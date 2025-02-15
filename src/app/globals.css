@@ -15,7 +15,47 @@
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  @apply text-foreground overflow-auto font-sans;
 }
+
+.title {
+  @apply font-inter text-title tracking-tight font-black leading-none;
+}
+
+.heading {
+  @apply font-inter text-heading tracking-tight font-extrabold;
+}
+
+.content {
+  @apply font-satoshi text-content font-medium;
+}
+
+.content2 {
+  @apply font-satoshi text-content2 font-semibold;
+}
+
+.content3 {
+  @apply font-satoshi text-content3 font-medium tracking-normal leading-normal;
+}
+
+.button {
+  @apply font-satoshi text-button font-medium;
+}
+
+.coffee::before,
+.gym::before,
+.compass::before {
+  width: 30px;
+  height: 30px;
+}
+
+.MyGradient {
+  mask-image: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0),
+    rgba(0, 0, 0, 1) 20%,
+    rgba(0, 0, 0, 1) 80%,
+    rgba(0, 0, 0, 0)
+  );
+}
+
