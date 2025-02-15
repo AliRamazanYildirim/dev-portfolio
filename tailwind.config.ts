@@ -1,18 +1,54 @@
-import type { Config } from "tailwindcss";
+import plugin from "tailwindcss/plugin";
+import forms from "@tailwindcss/forms";
+import type { PluginAPI, Config } from "tailwindcss/types/config";
 
-export default {
+const config: Config = {
   content: [
-    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
     extend: {
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        black: "#131313",
+        white: "#eeede9",
+        gray: "#7D7D7D",
+        background: "#eeede9",
+        foreground: "#171717",
+        "background-dark": "#0a0a0a",
+        "foreground-dark": "#ededed",
+      },
+      fontFamily: {
+        inter: ["Inter", "sans-serif"],
+        satoshi: ["Satoshi", "sans-serif"],
+      },
+      fontSize: {
+        title: "36px",
+        heading: "30px",
+        content: "16px",
+        content2: "16px",
+        content3: "14px",
+        button: "14px",
+        lgTitle: "128px",
+        lgHeading: "80px",
+        lgContent: "30px",
+        lgContent2: "30px",
+        lgContent3: "24px",
+        lgButton: "24px",
       },
     },
   },
-  plugins: [],
-} satisfies Config;
+  plugins: [
+    plugin(function ({ addUtilities }: { addUtilities: PluginAPI["addUtilities"] }) {
+      addUtilities({
+        ".text-balance": {
+          textWrap: "balance",
+        },
+      });
+    }),
+    forms,
+  ],
+};
+
+export default config;
