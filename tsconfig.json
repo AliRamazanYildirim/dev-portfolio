@@ -22,6 +22,13 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "components/sections/Hero.js",
+    "TextAnimations/BlurText/BlurText.jsx"
+, "components/ui/Nav.jsx"  ],
   "exclude": ["node_modules"]
 }
