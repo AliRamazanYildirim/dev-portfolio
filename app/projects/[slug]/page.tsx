@@ -24,13 +24,15 @@ const ProjectPage = ({ params }: { params: { slug: string } }) => {
             <p className="content md:text-lgContent text-gray text-sm">(by {project.author})</p>
           </div>
 
-          <Image
-            src={project.mainImage}
-            alt={project.title}
-            width={1600}
-            height={1200}
-            className="rounded-md pb-8"
-          />
+            <div className="flex justify-center">
+            <Image
+              src={project.mainImage}
+              alt={project.title}
+              width={900}
+              height={300}
+              className="rounded-md pb-8"
+            />
+            </div>
 
           <div className="mb-16 grid grid-cols-1 md:grid-cols-2 md:gap-8">
             <div>
