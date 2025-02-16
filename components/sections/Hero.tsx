@@ -2,9 +2,9 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
+import SplitText from "@/TextAnimations/SplitText";
 import { footerItems } from "@/data";
 import Link from "next/link";
-import SplitText from "@/TextAnimations/SplitText";
 
 export default function Hero() {
   const handleScrollToAbout = () => {

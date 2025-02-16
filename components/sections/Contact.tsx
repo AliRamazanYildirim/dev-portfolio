@@ -4,9 +4,7 @@ import { useState } from "react";
 import emailjs from "@emailjs/browser";
 import { motion, AnimatePresence } from "framer-motion";
 import NoiseBackground from "../NoiseBackground";
-import SplitText from "../../../TextAnimations/SplitText";
-
-
+import SplitText from "@/TextAnimations/SplitText";
 
 const Contact = () => {
   return (

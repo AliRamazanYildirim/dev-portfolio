@@ -1,5 +1,4 @@
 import plugin from "tailwindcss/plugin";
-import forms from "@tailwindcss/forms";
 import type { PluginAPI, Config } from "tailwindcss/types/config";
 
 const config: Config = {
@@ -47,7 +46,7 @@ const config: Config = {
         },
       });
     }),
-    forms,
+    require("@tailwindcss/forms"),
   ],
 };
 

@@ -3,7 +3,6 @@
 import React from "react";
 import MarqueeItem from "./MarqueeItem";
 
-
 const Marquee = () => {
   const upperMarquee = [
     { src: "/techStack/01.svg", text: "JavaScript" },
