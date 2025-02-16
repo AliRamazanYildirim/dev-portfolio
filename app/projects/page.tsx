@@ -19,6 +19,11 @@ const ProjectsPage = () => {
     },
   };
 
+  const itemVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: { opacity: 1, y: 0 },
+  };
+
   return (
     <NoiseBackground mode="dark" intensity={0.1}>
       <motion.section
@@ -34,33 +39,22 @@ const ProjectsPage = () => {
             className="grid grid-cols-1 md:grid-cols-2 gap-6"
             variants={containerVariants}
           >
-            {projects.map((project, index) => (
-              <Link href={`/projects/${project.slug}`} key={index}>
-                <div className="relative group">
-                  {/* Bild-Container mit subtilerem Blur */}
-                  <div className="overflow-hidden rounded-md w-full h-[400px] relative bg-white/5 backdrop-blur-[1px] border border-white/10">
-                    <div className="w-full h-full flex items-center justify-center p-6">
-                      <Image
-                        src={project.mainImage}
-                        alt={project.title}
-                        width={1920}
-                        height={1080}
-                        className="object-contain max-h-[300px] transition-transform duration-300 group-hover:scale-105"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Titel und Beschreibung unter dem Bild */}
-                  <div className="mt-4">
-                    <h2 className="text-white text-heading font-bold">
-                      {project.title}
-                    </h2>
-                    <p className="text-gray-300 text-sm mt-2">
-                      {project.description.slice(0, 100)}...
-                    </p>
-                  </div>
-                </div>
-              </Link>
+            {projects.map((project) => (
+              <motion.div key={project.slug} className="cursor-pointer" variants={itemVariants}>
+                <Link href={`/projects/${project.slug}`}>
+                  <Image
+                    src={project.mainImage}
+                    alt={project.title}
+                    width={1920}
+                    height={1080}
+                    className="w-full rounded-md hover:scale-105 transition-transform duration-300"
+                  />
+                  <h2 className="content md:text-lgContent mt-4">{project.title}</h2>
+                  <p className="button md:text-lgButton text-gray mt-2">
+                    {project.description.slice(0, 100)}...
+                  </p>
+                </Link>
+              </motion.div>
             ))}
           </motion.div>
         </div>
