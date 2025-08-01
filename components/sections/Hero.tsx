@@ -55,7 +55,7 @@ const IntroParagraph = () => (
     animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.8 }}
   >
-    <p className="mb-6 text-base md:text-lg lg:text-xl leading-relaxed">
+    <p className="mb-6 text-base md:text-lg lg:text-xl text-[#260a03] leading-relaxed">
       Experienced Software Developer. I love solving complex problems and
       building web solutions that are fast, scalable, and future-ready.
     </p>

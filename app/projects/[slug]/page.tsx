@@ -4,10 +4,11 @@ import { useRouter } from "next/navigation";
 import { projects } from "@/data/projects";
 import Image from "next/image";
 import NoiseBackground from "@/components/NoiseBackground";
+import { use } from "react";
 
-const ProjectPage = ({ params }: { params: { slug: string } }) => {
+const ProjectPage = ({ params }: { params: Promise<{ slug: string }> }) => {
   const router = useRouter();
-  const { slug } = params;
+  const { slug } = use(params);
 
   const project = projects.find((project) => project.slug === slug);
 
@@ -21,10 +22,12 @@ const ProjectPage = ({ params }: { params: { slug: string } }) => {
         <div className="container mx-auto">
           <div className="mb-10">
             <h1 className="heading md:text-lgHeading">{project.title}</h1>
-            <p className="content md:text-lgContent text-gray text-sm">(by {project.author})</p>
+            <p className="content md:text-lgContent text-gray text-sm">
+              (by {project.author})
+            </p>
           </div>
 
-            <div className="flex justify-center">
+          <div className="flex justify-center">
             <Image
               src={project.mainImage}
               alt={project.title}
@@ -32,11 +35,13 @@ const ProjectPage = ({ params }: { params: { slug: string } }) => {
               height={300}
               className="rounded-md pb-8"
             />
-            </div>
+          </div>
 
           <div className="mb-16 grid grid-cols-1 md:grid-cols-2 md:gap-8">
             <div>
-              <h2 className="heading md:text-lgHeading font-bold mb-4">About The Project</h2>
+              <h2 className="heading md:text-lgHeading font-bold mb-4">
+                About The Project
+              </h2>
             </div>
             <div>
               <p className="content md:text-lgContent text-gray text-lg leading-relaxed my-2">
@@ -46,7 +51,9 @@ const ProjectPage = ({ params }: { params: { slug: string } }) => {
 
             <div className="grid grid-cols-3 gap-4">
               <div>
-                <p className="font-bold content md:text-lgContent">Project Role</p>
+                <p className="font-bold content md:text-lgContent">
+                  Project Role
+                </p>
                 <p className="text-gray">{project.role}</p>
               </div>
               <div>
@@ -74,7 +81,9 @@ const ProjectPage = ({ params }: { params: { slug: string } }) => {
           </div>
 
           <div className="mb-16">
-            <h2 className="heading md:text-lgHeading mb-4">Technologies Used</h2>
+            <h2 className="heading md:text-lgHeading mb-4">
+              Technologies Used
+            </h2>
             <p className="content md:text-lgContent text-gray leading-relaxed">
               {project.technologies}
             </p>
