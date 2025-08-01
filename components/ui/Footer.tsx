@@ -36,14 +36,14 @@ function Footer({ className }: { className?: string }) {
                 height={32}
                 priority={item.title === "LinkedIn"}
               />
-              <span className="hidden md:inline">{item.title}</span>
+              <span className="hidden md:inline text-[#260a03]">{item.title}</span>
             </Link>
           ))}
         </div>
 
         <button
           onClick={scrollToTop}
-          className="mt-6 md:mt-0 md:text-right text-gray hover:text-black hover:underline transition"
+          className="mt-6 md:mt-0 md:text-right text-[#260a03] hover:text-gray hover:underline transition"
           aria-label="Scroll to top"
         >
           © 2025. Ali Ramazan Yildirim

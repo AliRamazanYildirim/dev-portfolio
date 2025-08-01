@@ -15,13 +15,20 @@ export default function Hero() {
   };
 
   return (
-    <section id="hero" className="px-7 pb-10 md:pb-40 min-h-screen flex flex-col">
+    <section
+      id="hero"
+      className="px-7 pb-10 md:pb-40 min-h-screen flex flex-col"
+    >
       <div className="container mx-auto flex-1 flex flex-col justify-center">
         <IntroHeader />
         <div className="flex-1 md:pl-10">
-          <div className="md:flex md:flex-row-reverse md:items-center md:justify-between md:gap-16 lg:gap-48">
-            <IntroParagraph />
-            <Portrait />
+          <div className="flex flex-col md:flex-row-reverse md:items-start lg:items-center gap-8 md:gap-12 lg:gap-16 xl:gap-24">
+            <div className="flex-shrink-0 order-first md:order-none">
+              <Portrait />
+            </div>
+            <div className="flex-1 min-w-0">
+              <IntroParagraph />
+            </div>
           </div>
 
           <div className="flex justify-between items-center mt-auto pt-8">
@@ -43,13 +50,15 @@ const IntroHeader = () => (
 
 const IntroParagraph = () => (
   <motion.div
-    className="content my-8 text-gray md:text-lgContent max-w-3xl md:max-w-lg lg:max-w-xl"
+    className="content text-gray md:text-lgContent w-full"
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.8 }}
   >
-    Experienced Software Developer. I love solving complex problems and building web solutions that
-    are fast, scalable, and future-ready.
+    <p className="mb-6 text-base md:text-lg lg:text-xl leading-relaxed">
+      Experienced Software Developer. I love solving complex problems and
+      building web solutions that are fast, scalable, and future-ready.
+    </p>
     <Socials />
   </motion.div>
 );
@@ -60,13 +69,13 @@ const Portrait = () => (
     src="/me.jpeg"
     width={408}
     height={488}
-    className="rounded-md md:mx-0 mb-5 w-full lg:max-w-sm"
+    className="rounded-md w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl h-auto object-cover"
     priority
   />
 );
 
 const Socials = () => (
-  <div className="flex gap-4 justify-center items-center md:justify-start pt-5">
+  <div className="flex flex-wrap gap-3 sm:gap-4 md:gap-5 lg:gap-6 justify-center md:justify-start items-center pt-4 md:pt-6">
     {footerItems.map((item) => (
       <Link
         key={item.path}
@@ -74,16 +83,21 @@ const Socials = () => (
         target="_blank"
         rel="noopener noreferrer"
         aria-label={`Go to ${item.title}`}
-        className="flex items-center gap-2 text-gray hover:text-black hover:scale-105 transition"
+        className="group flex items-center gap-2 md:gap-3 text-gray hover:text-black transition-all duration-300 ease-in-out transform hover:scale-110"
       >
-        <Image
-          src={item.icon}
-          alt={`${item.title} Icon`}
-          width={32}
-          height={32}
-          priority={item.title === "LinkedIn"}
-        />
-        <span className="hidden md:inline">{item.title}</span>
+        <div className="relative">
+          <Image
+            src={item.icon}
+            alt={`${item.title} Icon`}
+            width={32}
+            height={32}
+            className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 lg:w-11 lg:h-11 xl:w-12 xl:h-12 transition-all duration-300"
+            priority={item.title === "LinkedIn"}
+          />
+        </div>
+        <span className="hidden md:inline-block text-sm text-[#260a03] md:text-base lg:text-lg font-medium opacity-0 md:opacity-100 transition-opacity duration-300 group-hover:opacity-100">
+          {item.title}
+        </span>
       </Link>
     ))}
   </div>
@@ -97,8 +111,20 @@ interface IconProps {
   additionalClasses?: string;
 }
 
-const Icon: React.FC<IconProps> = ({ src, alt, width, height, additionalClasses = "" }) => (
-  <Image src={src} alt={alt} width={width} height={height} className={additionalClasses} />
+const Icon: React.FC<IconProps> = ({
+  src,
+  alt,
+  width,
+  height,
+  additionalClasses = "",
+}) => (
+  <Image
+    src={src}
+    alt={alt}
+    width={width}
+    height={height}
+    className={additionalClasses}
+  />
 );
 
 const Location = () => (
