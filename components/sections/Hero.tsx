@@ -15,16 +15,16 @@ export default function Hero() {
   };
 
   return (
-    <section id="hero" className="px-7 pb-10 md:pb-40">
-      <div className="container mx-auto">
+    <section id="hero" className="px-7 pb-10 md:pb-40 min-h-screen flex flex-col">
+      <div className="container mx-auto flex-1 flex flex-col justify-center">
         <IntroHeader />
-        <div className="max-w-8xl md:pl-10 mx-auto">
+        <div className="flex-1 md:pl-10">
           <div className="md:flex md:flex-row-reverse md:items-center md:justify-between md:gap-16 lg:gap-48">
             <IntroParagraph />
             <Portrait />
           </div>
 
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center mt-auto pt-8">
             <Location />
             <ScrollForMore onClick={handleScrollToAbout} />
           </div>
@@ -35,7 +35,7 @@ export default function Hero() {
 }
 
 const IntroHeader = () => (
-  <h1 className="lg:translate-y-1/4 title md:text-lgTitle">
+  <h1 className="title md:text-lgTitle mb-8 md:mb-12">
     <SplitText text="HI THERE -" />
     <SplitText text="I'M ALI RAMAZAN" className="justify-end" />
   </h1>
@@ -43,7 +43,7 @@ const IntroHeader = () => (
 
 const IntroParagraph = () => (
   <motion.div
-    className="content my-8 text-gray md:text-lgContent lg:mr-auto md:pl-10 max-w-3xl"
+    className="content my-8 text-gray md:text-lgContent max-w-3xl md:max-w-lg lg:max-w-xl"
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.8 }}

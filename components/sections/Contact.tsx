@@ -26,11 +26,17 @@ const Header = () => (
   </div>
 );
 const ContactForm = () => {
-  const [formData, setFormData] = useState({ name: "", email: "", message: "" });
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    message: "",
+  });
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
@@ -109,6 +115,7 @@ const ContactForm = () => {
                 value={formData.email}
                 onChange={handleChange}
                 required
+                suppressHydrationWarning={true}
               />
             </div>
 
@@ -125,7 +132,7 @@ const ContactForm = () => {
 
             <button
               type="submit"
-              className="col-span-3 mt-6 py-3 px-6 bg-black text-white rounded-md hover:bg-gray"
+              className="col-span-12 md:col-span-3 mt-6 py-3 px-6 bg-black text-white rounded-md hover:bg-gray transition-colors duration-200"
             >
               Send Message
             </button>
