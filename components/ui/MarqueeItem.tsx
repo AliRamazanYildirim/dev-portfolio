@@ -18,7 +18,11 @@ const MarqueeItem: React.FC<MarqueeItemProps> = ({ images, from, to }) => {
         className="flex flex-shrink-0"
       >
         {images.map((item, index) => (
-          <div key={index} className="flex items-center space-x-2 pr-10 h-20 md:h-40 w-fit">
+          <div
+            key={index}
+            className="flex items-center justify-center space-x-2 pr-10 h-20 md:h-40 w-fit bg-white/20 rounded-xl border border-white/40 shadow-lg m-4 px-4"
+            style={{ borderRadius: "1rem" }}
+          >
             <Image
               src={item.src}
               alt={`Icon ${index + 1}`}
@@ -26,7 +30,9 @@ const MarqueeItem: React.FC<MarqueeItemProps> = ({ images, from, to }) => {
               height={40}
               className="md:w-20 md:h-20"
             />
-            <span className="text-sm md:text-lg text-white">{item.text}</span>
+            <span className="text-sm md:text-lg text-white text-center font-bold">
+              {item.text}
+            </span>
           </div>
         ))}
       </motion.div>
@@ -38,7 +44,10 @@ const MarqueeItem: React.FC<MarqueeItemProps> = ({ images, from, to }) => {
         className="flex flex-shrink-0"
       >
         {images.map((item, index) => (
-          <div key={index} className="flex items-center space-x-2 pr-10 h-20 md:h-40 w-fit">
+          <div
+            key={index}
+            className="flex items-center justify-center space-x-2 pr-10 h-20 md:h-40 w-fit bg-white/20 rounded-xl border border-white/40 shadow-lg m-4 px-4"
+          >
             <Image
               src={item.src}
               alt={`Icon ${index + 1}`}
@@ -46,7 +55,9 @@ const MarqueeItem: React.FC<MarqueeItemProps> = ({ images, from, to }) => {
               height={40}
               className="md:w-20 md:h-20"
             />
-            <span className="text-sm md:text-lg text-white">{item.text}</span>
+            <span className="text-sm md:text-lg text-white text-center font-bold">
+              {item.text}
+            </span>
           </div>
         ))}
       </motion.div>

@@ -83,7 +83,7 @@ const MoreAboutMe = () => (
     transition={{ duration: 2, ease: "easeOut" }}
   >
     <Link href="/about" passHref>
-      <span className="button text-white mr-2 md:text-lgButton hover:underline transition">
+      <span className="button text-white font-bold mr-2 md:text-lgButton hover:underline transition">
         (Know More About Me)
       </span>
     </Link>
