@@ -12,7 +12,7 @@ const MarqueeItem: React.FC<MarqueeItemProps> = ({ images, from, to }) => {
   const renderItem = (item: { src: string; text: string }, index: number) => (
     <div
       key={index}
-      className="flex items-center justify-center space-x-2 pr-10 h-20 md:h-40 w-fit rounded-xl border border-gray-700 bg-gray-800/60 shadow-[0_4px_12px_rgba(0,0,0,0.3)] m-4 px-4"
+      className="flex items-center justify-center space-x-2 pr-10 h-20 md:h-40 w-fit rounded-xl border border-white/30 bg-gray-800/70 shadow-lg m-4 px-4"
       style={{ borderRadius: "1rem" }}
     >
       <Image
@@ -29,18 +29,24 @@ const MarqueeItem: React.FC<MarqueeItemProps> = ({ images, from, to }) => {
   );
 
   return (
-    <div className="flex MyGradient">
-      {[...Array(2)].map((_, i) => (
-        <motion.div
-          key={i}
-          initial={{ x: `${from}` }}
-          animate={{ x: `${to}` }}
-          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-          className="flex flex-shrink-0"
-        >
-          {images.map((item, index) => renderItem(item, index))}
-        </motion.div>
-      ))}
+    <div className="relative overflow-hidden">
+      {/* Maskierter Verlauf nur im Hintergrund*/}
+      <div className="absolute inset-0 pointer-events-none MyGradient z-0" />
+
+      {/* Inhalt in separater Schicht*/}
+      <div className="relative z-10 flex">
+        {[...Array(2)].map((_, i) => (
+          <motion.div
+            key={i}
+            initial={{ x: `${from}` }}
+            animate={{ x: `${to}` }}
+            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+            className="flex flex-shrink-0"
+          >
+            {images.map((item, index) => renderItem(item, index))}
+          </motion.div>
+        ))}
+      </div>
     </div>
   );
 };
