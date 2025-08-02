@@ -9,58 +9,38 @@ interface MarqueeItemProps {
 }
 
 const MarqueeItem: React.FC<MarqueeItemProps> = ({ images, from, to }) => {
+  const renderItem = (item: { src: string; text: string }, index: number) => (
+    <div
+      key={index}
+      className="flex items-center justify-center space-x-2 pr-10 h-20 md:h-40 w-fit rounded-xl border border-gray-700 bg-gray-800/60 shadow-[0_4px_12px_rgba(0,0,0,0.3)] m-4 px-4"
+      style={{ borderRadius: "1rem" }}
+    >
+      <Image
+        src={item.src}
+        alt={item.text || `Icon ${index + 1}`}
+        width={40}
+        height={40}
+        className="md:w-20 md:h-20"
+      />
+      <span className="text-sm md:text-lg text-white text-center font-bold">
+        {item.text}
+      </span>
+    </div>
+  );
+
   return (
     <div className="flex MyGradient">
-      <motion.div
-        initial={{ x: `${from}` }}
-        animate={{ x: `${to}` }}
-        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-        className="flex flex-shrink-0"
-      >
-        {images.map((item, index) => (
-          <div
-            key={index}
-            className="flex items-center justify-center space-x-2 pr-10 h-20 md:h-40 w-fit bg-white/20 rounded-xl border border-white/40 shadow-lg m-4 px-4"
-            style={{ borderRadius: "1rem" }}
-          >
-            <Image
-              src={item.src}
-              alt={`Icon ${index + 1}`}
-              width={40}
-              height={40}
-              className="md:w-20 md:h-20"
-            />
-            <span className="text-sm md:text-lg text-white text-center font-bold">
-              {item.text}
-            </span>
-          </div>
-        ))}
-      </motion.div>
-
-      <motion.div
-        initial={{ x: `${from}` }}
-        animate={{ x: `${to}` }}
-        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-        className="flex flex-shrink-0"
-      >
-        {images.map((item, index) => (
-          <div
-            key={index}
-            className="flex items-center justify-center space-x-2 pr-10 h-20 md:h-40 w-fit bg-white/20 rounded-xl border border-white/40 shadow-lg m-4 px-4"
-          >
-            <Image
-              src={item.src}
-              alt={`Icon ${index + 1}`}
-              width={40}
-              height={40}
-              className="md:w-20 md:h-20"
-            />
-            <span className="text-sm md:text-lg text-white text-center font-bold">
-              {item.text}
-            </span>
-          </div>
-        ))}
-      </motion.div>
+      {[...Array(2)].map((_, i) => (
+        <motion.div
+          key={i}
+          initial={{ x: `${from}` }}
+          animate={{ x: `${to}` }}
+          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+          className="flex flex-shrink-0"
+        >
+          {images.map((item, index) => renderItem(item, index))}
+        </motion.div>
+      ))}
     </div>
   );
 };
