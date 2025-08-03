@@ -50,7 +50,7 @@ const ProjectsPage = () => {
                     className="w-full rounded-md hover:scale-105 transition-transform duration-300"
                   />
                   <h2 className="content md:text-lgContent mt-4">{project.title}</h2>
-                  <p className="button md:text-lgButton text-gray mt-2">
+                  <p className="button md:text-lgButton text-white mt-2">
                     {project.description.slice(0, 100)}...
                   </p>
                 </Link>

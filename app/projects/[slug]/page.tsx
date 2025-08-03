@@ -22,7 +22,7 @@ const ProjectPage = ({ params }: { params: Promise<{ slug: string }> }) => {
         <div className="container mx-auto">
           <div className="mb-10">
             <h1 className="heading md:text-lgHeading">{project.title}</h1>
-            <p className="content md:text-lgContent text-gray text-sm">
+            <p className="content md:text-lgContent text-white text-sm">
               (by {project.author})
             </p>
           </div>
@@ -44,7 +44,7 @@ const ProjectPage = ({ params }: { params: Promise<{ slug: string }> }) => {
               </h2>
             </div>
             <div>
-              <p className="content md:text-lgContent text-gray text-lg leading-relaxed my-2">
+              <p className="content md:text-lgContent text-white text-lg leading-relaxed my-2">
                 {project.description}
               </p>
             </div>
@@ -54,15 +54,15 @@ const ProjectPage = ({ params }: { params: Promise<{ slug: string }> }) => {
                 <p className="font-bold content md:text-lgContent">
                   Project Role
                 </p>
-                <p className="text-gray">{project.role}</p>
+                <p className="text-white">{project.role}</p>
               </div>
               <div>
                 <p className="font-bold content md:text-lgContent">Duration</p>
-                <p className="text-gray">{project.duration}</p>
+                <p className="text-white">{project.duration}</p>
               </div>
               <div>
                 <p className="font-bold content md:text-lgContent">Category</p>
-                <p className="text-gray">{project.category}</p>
+                <p className="text-white">{project.category}</p>
               </div>
             </div>
           </div>
@@ -84,7 +84,7 @@ const ProjectPage = ({ params }: { params: Promise<{ slug: string }> }) => {
             <h2 className="heading md:text-lgHeading mb-4">
               Technologies Used
             </h2>
-            <p className="content md:text-lgContent text-gray leading-relaxed">
+            <p className="content md:text-lgContent text-white leading-relaxed">
               {project.technologies}
             </p>
           </div>
@@ -92,13 +92,13 @@ const ProjectPage = ({ params }: { params: Promise<{ slug: string }> }) => {
           <div className="flex justify-between items-center">
             <button
               onClick={() => router.push(project.previousSlug || "/projects")}
-              className="text-gray hover:text-white heading md:text-lgHeading font-bold"
+              className="text-white hover:text-[#c9184a] heading md:text-lgHeading font-bold"
             >
               &lt; LAST
             </button>
             <button
               onClick={() => router.push(project.nextSlug || "/projects")}
-              className="text-gray hover:text-white heading md:text-lgHeading font-bold"
+              className="text-white hover:text-[#c9184a] heading md:text-lgHeading font-bold"
             >
               NEXT &gt;
             </button>

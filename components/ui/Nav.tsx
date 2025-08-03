@@ -23,7 +23,8 @@ export const Nav = ({ className }: { className?: string }) => {
   };
 
   const isActive = (path: string) => pathname === path;
-  const isProjectsPage = pathname.startsWith("/projects");
+  const isProjectsPage =
+    pathname === "/projects" || pathname.startsWith("/projects/");
   const noiseMode = isProjectsPage ? "dark" : "light";
 
   const mobileMenuVariants = {
@@ -39,8 +40,16 @@ export const Nav = ({ className }: { className?: string }) => {
     setHoveredIndex: (index: number | null) => void;
   };
 
-  const NavItem = ({ item, index, hoveredIndex, setHoveredIndex }: NavItemProps) => {
-    const hoverTextColor = isProjectsPage ? "text-white" : "text-black";
+  const NavItem = ({
+    item,
+    index,
+    hoveredIndex,
+    setHoveredIndex,
+  }: NavItemProps) => {
+    // Nur auf den Seiten /projects und /projects/[slug] weiß
+    const isProjectsOrDetail =
+      pathname === "/projects" || pathname.startsWith("/projects/");
+    const hoverTextColor = isProjectsOrDetail ? "text-white" : "text-black";
 
     return (
       <Link
@@ -48,7 +57,11 @@ export const Nav = ({ className }: { className?: string }) => {
         href={item.path}
         target={item.title === "Blog" ? "_blank" : undefined}
         rel={item.title === "Blog" ? "noopener noreferrer" : undefined}
-        className={`button lg:text-lgButton text-gray hover:${hoverTextColor} relative group transition ${
+        className={`button lg:text-lgButton ${
+          isProjectsOrDetail
+            ? "text-white hover:text-white"
+            : "text-gray hover:" + hoverTextColor
+        } relative group transition ${
           isActive(item.path) ? "font-bold underline" : ""
         }`}
         onMouseEnter={() => setHoveredIndex(index)}
@@ -58,8 +71,8 @@ export const Nav = ({ className }: { className?: string }) => {
           {hoveredIndex === index ? (
             <>
               <span className="absolute inset-x-0 bottom-0 h-0.5 bg-transparent transition-all duration-300 transform scale-x-100 group-hover:scale-x-0"></span>
-                {item.title}
-                <span className="absolute inset-x-0 bottom-0 h-0.5 bg-[#c9184a] transition-all duration-300 transform scale-x-0 group-hover:scale-x-100"></span>
+              {item.title}
+              <span className="absolute inset-x-0 bottom-0 h-0.5 bg-[#c9184a] transition-all duration-300 transform scale-x-0 group-hover:scale-x-100"></span>
             </>
           ) : (
             item.title
@@ -85,15 +98,16 @@ export const Nav = ({ className }: { className?: string }) => {
                 transition={{ type: "spring", stiffness: 300 }}
               >
                 <Image
-                  src="/ali-ramazan-yildirim.svg"
+                  src={
+                    isProjectsPage
+                      ? "/ali-ramazan-yildirim-white.svg"
+                      : "/ali-ramazan-yildirim.svg"
+                  }
                   alt="Logo"
                   width={120}
                   height={80}
-                  className={`h-56 w-auto ${
-                    isProjectsPage
-                      ? "grayscale brightness-[0.9]"
-                      : "brightness-0"
-                  } opacity-100`}
+                  className={`h-56 w-auto opacity-100`}
+                  priority
                 />
               </motion.div>
             </Link>
@@ -183,8 +197,10 @@ export const Nav = ({ className }: { className?: string }) => {
                               ? "noopener noreferrer"
                               : undefined
                           }
-                          className={`button text-gray lg:text-lgButton hover:${
-                            isProjectsPage ? "text-white" : "text-black"
+                          className={`button lg:text-lgButton ${
+                            isProjectsPage
+                              ? "text-white hover:text-white"
+                              : "text-gray hover:text-black"
                           } transition`}
                           onClick={() => setMenuOpen(false)}
                         >
