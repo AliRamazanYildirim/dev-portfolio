@@ -85,11 +85,11 @@ export const Nav = ({ className }: { className?: string }) => {
                 transition={{ type: "spring", stiffness: 300 }}
               >
                 <Image
-                  src="/logo.svg"
+                  src="/ali-ramazan-yildirim.svg"
                   alt="Logo"
                   width={120}
                   height={80}
-                  className={`h-20 w-auto ${
+                  className={`h-56 w-auto ${
                     isProjectsPage
                       ? "grayscale brightness-[0.9]"
                       : "brightness-0"
