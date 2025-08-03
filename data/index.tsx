@@ -1,8 +1,8 @@
 export const navItems = [
-  { title: "About", path: "/about" },
-  { title: "Projects", path: "/projects" },
-  { title: "Contact", path: "/#contact" },
-  { title: "Blog", path: "https://medium.com/@aliramazanyildirim" },
+  { title: "<About>", path: "/about" },
+  { title: "<Projects>", path: "/projects" },
+  { title: "<Contact>", path: "/#contact" },
+  { title: "<Blog>", path: "https://medium.com/@aliramazanyildirim" },
 ];
 
 export const footerItems = [
@@ -18,7 +18,7 @@ export const footerItems = [
   },
   {
     title: "Blogspace",
-    path: "https://techpediablogs.com/",
+    path: "https://medium.com/@aliramazanyildirim",
     icon: "/icons/medium.svg",
   },
   {

@@ -90,7 +90,7 @@ const Header = () => (
       <SplitText text="FULL-TIME" />
     </h1>
     <h1 className="block pl-12 md:pl-10">
-      <SplitText text="CODING AND TEA" />
+      <SplitText text="CODINGGGGGG !" />
     </h1>
   </header>
 );

@@ -28,6 +28,7 @@ export default function Hero() {
             </div>
             <div className="flex-1 min-w-0">
               <IntroParagraph />
+              <AboutSectionText />
             </div>
           </div>
 
@@ -55,11 +56,6 @@ const IntroParagraph = () => (
     animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.8 }}
   >
-    <p className="mb-6 text-base md:text-lg lg:text-xl text-[#260a03] leading-relaxed">
-      Experienced Software Developer. I love solving complex problems and
-      building web solutions that are fast, scalable, and future-ready.
-    </p>
-    <Socials />
   </motion.div>
 );
 
@@ -161,5 +157,57 @@ const ScrollForMore = ({ onClick }: { onClick: () => void }) => (
         />
       </motion.div>
     </button>
+  </div>
+);
+
+const AboutSectionText = () => (
+  <div className="mt-8 md:mt-12 text-base md:text-lg lg:text-xl text-[#260a03] leading-relaxed space-y-4">
+    <p>
+      Fast, scalable, and reliable web solutions built with a clear focus on
+      business goals and user needs. With strong fullstack experience and a
+      background in both modern and enterprise technologies, every solution is
+      designed to work efficiently—and the right way.
+    </p>
+    <p>
+      From new product development to system optimization, complex challenges
+      are addressed through clean architecture and user-centered design,
+      creating sustainable digital products with long-term value.
+    </p>
+    <div>
+      <strong>Core Competencies</strong>
+      <ul className="list-disc pl-5">
+        <li>Frontend: React, Next.js, Tailwind CSS</li>
+        <li>Backend: Node.js, Express, MongoDB</li>
+        <li>Integrations: Stripe, Uploadthing</li>
+        <li>Enterprise Systems: SAP, ABAP</li>
+        <li>Architecture: Scalable, maintainable, high-performance systems</li>
+      </ul>
+    </div>
+    <div>
+      <strong>Collaboration Approach</strong>
+      <ul className="list-disc pl-5">
+        <li>Focus on quality, clarity, and scalability</li>
+        <li>Transparent communication and aligned workflows</li>
+        <li>Technically sound solutions with real business value</li>
+        <li>Long-term thinking behind every decision</li>
+      </ul>
+    </div>
+    <div>
+      <strong>Who I Work With</strong>
+      <ul className="list-disc pl-5">
+        <li>Startups: MVP to stable product</li>
+        <li>Enterprises: SAP modernization and integrations</li>
+        <li>Agencies: Flexible frontend/backend development</li>
+        <li>Entrepreneurs: From idea to launch-ready product</li>
+      </ul>
+      <p>
+        Every project starts with understanding the problem, delivering the
+        right solution, and creating lasting impact through thoughtful
+        engineering.
+      </p>
+    </div>
+    <div className="pt-8">
+      <Socials />
+    </div>
   </div>
 );
