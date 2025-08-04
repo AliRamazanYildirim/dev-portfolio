@@ -79,18 +79,18 @@ const AboutPage = () => {
 };
 
 const Header = () => (
-  <header className="title md:text-lgTitle pb-5 md:pb-20">
-    <h1 className="block">
+  <header className="title pb-5 md:pb-20">
+    <h1 className="block text-4xl md:text-8xl xl:text-[6.5rem]">
       <SplitText text="PART-TIME" />
     </h1>
-    <h1 className="block">
+    <h1 className="block text-4xl md:text-8xl xl:text-[6.5rem]">
       <SplitText text="TURKISH COFFEE," />
     </h1>
-    <h1 className="block pl-12 md:pl-32">
+    <h1 className="block pl-12 md:pl-32 text-4xl md:text-8xl xl:text-[6.5rem]">
       <SplitText text="FULL-TIME" />
     </h1>
-    <h1 className="block pl-12 md:pl-10">
-      <SplitText text="CODINGGGGGG !" />
+    <h1 className="block pl-12 md:pl-10 text-4xl md:text-8xl xl:text-[6.5rem]">
+      <SplitText text="CODINGGGGG !" />
     </h1>
   </header>
 );

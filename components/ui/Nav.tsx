@@ -106,7 +106,7 @@ export const Nav = ({ className }: { className?: string }) => {
                   alt="Logo"
                   width={120}
                   height={80}
-                  className={`h-56 w-auto opacity-100`}
+                  className="h-24 md:h-32 lg:h-48 w-auto opacity-100"
                   priority
                 />
               </motion.div>
