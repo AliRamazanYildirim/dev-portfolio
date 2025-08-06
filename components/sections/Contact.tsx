@@ -75,9 +75,8 @@ const ContactForm = () => {
         process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY
       ) {
         console.log("Email wird mit EmailJS gesendet:", {
-          from_name: formData.name,
-          from_email: formData.email,
-          to_name: "Ali",
+          name: formData.name,
+          email: formData.email,
           message: formData.message,
         });
 
@@ -85,9 +84,8 @@ const ContactForm = () => {
           process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
           process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
           {
-            from_name: formData.name,
-            from_email: formData.email,
-            to_name: "Ali",
+            name: formData.name,
+            email: formData.email,
             message: formData.message,
           },
           process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!
@@ -164,7 +162,7 @@ const ContactForm = () => {
             <div className="relative border-b border-gray md:col-span-6">
               <textarea
                 name="message"
-                placeholder="Nachricht"
+                placeholder="Message"
                 className="content w-full bg-transparent border-none text-lg placeholder-[#260a03] focus:outline-none focus:ring-0 md:text-lgContent"
                 value={formData.message}
                 onChange={handleChange}
