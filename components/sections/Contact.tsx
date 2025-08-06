@@ -45,30 +45,72 @@ const ContactForm = () => {
     setError("");
 
     try {
-      console.log("Sending email with:", {
-        from_name: formData.name,
-        from_email: formData.email,
-        to_name: "Ali",
-        message: formData.message,
+      // Zuerst Nachricht in Database speichern
+      const dbResponse = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          message: formData.message,
+        }),
       });
 
-      const result = await emailjs.send(
-        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
-        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
-        {
+      const dbResult = await dbResponse.json();
+
+      if (!dbResult.success) {
+        throw new Error(
+          dbResult.error || "Fehler beim Speichern der Nachricht"
+        );
+      }
+
+      console.log("Nachricht in Database gespeichert:", dbResult);
+
+      // Optional: EmailJS senden (falls konfiguriert)
+      if (
+        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID &&
+        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID &&
+        process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY
+      ) {
+        console.log("Email wird mit EmailJS gesendet:", {
           from_name: formData.name,
           from_email: formData.email,
           to_name: "Ali",
           message: formData.message,
-        },
-        process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!
-      );
+        });
 
-      console.log("Email sent successfully:", result);
+        const result = await emailjs.send(
+          process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
+          process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
+          {
+            from_name: formData.name,
+            from_email: formData.email,
+            to_name: "Ali",
+            message: formData.message,
+          },
+          process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!
+        );
+
+        console.log("Email erfolgreich gesendet:", result);
+      }
+
+      // Erfolg anzeigen
       setSubmitted(true);
+
+      // Form nach 5 Sekunden zurücksetzen
+      setTimeout(() => {
+        setSubmitted(false);
+        setFormData({ name: "", email: "", message: "" });
+      }, 5000);
     } catch (err) {
-      console.error("Failed to send email:", err);
-      setError("Something went wrong. Please try again later.");
+      console.error("Fehler beim Senden der Nachricht:", err);
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Ein Fehler ist aufgetreten. Bitte versuchen Sie es später erneut."
+      );
     }
   };
 
@@ -83,7 +125,7 @@ const ContactForm = () => {
             exit={{ opacity: 0, y: 20 }}
             className="text-green-600 text-center text-xl"
           >
-            Your message has been sent. Thank you!
+            Ihre Nachricht wurde erfolgreich gesendet. Vielen Dank!
           </motion.p>
         ) : (
           <motion.form
@@ -110,7 +152,7 @@ const ContactForm = () => {
               <input
                 type="email"
                 name="email"
-                placeholder="Email"
+                placeholder="E-Mail"
                 className="content w-full bg-transparent border-none text-lg placeholder-[#260a03] focus:outline-none focus:ring-0 md:text-lgContent"
                 value={formData.email}
                 onChange={handleChange}
@@ -122,7 +164,7 @@ const ContactForm = () => {
             <div className="relative border-b border-gray md:col-span-6">
               <textarea
                 name="message"
-                placeholder="Message"
+                placeholder="Nachricht"
                 className="content w-full bg-transparent border-none text-lg placeholder-[#260a03] focus:outline-none focus:ring-0 md:text-lgContent"
                 value={formData.message}
                 onChange={handleChange}
@@ -134,7 +176,7 @@ const ContactForm = () => {
               type="submit"
               className="col-span-12 md:col-span-3 mt-6 py-3 px-6 bg-black text-white rounded-md hover:bg-[#260a03] transition-colors duration-200"
             >
-              Send Message
+              Nachricht senden
             </button>
           </motion.form>
         )}

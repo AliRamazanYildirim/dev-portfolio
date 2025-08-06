@@ -1,106 +1,270 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { projects } from "@/data/projects";
 import Image from "next/image";
 import NoiseBackground from "@/components/NoiseBackground";
+import { ProjectsAPI } from "@/lib/api";
 import { use } from "react";
+
+// TypeScript Interface für Projekt Details
+interface ProjectDetail {
+  id: string;
+  slug: string;
+  title: string;
+  author: string;
+  description: string;
+  role: string;
+  duration: string;
+  category: string;
+  technologies: string;
+  mainImage: string;
+  featured: boolean;
+  previousSlug: string | null;
+  nextSlug: string | null;
+  gallery: Array<{
+    id: string;
+    url: string;
+    alt: string;
+    order: number;
+  }>;
+  tags: Array<{
+    id: string;
+    name: string;
+    color: string;
+  }>;
+  createdAt: string;
+  updatedAt: string;
+}
 
 const ProjectPage = ({ params }: { params: Promise<{ slug: string }> }) => {
   const router = useRouter();
   const { slug } = use(params);
 
-  const project = projects.find((project) => project.slug === slug);
+  // State für Projekt und Loading
+  const [project, setProject] = useState<ProjectDetail | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  if (!project) {
-    return <p className="text-center text-white mt-20">Project not found!</p>;
+  // Projekt von der API laden
+  useEffect(() => {
+    const fetchProject = async () => {
+      try {
+        setLoading(true);
+        const response = await ProjectsAPI.getBySlug(slug);
+
+        if (response.success) {
+          setProject(response.data);
+        } else {
+          setError(response.error || "Projekt nicht gefunden");
+        }
+      } catch (err) {
+        setError("Fehler beim Laden des Projekts");
+        console.error("Fehler beim Laden des Projekts:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (slug) {
+      fetchProject();
+    }
+  }, [slug]);
+
+  // Loading State
+  if (loading) {
+    return (
+      <NoiseBackground mode="dark" intensity={0.1}>
+        <div className="text-white px-5 py-10 md:px-20 md:py-20 min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+            <p className="content md:text-lgContent">Projekt wird geladen...</p>
+          </div>
+        </div>
+      </NoiseBackground>
+    );
+  }
+
+  // Error State
+  if (error || !project) {
+    return (
+      <NoiseBackground mode="dark" intensity={0.1}>
+        <div className="text-white px-5 py-10 md:px-20 md:py-20 min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <h1 className="heading md:text-lgHeading mb-4">
+              Projekt nicht gefunden
+            </h1>
+            <p className="content md:text-lgContent text-gray mb-6">{error}</p>
+            <button
+              onClick={() => router.push("/projects")}
+              className="button md:text-lgButton border border-white px-6 py-2 rounded hover:bg-white hover:text-black transition"
+            >
+              Zurück zu den Projekten
+            </button>
+          </div>
+        </div>
+      </NoiseBackground>
+    );
   }
 
   return (
     <NoiseBackground mode="dark" intensity={0.1}>
-      <section className=" text-white px-5 py-10 md:px-20 md:py-20">
+      <section className="text-white px-5 py-10 md:px-20 md:py-20">
         <div className="container mx-auto">
+          {/* Header Section */}
           <div className="mb-10">
-            <h1 className="heading md:text-lgHeading">{project.title}</h1>
-            <p className="content md:text-lgContent text-white text-sm">
-              (by {project.author})
+            <div className="flex items-center justify-between mb-4">
+              <h1 className="heading md:text-lgHeading">{project.title}</h1>
+              {/* Featured Badge */}
+              {project.featured && (
+                <span className="bg-[#c9184a] text-white px-4 py-2 rounded-full text-sm font-bold">
+                  Featured Project
+                </span>
+              )}
+            </div>
+            <p className="content md:text-lgContent text-gray text-sm">
+              von {project.author} •{" "}
+              {new Date(project.createdAt).toLocaleDateString("de-DE")}
             </p>
           </div>
 
-          <div className="flex justify-center">
+          {/* Main Image */}
+          <div className="flex justify-center mb-16">
             <Image
               src={project.mainImage}
               alt={project.title}
               width={900}
               height={300}
-              className="rounded-md pb-8"
+              className="rounded-md w-full max-w-4xl"
+              priority
             />
           </div>
 
+          {/* Project Details Grid */}
           <div className="mb-16 grid grid-cols-1 md:grid-cols-2 md:gap-8">
             <div>
               <h2 className="heading md:text-lgHeading font-bold mb-4">
-                About The Project
+                Über das Projekt
               </h2>
             </div>
             <div>
-              <p className="content md:text-lgContent text-white text-lg leading-relaxed my-2">
+              <p className="content md:text-lgContent text-white text-lg leading-relaxed">
                 {project.description}
               </p>
             </div>
 
-            <div className="grid grid-cols-3 gap-4">
+            {/* Project Meta Information */}
+            <div className="grid grid-cols-3 gap-4 mt-8">
               <div>
-                <p className="font-bold content md:text-lgContent">
-                  Project Role
+                <p className="font-bold content md:text-lgContent text-gray">
+                  Projekt Rolle
                 </p>
                 <p className="text-white">{project.role}</p>
               </div>
               <div>
-                <p className="font-bold content md:text-lgContent">Duration</p>
+                <p className="font-bold content md:text-lgContent text-gray">
+                  Dauer
+                </p>
                 <p className="text-white">{project.duration}</p>
               </div>
               <div>
-                <p className="font-bold content md:text-lgContent">Category</p>
+                <p className="font-bold content md:text-lgContent text-gray">
+                  Kategorie
+                </p>
                 <p className="text-white">{project.category}</p>
               </div>
             </div>
           </div>
 
-          <div className="mb-16 grid grid-cols-2 md:grid-cols-2 gap-4">
-            {project.gallery.map((image, index) => (
-              <Image
-                key={index}
-                src={image}
-                alt={`${project.title} screenshot ${index + 1}`}
-                width={400}
-                height={300}
-                className="rounded-md w-full"
-              />
-            ))}
-          </div>
+          {/* Gallery Section */}
+          {project.gallery && project.gallery.length > 0 && (
+            <div className="mb-16">
+              <h2 className="heading md:text-lgHeading mb-6">
+                Projekt Galerie
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {project.gallery
+                  .sort((a, b) => a.order - b.order)
+                  .map((image) => (
+                    <Image
+                      key={image.id}
+                      src={image.url}
+                      alt={image.alt || `${project.title} screenshot`}
+                      width={400}
+                      height={300}
+                      className="rounded-md w-full hover:scale-105 transition-transform duration-300 cursor-pointer"
+                    />
+                  ))}
+              </div>
+            </div>
+          )}
 
+          {/* Technologies Section */}
           <div className="mb-16">
             <h2 className="heading md:text-lgHeading mb-4">
-              Technologies Used
+              Verwendete Technologien
             </h2>
-            <p className="content md:text-lgContent text-white leading-relaxed">
-              {project.technologies}
-            </p>
+            <div className="bg-gray-800/50 rounded-lg p-6">
+              <p className="content md:text-lgContent text-white leading-relaxed">
+                {project.technologies}
+              </p>
+            </div>
           </div>
 
-          <div className="flex justify-between items-center">
+          {/* Tags Section */}
+          {project.tags && project.tags.length > 0 && (
+            <div className="mb-16">
+              <h2 className="heading md:text-lgHeading mb-4">Tags</h2>
+              <div className="flex flex-wrap gap-3">
+                {project.tags.map((tag) => (
+                  <span
+                    key={tag.id}
+                    className="px-4 py-2 rounded-full text-sm font-medium"
+                    style={{
+                      backgroundColor: tag.color + "20",
+                      borderColor: tag.color,
+                      color: tag.color,
+                      border: `1px solid ${tag.color}`,
+                    }}
+                  >
+                    {tag.name}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Navigation Section */}
+          <div className="flex justify-between items-center border-t border-gray-700 pt-8">
             <button
-              onClick={() => router.push(project.previousSlug || "/projects")}
-              className="text-white hover:text-[#c9184a] heading md:text-lgHeading font-bold"
+              onClick={() =>
+                project.previousSlug
+                  ? router.push(`/projects/${project.previousSlug}`)
+                  : router.push("/projects")
+              }
+              className="text-white hover:text-[#c9184a] heading md:text-lgHeading font-bold transition flex items-center gap-2"
             >
-              &lt; LAST
+              <span>&lt;</span>
+              {project.previousSlug ? "VORHERIGES" : "PROJEKTE"}
             </button>
+
             <button
-              onClick={() => router.push(project.nextSlug || "/projects")}
-              className="text-white hover:text-[#c9184a] heading md:text-lgHeading font-bold"
+              onClick={() => router.push("/projects")}
+              className="text-gray hover:text-white transition text-sm"
             >
-              NEXT &gt;
+              Alle Projekte anzeigen
+            </button>
+
+            <button
+              onClick={() =>
+                project.nextSlug
+                  ? router.push(`/projects/${project.nextSlug}`)
+                  : router.push("/projects")
+              }
+              className="text-white hover:text-[#c9184a] heading md:text-lgHeading font-bold transition flex items-center gap-2"
+            >
+              {project.nextSlug ? "NÄCHSTES" : "PROJEKTE"}
+              <span>&gt;</span>
             </button>
           </div>
         </div>
