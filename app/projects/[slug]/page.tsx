@@ -122,7 +122,7 @@ const ProjectPage = ({ params }: { params: Promise<{ slug: string }> }) => {
                 </span>
               )}
             </div>
-            <p className="content md:text-lgContent text-gray text-sm">
+            <p className="content md:text-lgContent text-white text-sm">
               von {project.author} •{" "}
               {new Date(project.createdAt).toLocaleDateString("de-DE")}
             </p>
@@ -144,7 +144,7 @@ const ProjectPage = ({ params }: { params: Promise<{ slug: string }> }) => {
           <div className="mb-16 grid grid-cols-1 md:grid-cols-2 md:gap-8">
             <div>
               <h2 className="heading md:text-lgHeading font-bold mb-4">
-                Über das Projekt
+                About The Project
               </h2>
             </div>
             <div>
@@ -156,20 +156,20 @@ const ProjectPage = ({ params }: { params: Promise<{ slug: string }> }) => {
             {/* Project Meta Information */}
             <div className="grid grid-cols-3 gap-4 mt-8">
               <div>
-                <p className="font-bold content md:text-lgContent text-gray">
-                  Projekt Rolle
+                <p className="font-bold content md:text-lgContent text-white">
+                  Project Role
                 </p>
                 <p className="text-white">{project.role}</p>
               </div>
               <div>
-                <p className="font-bold content md:text-lgContent text-gray">
-                  Dauer
+                <p className="font-bold content md:text-lgContent text-white">
+                  Duration
                 </p>
                 <p className="text-white">{project.duration}</p>
               </div>
               <div>
-                <p className="font-bold content md:text-lgContent text-gray">
-                  Kategorie
+                <p className="font-bold content md:text-lgContent text-white">
+                  Category
                 </p>
                 <p className="text-white">{project.category}</p>
               </div>
@@ -180,7 +180,7 @@ const ProjectPage = ({ params }: { params: Promise<{ slug: string }> }) => {
           {project.gallery && project.gallery.length > 0 && (
             <div className="mb-16">
               <h2 className="heading md:text-lgHeading mb-6">
-                Projekt Galerie
+                Project Galerie
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {project.gallery
@@ -202,7 +202,7 @@ const ProjectPage = ({ params }: { params: Promise<{ slug: string }> }) => {
           {/* Technologies Section */}
           <div className="mb-16">
             <h2 className="heading md:text-lgHeading mb-4">
-              Verwendete Technologien
+              Technologies Used
             </h2>
             <div className="bg-gray-800/50 rounded-lg p-6">
               <p className="content md:text-lgContent text-white leading-relaxed">
@@ -245,7 +245,7 @@ const ProjectPage = ({ params }: { params: Promise<{ slug: string }> }) => {
               className="text-white hover:text-[#c9184a] heading md:text-lgHeading font-bold transition flex items-center gap-2"
             >
               <span>&lt;</span>
-              {project.previousSlug ? "VORHERIGES" : "PROJEKTE"}
+              {project.previousSlug ? "Last" : "Projects"}
             </button>
 
           
@@ -258,7 +258,7 @@ const ProjectPage = ({ params }: { params: Promise<{ slug: string }> }) => {
               }
               className="text-white hover:text-[#c9184a] heading md:text-lgHeading font-bold transition flex items-center gap-2"
             >
-              {project.nextSlug ? "NÄCHSTES" : "PROJEKTE"}
+              {project.nextSlug ? "Next" : "Projects"}
               <span>&gt;</span>
             </button>
           </div>

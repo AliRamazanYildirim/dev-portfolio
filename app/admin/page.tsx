@@ -139,6 +139,8 @@ export default function AdminPage() {
         mainImage: gallery[0] || "/placeholder.jpg",
         gallery: gallery,
         featured: isFeatured,
+        // Not: previousSlug ve nextSlug değerleri API tarafından dinamik hesaplanıyor
+        // Note: previousSlug and nextSlug values are calculated dynamically by the API
         previousSlug: null,
         nextSlug: null,
       };

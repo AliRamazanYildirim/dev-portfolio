@@ -24,6 +24,24 @@ export async function GET(
       );
     }
 
+    // Tüm yayınlanmış projeleri ID'ye göre sıralı şekilde al - Get all published projects sorted by ID
+    const allProjects = await db.project.findMany({
+      where: { published: true },
+      select: { id: true, slug: true },
+      orderBy: { createdAt: "asc" }, // En eskiden en yeniye doğru sıralama
+    });
+
+    // Mevcut projenin index'ini bul - Find current project index
+    const currentIndex = allProjects.findIndex((p) => p.slug === slug);
+
+    // Önceki ve sonraki proje slug'larını hesapla - Calculate previous and next project slugs
+    const previousSlug =
+      currentIndex > 0 ? allProjects[currentIndex - 1].slug : null;
+    const nextSlug =
+      currentIndex < allProjects.length - 1
+        ? allProjects[currentIndex + 1].slug
+        : null;
+
     // Technologien parsen - Parse technologies field
     let technologies = [];
     try {
@@ -44,6 +62,8 @@ export async function GET(
       data: {
         ...project,
         technologies: technologies,
+        previousSlug,
+        nextSlug,
       },
     });
   } catch (error) {
