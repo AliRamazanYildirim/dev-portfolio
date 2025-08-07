@@ -390,10 +390,10 @@ export default function AdminPage() {
                           />
                         </svg>
                         <h3 className="text-xl font-medium text-[#131313] mb-3">
-                          Henüz proje yok
+                          No projects yet
                         </h3>
                         <p className="text-[#131313]/70">
-                          İlk projenizi eklemek için yukarıdaki butona tıklayın.
+                          Click the button above to add your first project.
                         </p>
                       </div>
                     </div>
@@ -414,10 +414,10 @@ export default function AdminPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="heading text-2xl text-white">
-                    {editingProject ? "Proje Düzenle" : "Yeni Proje Ekle"}
+                    {editingProject ? "Edit Project" : "Add New Project"}
                   </h2>
                   <p className="content text-white/70 text-sm mt-1">
-                    Proje bilgilerini doldurun
+                    Fill in the project information
                   </p>
                 </div>
                 <button
@@ -447,11 +447,11 @@ export default function AdminPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div className="md:col-span-2">
                     <label className="block text-sm font-semibold text-[#131313] mb-3">
-                      Proje Başlığı
+                      Project Title
                     </label>
                     <input
                       type="text"
-                      placeholder="Harika projenizin adını yazın..."
+                      placeholder="Enter your amazing project name..."
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
                       className="w-full px-6 py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content"
@@ -460,10 +460,10 @@ export default function AdminPage() {
 
                   <div className="md:col-span-2">
                     <label className="block text-sm font-semibold text-[#131313] mb-3">
-                      Kısa Açıklama
+                      Short Description
                     </label>
                     <textarea
-                      placeholder="Projenizi kısaca özetleyin..."
+                      placeholder="Briefly summarize your project..."
                       value={shortDescription}
                       onChange={(e) => setShortDescription(e.target.value)}
                       rows={3}
@@ -473,10 +473,10 @@ export default function AdminPage() {
 
                   <div className="md:col-span-2">
                     <label className="block text-sm font-semibold text-[#131313] mb-3">
-                      Detaylı Açıklama
+                      Detailed Description
                     </label>
                     <textarea
-                      placeholder="Projeniz hakkında detaylı bilgi verin..."
+                      placeholder="Provide detailed information about your project..."
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
                       rows={6}
@@ -486,11 +486,11 @@ export default function AdminPage() {
 
                   <div className="md:col-span-2">
                     <label className="block text-sm font-semibold text-[#131313] mb-3">
-                      Teknolojiler
+                      Technologies
                     </label>
                     <input
                       type="text"
-                      placeholder="React, Next.js, TypeScript (virgülle ayırın)"
+                      placeholder="React, Next.js, TypeScript (comma separated)"
                       value={techStack}
                       onChange={(e) => setTechStack(e.target.value)}
                       className="w-full px-6 py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content"
@@ -506,14 +506,14 @@ export default function AdminPage() {
                         className="w-6 h-6 text-[#c9184a] bg-white/80 border-[#131313]/20 rounded focus:ring-[#c9184a] transition-colors"
                       />
                       <span className="text-sm font-semibold text-[#131313] group-hover:text-[#c9184a] transition-colors">
-                        Öne çıkan proje olarak işaretle
+                        Mark as featured project
                       </span>
                     </label>
                   </div>
 
                   <div className="md:col-span-2">
                     <label className="block text-sm font-semibold text-[#131313] mb-4">
-                      Galeri Resimleri
+                      Gallery Images
                     </label>
                     <div className="backdrop-blur-sm bg-white/50 border-2 border-dashed border-[#131313]/30 rounded-2xl p-8 hover:border-[#131313]/50 transition-colors duration-200">
                       <ImageUpload
@@ -529,7 +529,7 @@ export default function AdminPage() {
                           <div key={index} className="relative group/delete">
                             <Image
                               src={url}
-                              alt={`Galeri resmi ${index + 1}`}
+                              alt={`Gallery image ${index + 1}`}
                               width={200}
                               height={150}
                               className="w-full h-32 object-cover rounded-xl border border-[#131313]/20"
@@ -567,18 +567,21 @@ export default function AdminPage() {
             </div>
 
             {/* Modal Footer */}
-            <div className="bg-[#131313]/5 backdrop-blur-sm px-8 py-6 border-t border-[#131313]/10 flex gap-4 justify-end">
+            <div
+              className="bg-[#131313]/5 backdrop-blur-sm px-8 py-6 border-t border-[#131313]/10 flex gap-4 justify-end"
+              style={{ paddingTop: "16px" }}
+            >
               <button
                 onClick={resetForm}
                 className="px-8 py-3 border border-[#131313]/30 text-[#131313] rounded-xl font-medium hover:bg-[#131313]/5 transition-all duration-200"
               >
-                İptal
+                Cancel
               </button>
               <button
                 onClick={saveProject}
                 className="px-8 py-3 bg-[#131313] hover:bg-[#131313]/90 text-white rounded-xl font-medium shadow-lg transition-all duration-200 hover:shadow-xl hover:scale-105"
               >
-                {editingProject ? "Güncelle" : "Kaydet"}
+                {editingProject ? "Update" : "Save"}
               </button>
             </div>
           </div>
