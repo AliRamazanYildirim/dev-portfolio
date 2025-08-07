@@ -248,12 +248,7 @@ const ProjectPage = ({ params }: { params: Promise<{ slug: string }> }) => {
               {project.previousSlug ? "VORHERIGES" : "PROJEKTE"}
             </button>
 
-            <button
-              onClick={() => router.push("/projects")}
-              className="text-gray hover:text-white transition text-sm"
-            >
-              Alle Projekte anzeigen
-            </button>
+          
 
             <button
               onClick={() =>

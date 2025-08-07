@@ -1,7 +1,30 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
-// GET /api/projects - Tüm projeleri getir
+// Navigation aktualisieren - Update project navigation
+async function updateProjectNavigation() {
+  const projects = await db.project.findMany({
+    where: { published: true },
+    orderBy: { createdAt: "asc" },
+    select: { id: true, slug: true },
+  });
+
+  for (let i = 0; i < projects.length; i++) {
+    const current = projects[i];
+    const previous = i > 0 ? projects[i - 1] : null;
+    const next = i < projects.length - 1 ? projects[i + 1] : null;
+
+    await db.project.update({
+      where: { id: current.id },
+      data: {
+        previousSlug: previous?.slug || null,
+        nextSlug: next?.slug || null,
+      },
+    });
+  }
+}
+
+// GET /api/projects - Retrieve all projects
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
@@ -29,7 +52,6 @@ export async function GET(request: NextRequest) {
       count: projects.length,
     });
   } catch (error) {
-    console.error("Error fetching projects:", error);
     return NextResponse.json(
       { success: false, error: "Failed to fetch projects" },
       { status: 500 }
@@ -37,10 +59,11 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST /api/projects - Yeni proje oluştur
+// POST /api/projects - Create new project
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
+
     const {
       slug,
       title,
@@ -56,7 +79,7 @@ export async function POST(request: NextRequest) {
       nextSlug,
     } = body;
 
-    // Slug benzersizliğini kontrol et
+    // Slug-Eindeutigkeit prüfen - Check slug uniqueness
     const existingProject = await db.project.findUnique({
       where: { slug },
     });
@@ -68,7 +91,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Galeri resimlerini hazırla
+    // Galerie vorbereiten - Prepare gallery
     const galleryData = gallery.map((url: string, index: number) => ({
       url,
       publicId: `portfolio_${slug}_${index}`,
@@ -101,6 +124,9 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    // Navigation automatisch aktualisieren - Auto-update navigation
+    await updateProjectNavigation();
+
     return NextResponse.json(
       {
         success: true,
@@ -109,10 +135,13 @@ export async function POST(request: NextRequest) {
       },
       { status: 201 }
     );
-  } catch (error) {
-    console.error("Error creating project:", error);
+  } catch (error: any) {
     return NextResponse.json(
-      { success: false, error: "Failed to create project" },
+      {
+        success: false,
+        error: "Failed to create project",
+        details: error?.message || error,
+      },
       { status: 500 }
     );
   }

@@ -1,0 +1,587 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import Image from "next/image";
+import NoiseBackground from "@/components/NoiseBackground";
+import ImageUpload from "@/components/ui/ImageUpload";
+
+// Interface-Definitionen - Interface definitions
+interface Project {
+  id: string;
+  title: string;
+  description: string;
+  shortDescription: string;
+  techStack: string[];
+  isFeatured: boolean;
+  gallery: { url: string }[];
+}
+
+export default function AdminPage() {
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [showForm, setShowForm] = useState(false);
+  const [editingProject, setEditingProject] = useState<Project | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  // Formular-Status - Form state
+  const [title, setTitle] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
+  const [shortDescription, setShortDescription] = useState<string>("");
+  const [techStack, setTechStack] = useState<string>("");
+  const [isFeatured, setIsFeatured] = useState<boolean>(false);
+  const [gallery, setGallery] = useState<string[]>([]);
+
+  useEffect(() => {
+    fetchProjects();
+  }, []);
+
+  // Projekte laden - Load projects
+  const fetchProjects = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch("/api/projects");
+      const result = await res.json();
+
+      if (result.success) {
+        // API-Response formatieren für Admin-Panel - Format API response for admin panel
+        const formattedProjects = result.data.map((project: any) => {
+          let techStack = [];
+
+          // Technologies-Feld sicher parsen - Parse technologies field safely
+          try {
+            if (typeof project.technologies === "string") {
+              // JSON-String parsen - Parse JSON string
+              techStack = JSON.parse(project.technologies);
+            } else if (Array.isArray(project.technologies)) {
+              // Array direkt verwenden - Use array directly
+              techStack = project.technologies;
+            } else {
+              techStack = [];
+            }
+          } catch (parseError) {
+            // Fallback bei Parse-Fehler - Fallback on parse error
+            techStack =
+              typeof project.technologies === "string"
+                ? project.technologies
+                    .split(",")
+                    .map((tech: string) => tech.trim())
+                    .filter((tech: string | any[]) => tech.length > 0)
+                : [];
+          }
+
+          return {
+            id: project.id,
+            title: project.title,
+            description: project.description,
+            shortDescription:
+              project.description?.substring(0, 150) + "..." || "",
+            techStack: techStack,
+            isFeatured: project.featured || false,
+            gallery: project.gallery || [],
+          };
+        });
+        setProjects(formattedProjects);
+      } else {
+        setProjects([]);
+      }
+    } catch (error) {
+      setProjects([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Formular zurücksetzen - Reset form
+  const resetForm = () => {
+    setTitle("");
+    setDescription("");
+    setShortDescription("");
+    setTechStack("");
+    setIsFeatured(false);
+    setGallery([]);
+    setEditingProject(null);
+    setShowForm(false);
+  };
+
+  // Projekt speichern - Save project
+  const saveProject = async () => {
+    try {
+      // Validierung - Validation
+      if (!title.trim()) {
+        alert("Project title is required!");
+        return;
+      }
+      if (!description.trim()) {
+        alert("Project description is required!");
+        return;
+      }
+
+      // Slug generieren - Generate slug
+      const slug = title
+        .toLowerCase()
+        .replace(/[^a-z0-9 -]/g, "")
+        .replace(/\s+/g, "-")
+        .replace(/-+/g, "-")
+        .trim();
+
+      const techArray = techStack
+        .split(",")
+        .map((tech) => tech.trim())
+        .filter((tech) => tech.length > 0);
+
+      const projectData = {
+        slug,
+        title,
+        description,
+        role: "Full Stack Developer",
+        duration: "3 months",
+        category: "Web Development",
+        technologies: JSON.stringify(techArray),
+        mainImage: gallery[0] || "/placeholder.jpg",
+        gallery: gallery,
+        featured: isFeatured,
+        previousSlug: null,
+        nextSlug: null,
+      };
+
+      const url = editingProject
+        ? `/api/admin/projects/${editingProject.id}`
+        : "/api/projects";
+      const method = editingProject ? "PUT" : "POST";
+
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(projectData),
+      });
+
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+
+      const result = await res.json();
+
+      if (result.success) {
+        fetchProjects();
+        resetForm();
+        alert("Project saved successfully!");
+      } else {
+        throw new Error(result.error || "Save failed");
+      }
+    } catch (error: any) {
+      alert(`Save error: ${error?.message || error}`);
+    }
+  };
+
+  // Projekt löschen - Delete project
+  const deleteProject = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this project?")) {
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/admin/projects/${id}`, {
+        method: "DELETE",
+      });
+
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+
+      const result = await res.json();
+
+      if (result.success) {
+        alert("Project deleted successfully!");
+        fetchProjects();
+      } else {
+        throw new Error(result.error || "Delete failed");
+      }
+    } catch (error: any) {
+      alert(`Delete error: ${error?.message || error}`);
+    }
+  };
+
+  const editProject = (project: Project) => {
+    setTitle(project.title);
+    setDescription(project.description);
+    setShortDescription(project.shortDescription);
+    setTechStack(project.techStack.join(", "));
+    setIsFeatured(project.isFeatured);
+    setGallery(project.gallery.map((img) => img.url));
+    setEditingProject(project);
+    setShowForm(true);
+  };
+
+  return (
+    <main className="relative flex justify-center items-center flex-col overflow-x-hidden mx-auto">
+      <div className="w-full">
+        <NoiseBackground mode="dark" intensity={0.1}>
+          {/* Header */}
+          <div className="relative z-10">
+            <div className="max-w-7xl mx-auto px-6 py-8">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h1 className="title text-5xl md:text-6xl text-white mb-2">
+                    Admin Panel
+                  </h1>
+                  <p className="content text-lg text-white/70">
+                    Manage your projects
+                  </p>
+                </div>
+                <button
+                  onClick={() => setShowForm(true)}
+                  className="button bg-white text-[#131313] px-8 py-4 rounded-lg hover:bg-white/90 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
+                >
+                  <span className="flex items-center gap-3">
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 4v16m8-8H4"
+                      />
+                    </svg>
+                    New Project
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Main Content */}
+          <div className="relative z-10 min-h-screen">
+            <div className="max-w-7xl mx-auto px-6 py-12">
+              {loading ? (
+                <div className="flex items-center justify-center py-24">
+                  <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-white"></div>
+                </div>
+              ) : (
+                <div className="grid gap-8">
+                  {projects && projects.length > 0 ? (
+                    projects.map((project) => (
+                      <div key={project.id} className="group">
+                        {/* Light Mode Card on Dark Background */}
+                        <div className="bg-[#eeede9] rounded-2xl shadow-lg border border-white/20 overflow-hidden hover:shadow-xl transition-all duration-300 hover:scale-[1.02] p-8">
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-4 mb-4">
+                                <h3 className="text-2xl md:text-3xl font-semibold text-[#131313]">
+                                  {project.title}
+                                </h3>
+                                {project.isFeatured && (
+                                  <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-bold bg-[#c9184a] text-white">
+                                    <svg
+                                      className="w-4 h-4 mr-2"
+                                      fill="currentColor"
+                                      viewBox="0 0 20 20"
+                                    >
+                                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                    </svg>
+                                    Featured
+                                  </span>
+                                )}
+                              </div>
+
+                              <p className="text-lg text-[#131313]/80 mb-6 leading-relaxed">
+                                {project.shortDescription}
+                              </p>
+
+                              <div className="flex flex-wrap gap-3 mb-6">
+                                {project.techStack?.map((tech) => (
+                                  <span
+                                    key={tech}
+                                    className="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium bg-[#131313]/10 text-[#131313] border border-[#131313]/20"
+                                  >
+                                    {tech}
+                                  </span>
+                                ))}
+                              </div>
+
+                              {project.gallery?.length > 0 && (
+                                <div className="flex gap-2 mb-6">
+                                  {project.gallery
+                                    .slice(0, 3)
+                                    .map((img, index) => (
+                                      <div key={index} className="relative">
+                                        <Image
+                                          src={img.url}
+                                          alt=""
+                                          width={60}
+                                          height={40}
+                                          className="w-15 h-10 object-cover rounded-lg border border-[#131313]/20"
+                                        />
+                                      </div>
+                                    ))}
+                                  {project.gallery.length > 3 && (
+                                    <div className="w-15 h-10 rounded-lg flex items-center justify-center">
+                                      <span className="text-xs font-bold text-black">
+                                        +{project.gallery.length - 3}
+                                      </span>
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+
+                            <div className="flex gap-3 ml-8">
+                              <button
+                                onClick={() => editProject(project)}
+                                className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-xl font-medium shadow-sm transition-all duration-200 hover:shadow-md hover:scale-105"
+                              >
+                                <svg
+                                  className="w-5 h-5 mr-2"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                                  />
+                                </svg>
+                                Edit
+                              </button>
+                              <button
+                                onClick={() => deleteProject(project.id)}
+                                className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-xl font-medium shadow-sm transition-all duration-200 hover:shadow-md hover:scale-105"
+                              >
+                                <svg
+                                  className="w-5 h-5 mr-2"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                  />
+                                </svg>
+                                Delete
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-center py-24">
+                      <div className="bg-[#eeede9] rounded-2xl shadow-lg border border-white/20 p-12 max-w-md mx-auto">
+                        <svg
+                          className="mx-auto h-16 w-16 text-[#131313]/50 mb-6"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 48 48"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={1.5}
+                            d="M34 40h10v-4a6 6 0 00-10.712-3.714M34 40H14m20 0v-4a9.971 9.971 0 00-.712-3.714M14 40H4v-4a6 6 0 0110.713-3.714M14 40v-4c0-1.313.253-2.566.713-3.714m0 0A9.971 9.971 0 0122 34c4.09 0 7.691 2.462 9.287 6M6 16a6 6 0 0112 0v3.586l.707.707c.63.63.293 1.707-.707 1.707H6z"
+                          />
+                        </svg>
+                        <h3 className="text-xl font-medium text-[#131313] mb-3">
+                          Henüz proje yok
+                        </h3>
+                        <p className="text-[#131313]/70">
+                          İlk projenizi eklemek için yukarıdaki butona tıklayın.
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        </NoiseBackground>
+      </div>
+
+      {/* Modal Form */}
+      {showForm && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-lg flex items-center justify-center p-4 z-50">
+          <div className="relative backdrop-blur-xl bg-white/95 border border-white/20 rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
+            {/* Modal Header */}
+            <div className="bg-gradient-to-r from-[#131313] to-[#131313]/90 px-8 py-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="heading text-2xl text-white">
+                    {editingProject ? "Proje Düzenle" : "Yeni Proje Ekle"}
+                  </h2>
+                  <p className="content text-white/70 text-sm mt-1">
+                    Proje bilgilerini doldurun
+                  </p>
+                </div>
+                <button
+                  onClick={resetForm}
+                  className="p-3 hover:bg-white/10 rounded-xl transition-all duration-200 group"
+                >
+                  <svg
+                    className="w-6 h-6 text-white/70 group-hover:text-white transition-colors"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            {/* Modal Body */}
+            <div className="px-8 py-8 overflow-y-auto max-h-[calc(90vh-180px)]">
+              <div className="space-y-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-semibold text-[#131313] mb-3">
+                      Proje Başlığı
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Harika projenizin adını yazın..."
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
+                      className="w-full px-6 py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content"
+                    />
+                  </div>
+
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-semibold text-[#131313] mb-3">
+                      Kısa Açıklama
+                    </label>
+                    <textarea
+                      placeholder="Projenizi kısaca özetleyin..."
+                      value={shortDescription}
+                      onChange={(e) => setShortDescription(e.target.value)}
+                      rows={3}
+                      className="w-full px-6 py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content resize-none"
+                    />
+                  </div>
+
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-semibold text-[#131313] mb-3">
+                      Detaylı Açıklama
+                    </label>
+                    <textarea
+                      placeholder="Projeniz hakkında detaylı bilgi verin..."
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
+                      rows={6}
+                      className="w-full px-6 py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content resize-none"
+                    />
+                  </div>
+
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-semibold text-[#131313] mb-3">
+                      Teknolojiler
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="React, Next.js, TypeScript (virgülle ayırın)"
+                      value={techStack}
+                      onChange={(e) => setTechStack(e.target.value)}
+                      className="w-full px-6 py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content"
+                    />
+                  </div>
+
+                  <div className="md:col-span-2">
+                    <label className="flex items-center gap-4 cursor-pointer group">
+                      <input
+                        type="checkbox"
+                        checked={isFeatured}
+                        onChange={(e) => setIsFeatured(e.target.checked)}
+                        className="w-6 h-6 text-[#c9184a] bg-white/80 border-[#131313]/20 rounded focus:ring-[#c9184a] transition-colors"
+                      />
+                      <span className="text-sm font-semibold text-[#131313] group-hover:text-[#c9184a] transition-colors">
+                        Öne çıkan proje olarak işaretle
+                      </span>
+                    </label>
+                  </div>
+
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-semibold text-[#131313] mb-4">
+                      Galeri Resimleri
+                    </label>
+                    <div className="backdrop-blur-sm bg-white/50 border-2 border-dashed border-[#131313]/30 rounded-2xl p-8 hover:border-[#131313]/50 transition-colors duration-200">
+                      <ImageUpload
+                        onUpload={(url: string) =>
+                          setGallery([...gallery, url])
+                        }
+                      />
+                    </div>
+
+                    {gallery.length > 0 && (
+                      <div className="grid grid-cols-4 gap-4 mt-8">
+                        {gallery.map((url, index) => (
+                          <div key={index} className="relative group/delete">
+                            <Image
+                              src={url}
+                              alt={`Galeri resmi ${index + 1}`}
+                              width={200}
+                              height={150}
+                              className="w-full h-32 object-cover rounded-xl border border-[#131313]/20"
+                            />
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setGallery(
+                                  gallery.filter((_, i) => i !== index)
+                                )
+                              }
+                              className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center shadow-lg opacity-0 group-hover/delete:opacity-100 transition-all duration-200 hover:scale-110"
+                            >
+                              <svg
+                                className="w-4 h-4"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M6 18L18 6M6 6l12 12"
+                                />
+                              </svg>
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="bg-[#131313]/5 backdrop-blur-sm px-8 py-6 border-t border-[#131313]/10 flex gap-4 justify-end">
+              <button
+                onClick={resetForm}
+                className="px-8 py-3 border border-[#131313]/30 text-[#131313] rounded-xl font-medium hover:bg-[#131313]/5 transition-all duration-200"
+              >
+                İptal
+              </button>
+              <button
+                onClick={saveProject}
+                className="px-8 py-3 bg-[#131313] hover:bg-[#131313]/90 text-white rounded-xl font-medium shadow-lg transition-all duration-200 hover:shadow-xl hover:scale-105"
+              >
+                {editingProject ? "Güncelle" : "Kaydet"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </main>
+  );
+}
