@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import NoiseBackground from "@/components/NoiseBackground";
@@ -20,6 +20,33 @@ export default function AdminLoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [checkingSession, setCheckingSession] = useState(true);
+
+  // Session prüfen - bereits eingeloggt? - Check if already logged in
+  useEffect(() => {
+    const checkExistingSession = async () => {
+      try {
+        const response = await fetch("/api/admin/session", {
+          credentials: "include",
+        });
+        const result = await response.json();
+
+        if (result.success && result.authenticated) {
+          // Bereits eingeloggt - bereits im Admin-Panel weiterleiten
+          // Already logged in - redirect to admin panel
+          router.push("/admin");
+          return;
+        }
+      } catch (error) {
+        // Fehler ignorieren - Session nicht vorhanden
+        // Ignore error - no session exists
+      } finally {
+        setCheckingSession(false);
+      }
+    };
+
+    checkExistingSession();
+  }, [router]);
 
   // Eingabe-Handler - Input handler
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -41,7 +68,7 @@ export default function AdminLoginPage() {
     try {
       // Einfache Client-Side-Validierung - Simple client-side validation
       if (!formData.email.trim() || !formData.password.trim()) {
-        setError("Alle Felder sind erforderlich - All fields are required");
+        setError("All fields are required");
         return;
       }
 
@@ -62,15 +89,31 @@ export default function AdminLoginPage() {
         router.refresh(); // Seite aktualisieren für Session - Refresh page for session
       } else {
         // Fehler anzeigen - Show error
-        setError(result.error || "Anmeldung fehlgeschlagen - Login failed");
+        setError(result.error || "Login failed");
       }
     } catch (error) {
       console.error("Login error:", error);
-      setError("Verbindungsfehler - Connection error");
+      setError("Connection error");
     } finally {
       setIsLoading(false);
     }
   };
+
+  // Session wird geprüft - Checking session
+  if (checkingSession) {
+    return (
+      <div className="min-h-screen w-full">
+        <NoiseBackground mode="dark" intensity={0.1}>
+          <div className="relative z-10 min-h-screen flex items-center justify-center px-6 py-12">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-white mx-auto mb-4"></div>
+              <p className="text-white text-lg">Checking session...</p>
+            </div>
+          </div>
+        </NoiseBackground>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen w-full">
@@ -95,7 +138,7 @@ export default function AdminLoginPage() {
                     Admin Login
                   </h1>
                   <p className="content text-[#131313]/70">
-                    Melden Sie sich an, um das Admin-Panel zu verwalten
+                    Sign in to access the admin panel
                   </p>
                 </motion.div>
               </div>
@@ -130,7 +173,7 @@ export default function AdminLoginPage() {
                     htmlFor="email"
                     className="block text-sm font-semibold text-[#131313]"
                   >
-                    E-Mail Adresse
+                    Email Address
                   </label>
                   <input
                     type="email"
@@ -150,7 +193,7 @@ export default function AdminLoginPage() {
                     htmlFor="password"
                     className="block text-sm font-semibold text-[#131313]"
                   >
-                    Passwort
+                    Password
                   </label>
                   <div className="relative">
                     <input
@@ -206,10 +249,10 @@ export default function AdminLoginPage() {
                   {isLoading ? (
                     <div className="flex items-center justify-center">
                       <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
-                      Anmelden...
+                      Signing in...
                     </div>
                   ) : (
-                    "Anmelden"
+                    "Sign In"
                   )}
                 </motion.button>
               </motion.form>
@@ -222,7 +265,7 @@ export default function AdminLoginPage() {
                 className="mt-6 text-center"
               >
                 <p className="text-sm text-[#131313]/50">
-                  Nur für autorisierte Administratoren
+                  For authorized administrators only
                 </p>
               </motion.div>
             </div>
@@ -238,7 +281,7 @@ export default function AdminLoginPage() {
                 onClick={() => router.push("/")}
                 className="text-white/70 hover:text-white text-sm font-medium transition-colors duration-200"
               >
-                ← Zurück zur Startseite - Back to home
+                ← Back to home
               </button>
             </motion.div>
           </motion.div>

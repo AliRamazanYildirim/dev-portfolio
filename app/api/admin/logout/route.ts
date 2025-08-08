@@ -7,7 +7,7 @@ export async function POST(request: NextRequest) {
     // Erfolgreiche Antwort vorbereiten - Prepare successful response
     const response = NextResponse.json({
       success: true,
-      message: "Erfolgreich abgemeldet - Successfully logged out",
+      message: "Successfully logged out",
     });
 
     // Cookie löschen durch Überschreiben mit abgelaufenem Datum
@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        error: "Abmeldung fehlgeschlagen - Logout failed",
+        error: "Logout failed",
       },
       { status: 500 }
     );

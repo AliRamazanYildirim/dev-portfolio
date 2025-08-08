@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import NoiseBackground from "@/components/NoiseBackground";
 import ImageUpload from "@/components/ui/ImageUpload";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
 
 // Interface-Definitionen - Interface definitions
 interface Project {
@@ -17,6 +18,14 @@ interface Project {
 }
 
 export default function AdminPage() {
+  // Admin-Authentifizierung - Admin authentication
+  const {
+    isAuthenticated,
+    user,
+    loading: authLoading,
+    logout,
+  } = useAdminAuth();
+
   const [projects, setProjects] = useState<Project[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
@@ -139,7 +148,6 @@ export default function AdminPage() {
         mainImage: gallery[0] || "/placeholder.jpg",
         gallery: gallery,
         featured: isFeatured,
-        // Not: previousSlug ve nextSlug değerleri API tarafından dinamik hesaplanıyor
         // Note: previousSlug and nextSlug values are calculated dynamically by the API
         previousSlug: null,
         nextSlug: null,
@@ -213,6 +221,28 @@ export default function AdminPage() {
     setShowForm(true);
   };
 
+  // Authentication yükleniyor - Authentication loading
+  if (authLoading) {
+    return (
+      <div className="fixed inset-0 w-full h-full">
+        <NoiseBackground mode="dark" intensity={0.1}>
+          <div className="relative z-10 flex items-center justify-center min-h-screen w-full h-full">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-white mx-auto mb-4"></div>
+              <p className="text-white text-lg">Session wird geprüft...</p>
+            </div>
+          </div>
+        </NoiseBackground>
+      </div>
+    );
+  }
+
+  // Nicht authentifiziert - Not authenticated (wird durch useAdminAuth weitergeleitet)
+  // Not authenticated (will be redirected by useAdminAuth)
+  if (!isAuthenticated) {
+    return null;
+  }
+
   return (
     <main className="relative flex justify-center items-center flex-col overflow-x-hidden mx-auto">
       <div className="w-full">
@@ -229,27 +259,52 @@ export default function AdminPage() {
                     Manage your projects
                   </p>
                 </div>
-                <button
-                  onClick={() => setShowForm(true)}
-                  className="button bg-white text-[#131313] px-8 py-4 rounded-lg hover:bg-white/90 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
-                >
-                  <span className="flex items-center gap-3">
-                    <svg
-                      className="w-5 h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M12 4v16m8-8H4"
-                      />
-                    </svg>
-                    New Project
-                  </span>
-                </button>
+                <div className="flex items-center gap-4">
+                  <button
+                    onClick={() => setShowForm(true)}
+                    className="button bg-white text-[#131313] px-8 py-4 rounded-lg hover:bg-white/90 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
+                  >
+                    <span className="flex items-center gap-3 font-bold">
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 4v16m8-8H4"
+                        />
+                      </svg>
+                      New Project
+                    </span>
+                  </button>
+
+                  {/* Logout Button */}
+                  <button
+                    onClick={logout}
+                    className="inline-flex items-center px-6 py-4 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-xl font-medium shadow-sm transition-all duration-200 hover:shadow-md hover:scale-105"
+                  >
+                    <span className="flex items-center gap-3">
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                        />
+                      </svg>
+                      Logout
+                    </span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>

@@ -18,8 +18,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error:
-            "E-Mail und Passwort sind erforderlich - Email and password are required",
+          error: "Email and password are required",
         },
         { status: 400 }
       );
@@ -31,7 +30,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: "Ungültige E-Mail-Adresse - Invalid email address",
+          error: "Invalid email address",
         },
         { status: 400 }
       );
@@ -51,7 +50,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: "Ungültige Anmeldedaten - Invalid credentials",
+          error: "Invalid credentials",
         },
         { status: 401 }
       );
@@ -64,7 +63,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: "Ungültige Anmeldedaten - Invalid credentials",
+          error: "Invalid credentials",
         },
         { status: 401 }
       );
@@ -80,7 +79,7 @@ export async function POST(request: NextRequest) {
     // Erfolgreiche Antwort mit Cookie - Successful response with cookie
     const response = NextResponse.json({
       success: true,
-      message: "Erfolgreich angemeldet - Successfully logged in",
+      message: "Successfully logged in",
       user: {
         id: adminUser.id,
         email: adminUser.email,
@@ -97,7 +96,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        error: "Anmeldung fehlgeschlagen - Login failed",
+        error: "Login failed",
       },
       { status: 500 }
     );

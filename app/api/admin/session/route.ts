@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
         {
           success: false,
           authenticated: false,
-          error: "Keine Session gefunden - No session found",
+          error: "No session found",
         },
         { status: 401 }
       );
@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
         {
           success: false,
           authenticated: false,
-          error: "Ungültige Session - Invalid session",
+          error: "Invalid session",
         },
         { status: 401 }
       );
@@ -52,7 +52,7 @@ export async function GET(request: NextRequest) {
         {
           success: false,
           authenticated: false,
-          error: "Benutzer nicht gefunden - User not found",
+          error: "User not found",
         },
         { status: 401 }
       );
@@ -74,7 +74,7 @@ export async function GET(request: NextRequest) {
       {
         success: false,
         authenticated: false,
-        error: "Session-Prüfung fehlgeschlagen - Session check failed",
+        error: "Session check failed",
       },
       { status: 500 }
     );
