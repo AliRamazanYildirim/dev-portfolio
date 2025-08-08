@@ -247,26 +247,26 @@ export default function AdminPage() {
     <main className="relative flex justify-center items-center flex-col overflow-x-hidden mx-auto">
       <div className="w-full">
         <NoiseBackground mode="dark" intensity={0.1}>
-          {/* Header */}
+          {/* Header - Responsive Design Upgrade */}
           <div className="relative z-10">
-            <div className="max-w-7xl mx-auto px-6 py-8">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h1 className="title text-5xl md:text-6xl text-white mb-2">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+              <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+                <div className="text-center lg:text-left">
+                  <h1 className="title text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white mb-2">
                     Admin Panel
                   </h1>
-                  <p className="content text-lg text-white/70">
+                  <p className="content text-base sm:text-lg text-white/70">
                     Manage your projects
                   </p>
                 </div>
-                <div className="flex items-center gap-4">
+                <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-end gap-3 sm:gap-4">
                   <button
                     onClick={() => setShowForm(true)}
-                    className="button bg-white text-[#131313] px-8 py-4 rounded-lg hover:bg-white/90 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
+                    className="button bg-white text-[#131313] px-6 sm:px-8 py-3 sm:py-4 rounded-lg hover:bg-white/90 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 w-full sm:w-auto"
                   >
-                    <span className="flex items-center gap-3 font-bold">
+                    <span className="flex items-center justify-center gap-2 sm:gap-3 font-bold text-sm sm:text-base">
                       <svg
-                        className="w-5 h-5"
+                        className="w-4 h-4 sm:w-5 sm:h-5"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -282,14 +282,14 @@ export default function AdminPage() {
                     </span>
                   </button>
 
-                  {/* Logout Button */}
+                  {/* Logout Button - Responsive */}
                   <button
                     onClick={logout}
-                    className="inline-flex items-center px-6 py-4 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-xl font-medium shadow-sm transition-all duration-200 hover:shadow-md hover:scale-105"
+                    className="inline-flex items-center justify-center px-4 sm:px-6 py-3 sm:py-4 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-xl font-medium shadow-sm transition-all duration-200 hover:shadow-md hover:scale-105 w-full sm:w-auto"
                   >
-                    <span className="flex items-center gap-3">
+                    <span className="flex items-center gap-2 sm:gap-3 text-sm sm:text-base">
                       <svg
-                        className="w-5 h-5"
+                        className="w-4 h-4 sm:w-5 sm:h-5"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -309,30 +309,30 @@ export default function AdminPage() {
             </div>
           </div>
 
-          {/* Main Content */}
+          {/* Main Content - Responsive Design Upgrade */}
           <div className="relative z-10 min-h-screen">
-            <div className="max-w-7xl mx-auto px-6 py-12">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
               {loading ? (
-                <div className="flex items-center justify-center py-24">
-                  <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-white"></div>
+                <div className="flex items-center justify-center py-16 sm:py-24">
+                  <div className="animate-spin rounded-full h-12 w-12 sm:h-16 sm:w-16 border-b-2 border-white"></div>
                 </div>
               ) : (
-                <div className="grid gap-8">
+                <div className="grid gap-6 sm:gap-8">
                   {projects && projects.length > 0 ? (
                     projects.map((project) => (
                       <div key={project.id} className="group">
-                        {/* Light Mode Card on Dark Background */}
-                        <div className="bg-[#eeede9] rounded-2xl shadow-lg border border-white/20 overflow-hidden hover:shadow-xl transition-all duration-300 hover:scale-[1.02] p-8">
-                          <div className="flex items-start justify-between">
+                        {/* Responsive Project Card */}
+                        <div className="bg-[#eeede9] rounded-xl sm:rounded-2xl shadow-lg border border-white/20 overflow-hidden hover:shadow-xl transition-all duration-300 hover:scale-[1.01] sm:hover:scale-[1.02] p-4 sm:p-6 lg:p-8">
+                          <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 lg:gap-6">
                             <div className="flex-1">
-                              <div className="flex items-center gap-4 mb-4">
-                                <h3 className="text-2xl md:text-3xl font-semibold text-[#131313]">
+                              <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 mb-4">
+                                <h3 className="text-xl sm:text-2xl lg:text-3xl font-semibold text-[#131313] break-words">
                                   {project.title}
                                 </h3>
                                 {project.isFeatured && (
-                                  <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-bold bg-[#c9184a] text-white">
+                                  <span className="inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-bold bg-[#c9184a] text-white self-start">
                                     <svg
-                                      className="w-4 h-4 mr-2"
+                                      className="w-3 h-3 sm:w-4 sm:h-4 mr-1.5 sm:mr-2"
                                       fill="currentColor"
                                       viewBox="0 0 20 20"
                                     >
@@ -343,15 +343,15 @@ export default function AdminPage() {
                                 )}
                               </div>
 
-                              <p className="text-lg text-[#131313]/80 mb-6 leading-relaxed">
+                              <p className="text-base sm:text-lg text-[#131313]/80 mb-4 sm:mb-6 leading-relaxed">
                                 {project.shortDescription}
                               </p>
 
-                              <div className="flex flex-wrap gap-3 mb-6">
+                              <div className="flex flex-wrap gap-2 sm:gap-3 mb-4 sm:mb-6">
                                 {project.techStack?.map((tech) => (
                                   <span
                                     key={tech}
-                                    className="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium bg-[#131313]/10 text-[#131313] border border-[#131313]/20"
+                                    className="inline-flex items-center px-2.5 sm:px-3 lg:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium bg-[#131313]/10 text-[#131313] border border-[#131313]/20"
                                   >
                                     {tech}
                                   </span>
@@ -359,22 +359,25 @@ export default function AdminPage() {
                               </div>
 
                               {project.gallery?.length > 0 && (
-                                <div className="flex gap-2 mb-6">
+                                <div className="flex gap-2 mb-4 sm:mb-6 overflow-x-auto">
                                   {project.gallery
                                     .slice(0, 3)
                                     .map((img, index) => (
-                                      <div key={index} className="relative">
+                                      <div
+                                        key={index}
+                                        className="relative flex-shrink-0"
+                                      >
                                         <Image
                                           src={img.url}
                                           alt=""
                                           width={60}
                                           height={40}
-                                          className="w-15 h-10 object-cover rounded-lg border border-[#131313]/20"
+                                          className="w-12 h-8 sm:w-15 sm:h-10 object-cover rounded-lg border border-[#131313]/20"
                                         />
                                       </div>
                                     ))}
                                   {project.gallery.length > 3 && (
-                                    <div className="w-15 h-10 rounded-lg flex items-center justify-center">
+                                    <div className="w-12 h-8 sm:w-15 sm:h-10 rounded-lg flex items-center justify-center flex-shrink-0">
                                       <span className="text-xs font-bold text-black">
                                         +{project.gallery.length - 3}
                                       </span>
@@ -384,13 +387,14 @@ export default function AdminPage() {
                               )}
                             </div>
 
-                            <div className="flex gap-3 ml-8">
+                            {/* Responsive Action Buttons */}
+                            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 lg:ml-6 w-full lg:w-auto">
                               <button
                                 onClick={() => editProject(project)}
-                                className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-xl font-medium shadow-sm transition-all duration-200 hover:shadow-md hover:scale-105"
+                                className="inline-flex items-center justify-center px-4 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-xl font-medium shadow-sm transition-all duration-200 hover:shadow-md hover:scale-105 text-sm sm:text-base"
                               >
                                 <svg
-                                  className="w-5 h-5 mr-2"
+                                  className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2"
                                   fill="none"
                                   stroke="currentColor"
                                   viewBox="0 0 24 24"
@@ -406,10 +410,10 @@ export default function AdminPage() {
                               </button>
                               <button
                                 onClick={() => deleteProject(project.id)}
-                                className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-xl font-medium shadow-sm transition-all duration-200 hover:shadow-md hover:scale-105"
+                                className="inline-flex items-center justify-center px-4 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-xl font-medium shadow-sm transition-all duration-200 hover:shadow-md hover:scale-105 text-sm sm:text-base"
                               >
                                 <svg
-                                  className="w-5 h-5 mr-2"
+                                  className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2"
                                   fill="none"
                                   stroke="currentColor"
                                   viewBox="0 0 24 24"
@@ -429,10 +433,10 @@ export default function AdminPage() {
                       </div>
                     ))
                   ) : (
-                    <div className="text-center py-24">
-                      <div className="bg-[#eeede9] rounded-2xl shadow-lg border border-white/20 p-12 max-w-md mx-auto">
+                    <div className="text-center py-16 sm:py-24">
+                      <div className="bg-[#eeede9] rounded-xl sm:rounded-2xl shadow-lg border border-white/20 p-8 sm:p-12 max-w-sm sm:max-w-md mx-auto">
                         <svg
-                          className="mx-auto h-16 w-16 text-[#131313]/50 mb-6"
+                          className="mx-auto h-12 w-12 sm:h-16 sm:w-16 text-[#131313]/50 mb-4 sm:mb-6"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 48 48"
@@ -444,10 +448,10 @@ export default function AdminPage() {
                             d="M34 40h10v-4a6 6 0 00-10.712-3.714M34 40H14m20 0v-4a9.971 9.971 0 00-.712-3.714M14 40H4v-4a6 6 0 0110.713-3.714M14 40v-4c0-1.313.253-2.566.713-3.714m0 0A9.971 9.971 0 0122 34c4.09 0 7.691 2.462 9.287 6M6 16a6 6 0 0112 0v3.586l.707.707c.63.63.293 1.707-.707 1.707H6z"
                           />
                         </svg>
-                        <h3 className="text-xl font-medium text-[#131313] mb-3">
+                        <h3 className="text-lg sm:text-xl font-medium text-[#131313] mb-2 sm:mb-3">
                           No projects yet
                         </h3>
-                        <p className="text-[#131313]/70">
+                        <p className="text-sm sm:text-base text-[#131313]/70">
                           Click the button above to add your first project.
                         </p>
                       </div>
@@ -460,27 +464,27 @@ export default function AdminPage() {
         </NoiseBackground>
       </div>
 
-      {/* Modal Form */}
+      {/* Responsive Modal Form */}
       {showForm && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-lg flex items-center justify-center p-4 z-50">
-          <div className="relative backdrop-blur-xl bg-white/95 border border-white/20 rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
-            {/* Modal Header */}
-            <div className="bg-gradient-to-r from-[#131313] to-[#131313]/90 px-8 py-6">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-lg flex items-center justify-center p-2 sm:p-4 z-50">
+          <div className="relative backdrop-blur-xl bg-white/95 border border-white/20 rounded-2xl sm:rounded-3xl shadow-2xl w-full max-w-sm sm:max-w-2xl lg:max-w-4xl max-h-[95vh] sm:max-h-[90vh] overflow-hidden">
+            {/* Responsive Modal Header */}
+            <div className="bg-gradient-to-r from-[#131313] to-[#131313]/90 px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <h2 className="heading text-2xl text-white">
+                  <h2 className="heading text-lg sm:text-xl lg:text-2xl text-white">
                     {editingProject ? "Edit Project" : "Add New Project"}
                   </h2>
-                  <p className="content text-white/70 text-sm mt-1">
+                  <p className="content text-white/70 text-xs sm:text-sm mt-1 hidden sm:block">
                     Fill in the project information
                   </p>
                 </div>
                 <button
                   onClick={resetForm}
-                  className="p-3 hover:bg-white/10 rounded-xl transition-all duration-200 group"
+                  className="p-2 sm:p-3 hover:bg-white/10 rounded-xl transition-all duration-200 group"
                 >
                   <svg
-                    className="w-6 h-6 text-white/70 group-hover:text-white transition-colors"
+                    className="w-5 h-5 sm:w-6 sm:h-6 text-white/70 group-hover:text-white transition-colors"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -496,12 +500,12 @@ export default function AdminPage() {
               </div>
             </div>
 
-            {/* Modal Body */}
-            <div className="px-8 py-8 overflow-y-auto max-h-[calc(90vh-180px)]">
-              <div className="space-y-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <div className="md:col-span-2">
-                    <label className="block text-sm font-semibold text-[#131313] mb-3">
+            {/* Responsive Modal Body */}
+            <div className="px-4 sm:px-6 lg:px-8 py-6 sm:py-8 overflow-y-auto max-h-[calc(95vh-200px)] sm:max-h-[calc(90vh-180px)]">
+              <div className="space-y-6 sm:space-y-8">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
+                  <div className="lg:col-span-2">
+                    <label className="block text-sm font-semibold text-[#131313] mb-2 sm:mb-3">
                       Project Title
                     </label>
                     <input
@@ -509,12 +513,12 @@ export default function AdminPage() {
                       placeholder="Enter your amazing project name..."
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
-                      className="w-full px-6 py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content"
+                      className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
                     />
                   </div>
 
-                  <div className="md:col-span-2">
-                    <label className="block text-sm font-semibold text-[#131313] mb-3">
+                  <div className="lg:col-span-2">
+                    <label className="block text-sm font-semibold text-[#131313] mb-2 sm:mb-3">
                       Short Description
                     </label>
                     <textarea
@@ -522,25 +526,25 @@ export default function AdminPage() {
                       value={shortDescription}
                       onChange={(e) => setShortDescription(e.target.value)}
                       rows={3}
-                      className="w-full px-6 py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content resize-none"
+                      className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content resize-none text-sm sm:text-base"
                     />
                   </div>
 
-                  <div className="md:col-span-2">
-                    <label className="block text-sm font-semibold text-[#131313] mb-3">
+                  <div className="lg:col-span-2">
+                    <label className="block text-sm font-semibold text-[#131313] mb-2 sm:mb-3">
                       Detailed Description
                     </label>
                     <textarea
                       placeholder="Provide detailed information about your project..."
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
-                      rows={6}
-                      className="w-full px-6 py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content resize-none"
+                      rows={4}
+                      className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content resize-none text-sm sm:text-base"
                     />
                   </div>
 
-                  <div className="md:col-span-2">
-                    <label className="block text-sm font-semibold text-[#131313] mb-3">
+                  <div className="lg:col-span-2">
+                    <label className="block text-sm font-semibold text-[#131313] mb-2 sm:mb-3">
                       Technologies
                     </label>
                     <input
@@ -548,17 +552,17 @@ export default function AdminPage() {
                       placeholder="React, Next.js, TypeScript (comma separated)"
                       value={techStack}
                       onChange={(e) => setTechStack(e.target.value)}
-                      className="w-full px-6 py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content"
+                      className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
                     />
                   </div>
 
-                  <div className="md:col-span-2">
-                    <label className="flex items-center gap-4 cursor-pointer group">
+                  <div className="lg:col-span-2">
+                    <label className="flex items-center gap-3 sm:gap-4 cursor-pointer group">
                       <input
                         type="checkbox"
                         checked={isFeatured}
                         onChange={(e) => setIsFeatured(e.target.checked)}
-                        className="w-6 h-6 text-[#c9184a] bg-white/80 border-[#131313]/20 rounded focus:ring-[#c9184a] transition-colors"
+                        className="w-5 h-5 sm:w-6 sm:h-6 text-[#c9184a] bg-white/80 border-[#131313]/20 rounded focus:ring-[#c9184a] transition-colors"
                       />
                       <span className="text-sm font-semibold text-[#131313] group-hover:text-[#c9184a] transition-colors">
                         Mark as featured project
@@ -621,20 +625,17 @@ export default function AdminPage() {
               </div>
             </div>
 
-            {/* Modal Footer */}
-            <div
-              className="bg-[#131313]/5 backdrop-blur-sm px-8 py-6 border-t border-[#131313]/10 flex gap-4 justify-end"
-              style={{ paddingTop: "16px" }}
-            >
+            {/* Responsive Modal Footer */}
+            <div className="bg-[#131313]/5 backdrop-blur-sm px-4 sm:px-6 lg:px-8 py-4 sm:py-6 border-t border-[#131313]/10 flex flex-col sm:flex-row gap-3 sm:gap-4 sm:justify-end -mt-3">
               <button
                 onClick={resetForm}
-                className="px-8 py-3 border border-[#131313]/30 text-[#131313] rounded-xl font-medium hover:bg-[#131313]/5 transition-all duration-200"
+                className="w-full sm:w-auto px-6 sm:px-8 py-3 border border-[#131313]/30 text-[#131313] rounded-xl font-medium hover:bg-[#131313]/5 transition-all duration-200 text-sm sm:text-base order-2 sm:order-1"
               >
                 Cancel
               </button>
               <button
                 onClick={saveProject}
-                className="px-8 py-3 bg-[#131313] hover:bg-[#131313]/90 text-white rounded-xl font-medium shadow-lg transition-all duration-200 hover:shadow-xl hover:scale-105"
+                className="w-full sm:w-auto px-6 sm:px-8 py-3 bg-[#131313] hover:bg-[#131313]/90 text-white rounded-xl font-medium shadow-lg transition-all duration-200 hover:shadow-xl hover:scale-105 text-sm sm:text-base order-1 sm:order-2"
               >
                 {editingProject ? "Update" : "Save"}
               </button>

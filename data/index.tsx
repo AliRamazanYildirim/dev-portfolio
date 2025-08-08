@@ -3,6 +3,7 @@ export const navItems = [
   { title: "<Projects>", path: "/projects" },
   { title: "<Contact>", path: "/#contact" },
   { title: "<Blog>", path: "https://medium.com/@aliramazanyildirim" },
+  { title: "<Admin>", path: "/admin/login" },
 ];
 
 export const footerItems = [

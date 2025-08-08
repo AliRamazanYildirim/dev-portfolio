@@ -25,7 +25,9 @@ export const Nav = ({ className }: { className?: string }) => {
   const isActive = (path: string) => pathname === path;
   const isProjectsPage =
     pathname === "/projects" || pathname.startsWith("/projects/");
-  const noiseMode = isProjectsPage ? "dark" : "light";
+  // Admin-Seite prüfen - Check if admin page
+  const isAdminPage = pathname.startsWith("/admin");
+  const noiseMode = isProjectsPage || isAdminPage ? "dark" : "light";
 
   const mobileMenuVariants = {
     hidden: { opacity: 0, y: -20 },
@@ -46,10 +48,11 @@ export const Nav = ({ className }: { className?: string }) => {
     hoveredIndex,
     setHoveredIndex,
   }: NavItemProps) => {
-    // Nur auf den Seiten /projects und /projects/[slug] weiß
+    // Nur auf den Seiten /projects, /projects/[slug] und /admin weiß - Only white on /projects, /projects/[slug] and /admin pages
     const isProjectsOrDetail =
       pathname === "/projects" || pathname.startsWith("/projects/");
-    const hoverTextColor = isProjectsOrDetail ? "text-white" : "text-black";
+    const hoverTextColor =
+      isProjectsOrDetail || isAdminPage ? "text-white" : "text-black";
 
     return (
       <Link
@@ -58,7 +61,7 @@ export const Nav = ({ className }: { className?: string }) => {
         target={item.title === "Blog" ? "_blank" : undefined}
         rel={item.title === "Blog" ? "noopener noreferrer" : undefined}
         className={`button lg:text-lgButton ${
-          isProjectsOrDetail
+          isProjectsOrDetail || isAdminPage
             ? "text-white hover:text-white"
             : "text-gray hover:" + hoverTextColor
         } relative group transition ${
@@ -86,11 +89,17 @@ export const Nav = ({ className }: { className?: string }) => {
     <NoiseBackground mode={noiseMode} intensity={0.1}>
       <div className={`w-full bg-transparent ${className}`}>
         <div className="relative pt-8 pb-8 px-7 md:px-24 md:pb-8">
-          <nav className="flex items-center justify-between">
+          <nav
+            className={`flex items-center ${
+              isAdminPage ? "justify-center" : "justify-between"
+            }`}
+          >
             <Link
               href="/"
               className={`button text-gray lg:text-lgButton transition hover:underline ${
-                isProjectsPage ? "hover:text-white" : "hover:text-black"
+                isProjectsPage || isAdminPage
+                  ? "hover:text-white"
+                  : "hover:text-black"
               }`}
             >
               <motion.div
@@ -99,7 +108,7 @@ export const Nav = ({ className }: { className?: string }) => {
               >
                 <Image
                   src={
-                    isProjectsPage
+                    isProjectsPage || isAdminPage
                       ? "/ali-ramazan-yildirim-white.svg"
                       : "/ali-ramazan-yildirim.svg"
                   }
@@ -112,43 +121,48 @@ export const Nav = ({ className }: { className?: string }) => {
               </motion.div>
             </Link>
 
-            <div className="hidden lg:flex space-x-8">
-              {navItems.map((item: NavItemType, index: number) => (
-                <NavItem
-                  key={item.path}
-                  item={item}
-                  index={index}
-                  hoveredIndex={hoveredIndex}
-                  setHoveredIndex={setHoveredIndex}
-                />
-              ))}
-            </div>
+            {/* Admin-Seite: Nur Logo, keine Navigation - Admin page: Only logo, no navigation */}
+            {!isAdminPage && (
+              <>
+                <div className="hidden lg:flex space-x-8">
+                  {navItems.map((item: NavItemType, index: number) => (
+                    <NavItem
+                      key={item.path}
+                      item={item}
+                      index={index}
+                      hoveredIndex={hoveredIndex}
+                      setHoveredIndex={setHoveredIndex}
+                    />
+                  ))}
+                </div>
 
-            <button
-              className="lg:hidden text-gray focus:outline-none"
-              onClick={toggleMenu}
-              aria-label="Toggle menu"
-              aria-expanded={menuOpen}
-            >
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M4 6h16M4 12h16m-7 6h7"
-                />
-              </svg>
-            </button>
+                <button
+                  className="lg:hidden text-gray focus:outline-none"
+                  onClick={toggleMenu}
+                  aria-label="Toggle menu"
+                  aria-expanded={menuOpen}
+                >
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M4 6h16M4 12h16m-7 6h7"
+                    />
+                  </svg>
+                </button>
+              </>
+            )}
           </nav>
 
           <AnimatePresence>
-            {menuOpen && (
+            {menuOpen && !isAdminPage && (
               <>
                 <motion.div
                   initial={{ opacity: 0 }}
