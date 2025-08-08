@@ -110,10 +110,10 @@ export async function PUT(
 // DELETE /api/projects/admin/[id] - Projekt löschen (Admin) - Delete project (Admin)
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
 
     // Existierendes Projekt prüfen - Check existing project
     const existingProject = await db.project.findUnique({
