@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { supabase } from "@/lib/supabase";
 import { verifyToken, AUTH_COOKIE_NAME } from "@/lib/auth";
 
 // GET /api/admin/session - Session-Status prüfen - Check session status
@@ -33,21 +33,15 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Benutzer in der Datenbank verifizieren - Verify user in database
-    const adminUser = await db.adminUser.findUnique({
-      where: {
-        id: decoded.userId,
-        active: true,
-      },
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        active: true,
-      },
-    });
+    // Supabase ile admin user sorgula
+    const { data, error } = await supabase
+      .from("admin_users")
+      .select("id, email, name, active")
+      .eq("id", decoded.userId)
+      .eq("active", true)
+      .single();
 
-    if (!adminUser) {
+    if (error || !data) {
       return NextResponse.json(
         {
           success: false,
@@ -57,6 +51,8 @@ export async function GET(request: NextRequest) {
         { status: 401 }
       );
     }
+
+    const adminUser = data;
 
     // Erfolgreiche Session-Prüfung - Successful session check
     return NextResponse.json({
