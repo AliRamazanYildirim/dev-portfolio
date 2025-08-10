@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Supabase ile admin user sorgula
+    // Admin-Benutzer mit Supabase abfragen
     const { data, error } = await supabase
       .from("admin_users")
       .select("id, email, name, password, active")
@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (error || !data) {
-      // Güvenlik: Aynı hata mesajı
+      // Sicherheit: Gleiche Fehlermeldung
       return NextResponse.json(
         {
           success: false,

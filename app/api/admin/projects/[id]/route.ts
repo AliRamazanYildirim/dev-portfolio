@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { supabase } from "@/lib/supabase";
 
 // PUT /api/projects/admin/[id] - Projekt aktualisieren (Admin) - Update project (Admin)
 export async function PUT(
@@ -25,12 +25,23 @@ export async function PUT(
       nextSlug,
     } = body;
 
-    // Existierendes Projekt prüfen - Check existing project
-    const existingProject = await db.project.findUnique({
-      where: { id },
-      include: { gallery: true },
-    });
+    // Existierendes Projekt prüfen (Supabase)
+    const { data: existingProjects, error: findError } = await supabase
+      .from("projects")
+      .select("*")
+      .eq("id", id)
+      .limit(1);
 
+    const existingProject =
+      existingProjects && existingProjects.length > 0
+        ? existingProjects[0]
+        : null;
+    if (findError) {
+      return NextResponse.json(
+        { success: false, error: "Failed to check project" },
+        { status: 500 }
+      );
+    }
     if (!existingProject) {
       return NextResponse.json(
         { success: false, error: "Project not found" },
@@ -38,12 +49,20 @@ export async function PUT(
       );
     }
 
-    // Slug-Eindeutigkeit prüfen bei Änderung - Check slug uniqueness if changed
+    // Slug-Eindeutigkeit prüfen bei Änderung (Supabase)
     if (slug !== existingProject.slug) {
-      const slugExists = await db.project.findUnique({
-        where: { slug },
-      });
-      if (slugExists) {
+      const { data: slugExists, error: slugError } = await supabase
+        .from("projects")
+        .select("id")
+        .eq("slug", slug)
+        .limit(1);
+      if (slugError) {
+        return NextResponse.json(
+          { success: false, error: "Failed to check slug uniqueness" },
+          { status: 500 }
+        );
+      }
+      if (slugExists && slugExists.length > 0) {
         return NextResponse.json(
           { success: false, error: "A project with this slug already exists" },
           { status: 400 }
@@ -51,18 +70,27 @@ export async function PUT(
       }
     }
 
-    // Galerie vorbereiten - Prepare gallery
+    // Galerie vorbereiten (Supabase)
     const galleryData = gallery.map((url: string, index: number) => ({
+      projectId: id,
       url,
       publicId: `portfolio_${slug}_${index}`,
       alt: `${title} screenshot ${index + 1}`,
       order: index,
     }));
 
-    // Projekt aktualisieren - Update project
-    const updatedProject = await db.project.update({
-      where: { id },
-      data: {
+    // Lösche die alte Galerie (Supabase)
+    await supabase.from("project_images").delete().eq("projectId", id);
+
+    // Neue Galerie hinzufügen (Supabase)
+    if (galleryData.length > 0) {
+      await supabase.from("project_images").insert(galleryData);
+    }
+
+    // Projekt aktualisieren (Supabase)
+    const { data: updatedProjects, error: updateError } = await supabase
+      .from("projects")
+      .update({
         slug,
         title,
         description,
@@ -74,23 +102,32 @@ export async function PUT(
         featured,
         previousSlug,
         nextSlug,
-        gallery: {
-          deleteMany: {}, // Existierende Galerie löschen - Delete existing gallery
-          create: galleryData, // Neue Galerie erstellen - Create new gallery
+      })
+      .eq("id", id)
+      .select();
+
+    if (updateError || !updatedProjects || updatedProjects.length === 0) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Failed to update project",
+          details: updateError?.message || updateError,
         },
-      },
-      include: {
-        gallery: {
-          orderBy: { order: "asc" },
-        },
-        tags: true,
-      },
-    });
+        { status: 500 }
+      );
+    }
+
+    // Ziehe das Projekt erneut zusammen mit der Galerie.
+    const { data: fullProject } = await supabase
+      .from("projects")
+      .select(`*, gallery:project_images(*), tags:project_tags(*)`)
+      .eq("id", id)
+      .single();
 
     return NextResponse.json(
       {
         success: true,
-        data: updatedProject,
+        data: fullProject,
         message: "Project updated successfully",
       },
       { status: 200 }
@@ -115,12 +152,22 @@ export async function DELETE(
   try {
     const { id } = await params;
 
-    // Existierendes Projekt prüfen - Check existing project
-    const existingProject = await db.project.findUnique({
-      where: { id },
-      include: { gallery: true },
-    });
-
+    // Existierendes Projekt prüfen (Supabase)
+    const { data: existingProjects, error: findError } = await supabase
+      .from("projects")
+      .select("id")
+      .eq("id", id)
+      .limit(1);
+    const existingProject =
+      existingProjects && existingProjects.length > 0
+        ? existingProjects[0]
+        : null;
+    if (findError) {
+      return NextResponse.json(
+        { success: false, error: "Failed to check project" },
+        { status: 500 }
+      );
+    }
     if (!existingProject) {
       return NextResponse.json(
         { success: false, error: "Project not found" },
@@ -128,10 +175,25 @@ export async function DELETE(
       );
     }
 
-    // Projekt löschen (Cascade löscht Gallery und Tags) - Delete project (Cascade deletes gallery and tags)
-    await db.project.delete({
-      where: { id },
-    });
+    // Galerie löschen (Supabase)
+    await supabase.from("project_images").delete().eq("projectId", id);
+
+    // Projeyi sil (Supabase)
+    const { error: deleteError } = await supabase
+      .from("projects")
+      .delete()
+      .eq("id", id);
+
+    if (deleteError) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Failed to delete project",
+          details: deleteError?.message || deleteError,
+        },
+        { status: 500 }
+      );
+    }
 
     return NextResponse.json(
       {
