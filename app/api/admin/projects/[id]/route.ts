@@ -102,6 +102,7 @@ export async function PUT(
         featured,
         previousSlug,
         nextSlug,
+        updatedAt: new Date().toISOString(),
       })
       .eq("id", id)
       .select();

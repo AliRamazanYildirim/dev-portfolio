@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
+export const runtime = "nodejs"; // Sicherstellen, dass Node-APIs (crypto) verfügbar sind
 import { supabase } from "@/lib/supabase";
+import { randomUUID } from "crypto";
 
 // Navigation aktualisieren (Supabase) - Aktualisiert die vorherigen und nächsten Slugs für Projekte
 async function updateProjectNavigation() {
@@ -63,6 +65,7 @@ export async function GET(request: NextRequest) {
       count: data ? data.length : 0,
     });
   } catch (error) {
+    console.error("GET /api/projects error:", error);
     return NextResponse.json(
       { success: false, error: "Failed to fetch projects" },
       { status: 500 }
@@ -99,7 +102,13 @@ export async function POST(request: NextRequest) {
 
     if (findError) {
       return NextResponse.json(
-        { success: false, error: "Failed to check slug uniqueness" },
+        {
+          success: false,
+          error: "Failed to check slug uniqueness",
+          details: findError.message,
+          hint: (findError as any).hint,
+          code: (findError as any).code,
+        },
         { status: 500 }
       );
     }
@@ -111,10 +120,12 @@ export async function POST(request: NextRequest) {
     }
 
     // Projekt erstellen (Supabase)
+    const projectId = randomUUID();
     const { data: project, error: createError } = await supabase
       .from("projects")
       .insert([
         {
+          id: projectId,
           slug,
           title,
           description,
@@ -124,6 +135,8 @@ export async function POST(request: NextRequest) {
           technologies,
           mainImage,
           featured,
+          published: true,
+          updatedAt: new Date().toISOString(),
           previousSlug,
           nextSlug,
         },
@@ -137,6 +150,8 @@ export async function POST(request: NextRequest) {
           success: false,
           error: "Failed to create project",
           details: createError?.message || createError,
+          hint: (createError as any)?.hint,
+          code: (createError as any)?.code,
         },
         { status: 500 }
       );
@@ -144,6 +159,7 @@ export async function POST(request: NextRequest) {
 
     // Galerie hinzufügen (Supabase)
     const galleryData = gallery.map((url: string, index: number) => ({
+      id: randomUUID(),
       projectId: project.id,
       url,
       publicId: `portfolio_${slug}_${index}`,
@@ -151,7 +167,21 @@ export async function POST(request: NextRequest) {
       order: index,
     }));
     if (galleryData.length > 0) {
-      await supabase.from("project_images").insert(galleryData);
+      const { error: galleryError } = await supabase
+        .from("project_images")
+        .insert(galleryData);
+      if (galleryError) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: "Failed to insert gallery",
+            details: galleryError.message,
+            hint: (galleryError as any).hint,
+            code: (galleryError as any).code,
+          },
+          { status: 500 }
+        );
+      }
     }
 
     // Navigation automatisch aktualisieren
@@ -173,6 +203,7 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error: any) {
+    console.error("POST /api/projects error:", error);
     return NextResponse.json(
       {
         success: false,
