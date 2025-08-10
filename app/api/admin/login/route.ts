@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { supabase } from "@/lib/supabase";
 import {
   verifyPassword,
   createToken,
@@ -36,17 +36,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Admin-Benutzer in der Datenbank finden - Find admin user in database
-    const adminUser = await db.adminUser.findUnique({
-      where: {
-        email: email.toLowerCase().trim(),
-        active: true, // Nur aktive Benutzer - Only active users
-      },
-    });
+    // Supabase ile admin user sorgula
+    const { data, error } = await supabase
+      .from("admin_users")
+      .select("id, email, name, password, active")
+      .eq("email", email.toLowerCase().trim())
+      .eq("active", true)
+      .single();
 
-    if (!adminUser) {
-      // Sicherheit: Gleiche Fehlermeldung für ungültiges E-Mail/Passwort
-      // Security: Same error message for invalid email/password
+    if (error || !data) {
+      // Güvenlik: Aynı hata mesajı
       return NextResponse.json(
         {
           success: false,
@@ -55,6 +54,8 @@ export async function POST(request: NextRequest) {
         { status: 401 }
       );
     }
+
+    const adminUser = data;
 
     // Passwort verifizieren - Verify password
     const isPasswordValid = await verifyPassword(password, adminUser.password);
