@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { supabase } from "@/lib/supabase";
+import { randomUUID } from "crypto";
+export const runtime = "nodejs"; // Node-APIs (crypto) sicherstellen
 
 // POST /api/kontakt - Kontaktmeldung speichern
 export async function POST(request: NextRequest) {
@@ -24,19 +26,40 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Nachricht in der Datenbank speichern
-    const contactMessage = await db.contactMessage.create({
-      data: {
-        name,
-        email,
-        message,
-      },
-    });
+    // Nachricht in der Datenbank speichern (Supabase)
+    const id = randomUUID();
+    const { data: inserted, error } = await supabase
+      .from("contact_messages")
+      .insert([
+        {
+          id,
+          name,
+          email,
+          message,
+          // read: false, // hat default
+        },
+      ])
+      .select()
+      .single();
+
+    if (error) {
+      console.error("contact insert error:", error);
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Failed to send message",
+          details: (error as any)?.message,
+          hint: (error as any)?.hint,
+          code: (error as any)?.code,
+        },
+        { status: 500 }
+      );
+    }
 
     return NextResponse.json(
       {
         success: true,
-        data: contactMessage,
+        data: inserted,
         message: "Message sent successfully",
       },
       { status: 201 }
@@ -57,18 +80,31 @@ export async function GET(request: NextRequest) {
     const unreadOnly = searchParams.get("unread");
     const limit = searchParams.get("limit");
 
-    const messages = await db.contactMessage.findMany({
-      where: {
-        ...(unreadOnly === "true" && { read: false }),
-      },
-      orderBy: { createdAt: "desc" },
-      ...(limit && { take: parseInt(limit) }),
-    });
+    // Nachrichten abrufen (Supabase)
+    let query = supabase
+      .from("contact_messages")
+      .select("*")
+      .order("createdAt", { ascending: false });
+    if (unreadOnly === "true") {
+      query = query.eq("read", false);
+    }
+    if (limit) {
+      query = query.limit(parseInt(limit));
+    }
+
+    const { data, error } = await query;
+    if (error) {
+      console.error("contact fetch error:", error);
+      return NextResponse.json(
+        { success: false, error: "Failed to fetch messages" },
+        { status: 500 }
+      );
+    }
 
     return NextResponse.json({
       success: true,
-      data: messages,
-      count: messages.length,
+      data: data || [],
+      count: data ? data.length : 0,
     });
   } catch (error) {
     console.error("Error fetching contact messages:", error);
