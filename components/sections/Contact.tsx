@@ -22,8 +22,8 @@ const Contact = () => {
 
 const Header = () => (
   <div className="heading md:text-lgHeading mb-10 md:mb-20">
-    <SplitText text="Great things can happen" />
-    <SplitText text={' with a simple "Hello!"'} />
+    <SplitText text="Tell us your idea; " />
+    <SplitText text={'we’ll build the wow.'} />
   </div>
 );
 const ContactForm = () => {
@@ -46,7 +46,7 @@ const ContactForm = () => {
     setError("");
 
     try {
-      const tId = toast.loading("Nachricht wird gesendet...");
+      const tId = toast.loading("Message is being sent...");
       // Zuerst Nachricht in Database speichern
       const dbResponse = await fetch("/api/contact", {
         method: "POST",
@@ -68,7 +68,7 @@ const ContactForm = () => {
         );
       }
 
-      console.log("Nachricht in Database gespeichert:", dbResult);
+      // Nachricht gespeichert, kein Logging
 
       // Optional: EmailJS senden (falls konfiguriert)
       if (
@@ -76,11 +76,7 @@ const ContactForm = () => {
         process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID &&
         process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY
       ) {
-        console.log("Email wird mit EmailJS gesendet:", {
-          name: formData.name,
-          email: formData.email,
-          message: formData.message,
-        });
+        // EmailJS wird gesendet, kein Logging
 
         const result = await emailjs.send(
           process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
@@ -93,12 +89,12 @@ const ContactForm = () => {
           process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!
         );
 
-        console.log("Email erfolgreich gesendet:", result);
+        // Email erfolgreich gesendet, kein Logging
       }
 
       // Erfolg anzeigen
       setSubmitted(true);
-      toast.success("Nachricht erfolgreich gesendet.", { id: tId });
+      toast.success("Message sent successfully.", { id: tId });
 
       // Form nach 5 Sekunden zurücksetzen
       setTimeout(() => {
@@ -106,16 +102,16 @@ const ContactForm = () => {
         setFormData({ name: "", email: "", message: "" });
       }, 5000);
     } catch (err) {
-      console.error("Fehler beim Senden der Nachricht:", err);
+      // Fehler beim Senden der Nachricht, kein Logging
       setError(
         err instanceof Error
           ? err.message
-          : "Ein Fehler ist aufgetreten. Bitte versuchen Sie es später erneut."
+          : "An error has occurred. Please try again later."
       );
       toast.error(
         err instanceof Error
           ? err.message
-          : "Ein Fehler ist aufgetreten. Bitte versuchen Sie es später erneut."
+          : "An error has occurred. Please try again later."
       );
     }
   };
@@ -131,7 +127,7 @@ const ContactForm = () => {
             exit={{ opacity: 0, y: 20 }}
             className="text-green-600 text-center text-xl"
           >
-            Ihre Nachricht wurde erfolgreich gesendet. Vielen Dank!
+            Your message has been sent successfully. Thank you!
           </motion.p>
         ) : (
           <motion.form
@@ -178,12 +174,14 @@ const ContactForm = () => {
               />
             </div>
 
-            <button
-              type="submit"
-              className="col-span-12 md:col-span-3 mt-6 py-3 px-6 bg-black text-white rounded-md hover:bg-[#260a03] transition-colors duration-200"
-            >
-              Nachricht senden
-            </button>
+              <div className="col-span-12 flex justify-end mt-6">
+                    <button
+                      type="submit"
+                      className="py-3 px-6 bg-black text-white rounded-md hover:bg-[#260a03] transition-colors duration-200"
+                    >
+                      Nachricht senden
+                    </button>
+                  </div>
           </motion.form>
         )}
       </AnimatePresence>
