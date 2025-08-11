@@ -20,30 +20,16 @@ const ProjectsUI = () => {
   const [projects, setProjects] = useState<LittleProject[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Featured Projekte oder die ersten 2 Projekte laden
+  // Alle Seed-Projekte + die ersten 2 Projekte aus der API laden
   useEffect(() => {
     const fetchProjects = async () => {
       try {
         setLoading(true);
-        // Zuerst versuchen, featured Projekte (max 2) zu laden
-        const featuredResponse = await ProjectsAPI.getAll({
-          featured: true,
-          limit: 2,
-        });
-
+        // Immer die ersten 2 Projekte aus der API laden (ohne Featured-Sonderfall)
         let dbItems: LittleProject[] = [];
-        if (
-          featuredResponse.success &&
-          Array.isArray(featuredResponse.data) &&
-          featuredResponse.data.length > 0
-        ) {
-          dbItems = featuredResponse.data;
-        } else {
-          // Falls keine featured Projekte, die ersten 2 Projekte aus DB laden
-          const allResponse = await ProjectsAPI.getAll({ limit: 2 });
-          if (allResponse.success && Array.isArray(allResponse.data)) {
-            dbItems = allResponse.data;
-          }
+        const allResponse = await ProjectsAPI.getAll({ limit: 2 });
+        if (allResponse.success && Array.isArray(allResponse.data)) {
+          dbItems = allResponse.data.slice(0, 2);
         }
 
         // Immer alle Seed-Projekte zusätzlich einblenden
@@ -66,8 +52,8 @@ const ProjectsUI = () => {
         setProjects(combined);
       } catch (err) {
         console.error("Fehler beim Laden der kleinen Projekte:", err);
-        // Bei Fehler: Nur Seed-Daten anzeigen
-        const seedOnly = seedProjects.slice(0, 2).map((p: any) => ({
+        // Bei Fehler: Nur Seed-Daten anzeigen (alle Seeds)
+        const seedOnly = seedProjects.map((p: any) => ({
           slug: p.slug,
           title: p.title,
           mainImage: p.mainImage,
