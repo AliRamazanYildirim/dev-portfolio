@@ -5,6 +5,7 @@ import Image from "next/image";
 import NoiseBackground from "@/components/NoiseBackground";
 import ImageUpload from "@/components/ui/ImageUpload";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
+import toast from "react-hot-toast";
 
 // Interface-Definitionen - Interface definitions
 interface Project {
@@ -116,11 +117,11 @@ export default function AdminPage() {
     try {
       // Validierung - Validation
       if (!title.trim()) {
-        alert("Project title is required!");
+        toast.error("Project title is required!");
         return;
       }
       if (!description.trim()) {
-        alert("Project description is required!");
+        toast.error("Project description is required!");
         return;
       }
 
@@ -158,55 +159,55 @@ export default function AdminPage() {
         : "/api/projects";
       const method = editingProject ? "PUT" : "POST";
 
-      const res = await fetch(url, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(projectData),
+      const promise = (async () => {
+        const res = await fetch(url, {
+          method,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(projectData),
+        });
+        const json = await res.json();
+        if (!res.ok || !json.success) {
+          throw new Error(json?.error || `HTTP ${res.status}`);
+        }
+        return editingProject ? "Project updated!" : "Project saved!";
+      })();
+
+      await toast.promise(promise, {
+        loading: editingProject ? "Updating project..." : "Saving project...",
+        success: (msg) => (typeof msg === "string" ? msg : "Success"),
+        error: (e) => (e instanceof Error ? e.message : "Operation failed"),
       });
 
-      if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
-      }
-
-      const result = await res.json();
-
-      if (result.success) {
-        fetchProjects();
-        resetForm();
-        alert("Project saved successfully!");
-      } else {
-        throw new Error(result.error || "Save failed");
-      }
+      // Only after success
+      fetchProjects();
+      resetForm();
     } catch (error: any) {
-      alert(`Save error: ${error?.message || error}`);
+      toast.error(error?.message || "Save failed");
     }
   };
 
   // Projekt löschen - Delete project
   const deleteProject = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this project?")) {
-      return;
-    }
-
     try {
-      const res = await fetch(`/api/admin/projects/${id}`, {
-        method: "DELETE",
+      const promise = (async () => {
+        const res = await fetch(`/api/admin/projects/${id}`, { method: "DELETE" });
+        const json = await res.json();
+        if (!res.ok || !json.success) {
+          throw new Error(json?.error || `HTTP ${res.status}`);
+        }
+        return "Project deleted!";
+      })();
+
+      await toast.promise(promise, {
+        loading: "Deleting project...",
+        success: (msg) => (typeof msg === "string" ? msg : "Deleted"),
+        error: (e) => (e instanceof Error ? e.message : "Delete failed"),
       });
 
-      if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
-      }
-
-      const result = await res.json();
-
-      if (result.success) {
-        alert("Project deleted successfully!");
-        fetchProjects();
-      } else {
-        throw new Error(result.error || "Delete failed");
-      }
+      // Refresh on success
+      fetchProjects();
     } catch (error: any) {
-      alert(`Delete error: ${error?.message || error}`);
+      toast.error(error?.message || "Delete failed");
     }
   };
 

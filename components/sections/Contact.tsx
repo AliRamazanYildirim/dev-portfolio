@@ -5,6 +5,7 @@ import emailjs from "@emailjs/browser";
 import { motion, AnimatePresence } from "framer-motion";
 import NoiseBackground from "../NoiseBackground";
 import SplitText from "@/TextAnimations/SplitText";
+import toast from "react-hot-toast";
 
 const Contact = () => {
   return (
@@ -45,6 +46,7 @@ const ContactForm = () => {
     setError("");
 
     try {
+      const tId = toast.loading("Nachricht wird gesendet...");
       // Zuerst Nachricht in Database speichern
       const dbResponse = await fetch("/api/contact", {
         method: "POST",
@@ -96,6 +98,7 @@ const ContactForm = () => {
 
       // Erfolg anzeigen
       setSubmitted(true);
+      toast.success("Nachricht erfolgreich gesendet.", { id: tId });
 
       // Form nach 5 Sekunden zurücksetzen
       setTimeout(() => {
@@ -105,6 +108,11 @@ const ContactForm = () => {
     } catch (err) {
       console.error("Fehler beim Senden der Nachricht:", err);
       setError(
+        err instanceof Error
+          ? err.message
+          : "Ein Fehler ist aufgetreten. Bitte versuchen Sie es später erneut."
+      );
+      toast.error(
         err instanceof Error
           ? err.message
           : "Ein Fehler ist aufgetreten. Bitte versuchen Sie es später erneut."

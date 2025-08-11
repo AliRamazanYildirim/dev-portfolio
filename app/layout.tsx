@@ -5,6 +5,7 @@ import Footer from "@/components/ui/Footer";
 import Contact from "@/components/sections/Contact";
 import Nav from "@/components/ui/Nav";
 import Head from "next/head";
+import { Toaster } from "react-hot-toast";
 
 
 export const metadata: Metadata = {
@@ -32,6 +33,7 @@ export default function RootLayout({
         {children}
         <Contact />
         <Footer />
+        <Toaster position="top-center" toastOptions={{ duration: 4000, style: { borderRadius: 8 } }} />
       </body>
     </html>
   );

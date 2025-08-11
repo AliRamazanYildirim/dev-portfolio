@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 // Interface-Definition - Interface definition
 interface ImageUploadProps {
@@ -27,7 +28,7 @@ export default function ImageUpload({ onUpload }: ImageUploadProps) {
       const data = await res.json();
       onUpload(data.url);
     } catch (error) {
-      alert("Upload error occurred!");
+      toast.error("Upload error occurred!");
     } finally {
       setUploading(false);
     }
