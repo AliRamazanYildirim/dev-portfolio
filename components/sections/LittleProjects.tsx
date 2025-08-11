@@ -88,7 +88,7 @@ const ProjectsUI = () => {
       <section className="text-white px-7 py-12 md:py-44">
         <div className="container mx-auto">
           <SplitText
-            text="MEINE PROJEKTE"
+            text="MY PROJECTS"
             className="title md:text-lgHeading font-bold mb-10"
           />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
@@ -108,7 +108,7 @@ const ProjectsUI = () => {
     <section className="text-white px-7 py-12 md:py-44">
       <div className="container mx-auto">
         <SplitText
-          text="MEINE PROJEKTE"
+          text="MY PROJECTS"
           className="title md:text-lgHeading font-bold mb-10"
         />
 
@@ -150,8 +150,7 @@ const ProjectsUI = () => {
         ) : (
           <div className="text-center py-20">
             <p className="content md:text-lgContent text-gray">
-              Projekte werden bald hinzugefügt. Schauen Sie später wieder
-              vorbei!
+              Projects will be added soon. Check back later!
             </p>
           </div>
         )}
@@ -162,7 +161,7 @@ const ProjectsUI = () => {
             href="/projects"
             className="inline-block button md:text-lgButton border border-white px-8 py-3 rounded hover:bg-white hover:text-black transition"
           >
-            Alle Projekte anzeigen
+            Show all projects
           </Link>
         </div>
       </div>
