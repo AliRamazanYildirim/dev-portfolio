@@ -179,7 +179,7 @@ const ContactForm = () => {
                       type="submit"
                       className="py-3 px-6 bg-black text-white rounded-md hover:bg-[#260a03] transition-colors duration-200"
                     >
-                      Nachricht senden
+                      Send message
                     </button>
                   </div>
           </motion.form>

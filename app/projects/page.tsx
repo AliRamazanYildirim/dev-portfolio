@@ -107,7 +107,7 @@ const ProjectsPage = () => {
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
             <p className="content md:text-lgContent">
-              Projekte werden geladen...
+             Projects are loading...
             </p>
           </div>
         </div>
@@ -128,7 +128,7 @@ const ProjectsPage = () => {
               onClick={() => window.location.reload()}
               className="button md:text-lgButton border border-white px-6 py-2 rounded hover:bg-white hover:text-black transition"
             >
-              Erneut versuchen
+              Try again
             </button>
           </div>
         </div>
@@ -149,8 +149,8 @@ const ProjectsPage = () => {
           <div className="mb-10" ref={listTopRef}>
             <SplitText text="Projects" className="title md:text-lgTitle mb-4" />
             <p className="content md:text-lgContent text-gray">
-              {projects.length} {projects.length === 1 ? "Projekt" : "Projekte"}{" "}
-              gefunden
+              {projects.length} {projects.length === 1 ? "Project" : "projects"}{" "}
+              found
             </p>
           </div>
 
@@ -191,7 +191,7 @@ const ProjectsPage = () => {
                     </p>
                     {/* Galerie Anzahl */}
                     <p className="text-sm text-white mt-2">
-                      {project.gallery.length} Bilder
+                      {project.gallery.length} Images
                     </p>
                   </div>
                 </Link>

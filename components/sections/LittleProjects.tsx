@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import SplitText from "@/TextAnimations/SplitText";
 import { ProjectsAPI } from "@/lib/api";
+import { projects as seedProjects } from "@/data/projects";
 
 // TypeScript Interface für kleine Projekte
 interface LittleProject {
@@ -24,25 +25,55 @@ const ProjectsUI = () => {
     const fetchProjects = async () => {
       try {
         setLoading(true);
-        // Zuerst versuchen, featured Projekte zu laden
+        // Zuerst versuchen, featured Projekte (max 2) zu laden
         const featuredResponse = await ProjectsAPI.getAll({
           featured: true,
           limit: 2,
         });
 
-        if (featuredResponse.success && featuredResponse.data.length > 0) {
-          setProjects(featuredResponse.data);
+        let dbItems: LittleProject[] = [];
+        if (
+          featuredResponse.success &&
+          Array.isArray(featuredResponse.data) &&
+          featuredResponse.data.length > 0
+        ) {
+          dbItems = featuredResponse.data;
         } else {
-          // Falls keine featured Projekte, die ersten 2 Projekte laden
+          // Falls keine featured Projekte, die ersten 2 Projekte aus DB laden
           const allResponse = await ProjectsAPI.getAll({ limit: 2 });
-          if (allResponse.success) {
-            setProjects(allResponse.data);
+          if (allResponse.success && Array.isArray(allResponse.data)) {
+            dbItems = allResponse.data;
           }
         }
+
+        // Immer alle Seed-Projekte zusätzlich einblenden
+        const seedItems: LittleProject[] = seedProjects.map((p: any) => ({
+          slug: p.slug,
+          title: p.title,
+          mainImage: p.mainImage,
+          featured: Boolean((p as any).featured),
+        }));
+
+        // Seeds zuerst, danach DB; Duplikate per slug entfernen
+        const combined = [...seedItems, ...dbItems].reduce<LittleProject[]>(
+          (acc, curr) => {
+            if (!acc.find((x) => x.slug === curr.slug)) acc.push(curr);
+            return acc;
+          },
+          []
+        );
+
+        setProjects(combined);
       } catch (err) {
         console.error("Fehler beim Laden der kleinen Projekte:", err);
-        // Bei Fehler ein leeres Array setzen
-        setProjects([]);
+        // Bei Fehler: Nur Seed-Daten anzeigen
+        const seedOnly = seedProjects.slice(0, 2).map((p: any) => ({
+          slug: p.slug,
+          title: p.title,
+          mainImage: p.mainImage,
+          featured: Boolean((p as any).featured),
+        }));
+        setProjects(seedOnly);
       } finally {
         setLoading(false);
       }
