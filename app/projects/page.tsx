@@ -154,13 +154,13 @@ const ProjectsPage = () => {
                     <h2 className="content md:text-lgContent font-bold group-hover:text-[#c9184a] transition">
                       {project.title}
                     </h2>
-                    <p className="button md:text-lgButton text-gray mt-2 line-clamp-2">
+                    <p className="button md:text-lgButton text-white mt-2 line-clamp-2">
                       {project.description.length > 100
                         ? `${project.description.slice(0, 100)}...`
                         : project.description}
                     </p>
                     {/* Galerie Anzahl */}
-                    <p className="text-sm text-gray mt-2">
+                    <p className="text-sm text-white mt-2">
                       {project.gallery.length} Bilder
                     </p>
                   </div>
