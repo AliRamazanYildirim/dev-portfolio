@@ -230,7 +230,7 @@ export default function AdminPage() {
           <div className="relative z-10 flex items-center justify-center min-h-screen w-full h-full">
             <div className="text-center">
               <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-white mx-auto mb-4"></div>
-              <p className="text-white text-lg">Session wird geprüft...</p>
+              <p className="text-white text-lg">Session is being verified...</p>
             </div>
           </div>
         </NoiseBackground>

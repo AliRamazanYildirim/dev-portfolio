@@ -250,8 +250,6 @@ const ProjectPage = ({ params }: { params: Promise<{ slug: string }> }) => {
               {project.previousSlug ? "Last" : "Projects"}
             </button>
 
-          
-
             <button
               onClick={() =>
                 project.nextSlug

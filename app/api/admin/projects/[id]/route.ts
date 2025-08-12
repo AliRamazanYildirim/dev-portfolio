@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase, supabaseAdmin } from "@/lib/supabase";
+import { randomUUID } from "crypto";
 
 // PUT /api/projects/admin/[id] - Projekt aktualisieren (Admin) - Update project (Admin)
 export async function PUT(
@@ -72,6 +73,7 @@ export async function PUT(
 
     // Galerie vorbereiten (Supabase)
     const galleryData = gallery.map((url: string, index: number) => ({
+      id: randomUUID(),
       projectId: id,
       url,
       publicId: `portfolio_${slug}_${index}`,
@@ -84,7 +86,21 @@ export async function PUT(
 
     // Neue Galerie hinzufügen (Supabase)
     if (galleryData.length > 0) {
-      await supabaseAdmin.from("project_images").insert(galleryData);
+      const { error: galleryError } = await supabaseAdmin
+        .from("project_images")
+        .insert(galleryData);
+      if (galleryError) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: "Failed to insert gallery",
+            details: galleryError.message,
+            hint: (galleryError as any).hint,
+            code: (galleryError as any).code,
+          },
+          { status: 500 }
+        );
+      }
     }
 
     // Projekt aktualisieren (Supabase)
