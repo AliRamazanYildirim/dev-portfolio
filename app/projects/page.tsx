@@ -190,9 +190,9 @@ const ProjectsPage = () => {
                         : project.description}
                     </p>
                     {/* Galerie Anzahl */}
-                    <p className="text-sm text-white mt-2">
+                    {/* <p className="text-sm text-white mt-2">
                       {project.gallery.length} Images
-                    </p>
+                    </p> */}
                   </div>
                 </Link>
               </motion.div>
