@@ -130,14 +130,16 @@ const ProjectPage = ({ params }: { params: Promise<{ slug: string }> }) => {
 
           {/* Main Image */}
           <div className="flex justify-center mb-16">
-            <Image
-              src={project.mainImage}
-              alt={project.title}
-              width={900}
-              height={300}
-              className="rounded-md w-full max-w-4xl"
-              priority
-            />
+            <div className="relative w-full max-w-[900px] aspect-[3/2] rounded-md overflow-hidden">
+              <Image
+                src={project.mainImage}
+                alt={project.title}
+                fill
+                className="object-contain hover:scale-105 transition-transform duration-300"
+                sizes="(max-width: 900px) 100vw, 900px"
+                priority
+              />
+            </div>
           </div>
 
           {/* Project Details Grid */}
@@ -186,14 +188,19 @@ const ProjectPage = ({ params }: { params: Promise<{ slug: string }> }) => {
                 {project.gallery
                   .sort((a, b) => a.order - b.order)
                   .map((image) => (
-                    <Image
+                    <div
                       key={image.id}
-                      src={image.url}
-                      alt={image.alt || `${project.title} screenshot`}
-                      width={400}
-                      height={300}
-                      className="rounded-md w-full hover:scale-105 transition-transform duration-300 cursor-pointer"
-                    />
+                      className="relative w-full aspect-[3/2] rounded-md overflow-hidden"
+                    >
+                      <Image
+                        src={image.url}
+                        alt={image.alt || `${project.title} screenshot`}
+                        fill
+                        className="object-contain hover:scale-105 transition-transform duration-300 cursor-pointer"
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                        loading="lazy"
+                      />
+                    </div>
                   ))}
               </div>
             </div>

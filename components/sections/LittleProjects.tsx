@@ -103,13 +103,14 @@ const ProjectsUI = () => {
             {projects.map((project, index) => (
               <Link href={`/projects/${project.slug}`} key={project.slug}>
                 <div className="relative group">
-                  <div className="overflow-hidden rounded-md">
+                  <div className="relative w-full max-w-[900px] aspect-[3/2] rounded-md overflow-hidden">
                     <Image
                       src={project.mainImage}
                       alt={project.title}
-                      width={1920}
-                      height={1080}
-                      className="w-full h-full transition-transform duration-300 group-hover:scale-105"
+                      fill
+                      className="w-full h-full transition-transform duration-300 group-hover:scale-90"
+                      sizes="(max-width: 900px) 100vw, 900px"
+                      priority
                     />
                   </div>
 

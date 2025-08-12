@@ -166,13 +166,19 @@ const ProjectsPage = () => {
               >
                 <Link href={`/projects/${project.slug}`}>
                   <div className="relative overflow-hidden rounded-md">
-                    <Image
-                      src={project.mainImage}
-                      alt={project.title}
-                      width={1920}
-                      height={1080}
-                      className="w-full rounded-md hover:scale-105 transition-transform duration-300"
-                    />
+                    <div className="flex justify-center mb-16">
+                      <div className="relative w-full max-w-[900px] aspect-[3/2] rounded-md overflow-hidden">
+                        <Image
+                          src={project.mainImage}
+                          alt={project.title}
+                          fill
+                          className="object-contain hover:scale-105 transition-transform duration-300"
+                          sizes="(max-width: 900px) 100vw, 900px"
+                          priority
+                        />
+                      </div>
+                    </div>
+
                     {/* Featured Badge */}
                     {project.featured && (
                       <div className="absolute top-4 right-4 bg-[#c9184a] text-white px-3 py-1 rounded-full text-sm font-bold">
