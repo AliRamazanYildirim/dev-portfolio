@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { supabase, supabaseAdmin } from "@/lib/supabase";
 
 // GET /api/projects/[slug] - Retrieve single project by slug
 export async function GET(
@@ -9,41 +9,44 @@ export async function GET(
   try {
     const { slug } = await params;
 
-    const project = await db.project.findUnique({
-      where: { slug, published: true },
-      include: {
-        gallery: { orderBy: { order: "asc" } },
-        tags: true,
-      },
-    });
+    // Einzelnes Projekt mit Galerie/Tags laden (Admin-Client, um RLS-Probleme zu vermeiden)
+    const { data: project, error: projectError } = await supabaseAdmin
+      .from("projects")
+      .select(
+        `id, slug, title, author, description, role, duration, category, technologies, mainImage, featured, createdAt, updatedAt, previousSlug, nextSlug,
+         gallery:project_images(id, url, alt, order),
+         tags:project_tags(id, name, color)`
+      )
+      .eq("slug", slug)
+      .eq("published", true)
+      .single();
 
-    if (!project) {
+    if (projectError || !project) {
       return NextResponse.json(
         { success: false, error: "Project not found" },
         { status: 404 }
       );
     }
 
-    // Tüm yayınlanmış projeleri ID'ye göre sıralı şekilde al - Get all published projects sorted by ID
-    const allProjects = await db.project.findMany({
-      where: { published: true },
-      select: { id: true, slug: true },
-      orderBy: { createdAt: "asc" }, // En eskiden en yeniye doğru sıralama
-    });
-
-    // Mevcut projenin index'ini bul - Find current project index
-    const currentIndex = allProjects.findIndex((p) => p.slug === slug);
-
-    // Önceki ve sonraki proje slug'larını hesapla - Calculate previous and next project slugs
-    const previousSlug =
-      currentIndex > 0 ? allProjects[currentIndex - 1].slug : null;
-    const nextSlug =
-      currentIndex < allProjects.length - 1
-        ? allProjects[currentIndex + 1].slug
-        : null;
+    // previous/next aus Feldern oder fallback-berechnet ermitteln
+    let prev = project.previousSlug ?? null;
+    let next = project.nextSlug ?? null;
+    if (prev === null || next === null) {
+      const { data: allProjects } = await supabase
+        .from("projects")
+        .select("slug, createdAt")
+        .eq("published", true)
+        .order("createdAt", { ascending: true });
+      if (allProjects && allProjects.length > 0) {
+        const index = allProjects.findIndex((p) => p.slug === slug);
+        prev = index > 0 ? allProjects[index - 1].slug : null;
+        next =
+          index < allProjects.length - 1 ? allProjects[index + 1].slug : null;
+      }
+    }
 
     // Technologien parsen - Parse technologies field
-    let technologies = [];
+    let technologies: string[] = [];
     try {
       if (typeof project.technologies === "string") {
         technologies = JSON.parse(project.technologies);
@@ -61,9 +64,9 @@ export async function GET(
       success: true,
       data: {
         ...project,
-        technologies: technologies,
-        previousSlug,
-        nextSlug,
+        technologies,
+        previousSlug: prev,
+        nextSlug: next,
       },
     });
   } catch (error) {
