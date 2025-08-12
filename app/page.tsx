@@ -3,6 +3,7 @@
 import Hero from "@/components/sections/Hero";
 import LittleAboutMe from "@/components/sections/LittleAboutMe";
 import LittleProjects from "@/components/sections/LittleProjects";
+import PartnersMarquee from "@/components/sections/PartnersMarquee";
 import NoiseBackground from "@/components/NoiseBackground";
 
 export default function Home() {
@@ -15,6 +16,7 @@ export default function Home() {
         <NoiseBackground mode="dark" intensity={0.1}>
           <LittleAboutMe />
           <LittleProjects />
+          <PartnersMarquee />
         </NoiseBackground>
       </div>
     </main>
