@@ -213,7 +213,7 @@ export const Nav = ({ className }: { className?: string }) => {
                           }
                           className={`button lg:text-lgButton ${
                             isProjectsPage
-                              ? "text-white hover:text-white"
+                              ? "text-gray hover:text-[#c9184a]"
                               : "text-gray hover:text-black"
                           } transition`}
                           onClick={() => setMenuOpen(false)}
