@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { supabase, supabaseAdmin } from "@/lib/supabase";
 
 // PUT /api/projects/admin/[id] - Projekt aktualisieren (Admin) - Update project (Admin)
 export async function PUT(
@@ -26,7 +26,7 @@ export async function PUT(
     } = body;
 
     // Existierendes Projekt prüfen (Supabase)
-    const { data: existingProjects, error: findError } = await supabase
+    const { data: existingProjects, error: findError } = await supabaseAdmin
       .from("projects")
       .select("*")
       .eq("id", id)
@@ -51,7 +51,7 @@ export async function PUT(
 
     // Slug-Eindeutigkeit prüfen bei Änderung (Supabase)
     if (slug !== existingProject.slug) {
-      const { data: slugExists, error: slugError } = await supabase
+      const { data: slugExists, error: slugError } = await supabaseAdmin
         .from("projects")
         .select("id")
         .eq("slug", slug)
@@ -80,15 +80,15 @@ export async function PUT(
     }));
 
     // Lösche die alte Galerie (Supabase)
-    await supabase.from("project_images").delete().eq("projectId", id);
+    await supabaseAdmin.from("project_images").delete().eq("projectId", id);
 
     // Neue Galerie hinzufügen (Supabase)
     if (galleryData.length > 0) {
-      await supabase.from("project_images").insert(galleryData);
+      await supabaseAdmin.from("project_images").insert(galleryData);
     }
 
     // Projekt aktualisieren (Supabase)
-    const { data: updatedProjects, error: updateError } = await supabase
+    const { data: updatedProjects, error: updateError } = await supabaseAdmin
       .from("projects")
       .update({
         slug,
@@ -154,7 +154,7 @@ export async function DELETE(
     const { id } = await params;
 
     // Existierendes Projekt prüfen (Supabase)
-    const { data: existingProjects, error: findError } = await supabase
+    const { data: existingProjects, error: findError } = await supabaseAdmin
       .from("projects")
       .select("id")
       .eq("id", id)
@@ -177,10 +177,10 @@ export async function DELETE(
     }
 
     // Galerie löschen (Supabase)
-    await supabase.from("project_images").delete().eq("projectId", id);
+    await supabaseAdmin.from("project_images").delete().eq("projectId", id);
 
     // Projeyi sil (Supabase)
-    const { error: deleteError } = await supabase
+    const { error: deleteError } = await supabaseAdmin
       .from("projects")
       .delete()
       .eq("id", id);

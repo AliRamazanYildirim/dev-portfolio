@@ -17,7 +17,7 @@ interface ProjectDetail {
   role: string;
   duration: string;
   category: string;
-  technologies: string;
+  technologies: string[] | string;
   mainImage: string;
   featured: boolean;
   previousSlug: string | null;
@@ -78,7 +78,7 @@ const ProjectPage = ({ params }: { params: Promise<{ slug: string }> }) => {
         <div className="text-white px-5 py-10 md:px-20 md:py-20 min-h-screen flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-            <p className="content md:text-lgContent">Projekt wird geladen...</p>
+            <p className="content md:text-lgContent">Project is loading...</p>
           </div>
         </div>
       </NoiseBackground>
@@ -92,14 +92,14 @@ const ProjectPage = ({ params }: { params: Promise<{ slug: string }> }) => {
         <div className="text-white px-5 py-10 md:px-20 md:py-20 min-h-screen flex items-center justify-center">
           <div className="text-center">
             <h1 className="heading md:text-lgHeading mb-4">
-              Projekt nicht gefunden
+              Project not found
             </h1>
             <p className="content md:text-lgContent text-gray mb-6">{error}</p>
             <button
               onClick={() => router.push("/projects")}
               className="button md:text-lgButton border border-white px-6 py-2 rounded hover:bg-white hover:text-black transition"
             >
-              Zurück zu den Projekten
+              Back to the projects
             </button>
           </div>
         </div>
@@ -206,7 +206,9 @@ const ProjectPage = ({ params }: { params: Promise<{ slug: string }> }) => {
             </h2>
             <div className="bg-gray-800/50 rounded-lg p-6">
               <p className="content md:text-lgContent text-white leading-relaxed">
-                {project.technologies}
+                {Array.isArray(project.technologies)
+                  ? project.technologies.join(", ")
+                  : project.technologies}
               </p>
             </div>
           </div>

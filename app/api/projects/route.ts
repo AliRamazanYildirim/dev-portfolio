@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 export const runtime = "nodejs"; // Sicherstellen, dass Node-APIs (crypto) verfügbar sind
-import { supabase } from "@/lib/supabase";
+import { supabase, supabaseAdmin } from "@/lib/supabase";
 import { randomUUID } from "crypto";
 
 // Navigation aktualisieren (Supabase) - Aktualisiert die vorherigen und nächsten Slugs für Projekte
@@ -19,7 +19,8 @@ async function updateProjectNavigation() {
     const previous = i > 0 ? projects[i - 1] : null;
     const next = i < projects.length - 1 ? projects[i + 1] : null;
 
-    await supabase
+    // Use admin client for write to bypass RLS
+    await supabaseAdmin
       .from("projects")
       .update({
         previousSlug: previous?.slug || null,
@@ -36,8 +37,8 @@ export async function GET(request: NextRequest) {
     const featured = searchParams.get("featured");
     const limit = searchParams.get("limit");
 
-    // Projekte mit Supabase abrufen
-    let query = supabase
+    // Projekte abrufen – Admin-Client sorgt dafür, dass eingebettete Relationen (gallery) nicht von RLS gefiltert werden
+    let query = supabaseAdmin
       .from("projects")
       .select(`*, gallery:project_images(*), tags:project_tags(*)`)
       .eq("published", true)
@@ -94,7 +95,8 @@ export async function POST(request: NextRequest) {
     } = body;
 
     // Slug-Eindeutigkeit prüfen (Supabase)
-    const { data: existingProjects, error: findError } = await supabase
+    // Slug Check mit Admin-Client (robust gegen RLS)
+    const { data: existingProjects, error: findError } = await supabaseAdmin
       .from("projects")
       .select("id")
       .eq("slug", slug)
@@ -121,7 +123,8 @@ export async function POST(request: NextRequest) {
 
     // Projekt erstellen (Supabase)
     const projectId = randomUUID();
-    const { data: project, error: createError } = await supabase
+    // Projekt erstellen (Admin-Client)
+    const { data: project, error: createError } = await supabaseAdmin
       .from("projects")
       .insert([
         {
@@ -167,7 +170,8 @@ export async function POST(request: NextRequest) {
       order: index,
     }));
     if (galleryData.length > 0) {
-      const { error: galleryError } = await supabase
+      // Galerie einfügen (Admin-Client)
+      const { error: galleryError } = await supabaseAdmin
         .from("project_images")
         .insert(galleryData);
       if (galleryError) {
