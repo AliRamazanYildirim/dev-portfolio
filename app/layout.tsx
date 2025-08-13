@@ -10,8 +10,7 @@ export const metadata: Metadata = {
   description: "Ali Ramazan's Portfolio",
   icons: {
     icon: [
-      { url: "/icon.svg", type: "image/svg+xml" },
-      { url: "/favicon.ico", rel: "alternate icon" },
+      { url: "/icon.svg", type: "image/svg+xml" }
     ],
     shortcut: "/ali-ramazan-yildirim-white.svg",
   },
