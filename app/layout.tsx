@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import AppShell from "@/components/ui/AppShell";
-import Head from "next/head";
 import { Toaster } from "react-hot-toast";
 
 
@@ -23,14 +22,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning={true}>
-      <Head>
-        <title>Ali Ramazan- Full-Stack Developer</title>
-        <meta
-          name="description"
-          content="Experienced Full-Stack Web Developer proficient in frontend, backend, and database management."
-        />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-      </Head>
       <body className="overflow-x-hidden">
         <AppShell>
           {children}
