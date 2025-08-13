@@ -62,3 +62,9 @@ body {
 /* * {
   border: 1px solid red;
 } */
+
+/* Fix für die Deprecation-Warnung: h1-Größe explizit festlegen */
+@layer base {
+  h1 { @apply text-3xl md:text-5xl font-bold; }
+  section h1, article h1, nav h1, aside h1 { @apply text-3xl md:text-5xl; }
+}
