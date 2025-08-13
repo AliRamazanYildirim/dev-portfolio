@@ -8,6 +8,13 @@ import { Toaster } from "react-hot-toast";
 export const metadata: Metadata = {
   title: "Ali Ramazan Portfolio",
   description: "Ali Ramazan's Portfolio",
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico", rel: "alternate icon" },
+    ],
+    shortcut: "/ali-ramazan-yildirim-white.svg",
+  },
 };
 
 export default function RootLayout({
