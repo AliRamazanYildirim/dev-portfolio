@@ -115,7 +115,7 @@ const ProjectsUI = () => {
                   </div>
 
                   {/* Hover Overlay mit Projekttitel */}
-                  <div className="absolute inset-0 bg-black bg-opacity-50 flex flex-col justify-end p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-md">
+                  <div className="absolute inset-0 bg-white bg-opacity-10 flex flex-col justify-end p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-md">
                     <p className="text-heading font-bold">{project.title}</p>
                     {project.featured && (
                       <p className="text-sm text-[#c9184a] font-medium">
