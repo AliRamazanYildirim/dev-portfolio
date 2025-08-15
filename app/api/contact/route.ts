@@ -6,7 +6,7 @@ import { getIpFromHeaders } from "@/lib/ip";
 export const runtime = "nodejs"; // Supabase/crypto için Node runtime
 
 // ---- Grenzen (je nach Bedarf anpassen) ----
-const RL_POST = { limit: 10, window: 60 }; // 20 POST pro Minute
+const RL_POST = { limit: 3, window: 60 }; // 3 POST pro Minute
 const RL_GET  = { limit: 60, window: 60 }; // 60 GET pro Minute
 // ---------------------------------------------
 
