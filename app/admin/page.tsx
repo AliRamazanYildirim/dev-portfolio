@@ -190,7 +190,9 @@ export default function AdminPage() {
   const deleteProject = async (id: string) => {
     try {
       const promise = (async () => {
-        const res = await fetch(`/api/admin/projects/${id}`, { method: "DELETE" });
+        const res = await fetch(`/api/admin/projects/${id}`, {
+          method: "DELETE",
+        });
         const json = await res.json();
         if (!res.ok || !json.success) {
           throw new Error(json?.error || `HTTP ${res.status}`);
@@ -282,6 +284,25 @@ export default function AdminPage() {
                       New Project
                     </span>
                   </button>
+                  <a
+                    href="/admin/customers"
+                    className="button bg-[#c9184a] text-white px-6 sm:px-8 py-3 sm:py-4 rounded-lg hover:bg-[#a3153a] transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 w-full sm:w-auto font-bold text-sm sm:text-base flex items-center justify-center gap-2"
+                  >
+                    <svg
+                      className="w-4 h-4 sm:w-5 sm:h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M4 6h16M4 10h16M4 14h16M4 18h16"
+                      />
+                    </svg>
+                    Manage Customers
+                  </a>
 
                   {/* Logout Button - Responsive */}
                   <button
