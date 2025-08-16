@@ -188,6 +188,26 @@ export default function CustomersAdminPage() {
                   </p>
                 </div>
                 <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-end gap-3 sm:gap-4">
+                  <a
+                    href="/admin"
+                    className="button bg-[#131313] text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full hover:bg-[#232323] transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105 w-full sm:w-auto font-bold text-sm flex items-center justify-center gap-2 mr-0 sm:mr-auto"
+                    style={{ boxShadow: "0 4px 24px rgba(0,0,0,0.15)" }}
+                  >
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M15 19l-7-7 7-7"
+                      />
+                    </svg>
+                    Admin Panel
+                  </a>
                   <button
                     onClick={() => setShowForm(true)}
                     className="button bg-white text-[#131313] px-6 sm:px-8 py-3 sm:py-4 rounded-lg hover:bg-white/90 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 w-full sm:w-auto"
@@ -248,7 +268,7 @@ export default function CustomersAdminPage() {
                               </div>
                             </div>
                           </div>
-                          <div className="absolute bottom-4 right-4 flex flex-col sm:flex-row gap-2 sm:gap-3">
+                          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 lg:flex-row lg:absolute lg:bottom-6 lg:right-6">
                             <button
                               onClick={() => editCustomer(customer)}
                               className="inline-flex items-center justify-center px-4 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-xl font-medium shadow-sm transition-all duration-200 hover:shadow-md hover:scale-105 text-sm sm:text-base"
@@ -463,27 +483,6 @@ export default function CustomersAdminPage() {
           </div>
         </div>
       )}
-      {/* Zurück-Button zum Admin-Panel*/}
-      <a
-        href="/admin"
-        className="fixed bottom-6 right-6 z-50 bg-[#131313] text-white px-5 py-3 rounded-full shadow-lg hover:bg-[#232323] transition-all duration-200 flex items-center gap-2 font-bold text-sm"
-        style={{ boxShadow: "0 4px 24px rgba(0,0,0,0.15)" }}
-      >
-        <svg
-          className="w-5 h-5"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M15 19l-7-7 7-7"
-          />
-        </svg>
-        Admin Panel
-      </a>
     </main>
   );
 }
