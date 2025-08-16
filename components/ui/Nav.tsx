@@ -200,7 +200,7 @@ export const Nav = ({ className }: { className?: string }) => {
                       />
                     </svg>
                   </button>
-                  <ul className="flex flex-col items-start space-y-4 py-4 px-6">
+                  <ul className="flex flex-col items-center space-y-4 py-4 px-6">
                     {navItems.map((item: NavItemType) => (
                       <li key={item.path}>
                         <Link
