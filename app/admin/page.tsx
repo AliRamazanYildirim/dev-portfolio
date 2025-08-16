@@ -409,8 +409,8 @@ export default function AdminPage() {
                               )}
                             </div>
 
-                            {/* Responsive Action Buttons */}
-                            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 lg:ml-6 w-full lg:w-auto">
+                            {/* Responsive Action Buttons - Sağ alt köşe */}
+                            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 lg:ml-6 w-full lg:w-auto lg:justify-end lg:items-end lg:self-end mt-4 lg:mt-0">
                               <button
                                 onClick={() => editProject(project)}
                                 className="inline-flex items-center justify-center px-4 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-xl font-medium shadow-sm transition-all duration-200 hover:shadow-md hover:scale-105 text-sm sm:text-base"
