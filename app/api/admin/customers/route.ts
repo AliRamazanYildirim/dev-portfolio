@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 
-// GET: Tüm müşterileri getir
+// GET: Bringe alle Kunden.
 export async function GET() {
   const { data, error } = await supabaseAdmin.from("customers").select("*");
   if (error) {
@@ -10,7 +10,7 @@ export async function GET() {
   return NextResponse.json({ success: true, data });
 }
 
-// POST: Yeni müşteri ekle
+// POST: Neuen Kunden hinzufügen
 export async function POST(req: Request) {
   const body = await req.json();
   const { data, error } = await supabaseAdmin.from("customers").insert([body]).select();

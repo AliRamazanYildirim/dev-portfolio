@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 
-// GET, PUT, DELETE: Tek müşteri işlemleri
+// GET, PUT, DELETE: Einzelne Kundenoperationen
 
 export async function GET(req: Request, context: { params: Promise<{ id: string }> }) {
   const { id } = await context.params;
