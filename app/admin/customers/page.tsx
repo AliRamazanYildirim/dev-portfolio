@@ -15,6 +15,7 @@ interface Customer {
   phone: string;
   address: string;
   reference: string;
+  price?: number | null;
 }
 
 export default function CustomersAdminPage() {
@@ -32,6 +33,7 @@ export default function CustomersAdminPage() {
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [reference, setReference] = useState("");
+  const [price, setPrice] = useState("");
 
   // Beim Laden der Seite Kunden abrufen
   useEffect(() => {
@@ -65,6 +67,7 @@ export default function CustomersAdminPage() {
     setPhone("");
     setAddress("");
     setReference("");
+    setPrice("");
     setEditingCustomer(null);
     setShowForm(false);
   };
@@ -84,6 +87,8 @@ export default function CustomersAdminPage() {
       phone,
       address,
       reference,
+      // convert price to number if provided
+      price: price !== "" ? Number(price) : null,
     };
     const url = editingCustomer
       ? `/api/admin/customers/${editingCustomer.id}`
@@ -150,6 +155,7 @@ export default function CustomersAdminPage() {
     setPhone(customer.phone);
     setAddress(customer.address);
     setReference(customer.reference);
+    setPrice(customer.price != null ? String(customer.price) : "");
     setEditingCustomer(customer);
     setShowForm(true);
   };
@@ -254,6 +260,11 @@ export default function CustomersAdminPage() {
                                 <span className="inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-bold bg-[#c9184a] text-white self-start">
                                   {customer.companyname}
                                 </span>
+                                {customer.price != null && (
+                                  <span className="inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold bg-[#131313]/5 text-[#131313] self-start">
+                                    €{Number(customer.price).toLocaleString()}
+                                  </span>
+                                )}
                               </div>
                               <p className="text-base sm:text-lg text-[#131313]/80 mb-4 sm:mb-6 leading-relaxed">
                                 {customer.email} | {customer.phone}
@@ -460,6 +471,18 @@ export default function CustomersAdminPage() {
                       placeholder="Reference..."
                       value={reference}
                       onChange={(e) => setReference(e.target.value)}
+                      className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
+                    />
+                  </div>
+                  <div className="lg:col-span-2">
+                    <label className="block text-sm font-semibold text-[#131313] mb-2 sm:mb-3">
+                      Price (EUR)
+                    </label>
+                    <input
+                      type="number"
+                      placeholder="Price..."
+                      value={price}
+                      onChange={(e) => setPrice(e.target.value)}
                       className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
                     />
                   </div>
