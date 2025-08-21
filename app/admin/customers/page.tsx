@@ -242,6 +242,25 @@ export default function CustomersAdminPage() {
                     </svg>
                     Admin Panel
                   </a>
+                  <a
+                    href="/admin/customers/statistics"
+                    className="button bg-[#131313] text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full hover:bg-[#232323] transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105 w-full sm:w-auto font-semibold text-lg flex items-center justify-center gap-2 mr-0 sm:mr-auto"
+                  >
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M11 3v18M21 7l-9 4-9-4"
+                      />
+                    </svg>
+                    Statistics
+                  </a>
                   <button
                     onClick={() => setShowForm(true)}
                     className="button bg-white text-[#131313] px-6 sm:px-8 py-3 sm:py-4 rounded-lg hover:bg-white/90 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 w-full sm:w-auto"
