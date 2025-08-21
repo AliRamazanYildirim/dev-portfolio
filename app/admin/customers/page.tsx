@@ -16,6 +16,7 @@ interface Customer {
   address: string;
   reference: string;
   price?: number | null;
+  created_at?: string | null;
 }
 
 export default function CustomersAdminPage() {
@@ -24,6 +25,12 @@ export default function CustomersAdminPage() {
   const [showForm, setShowForm] = useState(false);
   const [editingCustomer, setEditingCustomer] = useState<Customer | null>(null);
   const [loading, setLoading] = useState(true);
+  // filter / sort state
+  const [filter, setFilter] = useState<
+    "none" | "price_desc" | "price_asc" | "name_asc" | "name_desc" | "date_range"
+  >("none");
+  const [dateFrom, setDateFrom] = useState<string>("");
+  const [dateTo, setDateTo] = useState<string>("");
 
   // Formular-Status
   const [firstname, setFirstname] = useState("");
@@ -41,10 +48,21 @@ export default function CustomersAdminPage() {
   }, []);
 
   // Kunden abrufen
-  const fetchCustomers = async () => {
+  const fetchCustomers = async (opts?: {
+    sort?: string;
+    from?: string;
+    to?: string;
+  }) => {
     try {
       setLoading(true);
-      const res = await fetch("/api/admin/customers");
+      let url = "/api/admin/customers";
+      const params = new URLSearchParams();
+      if (opts?.sort) params.set("sort", opts.sort);
+      if (opts?.from) params.set("from", opts.from);
+      if (opts?.to) params.set("to", opts.to);
+      const qs = params.toString();
+      if (qs) url += `?${qs}`;
+      const res = await fetch(url);
       const result = await res.json();
       if (result.success) {
         setCustomers(result.data);
@@ -240,7 +258,64 @@ export default function CustomersAdminPage() {
             </div>
           </div>
           <div className="relative z-10 min-h-screen">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 relative">
+              {/* Filter control positioned top-right inside this container (red-box in screenshot) */}
+              <div className="absolute right-8 -top-2 z-20">
+                <div className="flex items-center gap-2">
+                  <label className="sr-only">Filter customers</label>
+                  <select
+                    value={filter}
+                    onChange={(e) => {
+                      const v = e.target.value as any;
+                      setFilter(v);
+                      // handle immediate sorts
+                      if (v === "price_desc") fetchCustomers({ sort: "price.desc" });
+                      else if (v === "price_asc") fetchCustomers({ sort: "price.asc" });
+                      else if (v === "name_asc") fetchCustomers({ sort: "name.asc" });
+                      else if (v === "name_desc") fetchCustomers({ sort: "name.desc" });
+                      else if (v === "none") fetchCustomers();
+                    }}
+                    className="bg-[#131313] text-white px-5 py-2 rounded-lg text-sm shadow-lg"
+                  >
+                    <option value="none">Filter / Sort</option>
+                    <option value="price_desc">Price: High → Low</option>
+                    <option value="price_asc">Price: Low → High</option>
+                    <option value="name_asc">Name: A → Z</option>
+                    <option value="name_desc">Name: Z → A</option>
+                    <option value="date_range">Created between...</option>
+                  </select>
+                </div>
+                {filter === "date_range" && (
+                  <div className="mt-2 flex flex-col items-start gap-2 bg-[#131313]/20 p-2 rounded-lg w-56">
+                    <label className="sr-only">From date</label>
+                    <input
+                      type="date"
+                      value={dateFrom}
+                      onChange={(e) => setDateFrom(e.target.value)}
+                      className="w-full bg-white/90 text-black px-2 py-1 rounded-md text-sm"
+                    />
+                    <label className="sr-only">To date</label>
+                    <input
+                      type="date"
+                      value={dateTo}
+                      onChange={(e) => setDateTo(e.target.value)}
+                      className="w-full bg-white/90 text-black px-2 py-1 rounded-md text-sm"
+                    />
+                    <button
+                      onClick={() => {
+                        if (!dateFrom || !dateTo) {
+                          toast.error("Please select both dates");
+                          return;
+                        }
+                        fetchCustomers({ from: dateFrom, to: dateTo });
+                      }}
+                      className="w-full bg-white text-[#131313] px-2 py-1 rounded-md text-sm font-medium"
+                    >
+                      Apply
+                    </button>
+                  </div>
+                )}
+              </div>
               {loading ? (
                 <div className="flex items-center justify-center py-16 sm:py-24">
                   <div className="animate-spin rounded-full h-12 w-12 sm:h-16 sm:w-16 border-b-2 border-white"></div>
