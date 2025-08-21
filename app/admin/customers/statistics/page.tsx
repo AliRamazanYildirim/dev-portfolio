@@ -155,7 +155,7 @@ export default function CustomersStatisticsPage() {
                       d="M15 19l-7-7 7-7"
                     />
                   </svg>
-                  Customer Panel
+                  Panel
                 </a>
                 <select
                   value={rangeDays}
