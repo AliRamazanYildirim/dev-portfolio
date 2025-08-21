@@ -373,7 +373,7 @@ export default function AdminPage() {
                                 {project.techStack?.map((tech) => (
                                   <span
                                     key={tech}
-                                    className="inline-flex items-center px-2.5 sm:px-3 lg:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium bg-[#131313]/10 text-[#131313] border border-[#131313]/20"
+                                    className="inline-flex items-center px-2.5 sm:px-3 lg:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium bg-blue-500/30 text-[#131313] border border-[#131313]/20"
                                   >
                                     {tech}
                                   </span>

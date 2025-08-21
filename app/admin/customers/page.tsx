@@ -27,10 +27,18 @@ export default function CustomersAdminPage() {
   const [loading, setLoading] = useState(true);
   // filter / sort state
   const [filter, setFilter] = useState<
-    "none" | "price_desc" | "price_asc" | "name_asc" | "name_desc" | "date_range"
+    | "none"
+    | "price_desc"
+    | "price_asc"
+    | "name_asc"
+    | "name_desc"
+    | "created_asc"
+    | "created_desc"
+    | "date_range"
   >("none");
   const [dateFrom, setDateFrom] = useState<string>("");
   const [dateTo, setDateTo] = useState<string>("");
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   // Formular-Status
   const [firstname, setFirstname] = useState("");
@@ -52,6 +60,7 @@ export default function CustomersAdminPage() {
     sort?: string;
     from?: string;
     to?: string;
+    q?: string;
   }) => {
     try {
       setLoading(true);
@@ -60,6 +69,7 @@ export default function CustomersAdminPage() {
       if (opts?.sort) params.set("sort", opts.sort);
       if (opts?.from) params.set("from", opts.from);
       if (opts?.to) params.set("to", opts.to);
+      if (opts?.q) params.set("q", opts.q);
       const qs = params.toString();
       if (qs) url += `?${qs}`;
       const res = await fetch(url);
@@ -214,7 +224,7 @@ export default function CustomersAdminPage() {
                 <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-end gap-3 sm:gap-4">
                   <a
                     href="/admin"
-                    className="button bg-[#131313] text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full hover:bg-[#232323] transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105 w-full sm:w-auto font-bold text-sm flex items-center justify-center gap-2 mr-0 sm:mr-auto"
+                    className="button bg-[#131313] text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full hover:bg-[#232323] transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105 w-full sm:w-auto font-semibold text-lg flex items-center justify-center gap-2 mr-0 sm:mr-auto"
                     style={{ boxShadow: "0 4px 24px rgba(0,0,0,0.15)" }}
                   >
                     <svg
@@ -259,34 +269,69 @@ export default function CustomersAdminPage() {
           </div>
           <div className="relative z-10 min-h-screen">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 relative">
-              {/* Filter control positioned top-right inside this container (red-box in screenshot) */}
-              <div className="absolute right-8 -top-2 z-20">
-                <div className="flex items-center gap-2">
-                  <label className="sr-only">Filter customers</label>
-                  <select
-                    value={filter}
-                    onChange={(e) => {
-                      const v = e.target.value as any;
-                      setFilter(v);
-                      // handle immediate sorts
-                      if (v === "price_desc") fetchCustomers({ sort: "price.desc" });
-                      else if (v === "price_asc") fetchCustomers({ sort: "price.asc" });
-                      else if (v === "name_asc") fetchCustomers({ sort: "name.asc" });
-                      else if (v === "name_desc") fetchCustomers({ sort: "name.desc" });
-                      else if (v === "none") fetchCustomers();
+              {/* Responsive search + filter container: stacks on mobile, inline on sm+ */}
+              <div className="mb-6">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 bg-transparent sm:justify-end">
+                  <form
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      fetchCustomers({ q: searchQuery });
                     }}
-                    className="bg-[#131313] text-white px-5 py-2 rounded-lg text-sm shadow-lg"
+                    className="flex flex-col sm:flex-row w-full sm:w-auto gap-2"
                   >
-                    <option value="none">Filter / Sort</option>
-                    <option value="price_desc">Price: High → Low</option>
-                    <option value="price_asc">Price: Low → High</option>
-                    <option value="name_asc">Name: A → Z</option>
-                    <option value="name_desc">Name: Z → A</option>
-                    <option value="date_range">Created between...</option>
-                  </select>
+                    <input
+                      type="search"
+                      placeholder="Search name, company, address or reference..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-full sm:w-64 bg-white/90 text-black px-3 py-1.5 rounded-md text-sm focus:outline-none"
+                    />
+                    <button
+                      type="submit"
+                      className="w-full sm:w-auto mt-0 sm:mt-0 bg-white text-[#131313] px-3 py-1 rounded-md text-sm font-semibold"
+                    >
+                      Search
+                    </button>
+                  </form>
+
+                  <div className="flex items-center gap-2">
+                    <label className="sr-only">Filter customers</label>
+                    <select
+                      value={filter}
+                      onChange={(e) => {
+                        const v = e.target.value as any;
+                        setFilter(v);
+                        // handle immediate sorts
+                        if (v === "price_desc")
+                          fetchCustomers({ sort: "price.desc" });
+                        else if (v === "price_asc")
+                          fetchCustomers({ sort: "price.asc" });
+                        else if (v === "name_asc")
+                          fetchCustomers({ sort: "name.asc" });
+                        else if (v === "name_desc")
+                          fetchCustomers({ sort: "name.desc" });
+                        else if (v === "created_asc")
+                          fetchCustomers({ sort: "created.asc" });
+                        else if (v === "created_desc")
+                          fetchCustomers({ sort: "created.desc" });
+                        else if (v === "none") fetchCustomers();
+                      }}
+                      className="bg-[#131313] text-white font-semibold px-4 py-2 rounded-lg text-sm shadow-lg"
+                    >
+                      <option value="none">Filter / Sort</option>
+                      <option value="price_desc">Price: High → Low</option>
+                      <option value="price_asc">Price: Low → High</option>
+                      <option value="name_asc">Name: A → Z</option>
+                      <option value="name_desc">Name: Z → A</option>
+                      <option value="created_asc">Created: Old → New</option>
+                      <option value="created_desc">Created: New → Old</option>
+                      <option value="date_range">Created between...</option>
+                    </select>
+                  </div>
                 </div>
+
                 {filter === "date_range" && (
-                  <div className="mt-2 flex flex-col items-start gap-2 bg-[#131313]/20 p-2 rounded-lg w-56">
+                  <div className="mt-2 flex flex-col items-end gap-2 bg-[#131313]/20 p-2 rounded-lg w-56 self-end ml-auto">
                     <label className="sr-only">From date</label>
                     <input
                       type="date"
@@ -336,7 +381,7 @@ export default function CustomersAdminPage() {
                                   {customer.companyname}
                                 </span>
                                 {customer.price != null && (
-                                  <span className="inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold bg-[#131313]/5 text-[#131313] self-start">
+                                  <span className="inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold bg-emerald-500 text-[#131313] self-start">
                                     €{Number(customer.price).toLocaleString()}
                                   </span>
                                 )}
@@ -345,10 +390,10 @@ export default function CustomersAdminPage() {
                                 {customer.email} | {customer.phone}
                               </p>
                               <div className="flex flex-wrap gap-2 sm:gap-3 mb-4 sm:mb-6">
-                                <span className="inline-flex items-center px-2.5 sm:px-3 lg:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium bg-[#131313]/10 text-[#131313] border border-[#131313]/20">
+                                <span className="inline-flex items-center px-2.5 sm:px-3 lg:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium bg-blue-500 text-white border border-[#131313]/20">
                                   {customer.address}
                                 </span>
-                                <span className="inline-flex items-center px-2.5 sm:px-3 lg:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium bg-[#131313]/10 text-[#131313] border border-[#131313]/20">
+                                <span className="inline-flex items-center px-2.5 sm:px-3 lg:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium bg-orange-500 text-white border border-[#131313]/20">
                                   {customer.reference}
                                 </span>
                               </div>

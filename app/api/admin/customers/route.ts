@@ -11,6 +11,7 @@ export async function GET(request: Request) {
     const sort = searchParams.get("sort");
     const from = searchParams.get("from");
     const to = searchParams.get("to");
+    const q = searchParams.get("q");
 
     let query: any = supabaseAdmin.from("customers").select("*");
 
@@ -21,23 +22,43 @@ export async function GET(request: Request) {
       query = query.gte("created_at", fromIso).lte("created_at", toIso);
     }
 
+    // If q provided, search across multiple fields (firstname, lastname, companyname, address, reference)
+    if (q) {
+      const pattern = `%${q.replace(/%/g, "")}%`;
+      // Supabase `or` can be used to OR multiple ilike conditions
+      // note: use double quotes around column names not needed here
+      query = query.or(
+        `firstname.ilike.${pattern},lastname.ilike.${pattern},companyname.ilike.${pattern},address.ilike.${pattern},reference.ilike.${pattern}`
+      );
+    }
+
     if (sort) {
       const [field, dir] = sort.split(".");
       const ascending = dir === "asc";
       if (field === "price") {
         query = query.order("price", { ascending });
       } else if (field === "name") {
-        query = query.order("firstname", { ascending }).order("lastname", { ascending });
+        query = query
+          .order("firstname", { ascending })
+          .order("lastname", { ascending });
+      } else if (field === "created") {
+        query = query.order("created_at", { ascending });
       }
     }
 
     const { data, error } = await query;
     if (error) {
-      return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+      return NextResponse.json(
+        { success: false, error: error.message },
+        { status: 500 }
+      );
     }
     return NextResponse.json({ success: true, data });
   } catch (error: any) {
-    return NextResponse.json({ success: false, error: error?.message || String(error) }, { status: 500 });
+    return NextResponse.json(
+      { success: false, error: error?.message || String(error) },
+      { status: 500 }
+    );
   }
 }
 
@@ -47,12 +68,21 @@ export async function POST(req: Request) {
     const body = await req.json();
     // set created_at if not provided
     if (!body.created_at) body.created_at = new Date().toISOString();
-    const { data, error } = await supabaseAdmin.from("customers").insert([body]).select();
+    const { data, error } = await supabaseAdmin
+      .from("customers")
+      .insert([body])
+      .select();
     if (error) {
-      return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+      return NextResponse.json(
+        { success: false, error: error.message },
+        { status: 500 }
+      );
     }
     return NextResponse.json({ success: true, data: data[0] });
   } catch (error: any) {
-    return NextResponse.json({ success: false, error: error?.message || String(error) }, { status: 500 });
+    return NextResponse.json(
+      { success: false, error: error?.message || String(error) },
+      { status: 500 }
+    );
   }
 }
