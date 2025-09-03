@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 
-// Referans kodunu doğrula ve indirim hesapla
+// Überprüfe den Referenzcode und berechnen Sie den Rabatt
 export async function POST(request: Request) {
   try {
     const { referralCode, basePrice } = await request.json();
@@ -13,7 +13,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // Referans koduna sahip müşteriyi bul
+    // Kunden mit Referenzcode finden
     const { data: referrer, error: referrerError } = await supabaseAdmin
       .from("customers")
       .select("id, firstname, lastname, myReferralCode, referralCount")
@@ -27,13 +27,13 @@ export async function POST(request: Request) {
       );
     }
 
-    // Referans seviyesine göre indirim hesapla
-    // İlk %3 + her referans için %3 daha, maksimum %15
+    // Referenzstufe basierend auf Rabatt berechnen  
+    // Erste 3 % + 3 % für jeden weiteren Referenz, maximal 15 %  
     const currentReferralCount = referrer.referralCount || 0;
-    let discountRate = 3 + currentReferralCount * 3; // İlk %3, sonra kademeli
-    discountRate = Math.min(discountRate, 15); // Max %15 indirim
+    let discountRate = 3 + currentReferralCount * 3; // Erst %3, dann schrittweise
+    discountRate = Math.min(discountRate, 15); // Maximal %15 Rabatt
 
-    // İndirimli fiyatı hesapla
+    // Berechne den reduzierten Preis
     const discountAmount = (basePrice * discountRate) / 100;
     const finalPrice = basePrice - discountAmount;
 
@@ -49,7 +49,7 @@ export async function POST(request: Request) {
           amount: discountAmount,
           originalPrice: basePrice,
           finalPrice: finalPrice,
-          referralLevel: Math.ceil(discountRate / 3), // Her %3 bir seviye
+          referralLevel: Math.ceil(discountRate / 3), // Ihre %3 jede Ebene
         },
       },
     });
