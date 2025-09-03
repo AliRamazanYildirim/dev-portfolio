@@ -97,3 +97,43 @@ model AdminUser {
   
   @@map("admin_users")
 }
+
+// Kunden-Management
+model Customer {
+  id               String   @id @default(cuid())
+  firstname        String
+  lastname         String
+  companyname      String
+  email            String   @unique
+  phone            String
+  address          String
+  reference        String?  // Referans kodu (eğer başka bir müşteriden geliyorsa)
+  price            Float?   // Orijinal fiyat
+  finalPrice       Float?   // İndirim uygulandıktan sonraki fiyat
+  discountRate     Float?   // Uygulanan toplam indirim oranı (%)
+  
+  // Referans sistemi
+  myReferralCode   String?  @unique // Kendi referans kodu
+  referralCount    Int?     @default(0)              // Kaç kişiyi refere etmiş
+  totalEarnings    Float?   @default(0)              // Referanslardan toplam kazanç
+  
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime? @default(now()) @updatedAt
+  
+  @@map("customers")
+}
+
+// Referans geçmişi ve indirim takibi
+model ReferralTransaction {
+  id              String   @id @default(cuid())
+  referrerCode    String   // Referans kodunu kullandıran kişinin kodu
+  newCustomerId   String   // Yeni müşterinin ID'si
+  discountRate    Float    // Uygulanan indirim oranı (%)
+  originalPrice   Float    // Orijinal fiyat
+  finalPrice      Float    // İndirimli fiyat
+  referralLevel   Int      // Referans seviyesi (1, 2, 3...)
+  
+  createdAt       DateTime @default(now())
+  
+  @@map("referral_transactions")
+}

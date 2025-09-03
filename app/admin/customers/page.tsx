@@ -16,6 +16,11 @@ interface Customer {
   address: string;
   reference: string;
   price?: number | null;
+  finalPrice?: number | null;
+  discountRate?: number | null;
+  myReferralCode?: string;
+  referralCount?: number;
+  totalEarnings?: number;
   created_at?: string | null;
 }
 
@@ -49,6 +54,19 @@ export default function CustomersAdminPage() {
   const [address, setAddress] = useState("");
   const [reference, setReference] = useState("");
   const [price, setPrice] = useState("");
+
+  // Referans kodu validasyon durumu
+  const [referralValidation, setReferralValidation] = useState<{
+    isValid: boolean;
+    referrerName?: string;
+    discount?: {
+      rate: number;
+      originalPrice: number;
+      finalPrice: number;
+      amount: number;
+    };
+    error?: string;
+  } | null>(null);
 
   // Beim Laden der Seite Kunden abrufen
   useEffect(() => {
@@ -86,6 +104,50 @@ export default function CustomersAdminPage() {
     }
   };
 
+  // Referans kodunu doğrula
+  const validateReferralCode = async (code: string, basePrice: string) => {
+    if (!code.trim() || !basePrice.trim()) {
+      setReferralValidation(null);
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/referral/validate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          referralCode: code.trim(),
+          basePrice: Number(basePrice),
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setReferralValidation({
+          isValid: true,
+          referrerName: result.data.referrer.name,
+          discount: result.data.discount,
+        });
+        toast.success(
+          `Referans kodu geçerli! ${result.data.discount.rate}% indirim uygulanacak`
+        );
+      } else {
+        setReferralValidation({
+          isValid: false,
+          error: result.error,
+        });
+        toast.error("Geçersiz referans kodu");
+      }
+    } catch (error) {
+      setReferralValidation({
+        isValid: false,
+        error: "Referans kodu kontrolü sırasında hata oluştu",
+      });
+      toast.error("Referans kodu kontrol edilemedi");
+    }
+  };
+
   // Formular zurücksetzen
   const resetForm = () => {
     setFirstname("");
@@ -98,6 +160,7 @@ export default function CustomersAdminPage() {
     setPrice("");
     setEditingCustomer(null);
     setShowForm(false);
+    setReferralValidation(null);
   };
 
   // Kunde speichern
@@ -186,6 +249,7 @@ export default function CustomersAdminPage() {
     setPrice(customer.price != null ? String(customer.price) : "");
     setEditingCustomer(customer);
     setShowForm(true);
+    setReferralValidation(null); // Reset referral validation when editing
   };
 
   // Authentifizierung wird überprüft
@@ -400,8 +464,38 @@ export default function CustomersAdminPage() {
                                   {customer.companyname}
                                 </span>
                                 {customer.price != null && (
-                                  <span className="inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold bg-emerald-500 text-[#131313] self-start">
-                                    €{Number(customer.price).toLocaleString()}
+                                  <div className="flex gap-2">
+                                    {customer.finalPrice != null &&
+                                    customer.discountRate ? (
+                                      <>
+                                        <span className="inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold bg-red-500 text-white line-through self-start">
+                                          €
+                                          {Number(
+                                            customer.price
+                                          ).toLocaleString()}
+                                        </span>
+                                        <span className="inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold bg-emerald-500 text-white self-start">
+                                          €
+                                          {Number(
+                                            customer.finalPrice
+                                          ).toLocaleString()}{" "}
+                                          (-{customer.discountRate}%)
+                                        </span>
+                                      </>
+                                    ) : (
+                                      <span className="inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold bg-emerald-500 text-white self-start">
+                                        €
+                                        {Number(
+                                          customer.price
+                                        ).toLocaleString()}
+                                      </span>
+                                    )}
+                                  </div>
+                                )}
+                                {customer.myReferralCode && (
+                                  <span className="inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold bg-blue-500 text-white self-start">
+                                    Referans: {customer.myReferralCode} (
+                                    {customer.referralCount || 0} kişi)
                                   </span>
                                 )}
                               </div>
@@ -419,6 +513,53 @@ export default function CustomersAdminPage() {
                             </div>
                           </div>
                           <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 lg:flex-row lg:absolute lg:bottom-6 lg:right-6">
+                            <button
+                              onClick={async () => {
+                                try {
+                                  const response = await fetch(
+                                    "/api/referral/generate",
+                                    {
+                                      method: "POST",
+                                      headers: {
+                                        "Content-Type": "application/json",
+                                      },
+                                      body: JSON.stringify({
+                                        customerId: customer.id,
+                                      }),
+                                    }
+                                  );
+                                  const result = await response.json();
+                                  if (result.success) {
+                                    navigator.clipboard.writeText(
+                                      result.data.shareMessage
+                                    );
+                                    toast.success(
+                                      "Referans mesajı kopyalandı!"
+                                    );
+                                  } else {
+                                    toast.error("Referans kodu alınamadı");
+                                  }
+                                } catch (error) {
+                                  toast.error("Bir hata oluştu");
+                                }
+                              }}
+                              className="inline-flex items-center justify-center px-4 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-xl font-medium shadow-sm transition-all duration-200 hover:shadow-md hover:scale-105 text-sm sm:text-base"
+                            >
+                              <svg
+                                className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"
+                                />
+                              </svg>
+                              Referans Paylaş
+                            </button>
                             <button
                               onClick={() => editCustomer(customer)}
                               className="inline-flex items-center justify-center px-4 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-xl font-medium shadow-sm transition-all duration-200 hover:shadow-md hover:scale-105 text-sm sm:text-base"
@@ -603,15 +744,89 @@ export default function CustomersAdminPage() {
                   </div>
                   <div className="lg:col-span-2">
                     <label className="block text-sm font-semibold text-[#131313] mb-2 sm:mb-3">
-                      Reference
+                      Reference (Referans Kodu - Opsiyonel)
                     </label>
                     <input
                       type="text"
-                      placeholder="Reference..."
+                      placeholder="Referans kodu girin..."
                       value={reference}
-                      onChange={(e) => setReference(e.target.value)}
-                      className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
+                      onChange={(e) => {
+                        setReference(e.target.value);
+                        if (e.target.value && price) {
+                          validateReferralCode(e.target.value, price);
+                        } else {
+                          setReferralValidation(null);
+                        }
+                      }}
+                      className={`w-full px-4 sm:px-6 py-3 sm:py-4 border rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 content text-sm sm:text-base ${
+                        referralValidation?.isValid
+                          ? "bg-emerald-50 border-emerald-300 focus:ring-emerald-500"
+                          : referralValidation?.error
+                          ? "bg-red-50 border-red-300 focus:ring-red-500"
+                          : "bg-white/80 border-[#131313]/20 focus:ring-[#131313]"
+                      }`}
                     />
+                    {referralValidation && (
+                      <div className="mt-2 p-3 rounded-lg text-sm">
+                        {referralValidation.isValid ? (
+                          <div className="bg-emerald-100 text-emerald-800 p-3 rounded-lg">
+                            <div className="flex items-center gap-2 mb-1">
+                              <svg
+                                className="w-4 h-4 text-emerald-600"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M5 13l4 4L19 7"
+                                />
+                              </svg>
+                              <strong>Geçerli referans kodu!</strong>
+                            </div>
+                            <p>
+                              Referans veren: {referralValidation.referrerName}
+                            </p>
+                            {referralValidation.discount && (
+                              <div className="mt-1 text-xs">
+                                <p>
+                                  İndirim: %{referralValidation.discount.rate}
+                                </p>
+                                <p>
+                                  Orijinal fiyat: €
+                                  {referralValidation.discount.originalPrice.toLocaleString()}
+                                </p>
+                                <p className="font-semibold text-emerald-700">
+                                  Son fiyat: €
+                                  {referralValidation.discount.finalPrice.toLocaleString()}
+                                </p>
+                              </div>
+                            )}
+                          </div>
+                        ) : (
+                          <div className="bg-red-100 text-red-800 p-3 rounded-lg">
+                            <div className="flex items-center gap-2">
+                              <svg
+                                className="w-4 h-4 text-red-600"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M6 18L18 6M6 6l12 12"
+                                />
+                              </svg>
+                              <span>{referralValidation.error}</span>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                   <div className="lg:col-span-2">
                     <label className="block text-sm font-semibold text-[#131313] mb-2 sm:mb-3">
@@ -619,9 +834,16 @@ export default function CustomersAdminPage() {
                     </label>
                     <input
                       type="number"
-                      placeholder="Price..."
+                      placeholder="Fiyat girin..."
                       value={price}
-                      onChange={(e) => setPrice(e.target.value)}
+                      onChange={(e) => {
+                        setPrice(e.target.value);
+                        if (reference && e.target.value) {
+                          validateReferralCode(reference, e.target.value);
+                        } else {
+                          setReferralValidation(null);
+                        }
+                      }}
                       className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
                     />
                   </div>
