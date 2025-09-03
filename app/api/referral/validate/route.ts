@@ -28,10 +28,10 @@ export async function POST(request: Request) {
     }
 
     // Referans seviyesine göre indirim hesapla
-    // İlk %5 + her referans için %5 daha
+    // İlk %3 + her referans için %3 daha, maksimum %15
     const currentReferralCount = referrer.referralCount || 0;
-    let discountRate = 5 + currentReferralCount * 5; // İlk %5, sonra kademeli
-    discountRate = Math.min(discountRate, 50); // Max %50 indirim
+    let discountRate = 3 + currentReferralCount * 3; // İlk %3, sonra kademeli
+    discountRate = Math.min(discountRate, 15); // Max %15 indirim
 
     // İndirimli fiyatı hesapla
     const discountAmount = (basePrice * discountRate) / 100;
@@ -49,7 +49,7 @@ export async function POST(request: Request) {
           amount: discountAmount,
           originalPrice: basePrice,
           finalPrice: finalPrice,
-          referralLevel: currentReferralCount + 1,
+          referralLevel: Math.ceil(discountRate / 3), // Her %3 bir seviye
         },
       },
     });

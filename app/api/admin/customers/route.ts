@@ -68,48 +68,55 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
 
-    // Referans kodu varsa işle
-    let finalPrice = body.price;
-    let discountRate = 0;
+    // Referans kodu varsa işle - ÖNERENİ ÖDÜLLENDIR
     let referrerCode = null;
+    let referrerDiscount = 0;
+
+    // YENİ MÜŞTERİ NORMAL FİYAT ÖDER - REFERRER İNDİRİM ALIR
+    let finalPrice = body.price || 0; // Yeni müşteri normal fiyat öder
+    let discountRate = 0; // Yeni müşteri indirim almaz
 
     if (body.reference && body.price) {
       // Referans kodunu doğrula
       const { data: referrer, error: referrerError } = await supabaseAdmin
         .from("customers")
-        .select("id, myReferralCode, referralCount")
+        .select("id, myReferralCode, referralCount, price")
         .eq("myReferralCode", body.reference)
         .single();
 
-      if (referrer && !referrerError) {
+      if (referrer && !referrerError && referrer.price) {
         referrerCode = referrer.myReferralCode;
 
-        // İndirim hesapla (%5 + her referans için %5 daha)
+        // ÖNERENİN fiyatına indirim hesapla (%3 + her referans için %3 daha, maksimum %15)
         const currentReferralCount = referrer.referralCount || 0;
-        discountRate = 5 + currentReferralCount * 5; // İlk %5, sonra kademeli
-        discountRate = Math.min(discountRate, 50); // Max %50
-        finalPrice = body.price - (body.price * discountRate) / 100;
+        referrerDiscount = 3 + currentReferralCount * 3; // İlk %3, sonra kademeli
+        referrerDiscount = Math.min(referrerDiscount, 15); // Max %15
 
-        console.log("Referans işlemi:", {
+        const referrerFinalPrice =
+          referrer.price - (referrer.price * referrerDiscount) / 100;
+
+        console.log("Referans işlemi - ÖNERENİ ÖDÜLLENDIR:", {
           referrer: referrer.id,
           currentCount: currentReferralCount,
           newCount: currentReferralCount + 1,
-          discountRate,
-          originalPrice: body.price,
-          finalPrice,
+          referrerDiscount,
+          referrerOriginalPrice: referrer.price,
+          referrerFinalPrice,
         });
 
-        // Referans sayacını güncelle
+        // Referans sayacını güncelle VE önerenin fiyatını indirimli yap
         const { error: updateError } = await supabaseAdmin
           .from("customers")
           .update({
             referralCount: currentReferralCount + 1,
+            discountRate: referrerDiscount,
+            finalPrice: referrerFinalPrice,
             updatedAt: new Date().toISOString(),
           })
           .eq("id", referrer.id);
 
         if (updateError) {
-          console.error("Referans sayacı güncellenirken hata:", updateError);
+          console.error("Öneren güncelleme hatası:", updateError);
         }
       }
     }
@@ -138,7 +145,7 @@ export async function POST(req: Request) {
       myReferralCode = generateReferralCode();
     }
 
-    // Müşteri verisini hazırla
+    // Müşteri verisini hazırla - YENİ MÜŞTERİ NORMAL FİYATA GELİR
     const customerData = {
       id: createId(), // CUID oluştur
       firstname: body.firstname,
@@ -147,11 +154,11 @@ export async function POST(req: Request) {
       email: body.email,
       phone: body.phone,
       address: body.address,
-      reference: body.reference,
-      price: body.price, // Orijinal fiyat
+      reference: body.reference, // Hangi referans kodunu kullandığını kaydet
+      price: body.price, // Orijinal fiyat (indirim YOK)
       myReferralCode,
-      finalPrice, // İndirimli fiyat
-      discountRate: discountRate > 0 ? discountRate : null,
+      finalPrice: body.price, // Yeni müşteri normal fiyat öder
+      discountRate: null, // Yeni müşteriye indirim yok
       referralCount: 0,
       totalEarnings: 0,
       createdAt: body.createdAt || new Date().toISOString(),
@@ -174,15 +181,15 @@ export async function POST(req: Request) {
     }
 
     // Referans işlemi varsa kaydet
-    if (referrerCode && discountRate > 0) {
+    if (referrerCode && referrerDiscount > 0) {
       await supabaseAdmin.from("referral_transactions").insert([
         {
           referrerCode,
           newCustomerId: customer.id,
-          discountRate,
-          originalPrice: body.price,
-          finalPrice,
-          referralLevel: Math.ceil(discountRate / 5),
+          discountRate: referrerDiscount,
+          originalPrice: body.price, // Yeni müşterinin fiyatı
+          finalPrice: body.price, // Yeni müşteri normal fiyat ödedi
+          referralLevel: Math.ceil(referrerDiscount / 3),
           createdAt: new Date().toISOString(),
         },
       ]);
@@ -191,14 +198,12 @@ export async function POST(req: Request) {
     return NextResponse.json({
       success: true,
       data: customer,
-      referralApplied: discountRate > 0,
-      discount:
-        discountRate > 0
+      referralApplied: referrerDiscount > 0,
+      referrerDiscount:
+        referrerDiscount > 0
           ? {
-              rate: discountRate,
-              originalPrice: body.price,
-              finalPrice,
-              savings: body.price - finalPrice,
+              rate: referrerDiscount,
+              message: `Öneren müşteri ${referrerDiscount}% indirim kazandı!`,
             }
           : null,
     });

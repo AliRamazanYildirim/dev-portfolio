@@ -844,7 +844,7 @@ export default function CustomersAdminPage() {
                                   d="M5 13l4 4L19 7"
                                 />
                               </svg>
-                              <strong>Geçerli referans kodu!</strong>
+                              <strong>Valid reference code!</strong>
                             </div>
                             <p>
                               Referans veren: {referralValidation.referrerName}
@@ -852,16 +852,9 @@ export default function CustomersAdminPage() {
                             {referralValidation.discount && (
                               <div className="mt-1 text-xs">
                                 <p>
-                                  İndirim: %{referralValidation.discount.rate}
+                                  Discount: %{referralValidation.discount.rate}
                                 </p>
-                                <p>
-                                  Orijinal fiyat: €
-                                  {referralValidation.discount.originalPrice.toLocaleString()}
-                                </p>
-                                <p className="font-semibold text-emerald-700">
-                                  Son fiyat: €
-                                  {referralValidation.discount.finalPrice.toLocaleString()}
-                                </p>
+                               
                               </div>
                             )}
                           </div>

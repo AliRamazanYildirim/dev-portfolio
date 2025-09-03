@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 
-// GET, PUT, DELETE: Einzelne Kundenoperationen
-
+// GET: Einzelnen Kunden abrufen
 export async function GET(
   req: Request,
   context: { params: Promise<{ id: string }> }
@@ -13,15 +12,18 @@ export async function GET(
     .select("*")
     .eq("id", id)
     .single();
-  if (error) {
+
+  if (error || !data) {
     return NextResponse.json(
-      { success: false, error: error.message },
+      { success: false, error: "Customer not found" },
       { status: 404 }
     );
   }
+
   return NextResponse.json({ success: true, data });
 }
 
+// PUT: Kunden aktualisieren
 export async function PUT(
   req: Request,
   context: { params: Promise<{ id: string }> }
@@ -30,7 +32,7 @@ export async function PUT(
     const { id } = await context.params;
     const body = await req.json();
 
-    // Mevcut müşteriyi getir
+    // Mevcut müşteri bilgilerini al
     const { data: existingCustomer, error: fetchError } = await supabaseAdmin
       .from("customers")
       .select("*")
@@ -44,73 +46,73 @@ export async function PUT(
       );
     }
 
-    // Referans kodu değişikliği kontrolü
-    let finalPrice = body.price;
-    let discountRate = existingCustomer.discountRate; // Mevcut indirim oranını koru
+    // Referans kodu ekleniyorsa işle - ÖNERENİ ÖDÜLLENDIR
+    let referrerDiscount = 0;
     let referrerCode = null;
 
-    // Eğer yeni referans kodu girildiyse ve önceden referans kullanılmamışsa
-    if (
-      body.reference &&
-      body.reference !== existingCustomer.reference &&
-      body.price &&
-      !existingCustomer.discountRate
-    ) {
-      // Referans kodunu doğrula
+    if (body.reference && body.price && !existingCustomer.reference) {
+      // Bu müşteriye ilk kez referans kodu ekleniyorsa
       const { data: referrer, error: referrerError } = await supabaseAdmin
         .from("customers")
-        .select("id, myReferralCode, referralCount")
+        .select("id, myReferralCode, referralCount, price")
         .eq("myReferralCode", body.reference)
         .single();
 
-      if (referrer && !referrerError) {
+      if (referrer && !referrerError && referrer.price) {
         referrerCode = referrer.myReferralCode;
 
-        // İndirim hesapla (%5 + her referans için %5 daha)
+        // ÖNERENİN fiyatına indirim hesapla
         const currentReferralCount = referrer.referralCount || 0;
-        discountRate = 5 + currentReferralCount * 5; // İlk %5, sonra kademeli
-        discountRate = Math.min(discountRate, 50); // Max %50
-        finalPrice = body.price - (body.price * discountRate) / 100;
+        referrerDiscount = 3 + currentReferralCount * 3;
+        referrerDiscount = Math.min(referrerDiscount, 15);
 
-        console.log("PUT Referans işlemi:", {
-          customerId: id,
+        const referrerFinalPrice =
+          referrer.price - (referrer.price * referrerDiscount) / 100;
+
+        console.log("Referans işlemi - ÖNERENİ ÖDÜLLENDIR:", {
           referrer: referrer.id,
           currentCount: currentReferralCount,
           newCount: currentReferralCount + 1,
-          discountRate,
-          originalPrice: body.price,
-          finalPrice,
+          referrerDiscount,
+          referrerOriginalPrice: referrer.price,
+          referrerFinalPrice,
         });
 
-        // Referans sayacını güncelle
-        const { error: updateError } = await supabaseAdmin
+        // Önerenin bilgilerini güncelle
+        await supabaseAdmin
           .from("customers")
           .update({
             referralCount: currentReferralCount + 1,
+            discountRate: referrerDiscount,
+            finalPrice: referrerFinalPrice,
             updatedAt: new Date().toISOString(),
           })
           .eq("id", referrer.id);
 
-        if (updateError) {
-          console.error("Referans sayacı güncellenirken hata:", updateError);
-        }
+        // Referans işlemi kaydet
+        await supabaseAdmin.from("referral_transactions").insert([
+          {
+            referrerCode,
+            newCustomerId: existingCustomer.id,
+            discountRate: referrerDiscount,
+            originalPrice: body.price,
+            finalPrice: body.price, // Güncellenen müşteri normal fiyat öder
+            referralLevel: Math.ceil(referrerDiscount / 3),
+            createdAt: new Date().toISOString(),
+          },
+        ]);
       }
     }
 
-    // Güncelleme verilerini hazırla
+    // Güncelleme verilerini hazırla - GÜNCELLENENE İNDİRİM YOK
     const updateData = {
       ...body,
-      finalPrice: finalPrice,
-      discountRate: discountRate,
+      finalPrice: body.price, // Güncellenen müşteri normal fiyat öder
+      discountRate: existingCustomer.discountRate, // Mevcut indirim oranını koru
       updatedAt: new Date().toISOString(),
     };
 
-    // created_at'ı koruma
-    if (updateData.created_at) delete updateData.created_at;
-    if (updateData.createdAt) delete updateData.createdAt;
-
-    // Müşteriyi güncelle
-    const { data, error } = await supabaseAdmin
+    const { data: result, error } = await supabaseAdmin
       .from("customers")
       .update(updateData)
       .eq("id", id)
@@ -118,44 +120,25 @@ export async function PUT(
       .single();
 
     if (error) {
-      console.error("Customer update error:", error);
       return NextResponse.json(
         { success: false, error: error.message },
         { status: 500 }
       );
     }
 
-    // Referans işlemi varsa kaydet
-    if (referrerCode && discountRate > existingCustomer.discountRate) {
-      await supabaseAdmin.from("referral_transactions").insert([
-        {
-          referrerCode,
-          newCustomerId: id,
-          discountRate,
-          originalPrice: body.price,
-          finalPrice,
-          referralLevel: Math.ceil(discountRate / 5),
-          createdAt: new Date().toISOString(),
-        },
-      ]);
-    }
-
     return NextResponse.json({
       success: true,
-      data,
-      referralApplied: discountRate > (existingCustomer.discountRate || 0),
-      discount:
-        discountRate > (existingCustomer.discountRate || 0)
+      data: result,
+      referralApplied: referrerDiscount > 0,
+      referrerReward:
+        referrerDiscount > 0
           ? {
-              rate: discountRate,
-              originalPrice: body.price,
-              finalPrice,
-              savings: body.price - finalPrice,
+              rate: referrerDiscount,
+              message: `Öneren müşteri ${referrerDiscount}% indirim kazandı!`,
             }
           : null,
     });
   } catch (error: any) {
-    console.error("PUT customer error:", error);
     return NextResponse.json(
       { success: false, error: error?.message || String(error) },
       { status: 500 }
@@ -163,17 +146,31 @@ export async function PUT(
   }
 }
 
+// DELETE: Kunden löschen
 export async function DELETE(
   req: Request,
   context: { params: Promise<{ id: string }> }
 ) {
-  const { id } = await context.params;
-  const { error } = await supabaseAdmin.from("customers").delete().eq("id", id);
-  if (error) {
+  try {
+    const { id } = await context.params;
+
+    const { error } = await supabaseAdmin
+      .from("customers")
+      .delete()
+      .eq("id", id);
+
+    if (error) {
+      return NextResponse.json(
+        { success: false, error: error.message },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (error: any) {
     return NextResponse.json(
-      { success: false, error: error.message },
+      { success: false, error: error?.message || String(error) },
       { status: 500 }
     );
   }
-  return NextResponse.json({ success: true });
 }
