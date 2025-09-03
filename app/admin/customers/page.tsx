@@ -507,9 +507,16 @@ export default function CustomersAdminPage() {
                                 <span className="inline-flex items-center px-2.5 sm:px-3 lg:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium bg-blue-500 text-white border border-[#131313]/20">
                                   {customer.address}
                                 </span>
-                                <span className="inline-flex items-center px-2.5 sm:px-3 lg:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium bg-orange-500 text-white border border-[#131313]/20">
-                                  {customer.reference}
-                                </span>
+                                {customer.myReferralCode && (
+                                  <span className="inline-flex items-center px-2.5 sm:px-3 lg:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium bg-green-500 text-white border border-[#131313]/20">
+                                    Own code: {customer.myReferralCode}
+                                  </span>
+                                )}
+                                {customer.reference && (
+                                  <span className="inline-flex items-center px-2.5 sm:px-3 lg:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium bg-orange-500 text-white border border-[#131313]/20">
+                                    Used: {customer.reference}
+                                  </span>
+                                )}
                               </div>
                             </div>
                           </div>
