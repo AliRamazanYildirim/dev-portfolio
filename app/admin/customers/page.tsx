@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import NoiseBackground from "@/components/NoiseBackground";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import toast from "react-hot-toast";
+import emailjs from "@emailjs/browser";
 
 // Kunden-Interface
 interface Customer {
@@ -515,32 +516,16 @@ export default function CustomersAdminPage() {
                           <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 lg:flex-row lg:absolute lg:bottom-6 lg:right-6">
                             <button
                               onClick={async () => {
-                                try {
-                                  const response = await fetch(
-                                    "/api/referral/generate",
-                                    {
-                                      method: "POST",
-                                      headers: {
-                                        "Content-Type": "application/json",
-                                      },
-                                      body: JSON.stringify({
-                                        customerId: customer.id,
-                                      }),
-                                    }
+                                if (customer.myReferralCode) {
+                                  navigator.clipboard.writeText(
+                                    customer.myReferralCode
                                   );
-                                  const result = await response.json();
-                                  if (result.success) {
-                                    navigator.clipboard.writeText(
-                                      result.data.shareMessage
-                                    );
-                                    toast.success(
-                                      "Referans mesajı kopyalandı!"
-                                    );
-                                  } else {
-                                    toast.error("Referans kodu alınamadı");
-                                  }
-                                } catch (error) {
-                                  toast.error("Bir hata oluştu");
+                                  toast.success(
+                                    "Referans kodu kopyalandı: " +
+                                      customer.myReferralCode
+                                  );
+                                } else {
+                                  toast.error("Referans kodu bulunamadı");
                                 }
                               }}
                               className="inline-flex items-center justify-center px-4 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-xl font-medium shadow-sm transition-all duration-200 hover:shadow-md hover:scale-105 text-sm sm:text-base"
@@ -555,10 +540,78 @@ export default function CustomersAdminPage() {
                                   strokeLinecap="round"
                                   strokeLinejoin="round"
                                   strokeWidth={2}
-                                  d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"
+                                  d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
                                 />
                               </svg>
                               Referans Paylaş
+                            </button>
+                            <button
+                              onClick={async () => {
+                                try {
+                                  const response = await fetch(
+                                    "/api/referral/send-email",
+                                    {
+                                      method: "POST",
+                                      headers: {
+                                        "Content-Type": "application/json",
+                                      },
+                                      body: JSON.stringify({
+                                        customerId: customer.id,
+                                        customerEmail: customer.email,
+                                      }),
+                                    }
+                                  );
+                                  const result = await response.json();
+                                  if (
+                                    result.success &&
+                                    result.data.emailParams
+                                  ) {
+                                    // EmailJS ile mail gönder
+                                    const emailResult = await emailjs.send(
+                                      process.env
+                                        .NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
+                                      process.env
+                                        .NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!, // Mevcut template kullanılacak
+                                      {
+                                        name: result.data.emailParams.from_name,
+                                        email: result.data.emailParams.to_email,
+                                        message:
+                                          result.data.emailParams.message,
+                                      },
+                                      process.env
+                                        .NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!
+                                    );
+
+                                    toast.success(
+                                      `Referans kodu mail olarak gönderildi: ${result.data.referralCode}`
+                                    );
+                                  } else {
+                                    toast.error(
+                                      "Mail gönderilemedi: " +
+                                        (result.error || "Bilinmeyen hata")
+                                    );
+                                  }
+                                } catch (error) {
+                                  console.error("Mail error:", error);
+                                  toast.error("Mail gönderme hatası");
+                                }
+                              }}
+                              className="inline-flex items-center justify-center px-4 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-xl font-medium shadow-sm transition-all duration-200 hover:shadow-md hover:scale-105 text-sm sm:text-base"
+                            >
+                              <svg
+                                className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M3 8l7.89 7.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                                />
+                              </svg>
+                              Mail Gönder
                             </button>
                             <button
                               onClick={() => editCustomer(customer)}
