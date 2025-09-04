@@ -34,30 +34,56 @@ export async function POST(request: Request) {
     }
 
     // E-Mail-Inhalt erstellen
+    const currentCount = customer.referralCount || 0;
+    const hasReachedMaximum = currentCount >= 5;
+    
     const emailContent = `
-Hallo ${customer.firstname} ${customer.lastname}!
+Hallo ${customer.firstname} ${customer.lastname},
 
-Vielen Dank, dass Sie mich für Ihre Webentwicklungsprojekte gewählt haben!
+es freut mich riesig, dass Sie mir Ihr Vertrauen geschenkt haben – gemeinsam erschaffen wir digitale Erlebnisse, die Eindruck hinterlassen!
 
-🎉 Ihr persönlicher Empfehlungscode: ${customer.myReferralCode}
+Sie haben den ersten Schritt schon gemacht – und jetzt können Sie noch mehr gewinnen!
 
-Mit diesem Code können Sie:
-✨ 5% Startrabatt für neue Kunden bieten
-💰 Zusätzliche 5% für jeden weiteren Empfohlenen (bis zu 50% maximal)
-📈 Derzeit haben Sie bereits ${customer.referralCount || 0} Personen empfohlen
+Mit Ihrem persönlichen Empfehlungscode sichern Sie sich immer größere Rabatte, je mehr Menschen Sie in mein Netzwerk bringen:
 
-Teilen Sie diesen Code mit Freunden und Kollegen, die professionelle Webentwicklungsdienstleistungen benötigen!
+👉 ${customer.myReferralCode}
 
-🚀 Dienstleistungen:
+✨ So funktioniert es:
+
+• 1. Empfehlung → 3% Rabatt
+• 2. Empfehlung → 6% Rabatt  
+• 3. Empfehlung → 9% Rabatt
+• 4. Empfehlung → 12% Rabatt
+• 5. Empfehlung → 15% Rabatt (Maximum)
+
+📈 Sie haben bereits ${currentCount} Empfehlungen gesammelt${hasReachedMaximum ? ' – GLÜCKWUNSCH! 🎉' : ' – das bedeutet, Ihr Vorteil wächst schon jetzt!'}
+
+${hasReachedMaximum ? `
+🏆 MAXIMUM ERREICHT!
+Sie haben das Maximum von 5 Empfehlungen erreicht und sichern sich dauerhaft 15% Rabatt auf alle zukünftigen Projekte! Ihr Code bleibt weiterhin aktiv – teilen Sie ihn gerne weiter, um anderen zu helfen, auch wenn Sie bereits die maximale Ersparnis erreicht haben.
+` : `
+🚀 Ihre Vorteile in jeder Empfehlung:
+
+• Sie sparen bei künftigen Projekten bis zu 15%
+• Ihre Freunde & Kollegen erhalten professionelle Unterstützung bei Webprojekten
+• Jeder Gewinn bringt Sie dem Maximum einen Schritt näher
+`}
+
+🌐 Meine Dienstleistungen:
 • Professionelle Websites
-• E-Commerce-Lösungen  
+• E-Commerce-Lösungen
 • Mobile Anwendungen
-• Custom Web Development
+• Maßgeschneiderte Webentwicklung
+
+💡 Jetzt aktiv werden:
+Teilen Sie Ihren Code noch heute mit Freunden, Geschäftspartnern oder Kollegen und verwandeln Sie jede Empfehlung in einen Vorteil!
 
 📧 Kontakt: aliramazanyildirim@gmail.com
 🌐 Portfolio: https://dev-portfolio-obhj.onrender.com
 
-Vielen Dank für Ihr Vertrauen!
+Vielen Dank für Ihr Vertrauen – gemeinsam machen wir Ihre digitale Vision Realität!
+
+Herzliche Grüße
 Ali Ramazan Yildirim
 Fullstack Web Developer & UI/UX Designer
 
