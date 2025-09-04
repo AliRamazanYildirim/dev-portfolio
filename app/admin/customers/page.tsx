@@ -171,6 +171,16 @@ export default function CustomersAdminPage() {
       toast.error("First name, last name, and email are required!");
       return;
     }
+
+    // E-Mail-Einzigartigkeitsprüfung (für neuen Kunden)
+    if (!editingCustomer) {
+      const existingCustomer = customers.find(c => c.email.toLowerCase() === email.toLowerCase());
+      if (existingCustomer) {
+        toast.error(`This email address is already registered to: ${existingCustomer.firstname} ${existingCustomer.lastname}`);
+        return;
+      }
+    }
+
     const customerData = {
       firstname,
       lastname,
@@ -197,6 +207,52 @@ export default function CustomersAdminPage() {
         if (!res.ok || !json.success) {
           throw new Error(json?.error || `HTTP ${res.status}`);
         }
+
+        // Wenn ein neuer Kunde registriert wurde und die Referrer-E-Mail-Parameter vorhanden sind, sende eine E-Mail.
+        if (!editingCustomer && json.referrerEmail) {
+          try {
+            console.log("Referrer-E-Mail wird gesendet:", json.referrerEmail.emailParams);
+            console.log("Ziel-E-Mail-Adresse:", json.referrerEmail.emailParams.to_email);
+            console.log("Zielname:", json.referrerEmail.emailParams.to_name);
+            
+            // E-MailJS-Informationen aus den Umgebungsvariablen abrufen
+            const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID;
+            const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID;
+            const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
+            
+            if (!serviceId || !templateId || !publicKey) {
+              console.error("EmailJS-Umgebungsvariablen fehlen!");
+              return;
+            }
+            
+            // Bereite die Parameter für die Vorlage vor
+            const emailParams = {
+              to_email: json.referrerEmail.emailParams.to_email,
+              subject: json.referrerEmail.emailParams.subject,
+              from_name: json.referrerEmail.emailParams.from_name,
+              reply_to: json.referrerEmail.emailParams.reply_to,
+              name: json.referrerEmail.emailParams.to_name,
+              message: json.referrerEmail.emailParams.message,
+            };
+            
+            console.log("Parameter, die an die Vorlage gesendet werden:", emailParams);
+            
+            await emailjs.send(
+              serviceId,
+              templateId,
+              emailParams,
+              publicKey
+            );
+            
+            console.log("Der Empfehlungs-E-Mail wurde erfolgreich gesendet!");
+            
+          } catch (emailError: any) {
+            console.error("Fehler beim Senden der Referrer-E-Mail:", emailError);
+            console.error("Fehlerdetails:", emailError?.message || emailError);
+            // Der E-Mail-Fehler soll den Hauptprozess nicht beeinträchtigen
+          }
+        }
+
         return editingCustomer
           ? "The customer has been updated!"
           : "The customer has been saved!";

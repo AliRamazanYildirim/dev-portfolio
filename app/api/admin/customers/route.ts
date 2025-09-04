@@ -26,8 +26,6 @@ export async function GET(request: Request) {
     // If q provided, search across multiple fields (firstname, lastname, companyname, address, reference)
     if (q) {
       const pattern = `%${q.replace(/%/g, "")}%`;
-      // Supabase `or` can be used to OR multiple ilike conditions
-      // note: use double quotes around column names not needed here
       query = query.or(
         `firstname.ilike.${pattern},lastname.ilike.${pattern},companyname.ilike.${pattern},address.ilike.${pattern},reference.ilike.${pattern}`
       );
@@ -63,52 +61,150 @@ export async function GET(request: Request) {
   }
 }
 
+// Assistent: Neuer Empfehlungsrabatt (3% + zusätzlich 3% pro Empfehlung, max. 15%)
+function calcReferrerDiscount(nextReferralCount: number) {
+  const base = 3 + (nextReferralCount - 1) * 3;
+  return Math.min(base, 15);
+}
+
+// Helfer: Erstelle einen 8-stelligen Empfehlungscode
+function generateReferralCode() {
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  let result = "";
+  for (let i = 0; i < 8; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return result;
+}
+
+// Bereite den E-Mail-Inhalt für den Referrer vor.
+function buildReferrerEmail({
+  refFirst,
+  refLast,
+  refEmail,
+  myReferralCode,
+  newCount,
+  discountRate,
+  newCustomerFullname,
+}: {
+  refFirst: string;
+  refLast: string;
+  refEmail: string;
+  myReferralCode: string;
+  newCount: number;
+  discountRate: number;
+  newCustomerFullname?: string;
+}) {
+  const hasReachedMaximum = newCount >= 5;
+
+  const emailContent = `
+Hallo ${refFirst} ${refLast},
+
+großartige Neuigkeiten! Dank Ihrer Empfehlung ${
+    newCustomerFullname ? `"${newCustomerFullname}"` : "eines neuen Kunden"
+  } ist Ihre Vorteilsstufe erneut gestiegen.
+
+✅ Aktueller Stand:
+• Gesamtanzahl Ihrer Empfehlungen: ${newCount}
+• Ihr persönlicher Rabatt: ${discountRate}%${hasReachedMaximum ? " (Maximum erreicht 🎉)" : ""}
+
+Ihr Empfehlungscode bleibt aktiv – teilen Sie ihn weiterhin und helfen Sie anderen, professionelle Unterstützung zu erhalten:
+
+👉 ${myReferralCode}
+
+${
+  hasReachedMaximum
+    ? `🏆 MAXIMUM ERREICHT!
+Sie haben 5 Empfehlungen erreicht und sichern sich dauerhaft 15% Rabatt auf alle zukünftigen Projekte. Herzlichen Glückwunsch!`
+    : `✨ Nächste Schritte:
+• Jede weitere Empfehlung bringt Sie näher an das Maximum von 15%
+• Ihr Vorteil wächst automatisch mit
+• Freunde & Kollegen profitieren von hochwertigen Weblösungen`
+}
+
+🌐 Meine Dienstleistungen:
+• Professionelle Websites
+• E-Commerce-Lösungen
+• Mobile Anwendungen
+• Maßgeschneiderte Webentwicklung
+
+📧 Kontakt: aliramazanyildirim@gmail.com
+🌐 Portfolio: https://dev-portfolio-obhj.onrender.com
+
+Vielen Dank für Ihre Unterstützung – gemeinsam schaffen wir digitale Lösungen, die begeistern!
+
+Herzliche Grüße
+Ali Ramazan Yildirim
+Fullstack Web Developer & UI/UX Designer
+
+---
+Diese E-Mail wurde automatisch generiert. Bei Fragen wenden Sie sich bitte an aliramazanyildirim@gmail.com
+  `.trim();
+
+  const emailParams = {
+    to_email: refEmail,
+    to_name: `${refFirst} ${refLast}`,
+    subject: `🎉 Danke für Ihre Empfehlung – Jetzt ${discountRate}% Rabatt`,
+    message: emailContent,
+    from_name: "Ali Ramazan Yildirim",
+    reply_to: "aliramazanyildirim@gmail.com",
+  };
+
+  return { emailContent, emailParams };
+}
+
 // POST: Neuen Kunden hinzufügen
 export async function POST(req: Request) {
   try {
     const body = await req.json();
 
-    // Wenn es einen Referenzcode gibt, bearbeite ihn - BELOHNE DEN VORSCHLAGENDEN
-    let referrerCode = null;
+    // Wenn er mit einem Referenzcode gekommen ist: Finde die Person, die ihn empfohlen hat, aktualisiere den Rabatt und bereite die E-Mail vor.
+    let referrerCode: string | null = null;
     let referrerDiscount = 0;
+    let referrerEmailBundle:
+      | {
+          emailContent: string;
+          emailParams: {
+            to_email: string;
+            to_name: string;
+            subject: string;
+            message: string;
+            from_name: string;
+            reply_to: string;
+          };
+        }
+      | null = null;
 
-    // NEUKUNDE ZAHLT DEN NORMALEN PREIS - EMPFEHLER ERHÄLT EINEN RABATT
-    let finalPrice = body.price || 0; // Ein neuer Kunde zahlt den normalen Preis.
-    let discountRate = 0; // Ein neuer Kunde erhält keinen Rabatt.
+    // NEUKUNDE ZAHLT DEN NORMALEN PREIS
+    const finalPriceForNewCustomer = body.price || 0;
 
     if (body.reference && body.price) {
-      // Referans kodunu doğrula
+      // Referenz überprüfen + Name/Nachname/E-Mail für die E-Mail abrufen
       const { data: referrer, error: referrerError } = await supabaseAdmin
         .from("customers")
-        .select("id, myReferralCode, referralCount, price")
+        .select(
+          "id, myReferralCode, referralCount, price, firstname, lastname, email"
+        )
         .eq("myReferralCode", body.reference)
         .single();
 
       if (referrer && !referrerError && referrer.price) {
         referrerCode = referrer.myReferralCode;
 
-        // Berechne den Rabatt auf den Preis des EMPFEHLERS (%3 + weitere %3 für jede Referenz, maximal %15)
         const currentReferralCount = referrer.referralCount || 0;
-        referrerDiscount = 3 + currentReferralCount * 3; // Erst %3, dann schrittweise
-        referrerDiscount = Math.min(referrerDiscount, 15); // Max %15
+        const newReferralCount = currentReferralCount + 1;
+
+        // Neuer Rabattprozentsatz (3 + für jede Empfehlung +3, max. 15)
+        referrerDiscount = calcReferrerDiscount(newReferralCount);
 
         const referrerFinalPrice =
           referrer.price - (referrer.price * referrerDiscount) / 100;
 
-        console.log("Referenzvorgang - EMPFEHLER BELOHNEN:", {
-          referrer: referrer.id,
-          currentCount: currentReferralCount,
-          newCount: currentReferralCount + 1,
-          referrerDiscount,
-          referrerOriginalPrice: referrer.price,
-          referrerFinalPrice,
-        });
-
-        // Referenzzähler aktualisieren UND den Preis des Vorschlagenden rabattieren
+        // Update Referrer
         const { error: updateError } = await supabaseAdmin
           .from("customers")
           .update({
-            referralCount: currentReferralCount + 1,
+            referralCount: newReferralCount,
             discountRate: referrerDiscount,
             finalPrice: referrerFinalPrice,
             updatedAt: new Date().toISOString(),
@@ -117,55 +213,62 @@ export async function POST(req: Request) {
 
         if (updateError) {
           console.error("Vorgeschlagener Aktualisierungsfehler:", updateError);
+        } else {
+          // Bereite den E-Mail-Inhalt für den Referrer vor.
+          if (referrer.email) {
+            const newCustomerFullname = [body.firstname, body.lastname]
+              .filter(Boolean)
+              .join(" ");
+            referrerEmailBundle = buildReferrerEmail({
+              refFirst: referrer.firstname ?? "",
+              refLast: referrer.lastname ?? "",
+              refEmail: referrer.email,
+              myReferralCode: referrer.myReferralCode,
+              newCount: newReferralCount,
+              discountRate: referrerDiscount,
+              newCustomerFullname:
+                newCustomerFullname.length > 0
+                  ? newCustomerFullname
+                  : undefined,
+            });
+          }
         }
       }
     }
 
-    // Generate a unique reference code
-    const generateReferralCode = () => {
-      const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-      let result = "";
-      for (let i = 0; i < 8; i++) {
-        result += chars.charAt(Math.floor(Math.random() * chars.length));
-      }
-      return result;
-    };
-
+    // Neuen Kunden einen einzigartigen Empfehlungscode erstellen
     let myReferralCode = generateReferralCode();
-
-    // Generiere erneut, bis der Code einzigartig ist.
     while (true) {
       const { data: existing } = await supabaseAdmin
         .from("customers")
         .select("myReferralCode")
         .eq("myReferralCode", myReferralCode)
         .single();
-
       if (!existing) break;
       myReferralCode = generateReferralCode();
     }
 
-    // Kundendaten vorbereiten - NEUER KUNDE KOMMT ZUM NORMALEN PREIS
+    // Neuer Kundenregistrierungs-Payload
     const customerData = {
-      id: createId(), // CUID erstellen
+      id: createId(),
       firstname: body.firstname,
       lastname: body.lastname,
       companyname: body.companyname,
       email: body.email,
       phone: body.phone,
       address: body.address,
-      reference: body.reference, // Welchen Referenzcode du verwendet hast, notiere.
-      price: body.price, // Originalpreis (KEIN Rabatt)
+      reference: body.reference || null, // verwendeter Referenzcode
+      price: body.price, // Originalpreis
       myReferralCode,
-      finalPrice: body.price, // Ein neuer Kunde zahlt den normalen Preis.
-      discountRate: null, // Yeniem Kunden gibt es keinen Rabatt.
+      finalPrice: finalPriceForNewCustomer, // neuer Kunde normaler Preis
+      discountRate: null, // Für neue Kunden gibt es keinen Rabatt.
       referralCount: 0,
       totalEarnings: 0,
       createdAt: body.createdAt || new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
 
-    // Kunden speichern
+    // Neuen Kunden speichern
     const { data: customer, error } = await supabaseAdmin
       .from("customers")
       .insert([customerData])
@@ -174,27 +277,37 @@ export async function POST(req: Request) {
 
     if (error) {
       console.error("Customer insert error:", error);
+      
+      // E-Mail-Fehler bei der eindeutigen Einschränkung mit spezieller Nachricht
+      if (error.message && error.message.includes('duplicate key value violates unique constraint "customers_email_key"')) {
+        return NextResponse.json(
+          { success: false, error: "This email address is already registered. Each customer must have a unique email address." },
+          { status: 409 }
+        );
+      }
+      
       return NextResponse.json(
         { success: false, error: error.message },
         { status: 500 }
       );
     }
 
-    // Wenn ein Referenzvorgang vorliegt, speichern.
+    //  Protokolliere den -Vorgang
     if (referrerCode && referrerDiscount > 0) {
       await supabaseAdmin.from("referral_transactions").insert([
         {
           referrerCode,
           newCustomerId: customer.id,
           discountRate: referrerDiscount,
-          originalPrice: body.price, // Preis für den neuen Kunden
-          finalPrice: body.price, // Der neue Kunde zahlte den normalen Preis.
+          originalPrice: body.price, // Preis für neuen Kunden
+          finalPrice: body.price, // neuer Kunde hat normal bezahlt
           referralLevel: Math.ceil(referrerDiscount / 3),
           createdAt: new Date().toISOString(),
         },
       ]);
     }
 
+    // Antwort: Wir geben auch die E-Mail-Parameter zurück, die an den Referrer gesendet werden.
     return NextResponse.json({
       success: true,
       data: customer,
@@ -204,6 +317,15 @@ export async function POST(req: Request) {
           ? {
               rate: referrerDiscount,
               message: `Der empfehlende Kunde hat ${referrerDiscount}% Rabatt erhalten!`,
+            }
+          : null,
+      // Falls die Referrer-E-Mail-Parameter vorbereitet wurden, können Sie diese clientseitig mit EmailJS senden:  
+
+      referrerEmail:
+        referrerEmailBundle
+          ? {
+              emailContent: referrerEmailBundle.emailContent,
+              emailParams: referrerEmailBundle.emailParams,
             }
           : null,
     });
