@@ -61,10 +61,20 @@ export async function GET(request: Request) {
   }
 }
 
-// Assistent: Neuer Empfehlungsrabatt (3% + zusätzlich 3% pro Empfehlung, max. 15%)
-function calcReferrerDiscount(nextReferralCount: number) {
-  const base = 3 + (nextReferralCount - 1) * 3;
-  return Math.min(base, 15);
+// Yardımcı: Her referansta mevcut fiyat üzerinden artan yüzde indirim uygulama (maksimum 3 referans)
+function calcDiscountedPrice(originalPrice: number, referralCount: number) {
+  if (referralCount === 0) return originalPrice;
+
+  let currentPrice = originalPrice;
+
+  // Her referans için mevcut fiyat üzerinden artan yüzde indirim uygula (maksimum 3 referans)
+  for (let i = 1; i <= Math.min(referralCount, 3); i++) {
+    const discountPercentage = i * 3; // 3%, 6%, 9%
+    const discountAmount = currentPrice * (discountPercentage / 100);
+    currentPrice = currentPrice - discountAmount;
+  }
+
+  return currentPrice;
 }
 
 // Helfer: Erstelle einen 8-stelligen Empfehlungscode
@@ -85,8 +95,9 @@ function buildReferrerEmail({
   myReferralCode,
   newCount,
   discountRate,
-  newCustomerFullname,
   referrerPrice,
+  referrerFinalPrice,
+  currentDiscountAmount,
 }: {
   refFirst: string;
   refLast: string;
@@ -94,47 +105,99 @@ function buildReferrerEmail({
   myReferralCode: string;
   newCount: number;
   discountRate: number;
-  newCustomerFullname?: string;
   referrerPrice?: number;
+  referrerFinalPrice?: number;
+  currentDiscountAmount?: number;
 }) {
-  const hasReachedMaximum = newCount >= 5;
-  const savings = referrerPrice ? (referrerPrice * discountRate) / 100 : 0;
+  const hasReachedMaximum = newCount >= 3;
+  const totalSavings =
+    referrerPrice && referrerFinalPrice
+      ? referrerPrice - referrerFinalPrice
+      : 0;
+  const currentDiscount = currentDiscountAmount || 0;
 
   const emailContent = `
 Hallo ${refFirst} ${refLast},
 
 🎉 HERZLICHEN GLÜCKWUNSCH! 🎉
 
-Eine neue Person hat Ihren Empfehlungscode ${myReferralCode} verwendet und Sie haben dadurch einen zusätzlichen Rabatt erhalten!
+Eine neue Person hat Ihren Empfehlungscode **${myReferralCode}** verwendet und Sie haben dadurch einen zusätzlichen Rabatt erhalten!
 
 📈 Ihre aktuelle Situation:
 • Empfehlungen gesamt: ${newCount}
-• Ihr neuer Rabattsatz: ${discountRate}%
-• Ihre Ersparnis: €${savings.toFixed(2)}
+• Ihr Projektpreis: €${referrerPrice?.toFixed(2) || "0.00"}
+• Aktueller Rabatt: ${discountRate}% (€${currentDiscount.toFixed(2)})
+• Ihre Gesamtersparnis: €${totalSavings.toFixed(2)}
+
+📊 TRANSPARENTE BERECHNUNG:
+${
+  newCount === 1
+    ? `
+• Ihr ursprünglicher Preis: €${referrerPrice?.toFixed(2)}
+• 1. Empfehlung → 3% Rabatt
+• Berechnung: €${referrerPrice?.toFixed(2)} - (€${referrerPrice?.toFixed(
+        2
+      )} × 3%) = €${referrerPrice?.toFixed(2)} - €${currentDiscount.toFixed(
+        2
+      )} = €${referrerFinalPrice?.toFixed(2)}
+`
+    : newCount === 2
+    ? `
+• Ihr ursprünglicher Preis: €${referrerPrice?.toFixed(2)}
+• Nach 1. Empfehlung: €${(referrerPrice! * 0.97).toFixed(2)}
+• 2. Empfehlung → 6% Rabatt auf aktuellen Preis
+• Berechnung: €${(referrerPrice! * 0.97).toFixed(2)} - (€${(
+        referrerPrice! * 0.97
+      ).toFixed(2)} × 6%) = €${(referrerPrice! * 0.97).toFixed(
+        2
+      )} - €${currentDiscount.toFixed(2)} = €${referrerFinalPrice?.toFixed(2)}
+`
+    : newCount === 3
+    ? `
+• Ihr ursprünglicher Preis: €${referrerPrice?.toFixed(2)}
+• Nach 1. Empfehlung: €${(referrerPrice! * 0.97).toFixed(2)}
+• Nach 2. Empfehlung: €${(referrerPrice! * 0.97 * 0.94).toFixed(2)}
+• 3. Empfehlung → 9% Rabatt auf aktuellen Preis
+• Berechnung: €${(referrerPrice! * 0.97 * 0.94).toFixed(2)} - (€${(
+        referrerPrice! *
+        0.97 *
+        0.94
+      ).toFixed(2)} × 9%) = €${(referrerPrice! * 0.97 * 0.94).toFixed(
+        2
+      )} - €${currentDiscount.toFixed(2)} = €${referrerFinalPrice?.toFixed(2)}
+`
+    : ""
+}
+✅ Jeder Rabatt wird immer auf den aktuell gültigen Preis angewendet - fair und transparent!
 
 💳 RABATT-AUSZAHLUNG:
-Teilen Sie uns Ihre IBAN-Daten mit und wir überweisen Ihnen den Rabattbetrag von €${savings.toFixed(
+Teilen Sie uns Ihre IBAN-Daten mit und wir überweisen Ihnen den Rabattbetrag von €${currentDiscount.toFixed(
     2
   )} innerhalb von maximal einer Woche auf Ihr Bankkonto!
 
-📧 IBAN senden an: aliramazanyildirim@gmail.com
+💡 HINWEIS: Der Rabattbetrag von €${currentDiscount.toFixed(
+    2
+  )} entspricht der ${discountRate}%-Ersparnis auf Ihren aktuellen Projektpreis von €${(
+    currentDiscount /
+    (discountRate / 100)
+  ).toFixed(2)}.
+
+💳 IBAN senden an: aliramazanyildirim@gmail.com
 ⏰ Auszahlungsdauer: Maximal 7 Werktage nach IBAN-Erhalt
 ${
   hasReachedMaximum
     ? `
 🏆 MAXIMUM ERREICHT!
-Sie haben das Maximum von 5 Empfehlungen erreicht und sichern sich dauerhaft 15% Rabatt auf alle zukünftigen Projekte! Gratulation zu dieser fantastischen Leistung!
+Sie haben das Maximum von 3 Empfehlungen erreicht und sichern sich dauerhaft 9% Rabatt auf alle zukünftigen Projekte! Gratulation zu dieser fantastischen Leistung!
 `
     : `
-✨ Noch ${5 - newCount} Empfehlungen bis zum Maximum von 15% Rabatt!
+✨ Noch ${3 - newCount} Empfehlungen bis zum Maximum von 9% Rabatt!
 `
 }
 💰 Rabattstaffel:
 • 1. Empfehlung → 3% Rabatt
 • 2. Empfehlung → 6% Rabatt  
-• 3. Empfehlung → 9% Rabatt
-• 4. Empfehlung → 12% Rabatt
-• 5. Empfehlung → 15% Rabatt (Maximum)
+• 3. Empfehlung → 9% Rabatt (Maximum)
 
 🚀 Teilen Sie Ihren Code weiter:
 👉 ${myReferralCode}
@@ -212,11 +275,23 @@ export async function POST(req: Request) {
         const currentReferralCount = referrer.referralCount || 0;
         const newReferralCount = currentReferralCount + 1;
 
-        // Neuer Rabattprozentsatz (3 + für jede Empfehlung +3, max. 15)
-        referrerDiscount = calcReferrerDiscount(newReferralCount);
+        // Berechne den vorherigen Preis (den Preis vor diesem Referenzpunkt)
+        const previousPrice = calcDiscountedPrice(
+          referrer.price,
+          currentReferralCount
+        );
 
-        const referrerFinalPrice =
-          referrer.price - (referrer.price * referrerDiscount) / 100;
+        // Neue Preisberechnung: Stufenweiser 3% Rabatt auf den reduzierten Preis
+        const referrerFinalPrice = calcDiscountedPrice(
+          referrer.price,
+          newReferralCount
+        );
+
+        // Bei diesem Verweis erhaltene Rabattbetrag
+        const currentDiscountAmount = previousPrice - referrerFinalPrice;
+
+        // Der auf dieser Referenzebene angewandte Prozentsatz (3 %, 6 %, 9 % - maximal 3 Referenzen)
+        referrerDiscount = Math.min(newReferralCount * 3, 9);
 
         // Update Referrer
         const { error: updateError } = await supabaseAdmin
@@ -234,9 +309,6 @@ export async function POST(req: Request) {
         } else {
           // Bereite den E-Mail-Inhalt für den Referrer vor.
           if (referrer.email) {
-            const newCustomerFullname = [body.firstname, body.lastname]
-              .filter(Boolean)
-              .join(" ");
             referrerEmailBundle = buildReferrerEmail({
               refFirst: referrer.firstname ?? "",
               refLast: referrer.lastname ?? "",
@@ -245,10 +317,8 @@ export async function POST(req: Request) {
               newCount: newReferralCount,
               discountRate: referrerDiscount,
               referrerPrice: referrer.price,
-              newCustomerFullname:
-                newCustomerFullname.length > 0
-                  ? newCustomerFullname
-                  : undefined,
+              referrerFinalPrice: referrerFinalPrice,
+              currentDiscountAmount: currentDiscountAmount,
             });
           }
         }
@@ -282,7 +352,6 @@ export async function POST(req: Request) {
       finalPrice: finalPriceForNewCustomer, // neuer Kunde normaler Preis
       discountRate: null, // Für neue Kunden gibt es keinen Rabatt.
       referralCount: 0,
-      totalEarnings: 0,
       createdAt: body.createdAt || new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
