@@ -174,9 +174,13 @@ export default function CustomersAdminPage() {
 
     // E-Mail-Einzigartigkeitsprüfung (für neuen Kunden)
     if (!editingCustomer) {
-      const existingCustomer = customers.find(c => c.email.toLowerCase() === email.toLowerCase());
+      const existingCustomer = customers.find(
+        (c) => c.email.toLowerCase() === email.toLowerCase()
+      );
       if (existingCustomer) {
-        toast.error(`This email address is already registered to: ${existingCustomer.firstname} ${existingCustomer.lastname}`);
+        toast.error(
+          `This email address is already registered to: ${existingCustomer.firstname} ${existingCustomer.lastname}`
+        );
         return;
       }
     }
@@ -211,20 +215,26 @@ export default function CustomersAdminPage() {
         // Wenn ein neuer Kunde registriert wurde und die Referrer-E-Mail-Parameter vorhanden sind, sende eine E-Mail.
         if (!editingCustomer && json.referrerEmail) {
           try {
-            console.log("Referrer-E-Mail wird gesendet:", json.referrerEmail.emailParams);
-            console.log("Ziel-E-Mail-Adresse:", json.referrerEmail.emailParams.to_email);
+            console.log(
+              "Referrer-E-Mail wird gesendet:",
+              json.referrerEmail.emailParams
+            );
+            console.log(
+              "Ziel-E-Mail-Adresse:",
+              json.referrerEmail.emailParams.to_email
+            );
             console.log("Zielname:", json.referrerEmail.emailParams.to_name);
-            
+
             // E-MailJS-Informationen aus den Umgebungsvariablen abrufen
             const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID;
             const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID;
             const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
-            
+
             if (!serviceId || !templateId || !publicKey) {
               console.error("EmailJS-Umgebungsvariablen fehlen!");
               return;
             }
-            
+
             // Bereite die Parameter für die Vorlage vor
             const emailParams = {
               to_email: json.referrerEmail.emailParams.to_email,
@@ -234,20 +244,20 @@ export default function CustomersAdminPage() {
               name: json.referrerEmail.emailParams.to_name,
               message: json.referrerEmail.emailParams.message,
             };
-            
-            console.log("Parameter, die an die Vorlage gesendet werden:", emailParams);
-            
-            await emailjs.send(
-              serviceId,
-              templateId,
-              emailParams,
-              publicKey
+
+            console.log(
+              "Parameter, die an die Vorlage gesendet werden:",
+              emailParams
             );
-            
+
+            await emailjs.send(serviceId, templateId, emailParams, publicKey);
+
             console.log("Der Empfehlungs-E-Mail wurde erfolgreich gesendet!");
-            
           } catch (emailError: any) {
-            console.error("Fehler beim Senden der Referrer-E-Mail:", emailError);
+            console.error(
+              "Fehler beim Senden der Referrer-E-Mail:",
+              emailError
+            );
             console.error("Fehlerdetails:", emailError?.message || emailError);
             // Der E-Mail-Fehler soll den Hauptprozess nicht beeinträchtigen
           }
@@ -576,7 +586,7 @@ export default function CustomersAdminPage() {
                               </div>
                             </div>
                           </div>
-                            <div className="flex flex-wrap gap-2 sm:gap-3 mb-4 sm:mb-6 justify-end">
+                          <div className="flex flex-wrap gap-2 sm:gap-3 mb-4 sm:mb-6 justify-end">
                             <button
                               onClick={async () => {
                                 if (customer.myReferralCode) {
@@ -629,21 +639,36 @@ export default function CustomersAdminPage() {
                                     result.success &&
                                     result.data.emailParams
                                   ) {
+                                    // Bereite  die Parameter für die EmailJS-Vorlage vor
+                                    const emailParams = {
+                                      to_email:
+                                        result.data.emailParams.to_email,
+                                      subject: result.data.emailParams.subject,
+                                      from_name:
+                                        result.data.emailParams.from_name,
+                                      reply_to:
+                                        result.data.emailParams.reply_to,
+                                      name: result.data.emailParams.to_name,
+                                      message: result.data.emailParams.message,
+                                    };
+
+                                    console.log(
+                                      "EmailJS'e gönderilen parametreler:",
+                                      emailParams
+                                    );
+
                                     // E-Mail mit EmailJS senden
                                     const emailResult = await emailjs.send(
                                       process.env
                                         .NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
                                       process.env
-                                        .NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!, //Die vorhandene Vorlage wird verwendet.
-                                      {
-                                        name: result.data.emailParams.from_name,
-                                        email: result.data.emailParams.to_email,
-                                        message:
-                                          result.data.emailParams.message,
-                                      },
+                                        .NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
+                                      emailParams,
                                       process.env
                                         .NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!
                                     );
+
+                                    console.log("EmailJS-Ergebnis:", emailResult);
 
                                     toast.success(
                                       `Referral code sent via email: ${result.data.referralCode}`
@@ -910,7 +935,6 @@ export default function CustomersAdminPage() {
                                 <p>
                                   Discount: %{referralValidation.discount.rate}
                                 </p>
-                               
                               </div>
                             )}
                           </div>
