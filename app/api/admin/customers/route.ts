@@ -86,6 +86,7 @@ function buildReferrerEmail({
   newCount,
   discountRate,
   newCustomerFullname,
+  referrerPrice,
 }: {
   refFirst: string;
   refLast: string;
@@ -94,33 +95,49 @@ function buildReferrerEmail({
   newCount: number;
   discountRate: number;
   newCustomerFullname?: string;
+  referrerPrice?: number;
 }) {
   const hasReachedMaximum = newCount >= 5;
+  const savings = referrerPrice ? (referrerPrice * discountRate) / 100 : 0;
 
   const emailContent = `
 Hallo ${refFirst} ${refLast},
 
-großartige Neuigkeiten! Dank Ihrer Empfehlung ${
-    newCustomerFullname ? `"${newCustomerFullname}"` : "eines neuen Kunden"
-  } ist Ihre Vorteilsstufe erneut gestiegen.
+🎉 HERZLICHEN GLÜCKWUNSCH! 🎉
 
-✅ Aktueller Stand:
-• Gesamtanzahl Ihrer Empfehlungen: ${newCount}
-• Ihr persönlicher Rabatt: ${discountRate}%${hasReachedMaximum ? " (Maximum erreicht 🎉)" : ""}
+Eine neue Person hat Ihren Empfehlungscode ${myReferralCode} verwendet und Sie haben dadurch einen zusätzlichen Rabatt erhalten!
 
-Ihr Empfehlungscode bleibt aktiv – teilen Sie ihn weiterhin und helfen Sie anderen, professionelle Unterstützung zu erhalten:
+📈 Ihre aktuelle Situation:
+• Empfehlungen gesamt: ${newCount}
+• Ihr neuer Rabattsatz: ${discountRate}%
+• Ihre Ersparnis: €${savings.toFixed(2)}
 
-👉 ${myReferralCode}
+💳 RABATT-AUSZAHLUNG:
+Teilen Sie uns Ihre IBAN-Daten mit und wir überweisen Ihnen den Rabattbetrag von €${savings.toFixed(
+    2
+  )} innerhalb von maximal einer Woche auf Ihr Bankkonto!
 
+📧 IBAN senden an: aliramazanyildirim@gmail.com
+⏰ Auszahlungsdauer: Maximal 7 Werktage nach IBAN-Erhalt
 ${
   hasReachedMaximum
-    ? `🏆 MAXIMUM ERREICHT!
-Sie haben 5 Empfehlungen erreicht und sichern sich dauerhaft 15% Rabatt auf alle zukünftigen Projekte. Herzlichen Glückwunsch!`
-    : `✨ Nächste Schritte:
-• Jede weitere Empfehlung bringt Sie näher an das Maximum von 15%
-• Ihr Vorteil wächst automatisch mit
-• Freunde & Kollegen profitieren von hochwertigen Weblösungen`
+    ? `
+🏆 MAXIMUM ERREICHT!
+Sie haben das Maximum von 5 Empfehlungen erreicht und sichern sich dauerhaft 15% Rabatt auf alle zukünftigen Projekte! Gratulation zu dieser fantastischen Leistung!
+`
+    : `
+✨ Noch ${5 - newCount} Empfehlungen bis zum Maximum von 15% Rabatt!
+`
 }
+💰 Rabattstaffel:
+• 1. Empfehlung → 3% Rabatt
+• 2. Empfehlung → 6% Rabatt  
+• 3. Empfehlung → 9% Rabatt
+• 4. Empfehlung → 12% Rabatt
+• 5. Empfehlung → 15% Rabatt (Maximum)
+
+🚀 Teilen Sie Ihren Code weiter:
+👉 ${myReferralCode}
 
 🌐 Meine Dienstleistungen:
 • Professionelle Websites
@@ -128,10 +145,13 @@ Sie haben 5 Empfehlungen erreicht und sichern sich dauerhaft 15% Rabatt auf alle
 • Mobile Anwendungen
 • Maßgeschneiderte Webentwicklung
 
+💡 Jetzt aktiv werden:
+Teilen Sie Ihren Code noch heute mit Freunden, Geschäftspartnern oder Kollegen und verwandeln Sie jede Empfehlung in einen Vorteil!
+
 📧 Kontakt: aliramazanyildirim@gmail.com
 🌐 Portfolio: https://dev-portfolio-obhj.onrender.com
 
-Vielen Dank für Ihre Unterstützung – gemeinsam schaffen wir digitale Lösungen, die begeistern!
+Vielen Dank, dass Sie mein Netzwerk erweitern und anderen helfen, professionelle Webentwicklungsdienstleistungen zu erhalten!
 
 Herzliche Grüße
 Ali Ramazan Yildirim
@@ -144,7 +164,7 @@ Diese E-Mail wurde automatisch generiert. Bei Fragen wenden Sie sich bitte an al
   const emailParams = {
     to_email: refEmail,
     to_name: `${refFirst} ${refLast}`,
-    subject: `🎉 Danke für Ihre Empfehlung – Jetzt ${discountRate}% Rabatt`,
+    subject: `🎉 Danke für Ihre Empfehlung! ${discountRate}% Rabatt erhalten - ${myReferralCode}`,
     message: emailContent,
     from_name: "Ali Ramazan Yildirim",
     reply_to: "aliramazanyildirim@gmail.com",
@@ -161,19 +181,17 @@ export async function POST(req: Request) {
     // Wenn er mit einem Referenzcode gekommen ist: Finde die Person, die ihn empfohlen hat, aktualisiere den Rabatt und bereite die E-Mail vor.
     let referrerCode: string | null = null;
     let referrerDiscount = 0;
-    let referrerEmailBundle:
-      | {
-          emailContent: string;
-          emailParams: {
-            to_email: string;
-            to_name: string;
-            subject: string;
-            message: string;
-            from_name: string;
-            reply_to: string;
-          };
-        }
-      | null = null;
+    let referrerEmailBundle: {
+      emailContent: string;
+      emailParams: {
+        to_email: string;
+        to_name: string;
+        subject: string;
+        message: string;
+        from_name: string;
+        reply_to: string;
+      };
+    } | null = null;
 
     // NEUKUNDE ZAHLT DEN NORMALEN PREIS
     const finalPriceForNewCustomer = body.price || 0;
@@ -226,6 +244,7 @@ export async function POST(req: Request) {
               myReferralCode: referrer.myReferralCode,
               newCount: newReferralCount,
               discountRate: referrerDiscount,
+              referrerPrice: referrer.price,
               newCustomerFullname:
                 newCustomerFullname.length > 0
                   ? newCustomerFullname
@@ -277,15 +296,24 @@ export async function POST(req: Request) {
 
     if (error) {
       console.error("Customer insert error:", error);
-      
+
       // E-Mail-Fehler bei der eindeutigen Einschränkung mit spezieller Nachricht
-      if (error.message && error.message.includes('duplicate key value violates unique constraint "customers_email_key"')) {
+      if (
+        error.message &&
+        error.message.includes(
+          'duplicate key value violates unique constraint "customers_email_key"'
+        )
+      ) {
         return NextResponse.json(
-          { success: false, error: "This email address is already registered. Each customer must have a unique email address." },
+          {
+            success: false,
+            error:
+              "This email address is already registered. Each customer must have a unique email address.",
+          },
           { status: 409 }
         );
       }
-      
+
       return NextResponse.json(
         { success: false, error: error.message },
         { status: 500 }
@@ -319,15 +347,14 @@ export async function POST(req: Request) {
               message: `Der empfehlende Kunde hat ${referrerDiscount}% Rabatt erhalten!`,
             }
           : null,
-      // Falls die Referrer-E-Mail-Parameter vorbereitet wurden, können Sie diese clientseitig mit EmailJS senden:  
+      // Falls die Referrer-E-Mail-Parameter vorbereitet wurden, können Sie diese clientseitig mit EmailJS senden:
 
-      referrerEmail:
-        referrerEmailBundle
-          ? {
-              emailContent: referrerEmailBundle.emailContent,
-              emailParams: referrerEmailBundle.emailParams,
-            }
-          : null,
+      referrerEmail: referrerEmailBundle
+        ? {
+            emailContent: referrerEmailBundle.emailContent,
+            emailParams: referrerEmailBundle.emailParams,
+          }
+        : null,
     });
   } catch (error: any) {
     console.error("POST customer error:", error);
