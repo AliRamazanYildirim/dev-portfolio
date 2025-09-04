@@ -56,7 +56,7 @@ export default function CustomersAdminPage() {
   const [reference, setReference] = useState("");
   const [price, setPrice] = useState("");
 
-  // Referans kodu validasyon durumu
+  // Reference code validation status
   const [referralValidation, setReferralValidation] = useState<{
     isValid: boolean;
     referrerName?: string;
@@ -105,7 +105,7 @@ export default function CustomersAdminPage() {
     }
   };
 
-  // Referans kodunu doğrula
+  // Verification of the reference code
   const validateReferralCode = async (code: string, basePrice: string) => {
     if (!code.trim() || !basePrice.trim()) {
       setReferralValidation(null);
@@ -131,21 +131,21 @@ export default function CustomersAdminPage() {
           discount: result.data.discount,
         });
         toast.success(
-          `Referans kodu geçerli! ${result.data.discount.rate}% indirim uygulanacak`
+          `Valid reference code! ${result.data.discount.rate}% discount will be applied`
         );
       } else {
         setReferralValidation({
           isValid: false,
           error: result.error,
         });
-        toast.error("Geçersiz referans kodu");
+        toast.error("Invalid reference code");
       }
     } catch (error) {
       setReferralValidation({
         isValid: false,
-        error: "Referans kodu kontrolü sırasında hata oluştu",
+        error: "An error occurred while checking the reference code.",
       });
-      toast.error("Referans kodu kontrol edilemedi");
+      toast.error("Reference code could not be verified");
     }
   };
 
@@ -225,10 +225,10 @@ export default function CustomersAdminPage() {
         if (!res.ok || !json.success) {
           throw new Error(json?.error || `HTTP ${res.status}`);
         }
-        return "Müşteri silindi!";
+        return "Customer has been deleted!";
       })();
       await toast.promise(promise, {
-        loading: "Siliniyor...",
+        loading: "Will be deleted...",
         success: (msg) => (typeof msg === "string" ? msg : "Deleted"),
         error: (e) => (e instanceof Error ? e.message : "Deletion failed"),
       });
@@ -496,7 +496,7 @@ export default function CustomersAdminPage() {
                                 {customer.myReferralCode && (
                                   <span className="inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold bg-blue-500 text-white self-start">
                                     Referans: {customer.myReferralCode} (
-                                    {customer.referralCount || 0} kişi)
+                                    {customer.referralCount || 0} Person)
                                   </span>
                                 )}
                               </div>
@@ -520,7 +520,7 @@ export default function CustomersAdminPage() {
                               </div>
                             </div>
                           </div>
-                          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 lg:flex-row lg:absolute lg:bottom-6 lg:right-6">
+                            <div className="flex flex-wrap gap-2 sm:gap-3 mb-4 sm:mb-6 justify-end">
                             <button
                               onClick={async () => {
                                 if (customer.myReferralCode) {
@@ -528,17 +528,17 @@ export default function CustomersAdminPage() {
                                     customer.myReferralCode
                                   );
                                   toast.success(
-                                    "Referans kodu kopyalandı: " +
+                                    "Reference code copied: " +
                                       customer.myReferralCode
                                   );
                                 } else {
-                                  toast.error("Referans kodu bulunamadı");
+                                  toast.error("Reference code not found");
                                 }
                               }}
-                              className="inline-flex items-center justify-center px-4 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-xl font-medium shadow-sm transition-all duration-200 hover:shadow-md hover:scale-105 text-sm sm:text-base"
+                              className="inline-flex items-center justify-center px-3 sm:px-4 lg:px-6 py-2 sm:py-2.5 lg:py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg lg:rounded-xl font-medium shadow-sm transition-all duration-200 hover:shadow-md hover:scale-105 text-xs sm:text-sm lg:text-base whitespace-nowrap"
                             >
                               <svg
-                                className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2"
+                                className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5 mr-1 sm:mr-1.5 lg:mr-2"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
@@ -550,7 +550,7 @@ export default function CustomersAdminPage() {
                                   d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
                                 />
                               </svg>
-                              Referans Paylaş
+                              Share Referral
                             </button>
                             <button
                               onClick={async () => {
@@ -573,12 +573,12 @@ export default function CustomersAdminPage() {
                                     result.success &&
                                     result.data.emailParams
                                   ) {
-                                    // EmailJS ile mail gönder
+                                    // E-Mail mit EmailJS senden
                                     const emailResult = await emailjs.send(
                                       process.env
                                         .NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
                                       process.env
-                                        .NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!, // Mevcut template kullanılacak
+                                        .NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!, //Die vorhandene Vorlage wird verwendet.
                                       {
                                         name: result.data.emailParams.from_name,
                                         email: result.data.emailParams.to_email,
@@ -590,23 +590,23 @@ export default function CustomersAdminPage() {
                                     );
 
                                     toast.success(
-                                      `Referans kodu mail olarak gönderildi: ${result.data.referralCode}`
+                                      `Referral code sent via email: ${result.data.referralCode}`
                                     );
                                   } else {
                                     toast.error(
-                                      "Mail gönderilemedi: " +
-                                        (result.error || "Bilinmeyen hata")
+                                      "Email could not be sent: " +
+                                        (result.error || "Unknown error")
                                     );
                                   }
                                 } catch (error) {
                                   console.error("Mail error:", error);
-                                  toast.error("Mail gönderme hatası");
+                                  toast.error("Email sending error");
                                 }
                               }}
-                              className="inline-flex items-center justify-center px-4 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-xl font-medium shadow-sm transition-all duration-200 hover:shadow-md hover:scale-105 text-sm sm:text-base"
+                              className="inline-flex items-center justify-center px-3 sm:px-4 lg:px-6 py-2 sm:py-2.5 lg:py-3 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-lg lg:rounded-xl font-medium shadow-sm transition-all duration-200 hover:shadow-md hover:scale-105 text-xs sm:text-sm lg:text-base whitespace-nowrap"
                             >
                               <svg
-                                className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2"
+                                className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5 mr-1 sm:mr-1.5 lg:mr-2"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
@@ -618,14 +618,14 @@ export default function CustomersAdminPage() {
                                   d="M3 8l7.89 7.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
                                 />
                               </svg>
-                              Mail Gönder
+                              Send Email
                             </button>
                             <button
                               onClick={() => editCustomer(customer)}
-                              className="inline-flex items-center justify-center px-4 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-xl font-medium shadow-sm transition-all duration-200 hover:shadow-md hover:scale-105 text-sm sm:text-base"
+                              className="inline-flex items-center justify-center px-3 sm:px-4 lg:px-6 py-2 sm:py-2.5 lg:py-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-lg lg:rounded-xl font-medium shadow-sm transition-all duration-200 hover:shadow-md hover:scale-105 text-xs sm:text-sm lg:text-base whitespace-nowrap"
                             >
                               <svg
-                                className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2"
+                                className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5 mr-1 sm:mr-1.5 lg:mr-2"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
@@ -641,10 +641,10 @@ export default function CustomersAdminPage() {
                             </button>
                             <button
                               onClick={() => deleteCustomer(customer.id)}
-                              className="inline-flex items-center justify-center px-4 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-xl font-medium shadow-sm transition-all duration-200 hover:shadow-md hover:scale-105 text-sm sm:text-base"
+                              className="inline-flex items-center justify-center px-3 sm:px-4 lg:px-6 py-2 sm:py-2.5 lg:py-3 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-lg lg:rounded-xl font-medium shadow-sm transition-all duration-200 hover:shadow-md hover:scale-105 text-xs sm:text-sm lg:text-base whitespace-nowrap"
                             >
                               <svg
-                                className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2"
+                                className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5 mr-1 sm:mr-1.5 lg:mr-2"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
@@ -804,11 +804,11 @@ export default function CustomersAdminPage() {
                   </div>
                   <div className="lg:col-span-2">
                     <label className="block text-sm font-semibold text-[#131313] mb-2 sm:mb-3">
-                      Reference (Referans Kodu - Opsiyonel)
+                      Reference (Referenzcode - Optional)
                     </label>
                     <input
                       type="text"
-                      placeholder="Referans kodu girin..."
+                      placeholder="Enter reference code..."
                       value={reference}
                       onChange={(e) => {
                         setReference(e.target.value);
@@ -847,7 +847,7 @@ export default function CustomersAdminPage() {
                               <strong>Valid reference code!</strong>
                             </div>
                             <p>
-                              Referans veren: {referralValidation.referrerName}
+                              Referred by: {referralValidation.referrerName}
                             </p>
                             {referralValidation.discount && (
                               <div className="mt-1 text-xs">
@@ -887,7 +887,7 @@ export default function CustomersAdminPage() {
                     </label>
                     <input
                       type="number"
-                      placeholder="Fiyat girin..."
+                      placeholder="Enter price..."
                       value={price}
                       onChange={(e) => {
                         setPrice(e.target.value);
