@@ -16,7 +16,8 @@ interface Customer {
   address: string;
   reference: string;
   price?: number | null;
-  created_at?: string | null;
+  createdAt?: string | null; // Prisma style (camelCase)
+  created_at?: string | null; // Supabase style (snake_case) - for compatibility
 }
 
 function formatMoney(n: number) {
@@ -24,15 +25,26 @@ function formatMoney(n: number) {
 }
 
 function sparklinePath(values: number[], width = 240, height = 60) {
-  if (!values || values.length === 0) return "";
+  if (!values || values.length === 0) return "M0,30 L240,30"; // default horizontal line
+
+  // If only one value, draw a horizontal line
+  if (values.length === 1) {
+    return `M0,${height / 2} L${width},${height / 2}`;
+  }
+
   const max = Math.max(...values);
   const min = Math.min(...values);
-  const range = max - min || 1;
+
+  // If all values are the same, create a slight variation for visualization
+  const range = max - min || Math.max(1, max * 0.1);
   const step = width / Math.max(1, values.length - 1);
+
   return values
     .map((v, i) => {
       const x = Math.round(i * step);
-      const y = Math.round(height - ((v - min) / range) * height);
+      // Add padding to prevent line from touching edges
+      const normalizedY = range > 0 ? (v - min) / range : 0.5;
+      const y = Math.round(height * 0.1 + normalizedY * height * 0.8);
       return `${i === 0 ? "M" : "L"}${x},${y}`;
     })
     .join(" ");
@@ -76,13 +88,59 @@ export default function CustomersStatisticsPage() {
       d.setDate(d.getDate() - (rangeDays - 1 - i));
       return d.toISOString().slice(0, 10);
     });
+
     const countsMap: Record<string, number> = {};
     customers.forEach((c) => {
-      if (!c.created_at) return;
-      const key = c.created_at.slice(0, 10);
-      countsMap[key] = (countsMap[key] || 0) + 1;
+      // Handle both createdAt (Prisma) and created_at (Supabase) formats
+      const dateValue = c.createdAt || c.created_at;
+      if (!dateValue) return;
+
+      // Parse the date properly
+      let dateKey = "";
+      try {
+        const date = new Date(dateValue);
+        if (!isNaN(date.getTime())) {
+          dateKey = date.toISOString().slice(0, 10);
+        }
+      } catch (e) {
+        // If it's already in YYYY-MM-DD format
+        if (
+          typeof dateValue === "string" &&
+          dateValue.match(/^\d{4}-\d{2}-\d{2}/)
+        ) {
+          dateKey = dateValue.slice(0, 10);
+        }
+      }
+
+      if (dateKey) {
+        countsMap[dateKey] = (countsMap[dateKey] || 0) + 1;
+      }
     });
-    const counts = days.map((d) => countsMap[d] || 0);
+
+    let counts = days.map((d) => countsMap[d] || 0);
+
+    // If no customers in the selected range, show all customer dates
+    const totalInRange = counts.reduce((a, b) => a + b, 0);
+    if (totalInRange === 0 && Object.keys(countsMap).length > 0) {
+      const allDates = Object.keys(countsMap).sort();
+      const earliestDate = allDates[0];
+      const latestDate = allDates[allDates.length - 1];
+
+      // Create new date range from earliest to latest customer
+      const start = new Date(earliestDate);
+      const end = new Date(latestDate);
+      const daysDiff =
+        Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) +
+        1;
+
+      const newDays = Array.from({ length: daysDiff }).map((_, i) => {
+        const d = new Date(start);
+        d.setDate(d.getDate() + i);
+        return d.toISOString().slice(0, 10);
+      });
+
+      counts = newDays.map((d) => countsMap[d] || 0);
+    }
 
     const topCustomers = [...customers]
       .filter((c) => typeof c.price === "number")
@@ -104,6 +162,10 @@ export default function CustomersStatisticsPage() {
     const start = (page - 1) * pageSize;
     return customers.slice(start, start + pageSize);
   }, [customers, page]);
+
+  const sparklinePathMemo = useMemo(() => {
+    return sparklinePath(stats.counts, 240, 40);
+  }, [stats.counts]);
 
   if (authLoading) {
     return (
@@ -241,16 +303,40 @@ export default function CustomersStatisticsPage() {
                       <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#131313]" />
                     </div>
                   ) : (
-                    <svg viewBox={`0 0 240 60`} className="w-full h-16">
-                      <path
-                        d={sparklinePath(stats.counts, 240, 40)}
-                        fill="none"
-                        stroke="#131313"
-                        strokeWidth={2}
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
+                    <>
+                      <svg viewBox={`0 0 240 60`} className="w-full h-16">
+                        <path
+                          d={sparklinePathMemo}
+                          fill="none"
+                          stroke="#131313"
+                          strokeWidth={2}
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                        {/* Add points for better visualization */}
+                        {stats.counts.map((count, index) => {
+                          const x =
+                            (index / Math.max(1, stats.counts.length - 1)) *
+                            240;
+                          const max = Math.max(...stats.counts);
+                          const min = Math.min(...stats.counts);
+                          const range = max - min || Math.max(1, max * 0.1);
+                          const normalizedY =
+                            range > 0 ? (count - min) / range : 0.5;
+                          const y = 40 * 0.1 + normalizedY * 40 * 0.8;
+
+                          return (
+                            <circle
+                              key={index}
+                              cx={x}
+                              cy={y}
+                              r="2"
+                              fill="#131313"
+                            />
+                          );
+                        })}
+                      </svg>
+                    </>
                   )}
                   <div className="grid grid-cols-3 gap-3 mt-4 text-sm text-[#131313]/70">
                     <div className="flex flex-col">
@@ -286,7 +372,7 @@ export default function CustomersStatisticsPage() {
 
               <div className="bg-[#eeede9] rounded-2xl p-4 sm:p-6 shadow-lg border border-white/20">
                 <h3 className="text-lg font-semibold text-[#131313] mb-4">
-                  Dear Kunden
+                  Top Customers
                 </h3>
                 {loading ? (
                   <div className="py-6 flex items-center justify-center">
@@ -366,7 +452,9 @@ export default function CustomersStatisticsPage() {
                                 {c.price != null ? formatMoney(c.price) : "-"}
                               </td>
                               <td className="py-3 text-sm text-[#131313]/80">
-                                {c.created_at ? c.created_at.slice(0, 10) : "-"}
+                                {c.createdAt || c.created_at
+                                  ? (c.createdAt || c.created_at)!.slice(0, 10)
+                                  : "-"}
                               </td>
                             </tr>
                           ))}
