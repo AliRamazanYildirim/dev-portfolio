@@ -28,10 +28,10 @@ export async function POST(request: Request) {
     }
 
     // Referenzstufe basierend auf Rabatt berechnen  
-    // Erste 3 % + 3 % für jeden weiteren Referenz, maximal 15 %  
+    // Erste 3 % + 3 % für jeden weiteren Referenz, maximal 9 %  
     const currentReferralCount = referrer.referralCount || 0;
     let discountRate = 3 + currentReferralCount * 3; // Erst %3, dann schrittweise
-    discountRate = Math.min(discountRate, 15); // Maximal %15 Rabatt
+    discountRate = Math.min(discountRate, 9); // Maximal %9 Rabatt
 
     // Berechne den reduzierten Preis
     const discountAmount = (basePrice * discountRate) / 100;
