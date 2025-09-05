@@ -35,7 +35,7 @@ export async function POST(request: Request) {
 
     // E-Mail-Inhalt erstellen
     const currentCount = customer.referralCount || 0;
-    const hasReachedMaximum = currentCount >= 5;
+    const hasReachedMaximum = currentCount >= 3;
     
     const emailContent = `
 Hallo ${customer.firstname} ${customer.lastname},
@@ -52,15 +52,13 @@ Mit Ihrem persönlichen Empfehlungscode sichern Sie sich immer größere Rabatte
 
 • 1. Empfehlung → 3% Rabatt
 • 2. Empfehlung → 6% Rabatt  
-• 3. Empfehlung → 9% Rabatt
-• 4. Empfehlung → 12% Rabatt
-• 5. Empfehlung → 15% Rabatt (Maximum)
+• 3. Empfehlung → 9% Rabatt (Maximum)
 
 📈 Sie haben bereits ${currentCount} Empfehlungen gesammelt${hasReachedMaximum ? ' – GLÜCKWUNSCH! 🎉' : ' – das bedeutet, Ihr Vorteil wächst schon jetzt!'}
 
 ${hasReachedMaximum ? `
 🏆 MAXIMUM ERREICHT!
-Sie haben das Maximum von 5 Empfehlungen erreicht und sichern sich dauerhaft 15% Rabatt auf alle zukünftigen Projekte! Ihr Code bleibt weiterhin aktiv – teilen Sie ihn gerne weiter, um anderen zu helfen, auch wenn Sie bereits die maximale Ersparnis erreicht haben.
+Sie haben das Maximum von 3 Empfehlungen erreicht und sichern sich dauerhaft 9% Rabatt auf alle zukünftigen Projekte! Ihr Code bleibt weiterhin aktiv – teilen Sie ihn gerne weiter, um anderen zu helfen, auch wenn Sie bereits die maximale Ersparnis erreicht haben.
 ` : `
 🚀 Ihre Vorteile in jeder Empfehlung:
 
@@ -95,18 +93,18 @@ Diese E-Mail wurde automatisch generiert. Bei Fragen wenden Sie sich bitte an al
     return NextResponse.json({
       success: true,
       data: {
-        referralCode: customer.myReferralCode,
-        customerName: `${customer.firstname} ${customer.lastname}`,
-        customerEmail: customerEmail,
-        emailContent: emailContent,
-        emailParams: {
-          to_email: customerEmail,
-          to_name: `${customer.firstname} ${customer.lastname}`,
-          subject: `Ihr Empfehlungscode: ${customer.myReferralCode} - Ali Ramazan Yildirim`,
-          message: emailContent,
-          from_name: "Ali Ramazan Yildirim",
-          reply_to: "aliramazanyildirim@gmail.com",
-        },
+      referralCode: customer.myReferralCode,
+      customerName: `${customer.firstname} ${customer.lastname}`,
+      customerEmail: customerEmail,
+      emailContent: emailContent,
+      emailParams: {
+        to_email: customerEmail,
+        to_name: `${customer.firstname} ${customer.lastname}`,
+        subject: `Willkommen!🎉 Ihr exklusiver Empfehlungscode: ${customer.myReferralCode} – Ali Ramazan Yildirim`,
+        message: emailContent,
+        from_name: "Ali Ramazan Yildirim",
+        reply_to: "aliramazanyildirim@gmail.com",
+      },
       },
     });
   } catch (error: any) {

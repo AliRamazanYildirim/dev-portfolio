@@ -27,6 +27,9 @@ interface Customer {
 export default function CustomersAdminPage() {
   const { isAuthenticated, loading: authLoading } = useAdminAuth();
   const [customers, setCustomers] = useState<Customer[]>([]);
+  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(
+    null
+  );
   const [showForm, setShowForm] = useState(false);
   const [editingCustomer, setEditingCustomer] = useState<Customer | null>(null);
   const [loading, setLoading] = useState(true);
@@ -44,6 +47,10 @@ export default function CustomersAdminPage() {
   const [dateFrom, setDateFrom] = useState<string>("");
   const [dateTo, setDateTo] = useState<string>("");
   const [searchQuery, setSearchQuery] = useState<string>("");
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const customersPerPage = 9;
 
   // Formular-Status
   const [firstname, setFirstname] = useState("");
@@ -73,6 +80,13 @@ export default function CustomersAdminPage() {
     fetchCustomers();
   }, []);
 
+  // Wähle den ersten Kunden automatisch aus
+  useEffect(() => {
+    if (customers.length > 0 && !selectedCustomer) {
+      setSelectedCustomer(customers[0]);
+    }
+  }, [customers, selectedCustomer]);
+
   // Kunden abrufen
   const fetchCustomers = async (opts?: {
     sort?: string;
@@ -82,6 +96,7 @@ export default function CustomersAdminPage() {
   }) => {
     try {
       setLoading(true);
+      setCurrentPage(1); // Reset to first page
       let url = "/api/admin/customers";
       const params = new URLSearchParams();
       if (opts?.sort) params.set("sort", opts.sort);
@@ -314,10 +329,27 @@ export default function CustomersAdminPage() {
   if (!isAuthenticated) return null;
 
   return (
-    <main className="relative flex justify-center items-center flex-col overflow-x-hidden mx-auto">
-      <div className="w-full">
-        <NoiseBackground mode="dark" intensity={0.1}>
-          <div className="relative z-10">
+    <div className="min-h-screen w-full">
+      <style jsx>{`
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: rgba(0, 0, 0, 0.1);
+          border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: linear-gradient(45deg, #3b82f6, #8b5cf6);
+          border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: linear-gradient(45deg, #2563eb, #7c3aed);
+        }
+      `}</style>
+      <NoiseBackground mode="dark" intensity={0.1}>
+        <div className="min-h-screen w-full">
+          {/* Header Section - Fixed */}
+          <div className="relative z-10 bg-transparent">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
               <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
                 <div className="text-center lg:text-left">
@@ -393,9 +425,11 @@ export default function CustomersAdminPage() {
               </div>
             </div>
           </div>
-          <div className="relative z-10 min-h-screen">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 relative">
-              {/* Responsive search + filter container: stacks on mobile, inline on sm+ */}
+
+          {/* Main Content Section */}
+          <div className="relative z-10">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
+              {/* Responsive search + filter container */}
               <div className="mb-6">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 bg-transparent sm:justify-end">
                   <form
@@ -492,225 +526,592 @@ export default function CustomersAdminPage() {
                   <div className="animate-spin rounded-full h-12 w-12 sm:h-16 sm:w-16 border-b-2 border-white"></div>
                 </div>
               ) : (
-                <div className="grid gap-6 sm:gap-8">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 min-h-[calc(100vh-280px)]">
                   {customers && customers.length > 0 ? (
-                    customers.map((customer) => (
-                      <div key={customer.id} className="group">
-                        <div className="bg-[#eeede9] rounded-xl sm:rounded-2xl shadow-lg border border-white/20 overflow-hidden hover:shadow-xl transition-all duration-300 hover:scale-[1.01] sm:hover:scale-[1.02] p-4 sm:p-6 lg:p-8 relative">
-                          <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 lg:gap-6">
-                            <div className="flex-1">
-                              <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 mb-4">
-                                <h3 className="text-xl sm:text-2xl lg:text-3xl font-semibold text-[#131313] break-words">
-                                  {customer.firstname} {customer.lastname}
-                                </h3>
-                                <span className="inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-bold bg-[#c9184a] text-white self-start">
-                                  {customer.companyname}
-                                </span>
-                                {customer.price != null && (
-                                  <div className="flex gap-2">
-                                    {customer.finalPrice != null &&
-                                    customer.discountRate ? (
-                                      <>
-                                        <span className="inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold bg-red-500 text-white line-through self-start">
-                                          €
-                                          {Number(
-                                            customer.price
-                                          ).toLocaleString()}
-                                        </span>
-                                        <span className="inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold bg-emerald-500 text-white self-start">
-                                          €
-                                          {Number(
-                                            customer.finalPrice
-                                          ).toLocaleString()}{" "}
-                                          (-{customer.discountRate}%)
-                                        </span>
-                                      </>
-                                    ) : (
-                                      <span className="inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold bg-emerald-500 text-white self-start">
-                                        €
-                                        {Number(
-                                          customer.price
-                                        ).toLocaleString()}
-                                      </span>
-                                    )}
-                                  </div>
-                                )}
-                                {customer.myReferralCode && (
-                                  <span className="inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold bg-blue-500 text-white self-start">
-                                    Referans: {customer.myReferralCode} (
-                                    {customer.referralCount || 0} Person)
-                                  </span>
-                                )}
-                              </div>
-                              <p className="text-base sm:text-lg text-[#131313]/80 mb-4 sm:mb-6 leading-relaxed">
-                                {customer.email} | {customer.phone}
+                    <>
+                      {/* Sol Taraf - Kundenliste */}
+                      <div className="lg:col-span-4 xl:col-span-3">
+                        <div className="bg-gradient-to-br from-white/95 to-white/85 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/30 overflow-hidden flex flex-col">
+                          <NoiseBackground mode="light" intensity={0.1}>
+                            <div className="bg-gradient-to-r from-slate-900 to-slate-800 p-6 text-white">
+                              <h3 className="text-xl font-bold mb-2">
+                                Customer List
+                              </h3>
+                              <p className="text-white/70 text-sm">
+                                {customers.length} customers total
                               </p>
-                              <div className="flex flex-wrap gap-2 sm:gap-3 mb-4 sm:mb-6">
-                                <span className="inline-flex items-center px-2.5 sm:px-3 lg:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium bg-blue-500 text-white border border-[#131313]/20">
-                                  {customer.address}
-                                </span>
-                                {customer.myReferralCode && (
-                                  <span className="inline-flex items-center px-2.5 sm:px-3 lg:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium bg-green-500 text-white border border-[#131313]/20">
-                                    Own code: {customer.myReferralCode}
-                                  </span>
-                                )}
-                                {customer.reference && (
-                                  <span className="inline-flex items-center px-2.5 sm:px-3 lg:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium bg-orange-500 text-white border border-[#131313]/20">
-                                    Used: {customer.reference}
-                                  </span>
-                                )}
+                            </div>
+                            <div className="flex-1 overflow-y-auto custom-scrollbar">
+                              <div className="p-2 space-y-2">
+                                {customers
+                                  .slice(
+                                    (currentPage - 1) * customersPerPage,
+                                    currentPage * customersPerPage
+                                  )
+                                  .map((customer) => (
+                                    <div
+                                      key={customer.id}
+                                      onClick={() =>
+                                        setSelectedCustomer(customer)
+                                      }
+                                      className={`group cursor-pointer relative p-4 rounded-2xl transition-all duration-300 hover:scale-[1.02] ${
+                                        selectedCustomer?.id === customer.id
+                                          ? "bg-gradient-to-r from-blue-500/20 to-purple-500/20 border-2 border-blue-500/30 shadow-lg"
+                                          : "bg-white/50 hover:bg-white/80 border border-white/30 hover:border-blue-300/50"
+                                      }`}
+                                    >
+                                      <div className="flex items-center gap-3">
+                                        <div
+                                          className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-white text-lg transition-all duration-300 ${
+                                            selectedCustomer?.id === customer.id
+                                              ? "bg-gradient-to-r from-blue-500 to-purple-500 shadow-lg"
+                                              : "bg-gradient-to-r from-slate-400 to-slate-500"
+                                          }`}
+                                        >
+                                          {customer.firstname.charAt(0)}
+                                          {customer.lastname.charAt(0)}
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                          <h4
+                                            className={`font-semibold truncate ${
+                                              selectedCustomer?.id ===
+                                              customer.id
+                                                ? "text-slate-800"
+                                                : "text-slate-700"
+                                            }`}
+                                          >
+                                            {customer.firstname}{" "}
+                                            {customer.lastname}
+                                          </h4>
+                                          <p className="text-sm text-slate-500 truncate">
+                                            {customer.companyname}
+                                          </p>
+                                          {customer.price && (
+                                            <p
+                                              className={`text-sm font-semibold ${
+                                                selectedCustomer?.id ===
+                                                customer.id
+                                                  ? "text-emerald-600"
+                                                  : "text-emerald-500"
+                                              }`}
+                                            >
+                                              €
+                                              {Number(
+                                                customer.price
+                                              ).toLocaleString()}
+                                            </p>
+                                          )}
+                                        </div>
+                                        {selectedCustomer?.id ===
+                                          customer.id && (
+                                          <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
+                                        )}
+                                      </div>
+                                    </div>
+                                  ))}
                               </div>
                             </div>
-                          </div>
-                          <div className="flex flex-wrap gap-2 sm:gap-3 mb-4 sm:mb-6 justify-end">
-                            <button
-                              onClick={async () => {
-                                if (customer.myReferralCode) {
-                                  navigator.clipboard.writeText(
-                                    customer.myReferralCode
-                                  );
-                                  toast.success(
-                                    "Reference code copied: " +
-                                      customer.myReferralCode
-                                  );
-                                } else {
-                                  toast.error("Reference code not found");
-                                }
-                              }}
-                              className="inline-flex items-center justify-center px-3 sm:px-4 lg:px-6 py-2 sm:py-2.5 lg:py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg lg:rounded-xl font-medium shadow-sm transition-all duration-200 hover:shadow-md hover:scale-105 text-xs sm:text-sm lg:text-base whitespace-nowrap"
-                            >
-                              <svg
-                                className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5 mr-1 sm:mr-1.5 lg:mr-2"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-                                />
-                              </svg>
-                              Share Referral
-                            </button>
-                            <button
-                              onClick={async () => {
-                                try {
-                                  const response = await fetch(
-                                    "/api/referral/send-email",
-                                    {
-                                      method: "POST",
-                                      headers: {
-                                        "Content-Type": "application/json",
-                                      },
-                                      body: JSON.stringify({
-                                        customerId: customer.id,
-                                        customerEmail: customer.email,
-                                      }),
+
+                            {/* Pagination */}
+                            <div className="flex-shrink-0 p-4 border-t border-slate-200/50 bg-white/80">
+                              <div className="flex items-center justify-between">
+                                <div className="text-sm text-slate-600">
+                                  Showing{" "}
+                                  {customers.length === 0
+                                    ? 0
+                                    : (currentPage - 1) * customersPerPage +
+                                      1}{" "}
+                                  -{" "}
+                                  {Math.min(
+                                    customers.length,
+                                    currentPage * customersPerPage
+                                  )}{" "}
+                                  of {customers.length}
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <button
+                                    onClick={() =>
+                                      setCurrentPage((prev) =>
+                                        Math.max(prev - 1, 1)
+                                      )
                                     }
-                                  );
-                                  const result = await response.json();
-                                  if (
-                                    result.success &&
-                                    result.data.emailParams
-                                  ) {
-                                    // Bereite  die Parameter für die EmailJS-Vorlage vor
-                                    const emailParams = {
-                                      to_email:
-                                        result.data.emailParams.to_email,
-                                      subject: result.data.emailParams.subject,
-                                      from_name:
-                                        result.data.emailParams.from_name,
-                                      reply_to:
-                                        result.data.emailParams.reply_to,
-                                      name: result.data.emailParams.to_name,
-                                      message: result.data.emailParams.message,
-                                    };
+                                    disabled={currentPage === 1}
+                                    className={`px-3 py-1 rounded-md text-sm transition-colors ${
+                                      currentPage === 1
+                                        ? "bg-slate-100 text-slate-400 cursor-not-allowed"
+                                        : "bg-white text-slate-700 shadow hover:bg-slate-50"
+                                    }`}
+                                  >
+                                    Prev
+                                  </button>
 
-                                    // E-Mail mit EmailJS senden
-                                    const emailResult = await emailjs.send(
-                                      process.env
-                                        .NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
-                                      process.env
-                                        .NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
-                                      emailParams,
-                                      process.env
-                                        .NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!
-                                    );
+                                  <div className="hidden sm:flex items-center gap-1">
+                                    {Array.from(
+                                      {
+                                        length: Math.ceil(
+                                          customers.length / customersPerPage
+                                        ),
+                                      },
+                                      (_, i) => {
+                                        const p = i + 1;
+                                        const active = p === currentPage;
+                                        return (
+                                          <button
+                                            key={p}
+                                            onClick={() => setCurrentPage(p)}
+                                            className={`px-3 py-1 rounded-md text-sm transition-colors ${
+                                              active
+                                                ? "bg-slate-800 text-white"
+                                                : "bg-white text-slate-700 shadow hover:bg-slate-50"
+                                            }`}
+                                          >
+                                            {p}
+                                          </button>
+                                        );
+                                      }
+                                    )}
+                                  </div>
 
-                                    toast.success(
-                                      `Referral code sent via email: ${result.data.referralCode}`
-                                    );
-                                  } else {
-                                    toast.error(
-                                      "Email could not be sent: " +
-                                        (result.error || "Unknown error")
-                                    );
-                                  }
-                                } catch (error) {
-                                  toast.error("Email sending error");
-                                }
-                              }}
-                              className="inline-flex items-center justify-center px-3 sm:px-4 lg:px-6 py-2 sm:py-2.5 lg:py-3 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-lg lg:rounded-xl font-medium shadow-sm transition-all duration-200 hover:shadow-md hover:scale-105 text-xs sm:text-sm lg:text-base whitespace-nowrap"
-                            >
-                              <svg
-                                className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5 mr-1 sm:mr-1.5 lg:mr-2"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M3 8l7.89 7.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                                />
-                              </svg>
-                              Send Email
-                            </button>
-                            <button
-                              onClick={() => editCustomer(customer)}
-                              className="inline-flex items-center justify-center px-3 sm:px-4 lg:px-6 py-2 sm:py-2.5 lg:py-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-lg lg:rounded-xl font-medium shadow-sm transition-all duration-200 hover:shadow-md hover:scale-105 text-xs sm:text-sm lg:text-base whitespace-nowrap"
-                            >
-                              <svg
-                                className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5 mr-1 sm:mr-1.5 lg:mr-2"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                                />
-                              </svg>
-                              Edit
-                            </button>
-                            <button
-                              onClick={() => deleteCustomer(customer.id)}
-                              className="inline-flex items-center justify-center px-3 sm:px-4 lg:px-6 py-2 sm:py-2.5 lg:py-3 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-lg lg:rounded-xl font-medium shadow-sm transition-all duration-200 hover:shadow-md hover:scale-105 text-xs sm:text-sm lg:text-base whitespace-nowrap"
-                            >
-                              <svg
-                                className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5 mr-1 sm:mr-1.5 lg:mr-2"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                />
-                              </svg>
-                              Delete
-                            </button>
-                          </div>
+                                  <button
+                                    onClick={() =>
+                                      setCurrentPage((prev) =>
+                                        Math.min(
+                                          prev + 1,
+                                          Math.ceil(
+                                            customers.length / customersPerPage
+                                          )
+                                        )
+                                      )
+                                    }
+                                    disabled={
+                                      currentPage ===
+                                      Math.ceil(
+                                        customers.length / customersPerPage
+                                      )
+                                    }
+                                    className={`px-3 py-1 rounded-md text-sm transition-colors ${
+                                      currentPage ===
+                                      Math.ceil(
+                                        customers.length / customersPerPage
+                                      )
+                                        ? "bg-slate-100 text-slate-400 cursor-not-allowed"
+                                        : "bg-white text-slate-700 shadow hover:bg-slate-50"
+                                    }`}
+                                  >
+                                    Next
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </NoiseBackground>
                         </div>
                       </div>
-                    ))
+
+                      {/* Rechte Seite - Kundendetails */}
+                      <div className="lg:col-span-8 xl:col-span-9">
+                        {selectedCustomer ? (
+                          <div className="rounded-3xl shadow-2xl border border-white/30 h-full overflow-hidden">
+                            <NoiseBackground mode="light" intensity={0.1}>
+                              <div className="bg-gradient-to-r from-slate-900 to-slate-800 p-6 text-white">
+                                <div className="flex items-center justify-between">
+                                  <div>
+                                    <h2 className="text-2xl font-bold mb-1">
+                                      Customer Details
+                                    </h2>
+                                    <p className="text-white/70">
+                                      Complete information and actions
+                                    </p>
+                                  </div>
+                                  <div className="flex items-center gap-3">
+                                    <div className="w-16 h-16 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center font-bold text-white text-2xl shadow-lg">
+                                      {selectedCustomer.firstname.charAt(0)}
+                                      {selectedCustomer.lastname.charAt(0)}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="h-[calc(100%-120px)] overflow-y-auto custom-scrollbar p-6">
+                                <div className="space-y-8">
+                                  {/* Grundinformationen */}
+                                  <div className="bg-gradient-to-r from-slate-50 to-slate-100 rounded-3xl p-6 border border-slate-200/50">
+                                    <div className="flex items-center gap-4 mb-6">
+                                      <div className="w-3 h-3 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full"></div>
+                                      <h3 className="text-2xl font-bold text-slate-800">
+                                        Personal Information
+                                      </h3>
+                                    </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                      <div className="space-y-4">
+                                        <div>
+                                          <label className="text-sm font-semibold text-slate-600 uppercase tracking-wide">
+                                            Full Name
+                                          </label>
+                                          <p className="text-xl font-bold text-slate-800">
+                                            {selectedCustomer.firstname}{" "}
+                                            {selectedCustomer.lastname}
+                                          </p>
+                                        </div>
+                                        <div>
+                                          <label className="text-sm font-semibold text-slate-600 uppercase tracking-wide">
+                                            Company
+                                          </label>
+                                          <p className="text-lg text-slate-700">
+                                            {selectedCustomer.companyname}
+                                          </p>
+                                        </div>
+                                      </div>
+                                      <div className="space-y-4">
+                                        <div>
+                                          <label className="text-sm font-semibold text-slate-600 uppercase tracking-wide">
+                                            Email
+                                          </label>
+                                          <p className="text-lg text-slate-700 break-all">
+                                            {selectedCustomer.email}
+                                          </p>
+                                        </div>
+                                        <div>
+                                          <label className="text-sm font-semibold text-slate-600 uppercase tracking-wide">
+                                            Phone
+                                          </label>
+                                          <p className="text-lg text-slate-700">
+                                            {selectedCustomer.phone}
+                                          </p>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  {/* Preisinformationen */}
+                                  {selectedCustomer.price && (
+                                    <div className="bg-gradient-to-r from-emerald-50 to-emerald-100 rounded-3xl p-6 border border-emerald-200/50">
+                                      <div className="flex items-center gap-4 mb-6">
+                                        <div className="w-3 h-3 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full"></div>
+                                        <h3 className="text-2xl font-bold text-emerald-800">
+                                          Pricing Information
+                                        </h3>
+                                      </div>
+                                      <div className="flex flex-wrap gap-4">
+                                        {selectedCustomer.finalPrice != null &&
+                                        selectedCustomer.discountRate ? (
+                                          <>
+                                            <div className="bg-white rounded-2xl p-4 shadow-lg">
+                                              <label className="text-sm font-semibold text-slate-600 uppercase tracking-wide">
+                                                Original Price
+                                              </label>
+                                              <p className="text-2xl font-bold text-red-600 line-through">
+                                                €
+                                                {Number(
+                                                  selectedCustomer.price
+                                                ).toLocaleString()}
+                                              </p>
+                                            </div>
+                                            <div className="bg-white rounded-2xl p-4 shadow-lg">
+                                              <label className="text-sm font-semibold text-slate-600 uppercase tracking-wide">
+                                                Final Price
+                                              </label>
+                                              <p className="text-2xl font-bold text-emerald-600">
+                                                €
+                                                {Number(
+                                                  selectedCustomer.finalPrice
+                                                ).toLocaleString()}
+                                              </p>
+                                            </div>
+                                            <div className="bg-white rounded-2xl p-4 shadow-lg">
+                                              <label className="text-sm font-semibold text-slate-600 uppercase tracking-wide">
+                                                Discount
+                                              </label>
+                                              <p className="text-2xl font-bold text-blue-600">
+                                                {selectedCustomer.discountRate}%
+                                              </p>
+                                            </div>
+                                          </>
+                                        ) : (
+                                          <div className="bg-white rounded-2xl p-4 shadow-lg">
+                                            <label className="text-sm font-semibold text-slate-600 uppercase tracking-wide">
+                                              Price
+                                            </label>
+                                            <p className="text-2xl font-bold text-emerald-600">
+                                              €
+                                              {Number(
+                                                selectedCustomer.price
+                                              ).toLocaleString()}
+                                            </p>
+                                          </div>
+                                        )}
+                                      </div>
+                                    </div>
+                                  )}
+
+                                  {/* Standort und Referenz */}
+                                  <div className="bg-gradient-to-r from-blue-200 to-indigo-100 rounded-3xl p-6 border border-blue-200/50">
+                                    <div className="flex items-center gap-4 mb-6">
+                                      <div className="w-3 h-3 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full"></div>
+                                      <h3 className="text-2xl font-bold text-blue-800">
+                                        Location & References
+                                      </h3>
+                                    </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                      <div>
+                                        <label className="text-sm font-semibold text-slate-600 uppercase tracking-wide mb-2 block">
+                                          Address
+                                        </label>
+                                        <div className="bg-white rounded-2xl p-4 shadow-lg">
+                                          <p className="text-lg text-slate-700">
+                                            {selectedCustomer.address}
+                                          </p>
+                                        </div>
+                                      </div>
+                                      <div className="space-y-4">
+                                        {selectedCustomer.myReferralCode && (
+                                          <div>
+                                            <label className="text-sm font-semibold text-slate-600 uppercase tracking-wide mb-2 block">
+                                              Own Referral Code
+                                            </label>
+                                            <div className="bg-white rounded-2xl p-4 shadow-lg">
+                                              <p className="text-lg font-mono text-emerald-600">
+                                                {
+                                                  selectedCustomer.myReferralCode
+                                                }
+                                              </p>
+                                              <p className="text-sm text-slate-500">
+                                                {selectedCustomer.referralCount ||
+                                                  0}{" "}
+                                                people used this code
+                                              </p>
+                                            </div>
+                                          </div>
+                                        )}
+                                        {selectedCustomer.reference && (
+                                          <div>
+                                            <label className="text-sm font-semibold text-slate-600 uppercase tracking-wide mb-2 block">
+                                              Used Referral Code
+                                            </label>
+                                            <div className="bg-white rounded-2xl p-4 shadow-lg">
+                                              <p className="text-lg font-mono text-amber-600">
+                                                {selectedCustomer.reference}
+                                              </p>
+                                            </div>
+                                          </div>
+                                        )}
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  {/* Aktionsschaltflächen */}
+                                  <div className="bg-gradient-to-r from-slate-50 to-slate-100 rounded-3xl p-6 border border-slate-200/50">
+                                    <div className="flex items-center gap-4 mb-6">
+                                      <div className="w-3 h-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full"></div>
+                                      <h3 className="text-2xl font-bold text-slate-800">
+                                        Actions
+                                      </h3>
+                                    </div>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                                      <button
+                                        onClick={async () => {
+                                          if (selectedCustomer.myReferralCode) {
+                                            navigator.clipboard.writeText(
+                                              selectedCustomer.myReferralCode
+                                            );
+                                            toast.success(
+                                              "Reference code copied: " +
+                                                selectedCustomer.myReferralCode
+                                            );
+                                          } else {
+                                            toast.error(
+                                              "Reference code not found"
+                                            );
+                                          }
+                                        }}
+                                        className="relative group/btn overflow-hidden inline-flex items-center justify-center px-6 py-4 bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 text-white rounded-2xl font-bold shadow-lg hover:shadow-blue-500/40 hover:shadow-2xl transition-all duration-300 hover:scale-105 backdrop-blur-sm border border-blue-400/20"
+                                      >
+                                        <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-blue-600 to-indigo-600 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300"></div>
+                                        <svg
+                                          className="w-5 h-5 mr-2 relative z-10"
+                                          fill="none"
+                                          stroke="currentColor"
+                                          viewBox="0 0 24 24"
+                                        >
+                                          <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                                          />
+                                        </svg>
+                                        <span className="relative z-10">
+                                          Share Referral
+                                        </span>
+                                      </button>
+                                      <button
+                                        onClick={async () => {
+                                          try {
+                                            const response = await fetch(
+                                              "/api/referral/send-email",
+                                              {
+                                                method: "POST",
+                                                headers: {
+                                                  "Content-Type":
+                                                    "application/json",
+                                                },
+                                                body: JSON.stringify({
+                                                  customerId:
+                                                    selectedCustomer.id,
+                                                  customerEmail:
+                                                    selectedCustomer.email,
+                                                }),
+                                              }
+                                            );
+                                            const result =
+                                              await response.json();
+                                            if (
+                                              result.success &&
+                                              result.data.emailParams
+                                            ) {
+                                              const emailParams = {
+                                                to_email:
+                                                  result.data.emailParams
+                                                    .to_email,
+                                                subject:
+                                                  result.data.emailParams
+                                                    .subject,
+                                                from_name:
+                                                  result.data.emailParams
+                                                    .from_name,
+                                                reply_to:
+                                                  result.data.emailParams
+                                                    .reply_to,
+                                                name: result.data.emailParams
+                                                  .to_name,
+                                                message:
+                                                  result.data.emailParams
+                                                    .message,
+                                              };
+                                              await emailjs.send(
+                                                process.env
+                                                  .NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
+                                                process.env
+                                                  .NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
+                                                emailParams,
+                                                process.env
+                                                  .NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!
+                                              );
+                                              toast.success(
+                                                `Referral code sent via email: ${result.data.referralCode}`
+                                              );
+                                            } else {
+                                              toast.error(
+                                                "Email could not be sent: " +
+                                                  (result.error ||
+                                                    "Unknown error")
+                                              );
+                                            }
+                                          } catch (error) {
+                                            toast.error("Email sending error");
+                                          }
+                                        }}
+                                        className="relative group/btn overflow-hidden inline-flex items-center justify-center px-6 py-4 bg-gradient-to-r from-emerald-600 via-emerald-700 to-teal-700 text-white rounded-2xl font-bold shadow-lg hover:shadow-emerald-500/40 hover:shadow-2xl transition-all duration-300 hover:scale-105 backdrop-blur-sm border border-emerald-400/20"
+                                      >
+                                        <div className="absolute inset-0 bg-gradient-to-r from-emerald-500 via-emerald-600 to-teal-600 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300"></div>
+                                        <svg
+                                          className="w-5 h-5 mr-2 relative z-10"
+                                          fill="none"
+                                          stroke="currentColor"
+                                          viewBox="0 0 24 24"
+                                        >
+                                          <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M3 8l7.89 7.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                                          />
+                                        </svg>
+                                        <span className="relative z-10">
+                                          Send Email
+                                        </span>
+                                      </button>
+                                      <button
+                                        onClick={() =>
+                                          editCustomer(selectedCustomer)
+                                        }
+                                        className="relative group/btn overflow-hidden inline-flex items-center justify-center px-6 py-4 bg-gradient-to-r from-amber-600 via-orange-600 to-orange-700 text-white rounded-2xl font-bold shadow-lg hover:shadow-amber-500/40 hover:shadow-2xl transition-all duration-300 hover:scale-105 backdrop-blur-sm border border-amber-400/20"
+                                      >
+                                        <div className="absolute inset-0 bg-gradient-to-r from-amber-500 via-orange-500 to-orange-600 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300"></div>
+                                        <svg
+                                          className="w-5 h-5 mr-2 relative z-10"
+                                          fill="none"
+                                          stroke="currentColor"
+                                          viewBox="0 0 24 24"
+                                        >
+                                          <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                                          />
+                                        </svg>
+                                        <span className="relative z-10">
+                                          Edit
+                                        </span>
+                                      </button>
+                                      <button
+                                        onClick={() =>
+                                          deleteCustomer(selectedCustomer.id)
+                                        }
+                                        className="relative group/btn overflow-hidden inline-flex items-center justify-center px-6 py-4 bg-gradient-to-r from-red-600 via-red-700 to-rose-700 text-white rounded-2xl font-bold shadow-lg hover:shadow-red-500/40 hover:shadow-2xl transition-all duration-300 hover:scale-105 backdrop-blur-sm border border-red-400/20"
+                                      >
+                                        <div className="absolute inset-0 bg-gradient-to-r from-red-500 via-red-600 to-rose-600 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300"></div>
+                                        <svg
+                                          className="w-5 h-5 mr-2 relative z-10"
+                                          fill="none"
+                                          stroke="currentColor"
+                                          viewBox="0 0 24 24"
+                                        >
+                                          <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                          />
+                                        </svg>
+                                        <span className="relative z-10">
+                                          Delete
+                                        </span>
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </NoiseBackground>
+                          </div>
+                        ) : (
+                          <div className="bg-gradient-to-br from-white/95 to-white/85 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/30 h-full flex items-center justify-center">
+                            <div className="text-center p-8">
+                              <div className="w-24 h-24 bg-gradient-to-r from-slate-400 to-slate-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                                <svg
+                                  className="w-12 h-12 text-white"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                                  />
+                                </svg>
+                              </div>
+                              <h3 className="text-2xl font-bold text-slate-700 mb-2">
+                                No Customer Selected
+                              </h3>
+                              <p className="text-slate-500">
+                                Select a customer from the list to view details
+                              </p>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </>
                   ) : (
                     <div className="text-center py-16 sm:py-24">
                       <div className="bg-[#eeede9] rounded-xl sm:rounded-2xl shadow-lg border border-white/20 p-8 sm:p-12 max-w-sm sm:max-w-md mx-auto">
@@ -740,234 +1141,238 @@ export default function CustomersAdminPage() {
               )}
             </div>
           </div>
-        </NoiseBackground>
-      </div>
-      {/* Modal-Formular */}
-      {showForm && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-lg flex items-center justify-center p-2 sm:p-4 z-50">
-          <div className="relative backdrop-blur-xl bg-white/95 border border-white/20 rounded-2xl sm:rounded-3xl shadow-2xl w-full max-w-sm sm:max-w-2xl lg:max-w-4xl max-h-[95vh] sm:max-h-[90vh] overflow-hidden">
-            <div className="bg-gradient-to-r from-[#131313] to-[#131313]/90 px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="heading text-lg sm:text-xl lg:text-2xl text-white">
-                    {editingCustomer ? "Editing customers" : "Add new customer"}
-                  </h2>
-                  <p className="content text-white/70 text-xs sm:text-sm mt-1 hidden sm:block">
-                    Fill in the customer data
-                  </p>
+
+          {/* Modal-Formular */}
+          {showForm && (
+            <div className="fixed inset-0 bg-black/80 backdrop-blur-lg flex items-center justify-center p-2 sm:p-4 z-50">
+              <div className="relative backdrop-blur-xl bg-white/95 border border-white/20 rounded-2xl sm:rounded-3xl shadow-2xl w-full max-w-sm sm:max-w-2xl lg:max-w-4xl max-h-[95vh] sm:max-h-[90vh] overflow-hidden">
+                <div className="bg-gradient-to-r from-[#131313] to-[#131313]/90 px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h2 className="heading text-lg sm:text-xl lg:text-2xl text-white">
+                        {editingCustomer
+                          ? "Editing customers"
+                          : "Add new customer"}
+                      </h2>
+                      <p className="content text-white/70 text-xs sm:text-sm mt-1 hidden sm:block">
+                        Fill in the customer data
+                      </p>
+                    </div>
+                    <button
+                      onClick={resetForm}
+                      className="p-2 sm:p-3 hover:bg-white/10 rounded-xl transition-all duration-200 group"
+                    >
+                      <svg
+                        className="w-5 h-5 sm:w-6 sm:h-6 text-white/70 group-hover:text-white transition-colors"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M6 18L18 6M6 6l12 12"
+                        />
+                      </svg>
+                    </button>
+                  </div>
                 </div>
-                <button
-                  onClick={resetForm}
-                  className="p-2 sm:p-3 hover:bg-white/10 rounded-xl transition-all duration-200 group"
-                >
-                  <svg
-                    className="w-5 h-5 sm:w-6 sm:h-6 text-white/70 group-hover:text-white transition-colors"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
-                </button>
-              </div>
-            </div>
-            <div className="px-4 sm:px-6 lg:px-8 py-6 sm:py-8 overflow-y-auto max-h-[calc(95vh-200px)] sm:max-h-[calc(90vh-180px)]">
-              <div className="space-y-6 sm:space-y-8">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
-                  <div className="lg:col-span-2">
-                    <label className="block text-sm font-semibold text-[#131313] mb-2 sm:mb-3">
-                      Name
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="Name..."
-                      value={firstname}
-                      onChange={(e) => setFirstname(e.target.value)}
-                      className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
-                    />
-                  </div>
-                  <div className="lg:col-span-2">
-                    <label className="block text-sm font-semibold text-[#131313] mb-2 sm:mb-3">
-                      Last name
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="Last name..."
-                      value={lastname}
-                      onChange={(e) => setLastname(e.target.value)}
-                      className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
-                    />
-                  </div>
-                  <div className="lg:col-span-2">
-                    <label className="block text-sm font-semibold text-[#131313] mb-2 sm:mb-3">
-                      Company name
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="Company name..."
-                      value={companyname}
-                      onChange={(e) => setCompanyname(e.target.value)}
-                      className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
-                    />
-                  </div>
-                  <div className="lg:col-span-2">
-                    <label className="block text-sm font-semibold text-[#131313] mb-2 sm:mb-3">
-                      Email
-                    </label>
-                    <input
-                      type="email"
-                      placeholder="Email..."
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
-                    />
-                  </div>
-                  <div className="lg:col-span-2">
-                    <label className="block text-sm font-semibold text-[#131313] mb-2 sm:mb-3">
-                      Telefon
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="Telefon..."
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
-                    />
-                  </div>
-                  <div className="lg:col-span-2">
-                    <label className="block text-sm font-semibold text-[#131313] mb-2 sm:mb-3">
-                      Address
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="Address..."
-                      value={address}
-                      onChange={(e) => setAddress(e.target.value)}
-                      className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
-                    />
-                  </div>
-                  <div className="lg:col-span-2">
-                    <label className="block text-sm font-semibold text-[#131313] mb-2 sm:mb-3">
-                      Reference (Referenzcode - Optional)
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="Enter reference code..."
-                      value={reference}
-                      onChange={(e) => {
-                        setReference(e.target.value);
-                        if (e.target.value && price) {
-                          validateReferralCode(e.target.value, price);
-                        } else {
-                          setReferralValidation(null);
-                        }
-                      }}
-                      className={`w-full px-4 sm:px-6 py-3 sm:py-4 border rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 content text-sm sm:text-base ${
-                        referralValidation?.isValid
-                          ? "bg-emerald-50 border-emerald-300 focus:ring-emerald-500"
-                          : referralValidation?.error
-                          ? "bg-red-50 border-red-300 focus:ring-red-500"
-                          : "bg-white/80 border-[#131313]/20 focus:ring-[#131313]"
-                      }`}
-                    />
-                    {referralValidation && (
-                      <div className="mt-2 p-3 rounded-lg text-sm">
-                        {referralValidation.isValid ? (
-                          <div className="bg-emerald-100 text-emerald-800 p-3 rounded-lg">
-                            <div className="flex items-center gap-2 mb-1">
-                              <svg
-                                className="w-4 h-4 text-emerald-600"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M5 13l4 4L19 7"
-                                />
-                              </svg>
-                              <strong>Valid reference code!</strong>
-                            </div>
-                            <p>
-                              Referred by: {referralValidation.referrerName}
-                            </p>
-                            {referralValidation.discount && (
-                              <div className="mt-1 text-xs">
+                <div className="px-4 sm:px-6 lg:px-8 py-6 sm:py-8 overflow-y-auto max-h-[calc(95vh-200px)] sm:max-h-[calc(90vh-180px)]">
+                  <div className="space-y-6 sm:space-y-8">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
+                      <div className="lg:col-span-2">
+                        <label className="block text-sm font-semibold text-[#131313] mb-2 sm:mb-3">
+                          Name
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="Name..."
+                          value={firstname}
+                          onChange={(e) => setFirstname(e.target.value)}
+                          className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
+                        />
+                      </div>
+                      <div className="lg:col-span-2">
+                        <label className="block text-sm font-semibold text-[#131313] mb-2 sm:mb-3">
+                          Last name
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="Last name..."
+                          value={lastname}
+                          onChange={(e) => setLastname(e.target.value)}
+                          className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
+                        />
+                      </div>
+                      <div className="lg:col-span-2">
+                        <label className="block text-sm font-semibold text-[#131313] mb-2 sm:mb-3">
+                          Company name
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="Company name..."
+                          value={companyname}
+                          onChange={(e) => setCompanyname(e.target.value)}
+                          className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
+                        />
+                      </div>
+                      <div className="lg:col-span-2">
+                        <label className="block text-sm font-semibold text-[#131313] mb-2 sm:mb-3">
+                          Email
+                        </label>
+                        <input
+                          type="email"
+                          placeholder="Email..."
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
+                        />
+                      </div>
+                      <div className="lg:col-span-2">
+                        <label className="block text-sm font-semibold text-[#131313] mb-2 sm:mb-3">
+                          Telefon
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="Telefon..."
+                          value={phone}
+                          onChange={(e) => setPhone(e.target.value)}
+                          className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
+                        />
+                      </div>
+                      <div className="lg:col-span-2">
+                        <label className="block text-sm font-semibold text-[#131313] mb-2 sm:mb-3">
+                          Address
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="Address..."
+                          value={address}
+                          onChange={(e) => setAddress(e.target.value)}
+                          className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
+                        />
+                      </div>
+                      <div className="lg:col-span-2">
+                        <label className="block text-sm font-semibold text-[#131313] mb-2 sm:mb-3">
+                          Reference (Referenzcode - Optional)
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="Enter reference code..."
+                          value={reference}
+                          onChange={(e) => {
+                            setReference(e.target.value);
+                            if (e.target.value && price) {
+                              validateReferralCode(e.target.value, price);
+                            } else {
+                              setReferralValidation(null);
+                            }
+                          }}
+                          className={`w-full px-4 sm:px-6 py-3 sm:py-4 border rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 content text-sm sm:text-base ${
+                            referralValidation?.isValid
+                              ? "bg-emerald-50 border-emerald-300 focus:ring-emerald-500"
+                              : referralValidation?.error
+                              ? "bg-red-50 border-red-300 focus:ring-red-500"
+                              : "bg-white/80 border-[#131313]/20 focus:ring-[#131313]"
+                          }`}
+                        />
+                        {referralValidation && (
+                          <div className="mt-2 p-3 rounded-lg text-sm">
+                            {referralValidation.isValid ? (
+                              <div className="bg-emerald-100 text-emerald-800 p-3 rounded-lg">
+                                <div className="flex items-center gap-2 mb-1">
+                                  <svg
+                                    className="w-4 h-4 text-emerald-600"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={2}
+                                      d="M5 13l4 4L19 7"
+                                    />
+                                  </svg>
+                                  <strong>Valid reference code!</strong>
+                                </div>
                                 <p>
-                                  Discount: %{referralValidation.discount.rate}
+                                  Referred by: {referralValidation.referrerName}
                                 </p>
+                                {referralValidation.discount && (
+                                  <div className="mt-1 text-xs">
+                                    <p>
+                                      Discount: %
+                                      {referralValidation.discount.rate}
+                                    </p>
+                                  </div>
+                                )}
+                              </div>
+                            ) : (
+                              <div className="bg-red-100 text-red-800 p-3 rounded-lg">
+                                <div className="flex items-center gap-2">
+                                  <svg
+                                    className="w-4 h-4 text-red-600"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={2}
+                                      d="M6 18L18 6M6 6l12 12"
+                                    />
+                                  </svg>
+                                  <span>{referralValidation.error}</span>
+                                </div>
                               </div>
                             )}
                           </div>
-                        ) : (
-                          <div className="bg-red-100 text-red-800 p-3 rounded-lg">
-                            <div className="flex items-center gap-2">
-                              <svg
-                                className="w-4 h-4 text-red-600"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M6 18L18 6M6 6l12 12"
-                                />
-                              </svg>
-                              <span>{referralValidation.error}</span>
-                            </div>
-                          </div>
                         )}
                       </div>
-                    )}
+                      <div className="lg:col-span-2">
+                        <label className="block text-sm font-semibold text-[#131313] mb-2 sm:mb-3">
+                          Price (EUR)
+                        </label>
+                        <input
+                          type="number"
+                          placeholder="Enter price..."
+                          value={price}
+                          onChange={(e) => {
+                            setPrice(e.target.value);
+                            if (reference && e.target.value) {
+                              validateReferralCode(reference, e.target.value);
+                            } else {
+                              setReferralValidation(null);
+                            }
+                          }}
+                          className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
+                        />
+                      </div>
+                    </div>
                   </div>
-                  <div className="lg:col-span-2">
-                    <label className="block text-sm font-semibold text-[#131313] mb-2 sm:mb-3">
-                      Price (EUR)
-                    </label>
-                    <input
-                      type="number"
-                      placeholder="Enter price..."
-                      value={price}
-                      onChange={(e) => {
-                        setPrice(e.target.value);
-                        if (reference && e.target.value) {
-                          validateReferralCode(reference, e.target.value);
-                        } else {
-                          setReferralValidation(null);
-                        }
-                      }}
-                      className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
-                    />
-                  </div>
+                </div>
+                <div className="bg-[#131313]/5 backdrop-blur-sm px-4 sm:px-6 lg:px-8 py-4 sm:py-6 border-t border-[#131313]/10 flex flex-col sm:flex-row gap-3 sm:gap-4 sm:justify-end -mt-3">
+                  <button
+                    onClick={resetForm}
+                    className="w-full sm:w-auto px-6 sm:px-8 py-3 border border-[#131313]/30 text-[#131313] rounded-xl font-medium hover:bg-[#131313]/5 transition-all duration-200 text-sm sm:text-base order-2 sm:order-1"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={saveCustomer}
+                    className="w-full sm:w-auto px-6 sm:px-8 py-3 bg-[#131313] hover:bg-[#131313]/90 text-white rounded-xl font-medium shadow-lg transition-all duration-200 hover:shadow-xl hover:scale-105 text-sm sm:text-base order-1 sm:order-2"
+                  >
+                    {editingCustomer ? "Update" : "Save"}
+                  </button>
                 </div>
               </div>
             </div>
-            <div className="bg-[#131313]/5 backdrop-blur-sm px-4 sm:px-6 lg:px-8 py-4 sm:py-6 border-t border-[#131313]/10 flex flex-col sm:flex-row gap-3 sm:gap-4 sm:justify-end -mt-3">
-              <button
-                onClick={resetForm}
-                className="w-full sm:w-auto px-6 sm:px-8 py-3 border border-[#131313]/30 text-[#131313] rounded-xl font-medium hover:bg-[#131313]/5 transition-all duration-200 text-sm sm:text-base order-2 sm:order-1"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={saveCustomer}
-                className="w-full sm:w-auto px-6 sm:px-8 py-3 bg-[#131313] hover:bg-[#131313]/90 text-white rounded-xl font-medium shadow-lg transition-all duration-200 hover:shadow-xl hover:scale-105 text-sm sm:text-base order-1 sm:order-2"
-              >
-                {editingCustomer ? "Update" : "Save"}
-              </button>
-            </div>
-          </div>
+          )}
         </div>
-      )}
-    </main>
+      </NoiseBackground>
+    </div>
   );
 }
