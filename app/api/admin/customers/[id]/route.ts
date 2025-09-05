@@ -69,15 +69,6 @@ export async function PUT(
         const referrerFinalPrice =
           referrer.price - (referrer.price * referrerDiscount) / 100;
 
-        console.log("Referenzvorgang - EMPFEHLER BELOHNEN:", {
-          referrer: referrer.id,
-          currentCount: currentReferralCount,
-          newCount: currentReferralCount + 1,
-          referrerDiscount,
-          referrerOriginalPrice: referrer.price,
-          referrerFinalPrice,
-        });
-
         // Informationen des Vorschlagenden aktualisieren
         await supabaseAdmin
           .from("customers")

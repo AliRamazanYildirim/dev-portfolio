@@ -61,13 +61,13 @@ export async function GET(request: Request) {
   }
 }
 
-// Yardımcı: Her referansta mevcut fiyat üzerinden artan yüzde indirim uygulama (maksimum 3 referans)
+// Helfer: Bei jeder Empfehlung einen prozentualen Rabatt auf den aktuellen Preis gewähren (maximal 3 Empfehlungen)
 function calcDiscountedPrice(originalPrice: number, referralCount: number) {
   if (referralCount === 0) return originalPrice;
 
   let currentPrice = originalPrice;
 
-  // Her referans için mevcut fiyat üzerinden artan yüzde indirim uygula (maksimum 3 referans)
+  // Wende für jeden Verweis einen gestaffelten prozentualen Rabatt auf den aktuellen Preis an (maximal 3 Verweise).
   for (let i = 1; i <= Math.min(referralCount, 3); i++) {
     const discountPercentage = i * 3; // 3%, 6%, 9%
     const discountAmount = currentPrice * (discountPercentage / 100);
