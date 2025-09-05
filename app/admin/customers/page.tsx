@@ -21,7 +21,6 @@ interface Customer {
   discountRate?: number | null;
   myReferralCode?: string;
   referralCount?: number;
-  totalEarnings?: number;
   created_at?: string | null;
 }
 
@@ -215,23 +214,12 @@ export default function CustomersAdminPage() {
         // Wenn ein neuer Kunde registriert wurde und die Referrer-E-Mail-Parameter vorhanden sind, sende eine E-Mail.
         if (!editingCustomer && json.referrerEmail) {
           try {
-            console.log(
-              "Referrer-E-Mail wird gesendet:",
-              json.referrerEmail.emailParams
-            );
-            console.log(
-              "Ziel-E-Mail-Adresse:",
-              json.referrerEmail.emailParams.to_email
-            );
-            console.log("Zielname:", json.referrerEmail.emailParams.to_name);
-
             // E-MailJS-Informationen aus den Umgebungsvariablen abrufen
             const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID;
             const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID;
             const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
 
             if (!serviceId || !templateId || !publicKey) {
-              console.error("EmailJS-Umgebungsvariablen fehlen!");
               return;
             }
 
@@ -245,20 +233,8 @@ export default function CustomersAdminPage() {
               message: json.referrerEmail.emailParams.message,
             };
 
-            console.log(
-              "Parameter, die an die Vorlage gesendet werden:",
-              emailParams
-            );
-
             await emailjs.send(serviceId, templateId, emailParams, publicKey);
-
-            console.log("Der Empfehlungs-E-Mail wurde erfolgreich gesendet!");
           } catch (emailError: any) {
-            console.error(
-              "Fehler beim Senden der Referrer-E-Mail:",
-              emailError
-            );
-            console.error("Fehlerdetails:", emailError?.message || emailError);
             // Der E-Mail-Fehler soll den Hauptprozess nicht beeinträchtigen
           }
         }
@@ -652,11 +628,6 @@ export default function CustomersAdminPage() {
                                       message: result.data.emailParams.message,
                                     };
 
-                                    console.log(
-                                      "EmailJS'e gönderilen parametreler:",
-                                      emailParams
-                                    );
-
                                     // E-Mail mit EmailJS senden
                                     const emailResult = await emailjs.send(
                                       process.env
@@ -668,8 +639,6 @@ export default function CustomersAdminPage() {
                                         .NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!
                                     );
 
-                                    console.log("EmailJS-Ergebnis:", emailResult);
-
                                     toast.success(
                                       `Referral code sent via email: ${result.data.referralCode}`
                                     );
@@ -680,7 +649,6 @@ export default function CustomersAdminPage() {
                                     );
                                   }
                                 } catch (error) {
-                                  console.error("Mail error:", error);
                                   toast.error("Email sending error");
                                 }
                               }}
