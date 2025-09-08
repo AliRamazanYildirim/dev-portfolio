@@ -59,7 +59,7 @@ export default function CustomersStatisticsPage() {
   const [rangeDays, setRangeDays] = useState<number>(30);
   const pageSize = 10; // fixed 10 items per page
 
-  // Pagination hook'unu kullan
+  // Verwende den Pagination-Hook.
   const pagination = usePagination({
     totalItems: customers.length,
     itemsPerPage: pageSize,
@@ -158,7 +158,7 @@ export default function CustomersStatisticsPage() {
     return { total, revenue, avg, days, counts, topCustomers };
   }, [customers, rangeDays]);
 
-  // Sayfalanmış müşterileri al
+  // Erhalte paginierte Kunden
   const paginatedCustomers = pagination.paginatedData(customers);
 
   const sparklinePathMemo = useMemo(() => {
@@ -460,7 +460,7 @@ export default function CustomersStatisticsPage() {
                       </table>
                     </div>
 
-                    {/* Merkezi Pagination Bileşeni */}
+                    {/* Zentrales Paginierungskomponente*/}
                     <Pagination
                       currentPage={pagination.currentPage}
                       totalPages={pagination.totalPages}

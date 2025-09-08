@@ -5,7 +5,7 @@ import { UsePaginationReturn } from "@/hooks/usePagination";
 
 interface CustomerListProps {
   currentCustomers: Customer[]; // Zaten sayfalanmış müşteriler
-  allCustomers: Customer[]; // Toplam müşteri sayısı için
+  allCustomers: Customer[]; // Gesamtanzahl der Kunden
   selectedCustomer: Customer | null;
   setSelectedCustomer: (customer: Customer) => void;
   pagination: UsePaginationReturn;
@@ -86,7 +86,7 @@ export default function CustomerList({
             </div>
           </div>
 
-          {/* Pagination - Merkezi Bileşen */}
+          {/* Pagination - Zentrale Komponente */}
           <div className="flex-shrink-0 p-4 border-t border-slate-200/50 bg-white/80">
             <Pagination
               currentPage={pagination.currentPage}

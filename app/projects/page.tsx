@@ -33,7 +33,7 @@ const ProjectsPage = () => {
   const pageSize = 2; // Elemente pro Seite (konfiguriert für mindestens 2 Projekte)
   const listTopRef = useRef<HTMLDivElement | null>(null);
 
-  // Pagination Hook kullan
+  // Seitennummerierungs-Hook verwenden
   const pagination = usePagination({
     totalItems: projects.length,
     itemsPerPage: pageSize,
@@ -80,13 +80,13 @@ const ProjectsPage = () => {
     visible: { opacity: 1, y: 0 },
   };
 
-  // Sayfalanmış projeleri al
+  // Erstellte Projekte abrufen
   const pageProjects = pagination.paginatedData(projects);
 
-  // Sayfa değiştiğinde yumuşak scroll
+  // Beim Seitenwechsel weiches Scrollen
   const handlePageChange = (page: number) => {
     pagination.goToPage(page);
-    // Sanft zum Listenanfang scrollen
+    // Smoothly scroll to the beginning of the list
     if (listTopRef.current) {
       listTopRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
     }

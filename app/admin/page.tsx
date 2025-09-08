@@ -112,13 +112,13 @@ export default function AdminPage() {
     }
   };
 
-  // Sayfalanmış projeleri al
+  // Erstellte Projekte abrufen
   const paginatedProjects = pagination.paginatedData(projects);
 
-  // Sayfa değiştiğinde yumuşak scroll
+  // Beim Seitenwechsel weiches Scrollen
   const handlePageChange = (page: number) => {
     pagination.goToPage(page);
-    // Yumuşak scroll
+    // Weiches Scrollen
     if (listTopRef.current) {
       listTopRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
     }
@@ -248,7 +248,7 @@ export default function AdminPage() {
     setShowForm(true);
   };
 
-  // Authentication yükleniyor - Authentication loading
+  // Authentication loading
   if (authLoading) {
     return (
       <div className="fixed inset-0 w-full h-full">
@@ -448,7 +448,7 @@ export default function AdminPage() {
                                 )}
                               </div>
 
-                              {/* Responsive Action Buttons - Sağ alt köşe */}
+                              {/* Responsive Action Buttons - Untere rechte Ecke*/}
                               <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 lg:ml-6 w-full lg:w-auto lg:justify-end lg:items-end lg:self-end mt-4 lg:mt-0">
                                 <button
                                   onClick={() => editProject(project)}
@@ -494,7 +494,7 @@ export default function AdminPage() {
                         </div>
                       ))}
 
-                      {/* Pagination Controls - Admin sayfası için özel tasarım */}
+                      {/* Pagination Controls - Spezialdesign für die Admin-Seite*/}
                       {projects.length > 0 && (
                         <Pagination
                           currentPage={pagination.currentPage}

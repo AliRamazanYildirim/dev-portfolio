@@ -31,7 +31,7 @@ const Pagination: React.FC<PaginationProps> = ({
   size = "md",
   className = "",
 }) => {
-  // Tema stilleri
+  // Themenstile
   const themeStyles = {
     dark: {
       container:
@@ -73,7 +73,7 @@ const Pagination: React.FC<PaginationProps> = ({
     },
   };
 
-  // Boyut stilleri
+  // Größenstile
   const sizeStyles = {
     sm: {
       button: "h-8 w-8 text-sm",
@@ -99,7 +99,7 @@ const Pagination: React.FC<PaginationProps> = ({
   const currentSize = sizeStyles[size];
   const range = getCurrentRange();
 
-  // Sayfa sayısı 1'den azsa pagination gösterme
+  // Wenn die Seitenanzahl kleiner als 1 ist, zeige keine Paginierung an.
   if (totalPages <= 1) {
     return null;
   }
@@ -143,7 +143,7 @@ const Pagination: React.FC<PaginationProps> = ({
                   ? currentTheme.button.disabled
                   : currentTheme.button.enabled
               }`}
-              aria-label="Önceki Sayfa"
+              aria-label="Previous page"
             >
               <ChevronLeftIcon />
             </button>
@@ -192,7 +192,7 @@ const Pagination: React.FC<PaginationProps> = ({
                   ? currentTheme.button.disabled
                   : currentTheme.button.enabled
               }`}
-              aria-label="Sonraki Sayfa"
+              aria-label="Next page"
             >
               <ChevronRightIcon />
             </button>
@@ -200,7 +200,7 @@ const Pagination: React.FC<PaginationProps> = ({
         </div>
       </div>
 
-      {/* Bilgi Metni */}
+      {/* Informationsschrift*/}
       {showInfo && (
         <p
           className={`mt-3 text-center ${currentTheme.info} ${currentSize.info}`}
