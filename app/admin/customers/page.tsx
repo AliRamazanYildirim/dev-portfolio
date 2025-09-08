@@ -14,15 +14,14 @@ export default function CustomersAdminPage() {
   const { isAuthenticated, loading: authLoading } = useAdminAuth();
   const {
     customers,
+    currentCustomers,
     selectedCustomer,
     setSelectedCustomer,
     loading,
-    currentPage,
-    setCurrentPage,
-    customersPerPage,
     fetchCustomers,
     saveCustomer,
     deleteCustomer,
+    pagination,
   } = useCustomers();
 
   const {
@@ -289,12 +288,11 @@ export default function CustomersAdminPage() {
                   {customers && customers.length > 0 ? (
                     <>
                       <CustomerList
-                        customers={customers}
+                        currentCustomers={currentCustomers}
+                        allCustomers={customers}
                         selectedCustomer={selectedCustomer}
                         setSelectedCustomer={setSelectedCustomer}
-                        currentPage={currentPage}
-                        setCurrentPage={setCurrentPage}
-                        customersPerPage={customersPerPage}
+                        pagination={pagination}
                       />
                       <CustomerDetails
                         customer={selectedCustomer}

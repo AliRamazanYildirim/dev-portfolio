@@ -4,6 +4,7 @@ import {
   Customer,
   FetchCustomersOptions,
 } from "@/services/customerService";
+import { usePagination } from "./usePagination";
 
 export const useCustomers = () => {
   const [customers, setCustomers] = useState<Customer[]>([]);
@@ -11,13 +12,16 @@ export const useCustomers = () => {
     null
   );
   const [loading, setLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
 
-  const customersPerPage = 9;
+  // Pagination için hook
+  const pagination = usePagination({
+    totalItems: customers.length,
+    itemsPerPage: 6,
+    initialPage: 1,
+  });
 
   const fetchCustomers = async (opts?: FetchCustomersOptions) => {
     setLoading(true);
-    setCurrentPage(1);
     const data = await customerService.fetchCustomers(opts);
     setCustomers(data);
     setLoading(false);
@@ -40,22 +44,46 @@ export const useCustomers = () => {
     fetchCustomers();
   }, []);
 
+  // Sayfalanmış müşterileri hesapla - usePagination hook'ündaki paginatedData fonksiyonunu kullan
+  const currentCustomers = pagination.paginatedData(customers);
+
+  // Debug için
+  console.log("Pagination Debug:", {
+    totalCustomers: customers.length,
+    currentPage: pagination.currentPage,
+    startIndex: pagination.startIndex,
+    endIndex: pagination.endIndex,
+    currentCustomersCount: currentCustomers.length,
+    itemsPerPage: 6,
+  });
+
   useEffect(() => {
-    if (customers.length > 0 && !selectedCustomer) {
-      setSelectedCustomer(customers[0]);
+    // Sayfa değiştiğinde veya müşteriler yüklendiğinde, mevcut sayfadaki ilk müşteriyi seç
+    if (currentCustomers.length > 0) {
+      // Eğer seçili müşteri mevcut sayfada değilse, sayfadaki ilk müşteriyi seç
+      const isSelectedCustomerInCurrentPage =
+        selectedCustomer &&
+        currentCustomers.some(
+          (customer) => customer.id === selectedCustomer.id
+        );
+
+      if (!isSelectedCustomerInCurrentPage) {
+        setSelectedCustomer(currentCustomers[0]);
+      }
+    } else if (customers.length === 0) {
+      setSelectedCustomer(null);
     }
-  }, [customers, selectedCustomer]);
+  }, [currentCustomers, customers.length, selectedCustomer]);
 
   return {
     customers,
+    currentCustomers,
     selectedCustomer,
     setSelectedCustomer,
     loading,
-    currentPage,
-    setCurrentPage,
-    customersPerPage,
     fetchCustomers,
     saveCustomer,
     deleteCustomer,
+    pagination,
   };
 };

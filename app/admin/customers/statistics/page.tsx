@@ -4,6 +4,8 @@ import { useEffect, useMemo, useState } from "react";
 import NoiseBackground from "@/components/NoiseBackground";
 import toast from "react-hot-toast";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
+import { usePagination } from "@/hooks/usePagination";
+import Pagination from "@/components/ui/Pagination";
 
 // Customer type (kept in sync with customers page)
 interface Customer {
@@ -55,8 +57,14 @@ export default function CustomersStatisticsPage() {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [loading, setLoading] = useState(true);
   const [rangeDays, setRangeDays] = useState<number>(30);
-  const [page, setPage] = useState<number>(1);
   const pageSize = 10; // fixed 10 items per page
+
+  // Pagination hook'unu kullan
+  const pagination = usePagination({
+    totalItems: customers.length,
+    itemsPerPage: pageSize,
+    initialPage: 1,
+  });
 
   useEffect(() => {
     fetchCustomers();
@@ -150,18 +158,8 @@ export default function CustomersStatisticsPage() {
     return { total, revenue, avg, days, counts, topCustomers };
   }, [customers, rangeDays]);
 
-  // pagination helpers
-  const totalPages = Math.max(1, Math.ceil(customers.length / pageSize));
-
-  useEffect(() => {
-    // reset to first page when customer list changes
-    setPage(1);
-  }, [customers.length]);
-
-  const paginatedCustomers = useMemo(() => {
-    const start = (page - 1) * pageSize;
-    return customers.slice(start, start + pageSize);
-  }, [customers, page]);
+  // Sayfalanmış müşterileri al
+  const paginatedCustomers = pagination.paginatedData(customers);
 
   const sparklinePathMemo = useMemo(() => {
     return sparklinePath(stats.counts, 240, 40);
@@ -462,62 +460,22 @@ export default function CustomersStatisticsPage() {
                       </table>
                     </div>
 
-                    {/* pagination controls */}
-                    <div className="mt-4 flex items-center justify-between">
-                      <div className="text-sm text-[#131313]/70">
-                        Showing{" "}
-                        {customers.length === 0 ? 0 : (page - 1) * pageSize + 1}{" "}
-                        - {Math.min(customers.length, page * pageSize)} of{" "}
-                        {customers.length}
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => setPage((p) => Math.max(1, p - 1))}
-                          disabled={page === 1}
-                          className={`px-3 py-1 rounded-md text-sm ${
-                            page === 1
-                              ? "bg-[#f0f0f0] text-[#8b8b8b]"
-                              : "bg-white text-[#131313] shadow"
-                          }`}
-                        >
-                          Prev
-                        </button>
-
-                        <div className="hidden sm:flex items-center gap-1">
-                          {Array.from({ length: totalPages }).map((_, i) => {
-                            const p = i + 1;
-                            const active = p === page;
-                            return (
-                              <button
-                                key={p}
-                                onClick={() => setPage(p)}
-                                className={`px-3 py-1 rounded-md text-sm ${
-                                  active
-                                    ? "bg-[#131313] text-white"
-                                    : "bg-white text-[#131313] shadow"
-                                }`}
-                              >
-                                {p}
-                              </button>
-                            );
-                          })}
-                        </div>
-
-                        <button
-                          onClick={() =>
-                            setPage((p) => Math.min(totalPages, p + 1))
-                          }
-                          disabled={page === totalPages}
-                          className={`px-3 py-1 rounded-md text-sm ${
-                            page === totalPages
-                              ? "bg-[#f0f0f0] text-[#8b8b8b]"
-                              : "bg-white text-[#131313] shadow"
-                          }`}
-                        >
-                          Next
-                        </button>
-                      </div>
-                    </div>
+                    {/* Merkezi Pagination Bileşeni */}
+                    <Pagination
+                      currentPage={pagination.currentPage}
+                      totalPages={pagination.totalPages}
+                      hasNextPage={pagination.hasNextPage}
+                      hasPrevPage={pagination.hasPrevPage}
+                      onPageChange={pagination.goToPage}
+                      onNextPage={pagination.nextPage}
+                      onPrevPage={pagination.prevPage}
+                      getPageNumbers={pagination.getPageNumbers}
+                      getCurrentRange={pagination.getCurrentRange}
+                      theme="light"
+                      showInfo={true}
+                      size="sm"
+                      className="mt-4"
+                    />
                   </div>
                 )}
               </div>

@@ -1,28 +1,23 @@
 import { Customer } from "@/services/customerService";
 import NoiseBackground from "@/components/NoiseBackground";
+import Pagination from "@/components/ui/Pagination";
+import { UsePaginationReturn } from "@/hooks/usePagination";
 
 interface CustomerListProps {
-  customers: Customer[];
+  currentCustomers: Customer[]; // Zaten sayfalanmış müşteriler
+  allCustomers: Customer[]; // Toplam müşteri sayısı için
   selectedCustomer: Customer | null;
   setSelectedCustomer: (customer: Customer) => void;
-  currentPage: number;
-  setCurrentPage: (page: number) => void;
-  customersPerPage: number;
+  pagination: UsePaginationReturn;
 }
 
 export default function CustomerList({
-  customers,
+  currentCustomers,
+  allCustomers,
   selectedCustomer,
   setSelectedCustomer,
-  currentPage,
-  setCurrentPage,
-  customersPerPage,
+  pagination,
 }: CustomerListProps) {
-  const totalPages = Math.ceil(customers.length / customersPerPage);
-  const startIndex = (currentPage - 1) * customersPerPage;
-  const endIndex = startIndex + customersPerPage;
-  const currentCustomers = customers.slice(startIndex, endIndex);
-
   return (
     <div className="lg:col-span-4 xl:col-span-3">
       <div className="bg-gradient-to-br from-white/95 to-white/85 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/30 overflow-hidden flex flex-col">
@@ -30,7 +25,7 @@ export default function CustomerList({
           <div className="bg-gradient-to-r from-slate-900 to-slate-800 p-6 text-white">
             <h3 className="text-xl font-bold mb-2">Customer List</h3>
             <p className="text-white/70 text-sm">
-              {customers.length} customers total
+              {allCustomers.length} customers total
             </p>
           </div>
 
@@ -91,87 +86,22 @@ export default function CustomerList({
             </div>
           </div>
 
-          {/* Pagination */}
+          {/* Pagination - Merkezi Bileşen */}
           <div className="flex-shrink-0 p-4 border-t border-slate-200/50 bg-white/80">
-            <div className="flex items-center justify-between">
-              <div className="text-sm text-slate-600">
-                Showing {customers.length === 0 ? 0 : startIndex + 1} -{" "}
-                {Math.min(customers.length, endIndex)} of {customers.length}
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setCurrentPage(Math.max(currentPage - 1, 1))}
-                  disabled={currentPage === 1}
-                  className={`px-3 py-1 rounded-md text-sm transition-colors ${
-                    currentPage === 1
-                      ? "bg-transparent text-slate-700 cursor-not-allowed"
-                      : "bg-white text-slate-700 shadow hover:bg-slate-50"
-                  }`}
-                >
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M15 19l-7-7 7-7"
-                    />
-                  </svg>
-                  {/* Prev */}
-                </button>
-
-                <div className="hidden sm:flex items-center gap-1">
-                  {Array.from({ length: totalPages }, (_, i) => {
-                    const p = i + 1;
-                    const active = p === currentPage;
-                    return (
-                      <button
-                        key={p}
-                        onClick={() => setCurrentPage(p)}
-                        className={`px-3 py-1 rounded-md text-sm transition-colors ${
-                          active
-                            ? "bg-slate-800 text-white"
-                            : "bg-white text-slate-700 shadow hover:bg-slate-50"
-                        }`}
-                      >
-                        {p}
-                      </button>
-                    );
-                  })}
-                </div>
-
-                <button
-                  onClick={() =>
-                    setCurrentPage(Math.min(currentPage + 1, totalPages))
-                  }
-                  disabled={currentPage === totalPages}
-                  className={`px-3 py-1 rounded-md text-sm transition-colors ${
-                    currentPage === totalPages
-                      ? "bg-transparent text-slate-700 cursor-not-allowed"
-                      : "bg-white text-slate-700 shadow hover:bg-slate-50"
-                  }`}
-                >
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
-                  {/* Next */}
-                </button>
-              </div>
-            </div>
+            <Pagination
+              currentPage={pagination.currentPage}
+              totalPages={pagination.totalPages}
+              hasNextPage={pagination.hasNextPage}
+              hasPrevPage={pagination.hasPrevPage}
+              onPageChange={pagination.goToPage}
+              onNextPage={pagination.nextPage}
+              onPrevPage={pagination.prevPage}
+              getPageNumbers={pagination.getPageNumbers}
+              getCurrentRange={pagination.getCurrentRange}
+              theme="admin"
+              size="sm"
+              showInfo={true}
+            />
           </div>
         </NoiseBackground>
       </div>

@@ -1,12 +1,14 @@
 "use client";
 
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import NoiseBackground from "@/components/NoiseBackground";
 import SplitText from "@/TextAnimations/SplitText";
 import { ProjectsAPI } from "@/lib/api";
+import { usePagination } from "@/hooks/usePagination";
+import Pagination from "@/components/ui/Pagination";
 
 // TypeScript Interface für Projekte
 interface Project {
@@ -28,9 +30,15 @@ const ProjectsPage = () => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [currentPage, setCurrentPage] = useState<number>(1);
   const pageSize = 2; // Elemente pro Seite (konfiguriert für mindestens 2 Projekte)
   const listTopRef = useRef<HTMLDivElement | null>(null);
+
+  // Pagination Hook kullan
+  const pagination = usePagination({
+    totalItems: projects.length,
+    itemsPerPage: pageSize,
+    initialPage: 1,
+  });
 
   // Projekte von der API laden
   useEffect(() => {
@@ -72,27 +80,12 @@ const ProjectsPage = () => {
     visible: { opacity: 1, y: 0 },
   };
 
-  // Pagination helpers
-  const totalPages = useMemo(() => {
-    return Math.max(1, Math.ceil(projects.length / pageSize));
-  }, [projects.length]);
+  // Sayfalanmış projeleri al
+  const pageProjects = pagination.paginatedData(projects);
 
-  const pageProjects = useMemo(() => {
-    const start = (currentPage - 1) * pageSize;
-    const end = start + pageSize;
-    return projects.slice(start, end);
-  }, [projects, currentPage]);
-
-  // Falls sich die Projektanzahl ändert, aktuelle Seite im gültigen Bereich halten
-  useEffect(() => {
-    if (currentPage > totalPages) {
-      setCurrentPage(totalPages);
-    }
-  }, [totalPages, currentPage]);
-
-  const goToPage = (page: number) => {
-    const next = Math.min(Math.max(1, page), totalPages);
-    setCurrentPage(next);
+  // Sayfa değiştiğinde yumuşak scroll
+  const handlePageChange = (page: number) => {
+    pagination.goToPage(page);
     // Sanft zum Listenanfang scrollen
     if (listTopRef.current) {
       listTopRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -106,9 +99,7 @@ const ProjectsPage = () => {
         <div className="text-white px-5 pb-10 md:px-20 md:pb-20 min-h-screen flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-            <p className="content md:text-lgContent">
-             Projects are loading...
-            </p>
+            <p className="content md:text-lgContent">Projects are loading...</p>
           </div>
         </div>
       </NoiseBackground>
@@ -205,119 +196,23 @@ const ProjectsPage = () => {
             ))}
           </motion.div>
 
-          {/* Pagination Controls (unten) - polished UI */}
-          {projects.length > 0 && totalPages > 1 && (
-            <nav className="mt-10 select-none" aria-label="Pagination">
-              <div className="w-full flex items-center justify-center">
-                <div className="backdrop-blur bg-white/5 border border-white/10 rounded-2xl px-2 py-2 sm:px-3 sm:py-3 shadow-lg">
-                  <div className="flex items-center gap-1 sm:gap-2">
-                    {/* Prev */}
-                    <button
-                      onClick={() => goToPage(currentPage - 1)}
-                      disabled={currentPage === 1}
-                      className={`h-10 w-10 sm:h-11 sm:w-11 rounded-xl flex items-center justify-center border transition ${
-                        currentPage === 1
-                          ? "border-white/10 text-white/40 cursor-not-allowed"
-                          : "border-white/20 text-white hover:bg-white/10"
-                      }`}
-                      aria-label="Vorherige Seite"
-                    >
-                      <svg
-                        className="h-4 w-4"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M15 19l-7-7 7-7"
-                        />
-                      </svg>
-                    </button>
-
-                    {/* Page numbers with ellipsis */}
-                    {(() => {
-                      const items: Array<number | "…"> = (() => {
-                        if (totalPages <= 7)
-                          return Array.from(
-                            { length: totalPages },
-                            (_, i) => i + 1
-                          );
-                        const arr: Array<number | "…"> = [1];
-                        const left = Math.max(2, currentPage - 1);
-                        const right = Math.min(totalPages - 1, currentPage + 1);
-                        if (left > 2) arr.push("…");
-                        for (let p = left; p <= right; p++) arr.push(p);
-                        if (right < totalPages - 1) arr.push("…");
-                        arr.push(totalPages);
-                        return arr;
-                      })();
-
-                      return items.map((it, idx) => {
-                        if (it === "…") {
-                          return (
-                            <span
-                              key={`ellipsis-${idx}`}
-                              className="h-10 w-10 sm:h-11 sm:w-11 rounded-xl flex items-center justify-center text-white/60"
-                            >
-                              …
-                            </span>
-                          );
-                        }
-                        const page = it as number;
-                        const active = page === currentPage;
-                        return (
-                          <button
-                            key={`p-${page}`}
-                            onClick={() => goToPage(page)}
-                            className={`h-10 w-10 sm:h-11 sm:w-11 rounded-xl flex items-center justify-center border transition ${
-                              active
-                                ? "bg-white text-black border-white"
-                                : "border-white/20 text-white hover:bg-white/10"
-                            }`}
-                            aria-current={active ? "page" : undefined}
-                            aria-label={`Seite ${page}`}
-                          >
-                            {page}
-                          </button>
-                        );
-                      });
-                    })()}
-
-                    {/* Next */}
-                    <button
-                      onClick={() => goToPage(currentPage + 1)}
-                      disabled={currentPage === totalPages}
-                      className={`h-10 w-10 sm:h-11 sm:w-11 rounded-xl flex items-center justify-center border transition ${
-                        currentPage === totalPages
-                          ? "border-white/10 text-white/40 cursor-not-allowed"
-                          : "border-white/20 text-white hover:bg-white/10"
-                      }`}
-                      aria-label="Nächste Seite"
-                    >
-                      <svg
-                        className="h-4 w-4"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M9 5l7 7-7 7"
-                        />
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-              </div>
-              <p className="mt-3 text-center text-white/70">
-                Seite {currentPage} von {totalPages}
-              </p>
-            </nav>
+          {/* Pagination Controls - Merkezi Pagination Bileşeni */}
+          {projects.length > 0 && (
+            <Pagination
+              currentPage={pagination.currentPage}
+              totalPages={pagination.totalPages}
+              hasNextPage={pagination.hasNextPage}
+              hasPrevPage={pagination.hasPrevPage}
+              onPageChange={handlePageChange}
+              onNextPage={() => handlePageChange(pagination.currentPage + 1)}
+              onPrevPage={() => handlePageChange(pagination.currentPage - 1)}
+              getPageNumbers={pagination.getPageNumbers}
+              getCurrentRange={pagination.getCurrentRange}
+              theme="dark"
+              showInfo={true}
+              size="md"
+              className="mt-10"
+            />
           )}
 
           {/* Keine Projekte gefunden */}
