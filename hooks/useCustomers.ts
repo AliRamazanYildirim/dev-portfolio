@@ -13,10 +13,10 @@ export const useCustomers = () => {
   );
   const [loading, setLoading] = useState(true);
 
-  // Pagination için hook
+  // Page creation hook
   const pagination = usePagination({
     totalItems: customers.length,
-    itemsPerPage: 6,
+    itemsPerPage: 9,
     initialPage: 1,
   });
 
@@ -44,23 +44,13 @@ export const useCustomers = () => {
     fetchCustomers();
   }, []);
 
-  // Sayfalanmış müşterileri hesapla - usePagination hook'ündaki paginatedData fonksiyonunu kullan
+  // Berechnete paginierte Kunden - Verwenden Sie die paginatedData-Funktion im usePagination-Hook
   const currentCustomers = pagination.paginatedData(customers);
 
-  // Debug için
-  console.log("Pagination Debug:", {
-    totalCustomers: customers.length,
-    currentPage: pagination.currentPage,
-    startIndex: pagination.startIndex,
-    endIndex: pagination.endIndex,
-    currentCustomersCount: currentCustomers.length,
-    itemsPerPage: 6,
-  });
-
   useEffect(() => {
-    // Sayfa değiştiğinde veya müşteriler yüklendiğinde, mevcut sayfadaki ilk müşteriyi seç
+    // Wenn die Seite gewechselt oder Kunden geladen werden, wähle den ersten Kunden auf der aktuellen Seite aus.
     if (currentCustomers.length > 0) {
-      // Eğer seçili müşteri mevcut sayfada değilse, sayfadaki ilk müşteriyi seç
+      // Wenn der ausgewählte Kunde nicht auf der aktuellen Seite ist, wähle den ersten Kunden auf der Seite aus.
       const isSelectedCustomerInCurrentPage =
         selectedCustomer &&
         currentCustomers.some(

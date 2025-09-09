@@ -236,7 +236,7 @@ export default function CustomersAdminPage() {
                   <select
                     value={filter}
                     onChange={(e) => handleFilterChange(e.target.value)}
-                    className="bg-[#131313] text-white font-semibold px-4 py-2 rounded-lg text-sm shadow-lg"
+                    className="bg-[#131313] text-white font-semibold px-6 py-2 rounded-lg text-sm shadow-lg"
                   >
                     <option value="none">Filter / Sort</option>
                     <option value="price_desc">Price: High → Low</option>
