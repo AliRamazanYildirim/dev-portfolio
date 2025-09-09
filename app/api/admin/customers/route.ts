@@ -20,7 +20,7 @@ export async function GET(request: Request) {
       // If user passed YYYY-MM-DD convert to full ISO interval
       const fromIso = from.length === 10 ? `${from}T00:00:00Z` : from;
       const toIso = to.length === 10 ? `${to}T23:59:59Z` : to;
-      query = query.gte("created_at", fromIso).lte("created_at", toIso);
+      query = query.gte("createdAt", fromIso).lte("createdAt", toIso);
     }
 
     // If q provided, search across multiple fields (firstname, lastname, companyname, address, reference)
@@ -41,7 +41,7 @@ export async function GET(request: Request) {
           .order("firstname", { ascending })
           .order("lastname", { ascending });
       } else if (field === "created") {
-        query = query.order("created_at", { ascending });
+        query = query.order("createdAt", { ascending });
       }
     }
 
