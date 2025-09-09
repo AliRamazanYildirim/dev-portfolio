@@ -383,7 +383,7 @@ export default function AdminPage() {
                       {paginatedProjects.map((project) => (
                         <div key={project.id} className="group">
                           {/* Responsive Project Card */}
-                          <div className="bg-[#eeede9] rounded-xl sm:rounded-2xl shadow-lg border border-white/20 overflow-hidden hover:shadow-xl transition-all duration-300 hover:scale-[1.01] sm:hover:scale-[1.02] p-4 sm:p-6 lg:p-8">
+                          <div className="bg-[#eee4c1] rounded-xl sm:rounded-2xl shadow-lg border border-white/20 overflow-hidden hover:shadow-xl transition-all duration-300 hover:scale-[1.01] sm:hover:scale-[1.02] p-4 sm:p-6 lg:p-8">
                             <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 lg:gap-6">
                               <div className="flex-1">
                                 <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 mb-4">
