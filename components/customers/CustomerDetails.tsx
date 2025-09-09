@@ -17,29 +17,31 @@ export default function CustomerDetails({
     return (
       <div className="lg:col-span-8 xl:col-span-9">
         <div className="bg-gradient-to-br from-white/95 to-white/85 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/30 h-full flex items-center justify-center">
-          <div className="text-center p-8">
-            <div className="w-24 h-24 bg-gradient-to-r from-slate-400 to-slate-500 rounded-full flex items-center justify-center mx-auto mb-6">
-              <svg
-                className="w-12 h-12 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                />
-              </svg>
+          <NoiseBackground mode="light" intensity={0.1}>
+            <div className="text-center p-8">
+              <div className="w-24 h-24 bg-gradient-to-r from-slate-400 to-slate-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                <svg
+                  className="w-12 h-12 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-2xl font-bold text-slate-700 mb-2">
+                No Customer Selected
+              </h3>
+              <p className="text-slate-500">
+                Select a customer from the list to view details
+              </p>
             </div>
-            <h3 className="text-2xl font-bold text-slate-700 mb-2">
-              No Customer Selected
-            </h3>
-            <p className="text-slate-500">
-              Select a customer from the list to view details
-            </p>
-          </div>
+          </NoiseBackground>
         </div>
       </div>
     );
@@ -64,7 +66,7 @@ export default function CustomerDetails({
 
   return (
     <div className="lg:col-span-8 xl:col-span-9">
-      <div className="rounded-3xl shadow-2xl border border-white/30 h-full overflow-hidden">
+      <div className="bg-gradient-to-br from-white/95 to-white/85 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/30 overflow-hidden flex flex-col">
         <NoiseBackground mode="light" intensity={0.1}>
           <div className="bg-gradient-to-r from-slate-900 to-slate-800 p-6 text-white">
             <div className="flex items-center justify-between">
@@ -83,7 +85,7 @@ export default function CustomerDetails({
             </div>
           </div>
 
-          <div className="h-[calc(100%-120px)] overflow-y-auto custom-scrollbar p-6">
+          <div className="flex-1 overflow-y-auto custom-scrollbar p-6">
             <div className="space-y-8">
               {/* Personal Information */}
               <div className="bg-gradient-to-r from-slate-50 to-slate-100 rounded-3xl p-6 border border-slate-200/50">
@@ -183,7 +185,7 @@ export default function CustomerDetails({
               )}
 
               {/* Location & References */}
-              <div className="bg-gradient-to-r from-blue-200 to-indigo-100 rounded-3xl p-6 border border-blue-200/50">
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-3xl p-6 border border-blue-200/50">
                 <div className="flex items-center gap-4 mb-6">
                   <div className="w-3 h-3 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full"></div>
                   <h3 className="text-2xl font-bold text-blue-800">
@@ -234,10 +236,12 @@ export default function CustomerDetails({
               </div>
 
               {/* Actions */}
-              <div className="bg-gradient-to-r from-slate-50 to-slate-100 rounded-3xl p-6 border border-slate-200/50">
+              <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-3xl p-6 border border-purple-200/50">
                 <div className="flex items-center gap-4 mb-6">
                   <div className="w-3 h-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full"></div>
-                  <h3 className="text-2xl font-bold text-slate-800">Actions</h3>
+                  <h3 className="text-2xl font-bold text-purple-800">
+                    Actions
+                  </h3>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                   <button

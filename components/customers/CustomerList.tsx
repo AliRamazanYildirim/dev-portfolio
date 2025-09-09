@@ -4,7 +4,7 @@ import Pagination from "@/components/ui/Pagination";
 import { UsePaginationReturn } from "@/hooks/usePagination";
 
 interface CustomerListProps {
-  currentCustomers: Customer[]; // Zaten sayfalanmış müşteriler
+  currentCustomers: Customer[]; // Bereits paginierte Kunden
   allCustomers: Customer[]; // Gesamtanzahl der Kunden
   selectedCustomer: Customer | null;
   setSelectedCustomer: (customer: Customer) => void;
@@ -35,10 +35,10 @@ export default function CustomerList({
                 <div
                   key={customer.id}
                   onClick={() => setSelectedCustomer(customer)}
-                  className={`group cursor-pointer relative p-4 rounded-2xl transition-all duration-300 hover:scale-[1.02] ${
+                  className={`group cursor-pointer relative p-5 rounded-2xl transition-all duration-300 hover:scale-[1.02] ${
                     selectedCustomer?.id === customer.id
-                      ? "bg-gradient-to-r from-blue-500/20 to-purple-500/20 border-2 border-blue-500/30 shadow-lg"
-                      : "bg-white/50 hover:bg-white/80 border border-white/30 hover:border-blue-300/50"
+                      ? "bg-gradient-to-l from-blue-500/20 to-purple-500/20 border-2 border-blue-500/30 shadow-lg"
+                      : "bg-gradient-to-l from-orange-500/20 to-purple-500/20 border border-white/30 hover:border-blue-300/50"
                   }`}
                 >
                   <div className="flex items-center gap-3">
@@ -62,7 +62,7 @@ export default function CustomerList({
                       >
                         {customer.firstname} {customer.lastname}
                       </h4>
-                      <p className="text-sm text-slate-500 truncate">
+                      <p className="text-sm text-slate-700 truncate">
                         {customer.companyname}
                       </p>
                       {customer.price && (
@@ -87,7 +87,7 @@ export default function CustomerList({
           </div>
 
           {/* Pagination - Zentrale Komponente */}
-          <div className="flex-shrink-0 p-4 border-t border-slate-200/50 bg-white/80">
+          <div className="flex-shrink-0 p-4 border-t border-slate-200/50 bg-transparent">
             <Pagination
               currentPage={pagination.currentPage}
               totalPages={pagination.totalPages}
