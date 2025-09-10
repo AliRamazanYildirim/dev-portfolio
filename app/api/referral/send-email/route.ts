@@ -65,9 +65,9 @@ Sie haben das Maximum von 3 Empfehlungen erreicht und sichern sich dauerhaft 9% 
 ` : `
 🚀 Ihre Vorteile in jeder Empfehlung:
 
-• Sie sparen bei künftigen Projekten bis zu 9%
-• Ihre Freunde & Kollegen erhalten professionelle Unterstützung bei Webprojekten
-• Jeder Gewinn bringt Sie dem Maximum einen Schritt näher
+• Sie sparen insgesamt 18% auf Ihre künftigen Projekte.
+• Ihre Freunde & Kollegen erhalten professionelle Unterstützung bei Webprojekten.
+• Jeder Gewinn bringt Sie dem Maximum einen Schritt näher.
 `}
 
 🌐 Meine Dienstleistungen:
