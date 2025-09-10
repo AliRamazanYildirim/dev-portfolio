@@ -15,7 +15,7 @@ export async function POST(request: Request) {
     // Müşteriyi ve referans kodunu getir
     const { data: customer, error: customerError } = await supabaseAdmin
       .from("customers")
-      .select("id, firstname, lastname, myReferralCode, referralCount")
+      .select("id, firstname, lastname, myReferralCode, referralCount, price")
       .eq("id", customerId)
       .single();
 
@@ -36,20 +36,23 @@ export async function POST(request: Request) {
     // E-Mail-Inhalt erstellen
     const currentCount = customer.referralCount || 0;
     const hasReachedMaximum = currentCount >= 3;
+    const referrerPrice = customer.price || 0;
     
     const emailContent = `
 Hallo ${customer.firstname} ${customer.lastname},
 
 es freut mich riesig, dass Sie mir Ihr Vertrauen geschenkt haben – gemeinsam erschaffen wir digitale Erlebnisse, die Eindruck hinterlassen!
-
 Sie haben den ersten Schritt schon gemacht – und jetzt können Sie noch mehr gewinnen!
-
 Mit Ihrem persönlichen Empfehlungscode sichern Sie sich immer größere Rabatte, je mehr Menschen Sie in mein Netzwerk bringen:
 
 👉 ${customer.myReferralCode}
 
+📈 Ihre aktuelle Situation:
+• Ihr Projektpreis: €${referrerPrice.toFixed(2)}
+
 ✨ So funktioniert es:
 
+💰 Rabattstaffel:
 • 1. Empfehlung → 3% Rabatt
 • 2. Empfehlung → 6% Rabatt  
 • 3. Empfehlung → 9% Rabatt (Maximum)
@@ -62,7 +65,7 @@ Sie haben das Maximum von 3 Empfehlungen erreicht und sichern sich dauerhaft 9% 
 ` : `
 🚀 Ihre Vorteile in jeder Empfehlung:
 
-• Sie sparen bei künftigen Projekten bis zu 15%
+• Sie sparen bei künftigen Projekten bis zu 9%
 • Ihre Freunde & Kollegen erhalten professionelle Unterstützung bei Webprojekten
 • Jeder Gewinn bringt Sie dem Maximum einen Schritt näher
 `}
