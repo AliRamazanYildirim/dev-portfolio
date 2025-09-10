@@ -471,7 +471,7 @@ export default function CustomersStatisticsPage() {
                       onPrevPage={pagination.prevPage}
                       getPageNumbers={pagination.getPageNumbers}
                       getCurrentRange={pagination.getCurrentRange}
-                      theme="light"
+                      theme="admin"
                       showInfo={true}
                       size="sm"
                       className="mt-4"

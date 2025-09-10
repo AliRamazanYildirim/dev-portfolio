@@ -88,7 +88,7 @@ export const Nav = ({ className }: { className?: string }) => {
   return (
     <NoiseBackground mode={noiseMode} intensity={0.1}>
       <div className={`w-full bg-transparent ${className}`}>
-        <div className="relative pt-8 pb-8 px-7 md:px-24 md:pb-8">
+        <div className="relative pt-0 pb-0 px-7 md:px-24 md:pb-0">
           <nav
             className={`flex items-center ${
               isAdminPage ? "justify-center" : "justify-between"
