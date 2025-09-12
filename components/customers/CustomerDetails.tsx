@@ -1,5 +1,6 @@
 import { Customer, customerService } from "@/services/customerService";
 import NoiseBackground from "@/components/NoiseBackground";
+import { useInvoiceGenerator } from "@/hooks/useInvoiceGenerator";
 import toast from "react-hot-toast";
 
 interface CustomerDetailsProps {
@@ -13,6 +14,8 @@ export default function CustomerDetails({
   onEdit,
   onDelete,
 }: CustomerDetailsProps) {
+  const { isGenerating, generateInvoice } = useInvoiceGenerator();
+
   if (!customer) {
     return (
       <div className="lg:col-span-8 xl:col-span-9">
@@ -63,6 +66,8 @@ export default function CustomerDetails({
       toast.error("Email sending error");
     }
   };
+
+  const handleGenerateInvoice = () => generateInvoice(customer);
 
   return (
     <div className="lg:col-span-8 xl:col-span-9">
@@ -243,7 +248,27 @@ export default function CustomerDetails({
                     Actions
                   </h3>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                  <button
+                    onClick={handleGenerateInvoice}
+                    disabled={isGenerating}
+                    className="relative group/btn overflow-hidden inline-flex items-center justify-center px-6 py-4 bg-gradient-to-r from-violet-600 via-purple-700 to-purple-800 text-white rounded-2xl font-bold shadow-lg hover:shadow-violet-500/40 hover:shadow-2xl transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                  >
+                    <svg
+                      className="w-5 h-5 mr-2"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                      />
+                    </svg>
+                    {isGenerating ? "Generating..." : "Generate Invoice"}
+                  </button>
                   <button
                     onClick={handleCopyReferral}
                     className="relative group/btn overflow-hidden inline-flex items-center justify-center px-6 py-4 bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 text-white rounded-2xl font-bold shadow-lg hover:shadow-blue-500/40 hover:shadow-2xl transition-all duration-300 hover:scale-105"
