@@ -1,7 +1,10 @@
 import { Customer, customerService } from "@/services/customerService";
 import NoiseBackground from "@/components/NoiseBackground";
 import { useInvoiceGenerator } from "@/hooks/useInvoiceGenerator";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import toast from "react-hot-toast";
+import InvoiceModal from "./InvoiceModal";
 
 interface CustomerDetailsProps {
   customer: Customer | null;
@@ -15,6 +18,8 @@ export default function CustomerDetails({
   onDelete,
 }: CustomerDetailsProps) {
   const { isGenerating, generateInvoice } = useInvoiceGenerator();
+  const router = useRouter();
+  const [showInvoiceModal, setShowInvoiceModal] = useState(false);
 
   if (!customer) {
     return (
@@ -67,7 +72,10 @@ export default function CustomerDetails({
     }
   };
 
-  const handleGenerateInvoice = () => generateInvoice(customer);
+  const handleGenerateInvoice = () => {
+    // Modal'ı aç
+    setShowInvoiceModal(true);
+  };
 
   return (
     <div className="lg:col-span-8 xl:col-span-9">
@@ -251,8 +259,8 @@ export default function CustomerDetails({
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
                   <button
                     onClick={handleGenerateInvoice}
-                    disabled={isGenerating}
-                    className="relative group/btn overflow-hidden inline-flex items-center justify-center px-6 py-4 bg-gradient-to-r from-violet-600 via-purple-700 to-purple-800 text-white rounded-2xl font-bold shadow-lg hover:shadow-violet-500/40 hover:shadow-2xl transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                    disabled={false}
+                    className="relative group/btn overflow-hidden inline-flex items-center justify-center px-6 py-4 bg-gradient-to-r from-violet-600 via-purple-700 to-purple-800 text-white rounded-2xl font-bold shadow-lg hover:shadow-violet-500/40 hover:shadow-2xl transition-all duration-300 hover:scale-105"
                   >
                     <svg
                       className="w-5 h-5 mr-2"
@@ -267,7 +275,7 @@ export default function CustomerDetails({
                         d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                       />
                     </svg>
-                    {isGenerating ? "Generating..." : "Generate Invoice"}
+                    Create Invoice
                   </button>
                   <button
                     onClick={handleCopyReferral}
@@ -351,6 +359,13 @@ export default function CustomerDetails({
           </div>
         </NoiseBackground>
       </div>
+
+      {/* Invoice Modal */}
+      <InvoiceModal
+        show={showInvoiceModal}
+        customer={customer}
+        onClose={() => setShowInvoiceModal(false)}
+      />
     </div>
   );
 }

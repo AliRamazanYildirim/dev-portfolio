@@ -228,18 +228,11 @@ export async function POST(request: NextRequest) {
     doc.text("Amount:", categoryX + 10, yPos + 75);
 
     doc.setFont("helvetica", "normal");
-    
-    // Category değerini güvenli şekilde göster
-    const categoryValue = invoiceData.project?.category;
-    const categoryText = Array.isArray(categoryValue) 
-      ? categoryValue[0] 
-      : categoryValue || "Web Development";
-    
-    doc.text(
-      categoryText,
-      categoryX + 10,
-      yPos + 60
-    );
+
+    // Category değerini formdan gelen değerle göster
+    const categoryText = invoiceData.project?.category || "Web Development";
+
+    doc.text(categoryText, categoryX + 10, yPos + 60);
     doc.setFontSize(16);
     doc.setFont("helvetica", "bold");
     doc.setTextColor(26, 54, 93);
@@ -262,12 +255,12 @@ export async function POST(request: NextRequest) {
     doc.setFont("helvetica", "bold");
     doc.text("DELIVERABLES", 50, yPos + 17);
 
-    // Deliverables content - Yüksekliği azalttık
+    // Deliverables content - 3 sütun için optimize edildi
     doc.setFillColor(255, 255, 255);
-    doc.rect(40, yPos + 25, pageWidth - 80, 60, "F"); // 80'den 60'a düşürdük
+    doc.rect(40, yPos + 25, pageWidth - 80, 80, "F"); // 120'den 80'e düşürüldü (3 sütun daha verimli)
     doc.setDrawColor(200, 200, 200);
     doc.setLineWidth(0.5); // İnce çerçeve
-    doc.rect(40, yPos + 25, pageWidth - 80, 60, "S");
+    doc.rect(40, yPos + 25, pageWidth - 80, 80, "S");
 
     doc.setTextColor(74, 85, 104);
     doc.setFontSize(10);
@@ -277,18 +270,55 @@ export async function POST(request: NextRequest) {
       invoiceData.project?.deliverables &&
       invoiceData.project.deliverables.length > 0
     ) {
-      let deliverableY = yPos + 45;
-      invoiceData.project.deliverables.forEach((deliverable: string) => {
-        if (deliverableY < yPos + 75) {
-          // 95'den 75'e düşürdük
-          doc.text(`• ${deliverable}`, 50, deliverableY);
-          deliverableY += 12; // 15'den 12'ye düşürdük
+      // 3 sütun layout için parametreler
+      const columnWidth = (pageWidth - 80 - 60) / 3; // 3 eşit sütun, 20px padding her sütun arası
+      const startX = 50; // Sol kenar
+      const startY = yPos + 45; // Başlangıç Y pozisyonu
+      const lineHeight = 12; // Satır yüksekliği
+      const maxItemsPerColumn = 5; // Her sütunda maksimum 5 item
+
+      let currentColumn = 0; // 0, 1, 2
+      let currentRow = 0; // 0, 1, 2, 3, 4
+
+      invoiceData.project.deliverables.forEach(
+        (deliverable: string, index: number) => {
+          // Eğer 15 item'e ulaştıysak (3x5) dur
+          if (index >= 15) return;
+
+          // Mevcut pozisyonu hesapla
+          const xPos = startX + currentColumn * columnWidth;
+          const yPos_item = startY + currentRow * lineHeight;
+
+          // Deliverable'ı yazdır
+          doc.text(`• ${deliverable}`, xPos, yPos_item);
+
+          // Sonraki pozisyonu hesapla
+          currentRow++;
+          if (currentRow >= maxItemsPerColumn) {
+            currentRow = 0;
+            currentColumn++;
+          }
         }
-      });
+      );
+
+      // Eğer 15'den fazla item varsa, uyarı göster
+      if (invoiceData.project.deliverables.length > 15) {
+        const remainingCount = invoiceData.project.deliverables.length - 15;
+        doc.setFont("helvetica", "italic");
+        doc.text(
+          `... and ${remainingCount} more items`,
+          startX,
+          startY + 5 * lineHeight + 10
+        );
+        doc.setFont("helvetica", "normal");
+      }
+    } else {
+      // Fallback durumu - eğer deliverables yoksa
+      doc.text("• No specific deliverables selected", 50, yPos + 45);
     }
 
-    // Pricing ve Total aynı yPos'da olacak - sadece boşlukları ayarlıyoruz
-    yPos += 90; // 130'dan 90'a düşürdük
+    // Pricing ve Total - 3 sütun layout ile optimize edildi
+    yPos += 110; // 150'den 110'a düşürüldü (deliverables kutusu küçüldü)
 
     // Pricing breakdown - German tax system (19% MwSt)
     doc.setFillColor(26, 54, 93);

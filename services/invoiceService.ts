@@ -27,27 +27,30 @@ export class InvoiceService {
 
   /**
    * Calculates pricing information according to German tax system (19% MwSt)
+   * Prices are treated as NET (VAT exclusive)
    */
   private static calculatePricing(customer: Customer) {
-    const originalPrice = Number(customer.price || 1000);
+    const originalNetPrice = Number(customer.price || 1000); // Net price (VAT exclusive)
     const discountRate = Number(customer.discountRate || 0);
 
-    // Calculate net amount (after discount, before MwSt)
+    // Calculate referral discount from net price
     const referralDiscount =
-      discountRate > 0 ? (originalPrice * discountRate) / 100 : 0;
-    const nettoAmount = originalPrice - referralDiscount; // Netto (MwSt-frei)
+      discountRate > 0 ? (originalNetPrice * discountRate) / 100 : 0;
 
-    // Calculate 19% MwSt on net amount
-    const mwst = nettoAmount * INVOICE_CONSTANTS.VAT_RATE; // 19% MwSt
+    // Net amount after discount (still VAT exclusive)
+    const netAmountAfterDiscount = originalNetPrice - referralDiscount;
+
+    // Calculate 19% MwSt on net amount after discount
+    const mwst = netAmountAfterDiscount * INVOICE_CONSTANTS.VAT_RATE; // 19% MwSt
 
     // Calculate total (Brutto = Netto + MwSt)
-    const bruttoTotal = nettoAmount + mwst;
+    const bruttoTotal = netAmountAfterDiscount + mwst;
 
     return {
-      subtotal: originalPrice, // Original price before discount
+      subtotal: originalNetPrice, // Original net price before discount (VAT exclusive)
       referralDiscount, // Discount amount
       referralDiscountPercent: discountRate, // Discount percentage
-      netAmount: nettoAmount, // Net amount (after discount, before MwSt)
+      netAmount: netAmountAfterDiscount, // Net amount after discount (VAT exclusive)
       vat: mwst, // 19% MwSt amount
       vatPercent: INVOICE_CONSTANTS.VAT_RATE * 100, // 19.00%
       total: bruttoTotal, // Brutto total (Netto + MwSt)
@@ -57,7 +60,15 @@ export class InvoiceService {
   /**
    * Creates invoice data from customer information
    */
-  private static createInvoiceData(customer: Customer): InvoiceData {
+  static createInvoiceData(
+    customer: Customer,
+    projectOverrides?: {
+      category?: string;
+      deliverables?: string[];
+      title?: string;
+      description?: string;
+    }
+  ): InvoiceData {
     const pricing = this.calculatePricing(customer);
 
     return {
@@ -81,11 +92,18 @@ export class InvoiceService {
         phone: customer.phone || undefined,
       },
       project: {
-        title: INVOICE_CONSTANTS.PROJECT.DEFAULT_TITLE,
-        description: INVOICE_CONSTANTS.PROJECT.DEFAULT_DESCRIPTION,
+        title:
+          projectOverrides?.title || INVOICE_CONSTANTS.PROJECT.DEFAULT_TITLE,
+        description:
+          projectOverrides?.description ||
+          INVOICE_CONSTANTS.PROJECT.DEFAULT_DESCRIPTION,
         technologies: INVOICE_CONSTANTS.PROJECT.DEFAULT_TECHNOLOGIES[0], // İlk teknoloji string'ini al
-        deliverables: [...INVOICE_CONSTANTS.PROJECT.DEFAULT_DELIVERABLES],
-        category: INVOICE_CONSTANTS.PROJECT.DEFAULT_CATEGORY[0], // İlk kategoriyi al
+        deliverables: projectOverrides?.deliverables || [
+          ...INVOICE_CONSTANTS.PROJECT.DEFAULT_DELIVERABLES,
+        ],
+        category:
+          projectOverrides?.category ||
+          INVOICE_CONSTANTS.PROJECT.DEFAULT_CATEGORY[0], // İlk kategoriyi al
         amount: pricing.netAmount, // Use calculated net amount (after discount, before MwSt)
       },
       pricing,
