@@ -26,6 +26,7 @@ export const INVOICE_CONSTANTS = {
             "Web Development",
             "Mobile App Development",
             "UI/UX Design",
+            "E-Commerce",
             "Consulting"
         ],
         DEFAULT_DELIVERABLES: [

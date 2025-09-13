@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { InvoiceData } from "@/lib/invoice-utils";
 import nodemailer from "nodemailer";
+import { INVOICE_CONSTANTS } from "@/constants/invoice";
 
 export async function POST(request: NextRequest) {
   try {
@@ -26,8 +27,7 @@ export async function POST(request: NextRequest) {
 
     // First generate the PDF
     const pdfResponse = await fetch(
-      `${
-        process.env.NEXTAUTH_URL || "http://localhost:3000"
+      `${process.env.NEXTAUTH_URL || "http://localhost:3000"
       }/api/invoice/generate`,
       {
         method: "POST",
@@ -118,6 +118,14 @@ export async function POST(request: NextRequest) {
       throw new Error(`Email configuration invalid: ${verifyError}`);
     }
 
+    // Projekt-Titel dynamisch bestimmen: Wenn Standardtitel & Kategorie vorhanden -> Custom (Kategorie) Project
+    const defaultProjectTitle = INVOICE_CONSTANTS.PROJECT.DEFAULT_TITLE;
+    const rawTitle = (invoiceData.project?.title || "").trim();
+    const category = (invoiceData.project?.category || "").trim();
+    const displayProjectTitle = (!rawTitle || rawTitle === defaultProjectTitle) && category
+      ? `Custom (${category}) Project`
+      : (rawTitle || defaultProjectTitle);
+
     // Send email with PDF attachment
     const mailOptions = {
       from: `"Ali Ramazan Yildirim" <${process.env.EMAIL_USER}>`,
@@ -156,9 +164,7 @@ export async function POST(request: NextRequest) {
                 </p>
                 <p style="color: #475569; font-size: 16px; line-height: 1.6; margin: 0;">
                   Im Anhang finden Sie die offizielle Rechnung für Ihr Projekt <br>
-                  <strong style="color: #1e293b;">"${
-                    invoiceData.project?.title || "Web Development Project"
-                  }"</strong>
+                  <strong style="color: #1e293b;">"${displayProjectTitle}"</strong>
                 </p>
               </div>
 
@@ -180,9 +186,8 @@ export async function POST(request: NextRequest) {
                   <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
                     <div>
                       <p style="color: #64748b; font-size: 14px; margin: 0 0 5px 0; font-weight: 500;">Rechnungsnummer</p>
-                      <p style="color: #1e293b; font-size: 16px; font-weight: 600; margin: 0;">${
-                        invoiceData.invoiceNumber
-                      }</p>
+                      <p style="color: #1e293b; font-size: 16px; font-weight: 600; margin: 0;">${invoiceData.invoiceNumber
+        }</p>
                     </div>
                     <div>
                       <p style="color: #64748b; font-size: 14px; margin: 0 0 5px 0; font-weight: 500;">Rechnungsdatum</p>
@@ -195,8 +200,8 @@ export async function POST(request: NextRequest) {
                     <div>
                       <p style="color: #64748b; font-size: 14px; margin: 0 0 5px 0; font-weight: 500;">Gesamtbetrag</p>
                       <p style="color: #059669; font-size: 24px; font-weight: 700; margin: 0;">€${(
-                        invoiceData.pricing?.total || 0
-                      ).toFixed(2)}</p>
+          invoiceData.pricing?.total || 0
+        ).toFixed(2)}</p>
                     </div>
                   </div>
                 </div>
@@ -228,9 +233,8 @@ export async function POST(request: NextRequest) {
                       <div style="margin-bottom: 8px;"><strong>IBAN:</strong> DE86 5009 0500 0006 4023 17</div>
                       <div style="margin-bottom: 8px;"><strong>BIC:</strong> GENODEF1XXX</div>
                       <div style="margin-bottom: 8px;"><strong>Empfänger:</strong> Ali Ramazan Yildirim</div>
-                      <div><strong>Verwendungszweck:</strong> Rechnungsnummer ${
-                        invoiceData.invoiceNumber
-                      }</div>
+                      <div><strong>Verwendungszweck:</strong> Rechnungsnummer ${invoiceData.invoiceNumber
+        }</div>
                     </div>
                   </div>
                 </div>

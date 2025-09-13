@@ -3,6 +3,7 @@ import jsPDF from "jspdf";
 import { InvoiceData } from "@/lib/invoice-utils";
 import fs from "fs";
 import path from "path";
+import { INVOICE_CONSTANTS } from "@/constants/invoice";
 
 export async function POST(request: NextRequest) {
   try {
@@ -197,10 +198,15 @@ export async function POST(request: NextRequest) {
     doc.setFontSize(10);
     doc.setFont("helvetica", "normal");
 
-    // Text wrapping için açıklamayı böl
-    const description =
-      invoiceData.project?.description ||
-      "Custom web development solution including design, development, and deployment.";
+    // Beschreibung: Wenn leer ODER exakt Standardwert => dynamisch mit Kategorie erzeugen
+    const selectedCategory = invoiceData.project?.category || "web development";
+    const rawDesc = invoiceData.project?.description?.trim() || "";
+    let description: string;
+    if (!rawDesc || rawDesc === INVOICE_CONSTANTS.PROJECT.DEFAULT_DESCRIPTION) {
+      description = `Custom (${selectedCategory}) solution including design, development, and deployment.`;
+    } else {
+      description = rawDesc;
+    }
     const maxWidth = (pageWidth - 80) * 0.7 - 20; // Kutunun genişliği - padding
     const wrappedText = doc.splitTextToSize(description, maxWidth);
 
