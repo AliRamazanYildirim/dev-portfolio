@@ -131,7 +131,7 @@ export async function POST(request: NextRequest) {
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <title>Rechnung ${invoiceData.invoiceNumber}</title>
         </head>
-        <body style="margin: 0; padding: 40px 20px; background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 50%, #f8fafc 100%); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+        <body style="margin: 0; padding: 40px 20px; background: transparent; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
           
           <!-- Main Container -->
           <div style="max-width: 650px; margin: 0 auto; background: white; border-radius: 16px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); overflow: hidden; border: 1px solid rgba(148, 163, 184, 0.2);">

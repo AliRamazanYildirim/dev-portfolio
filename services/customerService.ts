@@ -1,4 +1,3 @@
-import emailjs from "@emailjs/browser";
 import toast from "react-hot-toast";
 
 export interface Customer {
@@ -65,24 +64,9 @@ export const customerService = {
         throw new Error(json?.error || `HTTP ${res.status}`);
       }
 
-      // Email handling for new customers with referral
+      // Server versendet Referrer-Mail jetzt direkt via Nodemailer.
       if (!editingCustomer && json.referrerEmail) {
-        try {
-          const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID;
-          const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID;
-          const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
-
-          if (serviceId && templateId && publicKey) {
-            await emailjs.send(
-              serviceId,
-              templateId,
-              json.referrerEmail.emailParams,
-              publicKey
-            );
-          }
-        } catch (emailError) {
-          // Email error shouldn't affect main process
-        }
+        toast.success("Referrer wurde per E-Mail benachrichtigt.");
       }
 
       return editingCustomer
@@ -165,21 +149,12 @@ export const customerService = {
     });
 
     const result = await response.json();
-
-    if (result.success && result.data.emailParams) {
-      await emailjs.send(
-        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
-        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
-        result.data.emailParams,
-        process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!
-      );
-      toast.success(
-        `Referral code sent via email: ${result.data.referralCode}`
-      );
-    } else {
-      toast.error(
-        "Email could not be sent: " + (result.error || "Unknown error")
-      );
+    if (result.success && result.data) {
+      toast.success(`Referral code sent! Code: ${result.data.referralCode}`);
+      return;
     }
+    toast.error(
+      "Email could not be sent: " + (result.error || "Unknown error")
+    );
   },
 };
