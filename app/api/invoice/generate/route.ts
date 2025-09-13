@@ -132,14 +132,14 @@ export async function POST(request: NextRequest) {
     doc.setTextColor(26, 54, 93);
     doc.setFontSize(14);
     doc.setFont("helvetica", "bold");
-    doc.text("Ali Ramazan Yıldırım", 50, yPos + 45);
+    doc.text("Ali Ramazan Yildirim", 50, yPos + 45);
 
     doc.setTextColor(74, 85, 104);
     doc.setFontSize(10);
     doc.setFont("helvetica", "normal");
     doc.text("Full Stack Developer", 50, yPos + 60);
-    doc.text("Email: ali@example.com", 50, yPos + 75);
-    doc.text("Phone: +49 123 456 789", 50, yPos + 90);
+    doc.text("Email: aliramazanyildirim@gmail.com", 50, yPos + 75);
+    doc.text("Phone: +49 151 67145187", 50, yPos + 90);
 
     // BILL TO section - Invoice Details box ile aynı hizada
     doc.setFillColor(26, 54, 93);
@@ -421,9 +421,9 @@ export async function POST(request: NextRequest) {
     doc.setFont("helvetica", "bold");
     doc.text("Bank Transfer Details:", 50, yPos + 75);
     doc.setFont("helvetica", "normal");
-    doc.text("IBAN: DE89 3704 0044 0532 0130 00", 50, yPos + 90);
-    doc.text("BIC: COBADEFFXXX", 50, yPos + 105);
-    doc.text("Account Holder: Ali Ramazan Yıldırım", 50, yPos + 120);
+    doc.text("IBAN: DE86 5009 0500 0006 4023 17", 50, yPos + 90);
+    doc.text("BIC: GENODEF1XXX", 50, yPos + 105);
+    doc.text("Account Holder: Ali Ramazan Yildirim", 50, yPos + 120);
 
     // Footer - sayfanın altında optimum konumda
     const footerY = yPos + 140; // PAYMENT kutusu sonrası
@@ -431,7 +431,7 @@ export async function POST(request: NextRequest) {
     doc.setFontSize(8);
     doc.setFont("helvetica", "normal");
     doc.text(
-      "Ali Ramazan Yıldırım - Full Stack Developer - Berlin, Germany",
+      "Ali Ramazan Yildirim - Full Stack Developer - Hamburg, Germany",
       pageWidth / 2,
       footerY,
       { align: "center" }

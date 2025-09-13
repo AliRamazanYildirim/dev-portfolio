@@ -46,41 +46,61 @@ export async function POST(request: NextRequest) {
 
     const pdfBuffer = await pdfResponse.arrayBuffer();
 
-    // Prepare email content with PDF attachment
-    const emailContent = `
-Hallo ${customerName},
+    /**
+     * --- NUR SICHERE ÄNDERUNGEN BEZÜGLICH DES DATUMS ---
+     *
+     * Die folgende Funktion parseToDate:
+     * - Akzeptiert Date-Objekte, Zeitstempel (Zahl), ISO-Strings oder Formate wie "DD.MM.YYYY" / "D.M.YYYY".
+     * - Gibt null zurück, falls sie fehlschlägt.
+     *
+     * Anschließend werden issueDateFormatted und dueDateFormatted sicher erstellt
+     * und alle Datumsanzeigen in der E-Mail durch diese ersetzt.
+     */
+    function parseToDate(input: unknown): Date | null {
+      if (input === null || input === undefined) return null;
 
-vielen Dank für Ihr Vertrauen in meine Dienstleistungen!
+      if (input instanceof Date) {
+        return isNaN(input.getTime()) ? null : input;
+      }
 
-Im Anhang finden Sie die offizielle Rechnung für Ihr Projekt "${
-      invoiceData.project?.title || "Web Development Project"
-    }".
+      if (typeof input === "number") {
+        const d = new Date(input);
+        return isNaN(d.getTime()) ? null : d;
+      }
 
-� Rechnungsdetails:
-• Rechnungsnummer: ${invoiceData.invoiceNumber}
-• Rechnungsdatum: ${new Date(invoiceData.issueDate).toLocaleDateString("de-DE")}
-• Fälligkeitsdatum: ${new Date(invoiceData.dueDate).toLocaleDateString("de-DE")}
-• Gesamtbetrag: €${(invoiceData.pricing?.total || 0).toFixed(2)}
+      if (typeof input === "string") {
+        const trimmed = input.trim();
 
-💳 Zahlungsdetails:
-Die Rechnung ist innerhalb von 30 Tagen nach Rechnungsdatum fällig.
+        // 1) ISO / RFC-Formate ausprobieren
+        const iso = new Date(trimmed);
+        if (!isNaN(iso.getTime())) return iso;
 
-Überweisungsdetails:
-• IBAN: DE89 3704 0044 0532 0130 00
-• BIC: COBADEFFXXX
-• Empfänger: Ali Ramazan Yıldırım
-• Verwendungszweck: Rechnungsnummer ${invoiceData.invoiceNumber}
+        // 2) "TT.AA.JJJJ" oder "T.M.JJJJ" Format ausprobieren
+        const m = trimmed.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
+        if (m) {
+          const day = Number(m[1]);
+          const month = Number(m[2]) - 1;
+          const year = Number(m[3]);
+          const d = new Date(year, month, day);
+          return isNaN(d.getTime()) ? null : d;
+        }
+      }
 
-Bei Fragen zur Rechnung stehe ich Ihnen gerne zur Verfügung.
+      return null;
+    }
 
-Mit freundlichen Grüßen
-Ali Ramazan Yıldırım
-Full Stack Developer
+    function formatDateDE(d: Date): string {
+      return d.toLocaleDateString("de-DE");
+    }
 
----
-Diese E-Mail wurde automatisch generiert.
-Bei Fragen wenden Sie sich bitte an: aliramazanyildirim@gmail.com
-    `.trim();
+    // Sicheres Parsen und Fallback: Wenn das Parsen fehlschlägt, wird das heutige Datum verwendet
+    const issueDateObj = parseToDate(invoiceData.issueDate) ?? new Date();
+    const dueDateObj =
+      parseToDate(invoiceData.dueDate) ??
+      new Date(issueDateObj.getTime() + 30 * 24 * 60 * 60 * 1000); // fallback 30 gün
+
+    const issueDateFormatted = formatDateDE(issueDateObj);
+    const dueDateFormatted = formatDateDE(dueDateObj);
 
     // Configure nodemailer transporter
     const transporter = nodemailer.createTransport({
@@ -100,10 +120,9 @@ Bei Fragen wenden Sie sich bitte an: aliramazanyildirim@gmail.com
 
     // Send email with PDF attachment
     const mailOptions = {
-      from: `"Ali Ramazan Yıldırım" <${process.env.EMAIL_USER}>`,
+      from: `"Ali Ramazan Yildirim" <${process.env.EMAIL_USER}>`,
       to: customerEmail,
-      subject: `Ihre Rechnung ${invoiceData.invoiceNumber} - Ali Ramazan Yıldırım`,
-      text: emailContent,
+      subject: `Ihre Rechnung ${invoiceData.invoiceNumber} - Ali Ramazan Yildirim`,
       html: `
         <!DOCTYPE html>
         <html lang="de">
@@ -121,7 +140,7 @@ Bei Fragen wenden Sie sich bitte an: aliramazanyildirim@gmail.com
             <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 30px; text-align: center; position: relative;">
               <div style="position: absolute; top: 0; left: 0; right: 0; height: 100%; background: url('data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\"><defs><pattern id=\"grain\" width=\"100\" height=\"100\" patternUnits=\"userSpaceOnUse\"><circle cx=\"50\" cy=\"50\" r=\"0.5\" fill=\"%23ffffff\" opacity=\"0.1\"/></pattern></defs><rect width=\"100\" height=\"100\" fill=\"url(%23grain)\"/></svg></div>
               <h1 style="color: white; margin: 0; font-size: 28px; font-weight: 700; position: relative; z-index: 1;">Ihre Rechnung ist da!</h1>
-              <p style="color: rgba(255,255,255,0.9); margin: 12px 0 0 0; font-size: 16px; position: relative; z-index: 1;">Ali Ramazan Yıldırım - Full Stack Developer</p>
+              <p style="color: rgba(255,255,255,0.9); margin: 12px 0 0 0; font-size: 16px; position: relative; z-index: 1;">Ali Ramazan Yildirim - Full Stack Developer</p>
             </div>
             
             <!-- Content Wrapper -->
@@ -167,15 +186,11 @@ Bei Fragen wenden Sie sich bitte an: aliramazanyildirim@gmail.com
                     </div>
                     <div>
                       <p style="color: #64748b; font-size: 14px; margin: 0 0 5px 0; font-weight: 500;">Rechnungsdatum</p>
-                      <p style="color: #1e293b; font-size: 16px; font-weight: 600; margin: 0;">${new Date(
-                        invoiceData.issueDate
-                      ).toLocaleDateString("de-DE")}</p>
+                      <p style="color: #1e293b; font-size: 16px; font-weight: 600; margin: 0;">${issueDateFormatted}</p>
                     </div>
                     <div>
                       <p style="color: #64748b; font-size: 14px; margin: 0 0 5px 0; font-weight: 500;">Fälligkeitsdatum</p>
-                      <p style="color: #1e293b; font-size: 16px; font-weight: 600; margin: 0;">${new Date(
-                        invoiceData.dueDate
-                      ).toLocaleDateString("de-DE")}</p>
+                      <p style="color: #1e293b; font-size: 16px; font-weight: 600; margin: 0;">${dueDateFormatted}</p>
                     </div>
                     <div>
                       <p style="color: #64748b; font-size: 14px; margin: 0 0 5px 0; font-weight: 500;">Gesamtbetrag</p>
@@ -210,9 +225,9 @@ Bei Fragen wenden Sie sich bitte an: aliramazanyildirim@gmail.com
                   <div style="background: white; padding: 20px; border-radius: 10px; border: 1px solid #d1fae5;">
                     <h4 style="color: #14532d; font-size: 16px; font-weight: 600; margin: 0 0 15px 0;">Überweisungsdetails:</h4>
                     <div style="color: #166534; line-height: 1.8; font-size: 15px;">
-                      <div style="margin-bottom: 8px;"><strong>IBAN:</strong> DE89 3704 0044 0532 0130 00</div>
-                      <div style="margin-bottom: 8px;"><strong>BIC:</strong> COBADEFFXXX</div>
-                      <div style="margin-bottom: 8px;"><strong>Empfänger:</strong> Ali Ramazan Yıldırım</div>
+                      <div style="margin-bottom: 8px;"><strong>IBAN:</strong> DE86 5009 0500 0006 4023 17</div>
+                      <div style="margin-bottom: 8px;"><strong>BIC:</strong> GENODEF1XXX</div>
+                      <div style="margin-bottom: 8px;"><strong>Empfänger:</strong> Ali Ramazan Yildirim</div>
                       <div><strong>Verwendungszweck:</strong> Rechnungsnummer ${
                         invoiceData.invoiceNumber
                       }</div>
@@ -234,7 +249,7 @@ Bei Fragen wenden Sie sich bitte an: aliramazanyildirim@gmail.com
                     Mit freundlichen Grüßen
                   </p>
                   <p style="color: #1e293b; font-weight: 700; font-size: 20px; margin: 0 0 5px 0;">
-                    Ali Ramazan Yıldırım
+                    Ali Ramazan Yildirim
                   </p>
                   <p style="color: #3b82f6; font-weight: 600; font-size: 16px; margin: 0;">
                     Full Stack Developer
