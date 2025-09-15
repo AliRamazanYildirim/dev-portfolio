@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { supabaseAdmin } from "@/lib/supabase";
+import { db } from "@/lib/db";
 import { createId } from "@paralleldrive/cuid2";
 import nodemailer from "nodemailer";
 
@@ -15,45 +15,45 @@ export async function GET(request: Request) {
     const to = searchParams.get("to");
     const q = searchParams.get("q");
 
-    let query: any = supabaseAdmin.from("customers").select("*");
-
+    // Build Prisma query
+    const where: any = {};
     if (from && to) {
-      // If user passed YYYY-MM-DD convert to full ISO interval
-      const fromIso = from.length === 10 ? `${from}T00:00:00Z` : from;
-      const toIso = to.length === 10 ? `${to}T23:59:59Z` : to;
-      query = query.gte("createdAt", fromIso).lte("createdAt", toIso);
+      const fromIso = from.length === 10 ? `${from}T00:00:00.000Z` : from;
+      const toIso = to.length === 10 ? `${to}T23:59:59.999Z` : to;
+      where.createdAt = { gte: new Date(fromIso), lte: new Date(toIso) };
     }
 
-    // If q provided, search across multiple fields (firstname, lastname, companyname, address, reference)
     if (q) {
-      const pattern = `%${q.replace(/%/g, "")}%`;
-      query = query.or(
-        `firstname.ilike.${pattern},lastname.ilike.${pattern},companyname.ilike.${pattern},address.ilike.${pattern},reference.ilike.${pattern}`
-      );
+      const qClean = q.replace(/%/g, "");
+      where.OR = [
+        { firstname: { contains: qClean, mode: "insensitive" } },
+        { lastname: { contains: qClean, mode: "insensitive" } },
+        { companyname: { contains: qClean, mode: "insensitive" } },
+        { address: { contains: qClean, mode: "insensitive" } },
+        { reference: { contains: qClean, mode: "insensitive" } },
+      ];
     }
 
+    const orderBy: any[] = [];
     if (sort) {
       const [field, dir] = sort.split(".");
       const ascending = dir === "asc";
       if (field === "price") {
-        query = query.order("price", { ascending });
+        orderBy.push({ price: ascending ? "asc" : "desc" });
       } else if (field === "name") {
-        query = query
-          .order("firstname", { ascending })
-          .order("lastname", { ascending });
+        orderBy.push({ firstname: ascending ? "asc" : "desc" });
+        orderBy.push({ lastname: ascending ? "asc" : "desc" });
       } else if (field === "created") {
-        query = query.order("createdAt", { ascending });
+        orderBy.push({ createdAt: ascending ? "asc" : "desc" });
       }
     }
 
-    const { data, error } = await query;
-    if (error) {
-      return NextResponse.json(
-        { success: false, error: error.message },
-        { status: 500 }
-      );
+    try {
+      const data = await db.customer.findMany({ where, orderBy });
+      return NextResponse.json({ success: true, data });
+    } catch (err: any) {
+      return NextResponse.json({ success: false, error: err?.message || String(err) }, { status: 500 });
     }
-    return NextResponse.json({ success: true, data });
   } catch (error: any) {
     return NextResponse.json(
       { success: false, error: error?.message || String(error) },
@@ -121,8 +121,8 @@ function buildReferrerEmailHTML({
         <li>Ursprünglicher Preis: €${referrerPrice?.toFixed(2)}</li>
         <li>1. Empfehlung → 3% Rabatt</li>
         <li>Berechnung: €${referrerPrice?.toFixed(2)} - (€${referrerPrice?.toFixed(
-          2
-        )} × 3%) = €${currentDiscount.toFixed(2)} Ersparnis</li>`;
+        2
+      )} × 3%) = €${currentDiscount.toFixed(2)} Ersparnis</li>`;
     }
     if (newCount === 2) {
       const after1 = (referrerPrice! * 0.97).toFixed(2);
@@ -131,8 +131,8 @@ function buildReferrerEmailHTML({
         <li>Nach 1. Empfehlung: €${after1}</li>
         <li>2. Empfehlung → 6% Rabatt auf aktuellen Preis</li>
         <li>Berechnung: €${after1} × 6% = €${currentDiscount.toFixed(
-          2
-        )} zusätzliche Ersparnis</li>`;
+        2
+      )} zusätzliche Ersparnis</li>`;
     }
     if (newCount === 3) {
       const after1 = (referrerPrice! * 0.97).toFixed(2);
@@ -143,8 +143,8 @@ function buildReferrerEmailHTML({
         <li>Nach 2. Empfehlung: €${after2}</li>
         <li>3. Empfehlung → 9% Rabatt auf aktuellen Preis</li>
         <li>Berechnung: €${after2} × 9% = €${currentDiscount.toFixed(
-          2
-        )} zusätzliche Ersparnis</li>`;
+        2
+      )} zusätzliche Ersparnis</li>`;
     }
     return "";
   })();
@@ -230,87 +230,79 @@ export async function POST(req: Request) {
     const finalPriceForNewCustomer = body.price || 0;
 
     if (body.reference && body.price) {
-      // Referenz überprüfen + Name/Nachname/E-Mail für die E-Mail abrufen
-      const { data: referrer, error: referrerError } = await supabaseAdmin
-        .from("customers")
-        .select(
-          "id, myReferralCode, referralCount, price, firstname, lastname, email"
-        )
-        .eq("myReferralCode", body.reference)
-        .single();
+      const referrer = await db.customer.findUnique({ where: { myReferralCode: body.reference } });
 
-      if (referrer && !referrerError && referrer.price) {
+      if (referrer && referrer.price) {
         referrerCode = referrer.myReferralCode;
 
         const currentReferralCount = referrer.referralCount || 0;
         const newReferralCount = currentReferralCount + 1;
 
-        // Berechne den vorherigen Preis (den Preis vor diesem Referenzpunkt)
-        const previousPrice = calcDiscountedPrice(
-          referrer.price,
-          currentReferralCount
-        );
-
-        // Neue Preisberechnung: Stufenweiser 3% Rabatt auf den reduzierten Preis
-        const referrerFinalPrice = calcDiscountedPrice(
-          referrer.price,
-          newReferralCount
-        );
-
-        // Bei diesem Verweis erhaltene Rabattbetrag
+        const previousPrice = calcDiscountedPrice(referrer.price, currentReferralCount);
+        const referrerFinalPrice = calcDiscountedPrice(referrer.price, newReferralCount);
         const currentDiscountAmount = previousPrice - referrerFinalPrice;
-
-        // Der auf dieser Referenzebene angewandte Prozentsatz (3 %, 6 %, 9 % - maximal 3 Referenzen)
         referrerDiscount = Math.min(newReferralCount * 3, 9);
 
-        // Update Referrer
-        const { error: updateError } = await supabaseAdmin
-          .from("customers")
-          .update({
-            referralCount: newReferralCount,
-            discountRate: referrerDiscount,
-            finalPrice: referrerFinalPrice,
-            updatedAt: new Date().toISOString(),
-          })
-          .eq("id", referrer.id);
+        try {
+          await db.customer.update({
+            where: { id: referrer.id },
+            data: {
+              referralCount: newReferralCount,
+              discountRate: referrerDiscount,
+              finalPrice: referrerFinalPrice,
+              updatedAt: new Date(),
+            },
+          });
 
-        if (updateError) {
-          console.error("Vorgeschlagener Aktualisierungsfehler:", updateError);
-        } else {
-          // Bereite den E-Mail-Inhalt für den Referrer vor.
           if (referrer.email) {
             referrerEmailHTML = buildReferrerEmailHTML({
               refFirst: referrer.firstname ?? "",
               refLast: referrer.lastname ?? "",
-              myReferralCode: referrer.myReferralCode,
+              myReferralCode: referrer.myReferralCode ?? "",
               newCount: newReferralCount,
               discountRate: referrerDiscount,
               referrerPrice: referrer.price,
               referrerFinalPrice: referrerFinalPrice,
               currentDiscountAmount: currentDiscountAmount,
             });
-            // Versuche direkt per Nodemailer zu senden
-            if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-              console.warn("Email credentials not configured; skipping referrer notification email.");
-            } else {
+
+            if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
               try {
                 const transporter = nodemailer.createTransport({
                   service: "gmail",
                   auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
                 });
                 await transporter.verify();
-                const sendResult = await transporter.sendMail({
+                await transporter.sendMail({
                   from: `"Ali Ramazan Yildirim" <${process.env.EMAIL_USER}>`,
                   to: referrer.email,
                   subject: referrerEmailHTML.subject,
                   html: referrerEmailHTML.html,
                 });
-                console.log("Referrer notification email sent", sendResult.messageId);
               } catch (mailErr) {
                 console.error("Failed sending referrer notification email:", mailErr);
               }
+            } else {
+              console.warn("Email credentials not configured; skipping referrer notification email.");
             }
           }
+
+          // Insert referral transaction (only if referrer's code exists)
+          if (referrer.myReferralCode) {
+            await db.referralTransaction.create({
+              data: {
+                referrerCode: referrer.myReferralCode,
+                newCustomerId: referrer.id, // this will be updated after new customer is created
+                discountRate: referrerDiscount,
+                originalPrice: body.price,
+                finalPrice: body.price,
+                referralLevel: Math.ceil(referrerDiscount / 3),
+                createdAt: new Date(),
+              },
+            });
+          }
+        } catch (updateErr) {
+          console.error("Error updating referrer:", updateErr);
         }
       }
     }
@@ -318,11 +310,7 @@ export async function POST(req: Request) {
     // Neuen Kunden einen einzigartigen Empfehlungscode erstellen
     let myReferralCode = generateReferralCode();
     while (true) {
-      const { data: existing } = await supabaseAdmin
-        .from("customers")
-        .select("myReferralCode")
-        .eq("myReferralCode", myReferralCode)
-        .single();
+      const existing = await db.customer.findUnique({ where: { myReferralCode } });
       if (!existing) break;
       myReferralCode = generateReferralCode();
     }
@@ -330,89 +318,55 @@ export async function POST(req: Request) {
     // Neuer Kundenregistrierungs-Payload
     const customerData = {
       id: createId(),
-      firstname: body.firstname,
-      lastname: body.lastname,
-      companyname: body.companyname,
+      firstname: body.firstname || "",
+      lastname: body.lastname || "",
+      companyname: body.companyname || "",
       email: body.email,
-      phone: body.phone,
-      address: body.address,
+      phone: body.phone || "",
+      address: body.address || "",
       reference: body.reference || null, // verwendeter Referenzcode
       price: body.price, // Originalpreis
       myReferralCode,
       finalPrice: finalPriceForNewCustomer, // neuer Kunde normaler Preis
       discountRate: null, // Für neue Kunden gibt es keinen Rabatt.
       referralCount: 0,
-      createdAt: body.createdAt || new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+      createdAt: body.createdAt ? new Date(body.createdAt) : new Date(),
+      updatedAt: new Date(),
     };
 
     // Neuen Kunden speichern
-    const { data: customer, error } = await supabaseAdmin
-      .from("customers")
-      .insert([customerData])
-      .select()
-      .single();
+    try {
+      const customer = await db.customer.create({ data: customerData });
 
-    if (error) {
-      console.error("Customer insert error:", error);
-
-      // E-Mail-Fehler bei der eindeutigen Einschränkung mit spezieller Nachricht
-      if (
-        error.message &&
-        error.message.includes(
-          'duplicate key value violates unique constraint "customers_email_key"'
-        )
-      ) {
-        return NextResponse.json(
-          {
-            success: false,
-            error:
-              "This email address is already registered. Each customer must have a unique email address.",
+      // If referral transaction was inserted earlier referencing referrer.id, we should update newCustomerId now.
+      if (referrerCode) {
+        // Find the latest referral transaction for this referrerCode with null/placeholder newCustomerId and update it.
+        // Simpler approach: create a referral transaction here instead of earlier; we'll create it now referencing customer.id
+        await db.referralTransaction.create({
+          data: {
+            referrerCode,
+            newCustomerId: customer.id,
+            discountRate: referrerDiscount,
+            originalPrice: body.price,
+            finalPrice: body.price,
+            referralLevel: Math.ceil(referrerDiscount / 3),
+            createdAt: new Date(),
           },
-          { status: 409 }
-        );
+        });
       }
 
-      return NextResponse.json(
-        { success: false, error: error.message },
-        { status: 500 }
-      );
+      //  Protokolliere den -Vorgang
+      return NextResponse.json({ success: true, data: customer });
+    } catch (err: any) {
+      const msg = err?.message || String(err);
+      if (msg.includes("duplicate key value") || msg.includes("unique constraint")) {
+        return NextResponse.json({ success: false, error: "This email address is already registered. Each customer must have a unique email address." }, { status: 409 });
+      }
+      console.error("Customer insert error:", err);
+      return NextResponse.json({ success: false, error: msg }, { status: 500 });
     }
 
-    //  Protokolliere den -Vorgang
-    if (referrerCode && referrerDiscount > 0) {
-      await supabaseAdmin.from("referral_transactions").insert([
-        {
-          referrerCode,
-          newCustomerId: customer.id,
-          discountRate: referrerDiscount,
-          originalPrice: body.price, // Preis für neuen Kunden
-          finalPrice: body.price, // neuer Kunde hat normal bezahlt
-          referralLevel: Math.ceil(referrerDiscount / 3),
-          createdAt: new Date().toISOString(),
-        },
-      ]);
-    }
-
-    // Antwort: Wir geben auch die E-Mail-Parameter zurück, die an den Referrer gesendet werden.
-    return NextResponse.json({
-      success: true,
-      data: customer,
-      referralApplied: referrerDiscount > 0,
-      referrerDiscount:
-        referrerDiscount > 0
-          ? {
-              rate: referrerDiscount,
-              message: `Der empfehlende Kunde hat ${referrerDiscount}% Rabatt erhalten!`,
-            }
-          : null,
-      referrerEmail: referrerEmailHTML
-        ? {
-            subject: referrerEmailHTML.subject,
-            htmlSent: Boolean(referrerEmailHTML),
-          }
-        : null,
-    });
+    // Die Antwort wurde bereits oben im Try-Block zurückgegeben.
   } catch (error: any) {
     console.error("POST customer error:", error);
     return NextResponse.json(

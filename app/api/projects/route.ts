@@ -1,32 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 export const runtime = "nodejs"; // Sicherstellen, dass Node-APIs (crypto) verfügbar sind
-import { supabase, supabaseAdmin } from "@/lib/supabase";
+import { db } from "@/lib/db";
 import { randomUUID } from "crypto";
 
 // Navigation aktualisieren (Supabase) - Aktualisiert die vorherigen und nächsten Slugs für Projekte
 async function updateProjectNavigation() {
-  // Alle Projekte auflisten
-  const { data: projects, error } = await supabase
-    .from("projects")
-    .select("id, slug, createdAt")
-    .eq("published", true)
-    .order("createdAt", { ascending: true });
-
-  if (error || !projects) return;
+  // Alle Projekte auflisten (Prisma)
+  const projects = await db.project.findMany({ where: { published: true }, select: { id: true, slug: true, createdAt: true }, orderBy: { createdAt: 'asc' } });
+  if (!projects || projects.length === 0) return;
 
   for (let i = 0; i < projects.length; i++) {
     const current = projects[i];
     const previous = i > 0 ? projects[i - 1] : null;
     const next = i < projects.length - 1 ? projects[i + 1] : null;
 
-    // Use admin client for write to bypass RLS
-    await supabaseAdmin
-      .from("projects")
-      .update({
-        previousSlug: previous?.slug || null,
-        nextSlug: next?.slug || null,
-      })
-      .eq("id", current.id);
+    await db.project.update({ where: { id: current.id }, data: { previousSlug: previous?.slug || null, nextSlug: next?.slug || null } });
   }
 }
 
@@ -37,34 +25,20 @@ export async function GET(request: NextRequest) {
     const featured = searchParams.get("featured");
     const limit = searchParams.get("limit");
 
-    // Projekte abrufen – Admin-Client sorgt dafür, dass eingebettete Relationen (gallery) nicht von RLS gefiltert werden
-    let query = supabaseAdmin
-      .from("projects")
-      .select(`*, gallery:project_images(*), tags:project_tags(*)`)
-      .eq("published", true)
-      .order("createdAt", { ascending: false });
+    // Projekte abrufen (Prisma) mit Gallery und Tags
+    const where: any = { published: true };
+    if (featured === "true") where.featured = true;
 
-    if (featured === "true") {
-      query = query.eq("featured", true);
-    }
-    if (limit) {
-      query = query.limit(parseInt(limit));
-    }
+    const take = limit ? parseInt(limit) : undefined;
 
-    const { data, error } = await query;
-
-    if (error) {
-      return NextResponse.json(
-        { success: false, error: "Failed to fetch projects" },
-        { status: 500 }
-      );
-    }
-
-    return NextResponse.json({
-      success: true,
-      data: data || [],
-      count: data ? data.length : 0,
+    const data = await db.project.findMany({
+      where,
+      orderBy: { createdAt: 'desc' },
+      include: { gallery: true, tags: true },
+      take,
     });
+
+    return NextResponse.json({ success: true, data: data || [], count: data ? data.length : 0 });
   } catch (error) {
     console.error("GET /api/projects error:", error);
     return NextResponse.json(
@@ -96,69 +70,31 @@ export async function POST(request: NextRequest) {
 
     // Slug-Eindeutigkeit prüfen (Supabase)
     // Slug Check mit Admin-Client (robust gegen RLS)
-    const { data: existingProjects, error: findError } = await supabaseAdmin
-      .from("projects")
-      .select("id")
-      .eq("slug", slug)
-      .limit(1);
-
-    if (findError) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: "Failed to check slug uniqueness",
-          details: findError.message,
-          hint: (findError as any).hint,
-          code: (findError as any).code,
-        },
-        { status: 500 }
-      );
-    }
-    if (existingProjects && existingProjects.length > 0) {
-      return NextResponse.json(
-        { success: false, error: "A project with this slug already exists" },
-        { status: 400 }
-      );
+    const existing = await db.project.findUnique({ where: { slug } });
+    if (existing) {
+      return NextResponse.json({ success: false, error: "A project with this slug already exists" }, { status: 400 });
     }
 
     // Projekt erstellen (Supabase)
     const projectId = randomUUID();
-    // Projekt erstellen (Admin-Client)
-    const { data: project, error: createError } = await supabaseAdmin
-      .from("projects")
-      .insert([
-        {
-          id: projectId,
-          slug,
-          title,
-          description,
-          role,
-          duration,
-          category,
-          technologies,
-          mainImage,
-          featured,
-          published: true,
-          updatedAt: new Date().toISOString(),
-          previousSlug,
-          nextSlug,
-        },
-      ])
-      .select()
-      .single();
-
-    if (createError || !project) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: "Failed to create project",
-          details: createError?.message || createError,
-          hint: (createError as any)?.hint,
-          code: (createError as any)?.code,
-        },
-        { status: 500 }
-      );
-    }
+    const project = await db.project.create({
+      data: {
+        id: projectId,
+        slug,
+        title,
+        description,
+        role,
+        duration,
+        category,
+        technologies,
+        mainImage,
+        featured,
+        published: true,
+        updatedAt: new Date(),
+        previousSlug,
+        nextSlug,
+      },
+    });
 
     // Galerie hinzufügen (Supabase)
     const galleryData = gallery.map((url: string, index: number) => ({
@@ -170,42 +106,14 @@ export async function POST(request: NextRequest) {
       order: index,
     }));
     if (galleryData.length > 0) {
-      // Galerie einfügen (Admin-Client)
-      const { error: galleryError } = await supabaseAdmin
-        .from("project_images")
-        .insert(galleryData);
-      if (galleryError) {
-        return NextResponse.json(
-          {
-            success: false,
-            error: "Failed to insert gallery",
-            details: galleryError.message,
-            hint: (galleryError as any).hint,
-            code: (galleryError as any).code,
-          },
-          { status: 500 }
-        );
-      }
+      await db.projectImage.createMany({ data: galleryData });
     }
 
     // Navigation automatisch aktualisieren
     await updateProjectNavigation();
 
-    // Projekt mit Galerie erneut abrufen
-    const { data: fullProject } = await supabase
-      .from("projects")
-      .select(`*, gallery:project_images(*), tags:project_tags(*)`)
-      .eq("id", project.id)
-      .single();
-
-    return NextResponse.json(
-      {
-        success: true,
-        data: fullProject,
-        message: "Project created successfully",
-      },
-      { status: 201 }
-    );
+    const fullProject = await db.project.findUnique({ where: { id: project.id }, include: { gallery: true, tags: true } });
+    return NextResponse.json({ success: true, data: fullProject, message: "Project created successfully" }, { status: 201 });
   } catch (error: any) {
     console.error("POST /api/projects error:", error);
     return NextResponse.json(

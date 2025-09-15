@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import emailjs from "@emailjs/browser";
 import { motion, AnimatePresence } from "framer-motion";
 import NoiseBackground from "../NoiseBackground";
 import SplitText from "@/TextAnimations/SplitText";
@@ -23,7 +22,7 @@ const Contact = () => {
 const Header = () => (
   <div className="heading md:text-lgHeading mb-10 md:mb-20">
     <SplitText text="Tell us your idea; " />
-    <SplitText text={'we’ll build the wow.'} />
+    <SplitText text={"we’ll build the wow."} />
   </div>
 );
 const ContactForm = () => {
@@ -70,26 +69,26 @@ const ContactForm = () => {
 
       // Nachricht gespeichert, kein Logging
 
-      // Optional: EmailJS senden (falls konfiguriert)
-      if (
-        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID &&
-        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID &&
-        process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY
-      ) {
-        // EmailJS wird gesendet, kein Logging
+      // Server-side e-posta gönderimi (API) — EmailJS client-side kullanımdan vazgeçildi
+      const emailResp = await fetch("/api/send-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          message: formData.message,
+        }),
+      });
 
-        const result = await emailjs.send(
-          process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
-          process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
-          {
-            name: formData.name,
-            email: formData.email,
-            message: formData.message,
-          },
-          process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!
+      const emailResult = await emailResp
+        .json()
+        .catch(() => ({ success: false }));
+      if (!emailResult.success) {
+        // E-posta başarısız olduysa kullanıcıya uyar
+        console.warn("Email sending failed", emailResult);
+        toast.error(
+          "Failed to send notification email, but message was saved."
         );
-
-        // Email erfolgreich gesendet, kein Logging
       }
 
       // Erfolg anzeigen
@@ -144,7 +143,7 @@ const ContactForm = () => {
                 name="name"
                 placeholder="Name"
                 className="content w-full bg-transparent border-none text-lg placeholder-[#260a03] focus:outline-none focus:ring-0 md:text-lgContent"
-                value={formData.name}
+                value={formData.name ?? ""}
                 onChange={handleChange}
                 required
               />
@@ -156,7 +155,7 @@ const ContactForm = () => {
                 name="email"
                 placeholder="E-Mail"
                 className="content w-full bg-transparent border-none text-lg placeholder-[#260a03] focus:outline-none focus:ring-0 md:text-lgContent"
-                value={formData.email}
+                value={formData.email ?? ""}
                 onChange={handleChange}
                 required
                 suppressHydrationWarning={true}
@@ -168,20 +167,20 @@ const ContactForm = () => {
                 name="message"
                 placeholder="Message"
                 className="content w-full bg-transparent border-none text-lg placeholder-[#260a03] focus:outline-none focus:ring-0 md:text-lgContent"
-                value={formData.message}
+                value={formData.message ?? ""}
                 onChange={handleChange}
                 required
               />
             </div>
 
-              <div className="col-span-12 flex justify-end mt-6">
-                    <button
-                      type="submit"
-                      className="py-3 px-6 bg-black text-white rounded-md hover:bg-[#260a03] transition-colors duration-200"
-                    >
-                      Send message
-                    </button>
-                  </div>
+            <div className="col-span-12 flex justify-end mt-6">
+              <button
+                type="submit"
+                className="py-3 px-6 bg-black text-white rounded-md hover:bg-[#260a03] transition-colors duration-200"
+              >
+                Send message
+              </button>
+            </div>
           </motion.form>
         )}
       </AnimatePresence>

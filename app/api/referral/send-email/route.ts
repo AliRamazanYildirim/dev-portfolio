@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { supabaseAdmin } from "@/lib/supabase";
+import { db } from "@/lib/db";
 import nodemailer from "nodemailer";
 
 export async function POST(request: Request) {
@@ -13,19 +13,9 @@ export async function POST(request: Request) {
       );
     }
 
-    // Müşteriyi ve referans kodunu getir
-    const { data: customer, error: customerError } = await supabaseAdmin
-      .from("customers")
-      .select("id, firstname, lastname, myReferralCode, referralCount, price")
-      .eq("id", customerId)
-      .single();
-
-    if (customerError || !customer) {
-      return NextResponse.json(
-        { success: false, error: "Customer not found" },
-        { status: 404 }
-      );
-    }
+    // Müşteriyi ve referans kodunu getir (Prisma)
+    const customer = await db.customer.findUnique({ where: { id: customerId } });
+    if (!customer) return NextResponse.json({ success: false, error: "Customer not found" }, { status: 404 });
 
     if (!customer.myReferralCode) {
       return NextResponse.json(
@@ -76,29 +66,26 @@ export async function POST(request: Request) {
       </div>
       <div style="padding:40px 30px;">
         <div style="text-align:center;margin-bottom:32px;">
-          <p style="color:#1e293b;font-size:17px;line-height:1.6;margin:0 0 14px 0;">Hallo <span style="color:#6366f1;font-weight:600;">${
-            customer.firstname
-          } ${customer.lastname}</span> 👋</p>
+          <p style="color:#1e293b;font-size:17px;line-height:1.6;margin:0 0 14px 0;">Hallo <span style="color:#6366f1;font-weight:600;">${customer.firstname
+      } ${customer.lastname}</span> 👋</p>
           <p style="color:#475569;font-size:15px;line-height:1.6;margin:0 0 10px 0;">Vielen Dank für Ihr Vertrauen – gemeinsam erschaffen wir digitale Erlebnisse!</p>
           <p style="color:#475569;font-size:15px;line-height:1.6;margin:0;">Nutzen Sie jetzt Ihren exklusiven Code und steigern Sie Ihre Vorteile:</p>
         </div>
         <div style="text-align:center;margin:0 auto 30px auto;max-width:400px;background:linear-gradient(135deg,#eef2ff,#ede9fe);padding:22px 24px;border:1px solid #c7d2fe;border-radius:14px;">
           <p style="margin:0 0 10px 0;font-size:13px;letter-spacing:0.5px;font-weight:600;color:#4f46e5;text-transform:uppercase;">Ihr Empfehlungscode</p>
-          <div style="font-size:30px;font-weight:700;letter-spacing:3px;color:#312e81;font-family:monospace;">${
-            customer.myReferralCode
-          }</div>
+          <div style="font-size:30px;font-weight:700;letter-spacing:3px;color:#312e81;font-family:monospace;">${customer.myReferralCode
+      }</div>
           <p style="margin:14px 0 0 0;font-size:12px;color:#6366f1;">Teilen Sie diesen Code mit Ihrem Netzwerk</p>
         </div>
         <div style="background:linear-gradient(135deg,#f8fafc,#f1f5f9);border:1px solid #e2e8f0;border-radius:14px;padding:26px 24px;margin-bottom:32px;">
           <h2 style="margin:0 0 18px 0;font-size:18px;color:#1e293b;font-weight:700;display:flex;align-items:center;gap:8px;">📊 Aktueller Status</h2>
           <p style="margin:0 0 8px 0;color:#334155;line-height:1.6;">Projektpreis: <strong>€${referrerPrice.toFixed(
-            2
-          )}</strong></p>
-          <p style="margin:0;color:#334155;line-height:1.6;">Empfehlungen gesammelt: <strong>${currentCount}</strong> ${
-      hasReachedMaximum
+        2
+      )}</strong></p>
+          <p style="margin:0;color:#334155;line-height:1.6;">Empfehlungen gesammelt: <strong>${currentCount}</strong> ${hasReachedMaximum
         ? '<span style="color:#065f46;font-weight:600;">(Maximum erreicht 🎉)</span>'
         : ""
-    }</p>
+      }</p>
         </div>
         <div style="background:linear-gradient(135deg,#ecfdf5,#f0fdf4);border:1px solid #bbf7d0;border-radius:14px;padding:26px 24px;margin-bottom:32px;">
           <h2 style="margin:0 0 14px 0;font-size:18px;color:#065f46;font-weight:700;display:flex;align-items:center;gap:8px;">💰 Rabattstaffel</h2>

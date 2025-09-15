@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabaseAdmin } from "@/lib/supabase/server"; // service_role (server-only)
+// rate-limiter RPC çağrısı artık doğrudan Prisma ile yapılacak
+import { db } from "@/lib/db";
 import { randomUUID } from "crypto";
 import { getIpFromHeaders } from "@/lib/ip";
 
@@ -7,7 +8,7 @@ export const runtime = "nodejs"; // Supabase/crypto için Node runtime
 
 // ---- Grenzen (je nach Bedarf anpassen) ----
 const RL_POST = { limit: 3, window: 60 }; // 3 POST pro Minute
-const RL_GET  = { limit: 60, window: 60 }; // 60 GET pro Minute
+const RL_GET = { limit: 60, window: 60 }; // 60 GET pro Minute
 // ---------------------------------------------
 
 type RLMeta = {
@@ -24,27 +25,26 @@ async function checkRateLimit(
   const key = `ip:${ip}:/api/contact:${scope}`;
   const { limit, window } = scope === "POST" ? RL_POST : RL_GET;
 
-  const { data, error } = await supabaseAdmin.rpc("hit_rate_limit", {
-    p_key: key,
-    p_window_seconds: window,
-    p_limit: limit,
-  });
+  // Verwende Prisma Raw Query, um die Postgres-Funktion `hit_rate_limit` aufzurufen.
+  // Die Funktion gibt ein RECORD / TABLE zurück — wir casten das Ergebnis entsprechend.
+  try {
+    const rows: any = await db.$queryRaw`
+      SELECT * FROM hit_rate_limit(${key}::text, ${window}::bigint, ${limit}::bigint)`;
 
-  if (error) {
+    const row = Array.isArray(rows) ? rows[0] : rows;
+    const success = !!row?.success;
+    const meta: RLMeta = {
+      limit: Number(row?.limit ?? row?.lim ?? limit),
+      remaining: Number(row?.remaining ?? row?.remaining ?? 0),
+      reset: Number(row?.reset ?? row?.reset_at ?? 0),
+    };
+
+    return success ? { allowed: true, meta } : { allowed: false, meta };
+  } catch (err: any) {
     // fail-closed: Blockiere die Anfrage, wenn der Ratenbegrenzer ausfällt
-    throw new Error(`rate_limit rpc error: ${error.message}`);
+    console.error("rate_limit rpc error:", err?.message || err);
+    throw new Error(`rate_limit rpc error: ${err?.message || String(err)}`);
   }
-
-  // Supabase, gibt für RETURNS TABLE ein Array zurück
-  const row = Array.isArray(data) ? data[0] : data;
-  const success = !!row?.success;
-  const meta: RLMeta = {
-    limit: Number(row?.limit ?? limit),
-    remaining: Number(row?.remaining ?? 0),
-    reset: Number(row?.reset ?? 0),
-  };
-
-  return success ? { allowed: true, meta } : { allowed: false, meta };
 }
 
 function attachRLHeaders(res: NextResponse, meta: RLMeta) {
@@ -83,24 +83,8 @@ export async function POST(request: NextRequest) {
     }
 
     const id = randomUUID();
-    const { data: inserted, error } = await supabaseAdmin
-      .from("contact_messages")
-      .insert([{ id, name, email, message }])
-      .select()
-      .single();
-
-    if (error) {
-      console.error("contact insert error:", error);
-      return NextResponse.json(
-        { success: false, error: "Failed to send message", details: (error as any)?.message },
-        { status: 500 }
-      );
-    }
-
-    const res = NextResponse.json(
-      { success: true, data: inserted, message: "Message sent successfully" },
-      { status: 201 }
-    );
+    const inserted = await db.contactMessage.create({ data: { id, name, email, message, createdAt: new Date() } });
+    const res = NextResponse.json({ success: true, data: inserted, message: "Message sent successfully" }, { status: 201 });
     attachRLHeaders(res, rl.meta);
     return res;
   } catch (e) {
@@ -127,26 +111,10 @@ export async function GET(request: NextRequest) {
     const unreadOnly = params.get("unread") === "true";
     const limit = Number(params.get("limit") ?? 0);
 
-    let query = supabaseAdmin
-      .from("contact_messages")
-      .select("*")
-      .order("createdAt", { ascending: false });
-
-    if (unreadOnly) query = query.eq("read", false);
-    if (limit) query = query.limit(limit);
-
-    const { data, error } = await query;
-
-    if (error) {
-      console.error("contact fetch error:", error);
-      return NextResponse.json({ success: false, error: "Failed to fetch messages" }, { status: 500 });
-    }
-
-    const res = NextResponse.json({
-      success: true,
-      data: data ?? [],
-      count: data?.length ?? 0,
-    });
+    const where: any = {};
+    if (unreadOnly) where.read = false;
+    const query = await db.contactMessage.findMany({ where, orderBy: { createdAt: 'desc' }, take: limit || undefined });
+    const res = NextResponse.json({ success: true, data: query ?? [], count: query?.length ?? 0 });
     attachRLHeaders(res, rl.meta);
     return res;
   } catch (e) {

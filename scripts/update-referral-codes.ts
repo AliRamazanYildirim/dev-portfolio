@@ -1,4 +1,4 @@
-import { supabaseAdmin } from "../lib/supabase";
+import { db } from "../lib/db";
 
 // Mevcut müşterilere referans kodları oluştur
 const generateReferralCode = () => {
@@ -14,17 +14,8 @@ async function updateReferralCodes() {
   try {
     console.log("Mevcut müşteriler alınıyor...");
 
-    // Referans kodu olmayan müşterileri getir
-    const { data: customers, error: fetchError } = await supabaseAdmin
-      .from("customers")
-      .select("id, firstname, lastname")
-      .is("myReferralCode", null);
-
-    if (fetchError) {
-      console.error("Müşteriler getirilemedi:", fetchError);
-      return;
-    }
-
+    // Referans kodu olmayan müşterileri getir (Prisma)
+    const customers = await db.customer.findMany({ where: { myReferralCode: null }, select: { id: true, firstname: true, lastname: true } });
     if (!customers || customers.length === 0) {
       console.log("Referans kodu olmayan müşteri bulunamadı.");
       return;
@@ -40,12 +31,7 @@ async function updateReferralCodes() {
       // Benzersizlik kontrolü
       let attempts = 0;
       while (attempts < 10) {
-        const { data: existing } = await supabaseAdmin
-          .from("customers")
-          .select("myReferralCode")
-          .eq("myReferralCode", myReferralCode)
-          .single();
-
+        const existing = await db.customer.findUnique({ where: { myReferralCode } });
         if (!existing) break;
 
         myReferralCode = generateReferralCode();
@@ -60,25 +46,11 @@ async function updateReferralCodes() {
       }
 
       // Müşteriyi güncelle
-      const { error: updateError } = await supabaseAdmin
-        .from("customers")
-        .update({
-          myReferralCode,
-          referralCount: 0,
-          totalEarnings: 0,
-          updatedAt: new Date().toISOString(),
-        })
-        .eq("id", customer.id);
-
-      if (updateError) {
-        console.error(
-          `${customer.firstname} ${customer.lastname} güncellenemedi:`,
-          updateError
-        );
-      } else {
-        console.log(
-          `✓ ${customer.firstname} ${customer.lastname} - Kod: ${myReferralCode}`
-        );
+      try {
+        await db.customer.update({ where: { id: customer.id }, data: { myReferralCode, referralCount: 0, totalEarnings: 0, updatedAt: new Date() } });
+        console.log(`✓ ${customer.firstname} ${customer.lastname} - Kod: ${myReferralCode}`);
+      } catch (e) {
+        console.error(`${customer.firstname} ${customer.lastname} güncellenemedi:`, e);
       }
     }
 

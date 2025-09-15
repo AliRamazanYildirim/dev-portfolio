@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { supabaseAdmin } from "@/lib/supabase";
+import { db } from "@/lib/db";
 
 // GET: Einzelnen Kunden abrufen
 export async function GET(
@@ -7,17 +7,10 @@ export async function GET(
   context: { params: Promise<{ id: string }> }
 ) {
   const { id } = await context.params;
-  const { data, error } = await supabaseAdmin
-    .from("customers")
-    .select("*")
-    .eq("id", id)
-    .single();
+  const data = await db.customer.findUnique({ where: { id } });
 
-  if (error || !data) {
-    return NextResponse.json(
-      { success: false, error: "Customer not found" },
-      { status: 404 }
-    );
+  if (!data) {
+    return NextResponse.json({ success: false, error: "Customer not found" }, { status: 404 });
   }
 
   return NextResponse.json({ success: true, data });
@@ -33,17 +26,10 @@ export async function PUT(
     const body = await req.json();
 
     // Abrufen der aktuellen Kundeninformationen
-    const { data: existingCustomer, error: fetchError } = await supabaseAdmin
-      .from("customers")
-      .select("*")
-      .eq("id", id)
-      .single();
+    const existingCustomer = await db.customer.findUnique({ where: { id } });
 
-    if (fetchError || !existingCustomer) {
-      return NextResponse.json(
-        { success: false, error: "Customer not found" },
-        { status: 404 }
-      );
+    if (!existingCustomer) {
+      return NextResponse.json({ success: false, error: "Customer not found" }, { status: 404 });
     }
 
     // Wenn ein Referenzcode hinzugefügt wird, fahre mit dem Vorgang fort - BELOHNE DEN EMPFEHLER
@@ -52,46 +38,38 @@ export async function PUT(
 
     if (body.reference && body.price && !existingCustomer.reference) {
       // Wenn diesem Kunden zum ersten Mal ein Referenzcode hinzugefügt wird
-      const { data: referrer, error: referrerError } = await supabaseAdmin
-        .from("customers")
-        .select("id, myReferralCode, referralCount, price")
-        .eq("myReferralCode", body.reference)
-        .single();
+      const referrer = await db.customer.findUnique({ where: { myReferralCode: body.reference } });
 
-      if (referrer && !referrerError && referrer.price) {
+      if (referrer && referrer.price && referrer.myReferralCode) {
         referrerCode = referrer.myReferralCode;
 
-        // Berechne den Rabatt auf den vorgeschlagenen Preis.
         const currentReferralCount = referrer.referralCount || 0;
         referrerDiscount = 3 + currentReferralCount * 3;
         referrerDiscount = Math.min(referrerDiscount, 15);
 
-        const referrerFinalPrice =
-          referrer.price - (referrer.price * referrerDiscount) / 100;
+        const referrerFinalPrice = referrer.price - (referrer.price * referrerDiscount) / 100;
 
-        // Informationen des Vorschlagenden aktualisieren
-        await supabaseAdmin
-          .from("customers")
-          .update({
+        await db.customer.update({
+          where: { id: referrer.id },
+          data: {
             referralCount: currentReferralCount + 1,
             discountRate: referrerDiscount,
             finalPrice: referrerFinalPrice,
-            updatedAt: new Date().toISOString(),
-          })
-          .eq("id", referrer.id);
+            updatedAt: new Date(),
+          },
+        });
 
-        // Referenzvorgang speichern
-        await supabaseAdmin.from("referral_transactions").insert([
-          {
+        await db.referralTransaction.create({
+          data: {
             referrerCode,
             newCustomerId: existingCustomer.id,
             discountRate: referrerDiscount,
             originalPrice: body.price,
-            finalPrice: body.price, // Der aktualisierte Kunde zahlt den normalen Preis.
+            finalPrice: body.price,
             referralLevel: Math.ceil(referrerDiscount / 3),
-            createdAt: new Date().toISOString(),
+            createdAt: new Date(),
           },
-        ]);
+        });
       }
     }
 
@@ -100,35 +78,20 @@ export async function PUT(
       ...body,
       finalPrice: body.price, // Der aktualisierte Kunde zahlt den normalen Preis.
       discountRate: existingCustomer.discountRate, // Den aktuellen Rabattprozentsatz beibehalten
-      updatedAt: new Date().toISOString(),
+      updatedAt: new Date(),
     };
 
-    const { data: result, error } = await supabaseAdmin
-      .from("customers")
-      .update(updateData)
-      .eq("id", id)
-      .select()
-      .single();
-
-    if (error) {
-      return NextResponse.json(
-        { success: false, error: error.message },
-        { status: 500 }
-      );
+    try {
+      const result = await db.customer.update({ where: { id }, data: updateData });
+      return NextResponse.json({
+        success: true,
+        data: result,
+        referralApplied: referrerDiscount > 0,
+        referrerReward: referrerDiscount > 0 ? { rate: referrerDiscount, message: `Der empfehlende Kunde hat ${referrerDiscount}% Rabatt erhalten!` } : null,
+      });
+    } catch (err: any) {
+      return NextResponse.json({ success: false, error: err?.message || String(err) }, { status: 500 });
     }
-
-    return NextResponse.json({
-      success: true,
-      data: result,
-      referralApplied: referrerDiscount > 0,
-      referrerReward:
-        referrerDiscount > 0
-          ? {
-              rate: referrerDiscount,
-              message: `Der empfehlende Kunde hat ${referrerDiscount}% Rabatt erhalten!`,
-            }
-          : null,
-    });
   } catch (error: any) {
     return NextResponse.json(
       { success: false, error: error?.message || String(error) },
@@ -145,19 +108,12 @@ export async function DELETE(
   try {
     const { id } = await context.params;
 
-    const { error } = await supabaseAdmin
-      .from("customers")
-      .delete()
-      .eq("id", id);
-
-    if (error) {
-      return NextResponse.json(
-        { success: false, error: error.message },
-        { status: 500 }
-      );
+    try {
+      await db.customer.delete({ where: { id } });
+      return NextResponse.json({ success: true });
+    } catch (err: any) {
+      return NextResponse.json({ success: false, error: err?.message || String(err) }, { status: 500 });
     }
-
-    return NextResponse.json({ success: true });
   } catch (error: any) {
     return NextResponse.json(
       { success: false, error: error?.message || String(error) },

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabase, supabaseAdmin } from "@/lib/supabase";
+import { db } from "@/lib/db";
 import { randomUUID } from "crypto";
 
 // PUT /api/projects/admin/[id] - Projekt aktualisieren (Admin) - Update project (Admin)
@@ -26,48 +26,16 @@ export async function PUT(
       nextSlug,
     } = body;
 
-    // Existierendes Projekt prüfen (Supabase)
-    const { data: existingProjects, error: findError } = await supabaseAdmin
-      .from("projects")
-      .select("*")
-      .eq("id", id)
-      .limit(1);
-
-    const existingProject =
-      existingProjects && existingProjects.length > 0
-        ? existingProjects[0]
-        : null;
-    if (findError) {
-      return NextResponse.json(
-        { success: false, error: "Failed to check project" },
-        { status: 500 }
-      );
-    }
+    const existingProject = await db.project.findUnique({ where: { id } });
     if (!existingProject) {
-      return NextResponse.json(
-        { success: false, error: "Project not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ success: false, error: "Project not found" }, { status: 404 });
     }
 
     // Slug-Eindeutigkeit prüfen bei Änderung (Supabase)
     if (slug !== existingProject.slug) {
-      const { data: slugExists, error: slugError } = await supabaseAdmin
-        .from("projects")
-        .select("id")
-        .eq("slug", slug)
-        .limit(1);
-      if (slugError) {
-        return NextResponse.json(
-          { success: false, error: "Failed to check slug uniqueness" },
-          { status: 500 }
-        );
-      }
-      if (slugExists && slugExists.length > 0) {
-        return NextResponse.json(
-          { success: false, error: "A project with this slug already exists" },
-          { status: 400 }
-        );
+      const slugExists = await db.project.findUnique({ where: { slug } });
+      if (slugExists) {
+        return NextResponse.json({ success: false, error: "A project with this slug already exists" }, { status: 400 });
       }
     }
 
@@ -81,74 +49,19 @@ export async function PUT(
       order: index,
     }));
 
-    // Lösche die alte Galerie (Supabase)
-    await supabaseAdmin.from("project_images").delete().eq("projectId", id);
-
-    // Neue Galerie hinzufügen (Supabase)
+    // Lösche die alte Galerie (Prisma)
+    await db.projectImage.deleteMany({ where: { projectId: id } });
+    // Neue Galerie hinzufügen (Prisma)
     if (galleryData.length > 0) {
-      const { error: galleryError } = await supabaseAdmin
-        .from("project_images")
-        .insert(galleryData);
-      if (galleryError) {
-        return NextResponse.json(
-          {
-            success: false,
-            error: "Failed to insert gallery",
-            details: galleryError.message,
-            hint: (galleryError as any).hint,
-            code: (galleryError as any).code,
-          },
-          { status: 500 }
-        );
-      }
+      await db.projectImage.createMany({ data: galleryData });
     }
 
     // Projekt aktualisieren (Supabase)
-    const { data: updatedProjects, error: updateError } = await supabaseAdmin
-      .from("projects")
-      .update({
-        slug,
-        title,
-        description,
-        role,
-        duration,
-        category,
-        technologies,
-        mainImage,
-        featured,
-        previousSlug,
-        nextSlug,
-        updatedAt: new Date().toISOString(),
-      })
-      .eq("id", id)
-      .select();
-
-    if (updateError || !updatedProjects || updatedProjects.length === 0) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: "Failed to update project",
-          details: updateError?.message || updateError,
-        },
-        { status: 500 }
-      );
-    }
+    const updatedProject = await db.project.update({ where: { id }, data: { slug, title, description, role, duration, category, technologies, mainImage, featured, previousSlug, nextSlug, updatedAt: new Date() } });
 
     // Ziehe das Projekt erneut zusammen mit der Galerie.
-    const { data: fullProject } = await supabase
-      .from("projects")
-      .select(`*, gallery:project_images(*), tags:project_tags(*)`)
-      .eq("id", id)
-      .single();
-
-    return NextResponse.json(
-      {
-        success: true,
-        data: fullProject,
-        message: "Project updated successfully",
-      },
-      { status: 200 }
-    );
+    const fullProject = await db.project.findUnique({ where: { id }, include: { gallery: true, tags: true } });
+    return NextResponse.json({ success: true, data: fullProject, message: "Project updated successfully" }, { status: 200 });
   } catch (error: any) {
     return NextResponse.json(
       {
@@ -169,48 +82,10 @@ export async function DELETE(
   try {
     const { id } = await params;
 
-    // Existierendes Projekt prüfen (Supabase)
-    const { data: existingProjects, error: findError } = await supabaseAdmin
-      .from("projects")
-      .select("id")
-      .eq("id", id)
-      .limit(1);
-    const existingProject =
-      existingProjects && existingProjects.length > 0
-        ? existingProjects[0]
-        : null;
-    if (findError) {
-      return NextResponse.json(
-        { success: false, error: "Failed to check project" },
-        { status: 500 }
-      );
-    }
-    if (!existingProject) {
-      return NextResponse.json(
-        { success: false, error: "Project not found" },
-        { status: 404 }
-      );
-    }
-
-    // Galerie löschen (Supabase)
-    await supabaseAdmin.from("project_images").delete().eq("projectId", id);
-
-    // Projeyi sil (Supabase)
-    const { error: deleteError } = await supabaseAdmin
-      .from("projects")
-      .delete()
-      .eq("id", id);
-
-    if (deleteError) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: "Failed to delete project",
-          details: deleteError?.message || deleteError,
-        },
-        { status: 500 }
-      );
-    }
+    const existing = await db.project.findUnique({ where: { id } });
+    if (!existing) return NextResponse.json({ success: false, error: "Project not found" }, { status: 404 });
+    await db.projectImage.deleteMany({ where: { projectId: id } });
+    await db.project.delete({ where: { id } });
 
     return NextResponse.json(
       {

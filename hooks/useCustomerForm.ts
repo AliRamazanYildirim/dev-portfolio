@@ -2,7 +2,7 @@ import { useState } from "react";
 import { customerService, Customer } from "@/services/customerService";
 import toast from "react-hot-toast";
 
-export const useCustomerForm = () => {
+export const useCustomerForm = (onFieldChange?: (field: string, value: string) => void) => {
   const [formData, setFormData] = useState({
     firstname: "",
     lastname: "",
@@ -19,6 +19,14 @@ export const useCustomerForm = () => {
 
   const updateField = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+
+    if (onFieldChange) {
+      try {
+        onFieldChange(field, value);
+      } catch (e) {
+        // noop - parent may not care
+      }
+    }
 
     if (field === "reference" || field === "price") {
       const newReference = field === "reference" ? value : formData.reference;

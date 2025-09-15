@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import NoiseBackground from "@/components/NoiseBackground";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { useCustomers } from "@/hooks/useCustomers";
@@ -33,7 +33,18 @@ export default function CustomersAdminPage() {
     getCustomerData,
     resetForm,
     setEditForm,
-  } = useCustomerForm();
+  } = useCustomerForm((field: string, value: string) => {
+    // Mirror live changes into the selected customer while editing
+    if (!editingCustomer) return;
+    setSelectedCustomer(
+      (prev) =>
+        ({
+          ...(prev || editingCustomer),
+          [field]:
+            field === "price" ? (value !== "" ? Number(value) : null) : value,
+        } as any)
+    );
+  });
 
   const [showForm, setShowForm] = useState(false);
   const [filter, setFilter] = useState<
@@ -65,7 +76,26 @@ export default function CustomersAdminPage() {
   const handleEditCustomer = (customer: any) => {
     setEditForm(customer);
     setShowForm(true);
+    setSelectedCustomer(customer);
   };
+
+  // While editing, mirror the form data into the selected customer so
+  // CustomerDetails updates live as fields change in the form.
+  useEffect(() => {
+    if (!editingCustomer) return;
+
+    setSelectedCustomer((prev) => ({
+      ...editingCustomer,
+      firstname: formData.firstname,
+      lastname: formData.lastname,
+      companyname: formData.companyname,
+      email: formData.email,
+      phone: formData.phone,
+      address: formData.address,
+      reference: formData.reference,
+      price: formData.price !== "" ? Number(formData.price) : null,
+    }));
+  }, [formData, editingCustomer, setSelectedCustomer]);
 
   const handleCancelForm = () => {
     setShowForm(false);

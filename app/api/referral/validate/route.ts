@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { supabaseAdmin } from "@/lib/supabase";
+import { db } from "@/lib/db";
 
 // Überprüfe den Referenzcode und berechnen Sie den Rabatt
 export async function POST(request: Request) {
@@ -13,19 +13,9 @@ export async function POST(request: Request) {
       );
     }
 
-    // Kunden mit Referenzcode finden
-    const { data: referrer, error: referrerError } = await supabaseAdmin
-      .from("customers")
-      .select("id, firstname, lastname, myReferralCode, referralCount")
-      .eq("myReferralCode", referralCode)
-      .single();
-
-    if (referrerError || !referrer) {
-      return NextResponse.json(
-        { success: false, error: "Invalid referral code" },
-        { status: 404 }
-      );
-    }
+    // Kunden mit Referenzcode finden (Prisma)
+    const referrer = await db.customer.findUnique({ where: { myReferralCode: referralCode } });
+    if (!referrer) return NextResponse.json({ success: false, error: "Invalid referral code" }, { status: 404 });
 
     // Referenzstufe basierend auf Rabatt berechnen  
     // Erste 3 % + 3 % für jeden weiteren Referenz, maximal 9 %  
