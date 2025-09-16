@@ -279,6 +279,12 @@ export default function CustomersAdminPage() {
                     <option value="created_desc">Created: New → Old</option>
                     <option value="date_range">Created between...</option>
                   </select>
+                  <button
+                    onClick={() => fetchCustomers()}
+                    className="bg-white text-[#131313] px-4 py-2 rounded-md text-sm font-semibold shadow hover:shadow-md ml-2"
+                  >
+                    Refresh
+                  </button>
                 </div>
 
                 {filter === "date_range" && (
@@ -312,8 +318,9 @@ export default function CustomersAdminPage() {
               </div>
 
               {loading ? (
-                <div className="flex items-center justify-center py-16 sm:py-24">
+                <div className="flex flex-col items-center justify-center py-16 sm:py-24">
                   <div className="animate-spin rounded-full h-12 w-12 sm:h-16 sm:w-16 border-b-2 border-white"></div>
+                  <p className="text-white/80 mt-4">Loading customers...</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 min-h-[calc(100vh-280px)]">
