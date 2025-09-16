@@ -92,6 +92,8 @@ export default function CustomersAdminPage() {
       email: formData.email,
       phone: formData.phone,
       address: formData.address,
+      city: (formData as any).city || "",
+      postcode: (formData as any).postcode || "",
       reference: formData.reference,
       price: formData.price !== "" ? Number(formData.price) : null,
     }));

@@ -324,6 +324,8 @@ export async function POST(req: Request) {
       email: body.email,
       phone: body.phone || "",
       address: body.address || "",
+      city: body.city || null,
+      postcode: body.postcode || null,
       reference: body.reference || null, // verwendeter Referenzcode
       price: body.price, // Originalpreis
       myReferralCode,

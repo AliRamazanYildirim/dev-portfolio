@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import NoiseBackground from "@/components/NoiseBackground";
 import ImageUpload from "@/components/ui/ImageUpload";
+import { INVOICE_CONSTANTS } from "@/constants/invoice";
 import Pagination from "@/components/ui/Pagination";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { usePagination } from "@/hooks/usePagination";
@@ -17,6 +18,7 @@ interface Project {
   shortDescription: string;
   techStack: string[];
   isFeatured: boolean;
+  category?: string;
   gallery: { url: string }[];
 }
 
@@ -49,6 +51,7 @@ export default function AdminPage() {
   const [description, setDescription] = useState<string>("");
   const [shortDescription, setShortDescription] = useState<string>("");
   const [techStack, setTechStack] = useState<string>("");
+  const [category, setCategory] = useState<string>("");
   const [isFeatured, setIsFeatured] = useState<boolean>(false);
   const [gallery, setGallery] = useState<string[]>([]);
 
@@ -97,6 +100,7 @@ export default function AdminPage() {
             shortDescription:
               project.description?.substring(0, 150) + "..." || "",
             techStack: techStack,
+            category: project.category || "",
             isFeatured: project.featured || false,
             gallery: project.gallery || [],
           };
@@ -130,6 +134,7 @@ export default function AdminPage() {
     setDescription("");
     setShortDescription("");
     setTechStack("");
+    setCategory("");
     setIsFeatured(false);
     setGallery([]);
     setEditingProject(null);
@@ -168,7 +173,7 @@ export default function AdminPage() {
         description,
         role: "Full Stack Developer",
         duration: "3 months",
-        category: "Web Development",
+        category,
         technologies: JSON.stringify(techArray),
         mainImage: gallery[0] || "/placeholder.jpg",
         gallery: gallery,
@@ -242,6 +247,7 @@ export default function AdminPage() {
     setDescription(project.description);
     setShortDescription(project.shortDescription);
     setTechStack(project.techStack.join(", "));
+    setCategory(project.category || "");
     setIsFeatured(project.isFeatured);
     setGallery(project.gallery.map((img) => img.url));
     setEditingProject(project);
@@ -390,6 +396,12 @@ export default function AdminPage() {
                                   <h3 className="text-xl sm:text-2xl lg:text-3xl font-semibold text-[#131313] break-words">
                                     {project.title}
                                   </h3>
+                                  {project.category && (
+                                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs sm:text-sm font-semibold bg-white/80 text-[#131313] border border-[#131313]/10 mr-2">
+                                      {project.category}
+                                    </span>
+                                  )}
+
                                   {project.isFeatured && (
                                     <span className="inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-bold bg-[#c9184a] text-white self-start">
                                       <svg
@@ -639,6 +651,24 @@ export default function AdminPage() {
                       onChange={(e) => setTechStack(e.target.value)}
                       className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
                     />
+                  </div>
+
+                  <div className="lg:col-span-2">
+                    <label className="block text-sm font-semibold text-[#131313] mb-2 sm:mb-3">
+                      Category
+                    </label>
+                    <select
+                      value={category}
+                      onChange={(e) => setCategory(e.target.value)}
+                      className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
+                    >
+                      <option value="">Select category</option>
+                      {INVOICE_CONSTANTS.PROJECT.DEFAULT_CATEGORY.map((c) => (
+                        <option key={c} value={c}>
+                          {c}
+                        </option>
+                      ))}
+                    </select>
                   </div>
 
                   <div className="lg:col-span-2">

@@ -9,6 +9,8 @@ interface CustomerFormProps {
     email: string;
     phone: string;
     address: string;
+    city?: string;
+    postcode?: string;
     reference: string;
     price: string;
   };
@@ -74,7 +76,7 @@ export default function CustomerForm({
                 <input
                   type="text"
                   placeholder="Name..."
-                  value={formData.firstname}
+                  value={formData.firstname ?? ""}
                   onChange={(e) => onUpdateField("firstname", e.target.value)}
                   className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
                 />
@@ -87,7 +89,7 @@ export default function CustomerForm({
                 <input
                   type="text"
                   placeholder="Last name..."
-                  value={formData.lastname}
+                  value={formData.lastname ?? ""}
                   onChange={(e) => onUpdateField("lastname", e.target.value)}
                   className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
                 />
@@ -100,7 +102,7 @@ export default function CustomerForm({
                 <input
                   type="text"
                   placeholder="Company name..."
-                  value={formData.companyname}
+                  value={formData.companyname ?? ""}
                   onChange={(e) => onUpdateField("companyname", e.target.value)}
                   className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
                 />
@@ -113,7 +115,7 @@ export default function CustomerForm({
                 <input
                   type="email"
                   placeholder="Email..."
-                  value={formData.email}
+                  value={formData.email ?? ""}
                   onChange={(e) => onUpdateField("email", e.target.value)}
                   className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
                 />
@@ -126,7 +128,7 @@ export default function CustomerForm({
                 <input
                   type="text"
                   placeholder="Telefon..."
-                  value={formData.phone}
+                  value={formData.phone ?? ""}
                   onChange={(e) => onUpdateField("phone", e.target.value)}
                   className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
                 />
@@ -139,8 +141,34 @@ export default function CustomerForm({
                 <input
                   type="text"
                   placeholder="Address..."
-                  value={formData.address}
+                  value={formData.address ?? ""}
                   onChange={(e) => onUpdateField("address", e.target.value)}
+                  className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
+                />
+              </div>
+
+              <div className="lg:col-span-1">
+                <label className="block text-sm font-semibold text-[#131313] mb-2 sm:mb-3">
+                  City
+                </label>
+                <input
+                  type="text"
+                  placeholder="City..."
+                  value={formData.city ?? ""}
+                  onChange={(e) => onUpdateField("city", e.target.value)}
+                  className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
+                />
+              </div>
+
+              <div className="lg:col-span-1">
+                <label className="block text-sm font-semibold text-[#131313] mb-2 sm:mb-3">
+                  Postcode
+                </label>
+                <input
+                  type="text"
+                  placeholder="Postcode..."
+                  value={formData.postcode ?? ""}
+                  onChange={(e) => onUpdateField("postcode", e.target.value)}
                   className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
                 />
               </div>
@@ -152,7 +180,7 @@ export default function CustomerForm({
                 <input
                   type="text"
                   placeholder="Enter reference code..."
-                  value={formData.reference}
+                  value={formData.reference ?? ""}
                   onChange={(e) => onUpdateField("reference", e.target.value)}
                   className={`w-full px-4 sm:px-6 py-3 sm:py-4 border rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 content text-sm sm:text-base ${
                     referralValidation?.isValid
@@ -220,7 +248,7 @@ export default function CustomerForm({
                 <input
                   type="number"
                   placeholder="Enter price..."
-                  value={formData.price}
+                  value={formData.price ?? ""}
                   onChange={(e) => onUpdateField("price", e.target.value)}
                   className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
                 />

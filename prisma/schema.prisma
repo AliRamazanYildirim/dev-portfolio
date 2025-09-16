@@ -107,6 +107,8 @@ model Customer {
   email            String   @unique
   phone            String
   address          String
+  city             String?
+  postcode         String?
   reference        String?  // Referans kodu (eğer başka bir müşteriden geliyorsa)
   price            Float?   // Orijinal fiyat
   finalPrice       Float?   // İndirim uygulandıktan sonraki fiyat

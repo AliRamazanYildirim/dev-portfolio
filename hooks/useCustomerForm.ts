@@ -10,6 +10,8 @@ export const useCustomerForm = (onFieldChange?: (field: string, value: string) =
     email: "",
     phone: "",
     address: "",
+    city: "",
+    postcode: "",
     reference: "",
     price: "",
   });
@@ -83,6 +85,8 @@ export const useCustomerForm = (onFieldChange?: (field: string, value: string) =
       email: "",
       phone: "",
       address: "",
+      city: "",
+      postcode: "",
       reference: "",
       price: "",
     });
@@ -98,6 +102,8 @@ export const useCustomerForm = (onFieldChange?: (field: string, value: string) =
       email: customer.email,
       phone: customer.phone,
       address: customer.address,
+      city: (customer as any).city || "",
+      postcode: (customer as any).postcode || "",
       reference: customer.reference,
       price: customer.price != null ? String(customer.price) : "",
     });

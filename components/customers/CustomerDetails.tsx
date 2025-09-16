@@ -214,6 +214,13 @@ export default function CustomerDetails({
                       <p className="text-lg text-slate-700">
                         {customer.address}
                       </p>
+                      {(customer.city || (customer as any).postcode) && (
+                        <p className="text-sm text-slate-500 mt-2">
+                          {(customer.city ? `${customer.city}` : "")}
+                          {customer.city && customer.postcode ? ", " : ""}
+                          {customer.postcode}
+                        </p>
+                      )}
                     </div>
                   </div>
                   <div className="space-y-4">

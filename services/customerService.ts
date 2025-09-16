@@ -8,6 +8,8 @@ export interface Customer {
   email: string;
   phone: string;
   address: string;
+  city?: string;
+  postcode?: string;
   reference: string;
   price?: number | null;
   finalPrice?: number | null;
