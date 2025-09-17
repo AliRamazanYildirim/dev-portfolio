@@ -1,4 +1,5 @@
-import { db } from "../lib/db";
+import { connectToMongo } from "../lib/mongodb";
+import AdminModel from "../models/Admin";
 import { hashPassword, ADMIN_CREDENTIALS } from "../lib/auth";
 
 /**
@@ -11,12 +12,11 @@ async function createAdminUser() {
   );
 
   try {
+    // Connect to Mongo
+    await connectToMongo();
+
     // Prüfen ob bereits ein Admin existiert - Check if admin already exists
-    const existingAdmin = await db.adminUser.findUnique({
-      where: {
-        email: ADMIN_CREDENTIALS.email,
-      },
-    });
+    const existingAdmin = await AdminModel.findOne({ email: ADMIN_CREDENTIALS.email }).exec();
 
     if (existingAdmin) {
       console.log(
@@ -28,13 +28,13 @@ async function createAdminUser() {
 
     // Admin-Benutzer erstellen - Create admin user
     console.log("👤 Admin-Benutzer wird erstellt... - Creating admin user...");
-    const adminUser = await db.adminUser.create({
-      data: {
-        email: ADMIN_CREDENTIALS.email,
-        name: "Admin",
-        password: ADMIN_CREDENTIALS.passwordHash, // Bereits gehashtes Passwort - Already hashed password
-        active: true,
-      },
+    const passwordHash = ADMIN_CREDENTIALS.passwordHash || (await hashPassword("changeme"));
+
+    const adminUser = await AdminModel.create({
+      email: ADMIN_CREDENTIALS.email,
+      name: "Admin",
+      password: passwordHash,
+      active: true,
     });
 
     console.log(
@@ -58,8 +58,8 @@ async function createAdminUser() {
     );
     console.error(error);
   } finally {
-    // Datenbankverbindung schließen - Close database connection
-    await db.$disconnect();
+    // Mongoose bağlantısını kapat - Close mongoose connection
+    await (await connectToMongo()).close();
   }
 }
 
@@ -70,21 +70,22 @@ async function deleteAdminUser() {
   console.log("🗑️  Admin-Benutzer wird gelöscht... - Deleting admin user...");
 
   try {
-    const deletedUser = await db.adminUser.delete({
-      where: {
-        email: ADMIN_CREDENTIALS.email,
-      },
-    });
+    await connectToMongo();
+    const deletedUser = await AdminModel.findOneAndDelete({ email: ADMIN_CREDENTIALS.email }).exec();
 
-    console.log(
-      "✅ Admin-Benutzer erfolgreich gelöscht! - Admin user deleted successfully!"
-    );
-    console.log(`   E-Mail: ${deletedUser.email}`);
+    if (deletedUser) {
+      console.log(
+        "✅ Admin-Benutzer erfolgreich gelöscht! - Admin user deleted successfully!"
+      );
+      console.log(`   E-Mail: ${deletedUser.email}`);
+    } else {
+      console.log("⚠️  Admin user not found to delete");
+    }
   } catch (error) {
     console.error("❌ Fehler beim Löschen - Error deleting:");
     console.error(error);
   } finally {
-    await db.$disconnect();
+    await (await connectToMongo()).close();
   }
 }
 

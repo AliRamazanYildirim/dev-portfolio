@@ -421,9 +421,9 @@ export default function AdminPage() {
                                 </p>
 
                                 <div className="flex flex-wrap gap-2 sm:gap-3 mb-4 sm:mb-6">
-                                  {project.techStack?.map((tech) => (
+                                  {project.techStack?.map((tech, i) => (
                                     <span
-                                      key={tech}
+                                      key={`${tech}-${i}`}
                                       className="inline-flex items-center px-2.5 sm:px-3 lg:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium bg-blue-500/30 text-[#131313] border border-[#131313]/20"
                                     >
                                       {tech}
@@ -437,7 +437,7 @@ export default function AdminPage() {
                                       .slice(0, 3)
                                       .map((img, index) => (
                                         <div
-                                          key={index}
+                                          key={`${img.url}-${index}`}
                                           className="relative flex-shrink-0"
                                         >
                                           <Image
@@ -700,7 +700,10 @@ export default function AdminPage() {
                     {gallery.length > 0 && (
                       <div className="grid grid-cols-4 gap-4 mt-8">
                         {gallery.map((url, index) => (
-                          <div key={index} className="relative group/delete">
+                          <div
+                            key={`${url}-${index}`}
+                            className="relative group/delete"
+                          >
                             <Image
                               src={url}
                               alt={`Gallery image ${index + 1}`}

@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { createId } from "@paralleldrive/cuid2";
+import CustomerModel from "@/models/Customer";
+import ReferralTransactionModel from "@/models/ReferralTransaction";
 import nodemailer from "nodemailer";
+import { createId } from "@paralleldrive/cuid2";
 
-// GET: Bringe alle Kunden. Unterstützt Query-Parameter:
 // - sort=price.asc | price.desc | name.asc
 // - from=YYYY-MM-DD (inclusive)
 // - to=YYYY-MM-DD (inclusive)
@@ -49,7 +50,16 @@ export async function GET(request: Request) {
     }
 
     try {
-      const data = await db.customer.findMany({ where, orderBy });
+      // Convert Prisma-style where/orderBy to mongoose query as much as needed
+      const query: any = where || {};
+      const sort: any = {};
+      if (orderBy && orderBy.length > 0) {
+        for (const ob of orderBy) {
+          const key = Object.keys(ob)[0];
+          sort[key] = ob[key] === 'asc' ? 1 : -1;
+        }
+      }
+      const data = await CustomerModel.find(query).sort(sort).lean().exec();
       return NextResponse.json({ success: true, data });
     } catch (err: any) {
       return NextResponse.json({ success: false, error: err?.message || String(err) }, { status: 500 });
@@ -230,10 +240,10 @@ export async function POST(req: Request) {
     const finalPriceForNewCustomer = body.price || 0;
 
     if (body.reference && body.price) {
-      const referrer = await db.customer.findUnique({ where: { myReferralCode: body.reference } });
+      const referrer = await CustomerModel.findOne({ myReferralCode: body.reference }).exec();
 
       if (referrer && referrer.price) {
-        referrerCode = referrer.myReferralCode;
+        referrerCode = referrer.myReferralCode || null;
 
         const currentReferralCount = referrer.referralCount || 0;
         const newReferralCount = currentReferralCount + 1;
@@ -244,15 +254,12 @@ export async function POST(req: Request) {
         referrerDiscount = Math.min(newReferralCount * 3, 9);
 
         try {
-          await db.customer.update({
-            where: { id: referrer.id },
-            data: {
-              referralCount: newReferralCount,
-              discountRate: referrerDiscount,
-              finalPrice: referrerFinalPrice,
-              updatedAt: new Date(),
-            },
-          });
+          await CustomerModel.findByIdAndUpdate(referrer._id, {
+            referralCount: newReferralCount,
+            discountRate: referrerDiscount,
+            finalPrice: referrerFinalPrice,
+            updatedAt: new Date(),
+          }).exec();
 
           if (referrer.email) {
             referrerEmailHTML = buildReferrerEmailHTML({
@@ -289,16 +296,13 @@ export async function POST(req: Request) {
 
           // Insert referral transaction (only if referrer's code exists)
           if (referrer.myReferralCode) {
-            await db.referralTransaction.create({
-              data: {
-                referrerCode: referrer.myReferralCode,
-                newCustomerId: referrer.id, // this will be updated after new customer is created
-                discountRate: referrerDiscount,
-                originalPrice: body.price,
-                finalPrice: body.price,
-                referralLevel: Math.ceil(referrerDiscount / 3),
-                createdAt: new Date(),
-              },
+            await ReferralTransactionModel.create({
+              referrerCode: referrer.myReferralCode,
+              newCustomerId: referrer._id.toString(),
+              discountRate: referrerDiscount,
+              originalPrice: body.price,
+              finalPrice: body.price,
+              referralLevel: Math.ceil(referrerDiscount / 3),
             });
           }
         } catch (updateErr) {
@@ -310,14 +314,13 @@ export async function POST(req: Request) {
     // Neuen Kunden einen einzigartigen Empfehlungscode erstellen
     let myReferralCode = generateReferralCode();
     while (true) {
-      const existing = await db.customer.findUnique({ where: { myReferralCode } });
+      const existing = await CustomerModel.findOne({ myReferralCode }).exec();
       if (!existing) break;
       myReferralCode = generateReferralCode();
     }
 
     // Neuer Kundenregistrierungs-Payload
-    const customerData = {
-      id: createId(),
+    const customerData: any = {
       firstname: body.firstname || "",
       lastname: body.lastname || "",
       companyname: body.companyname || "",
@@ -338,22 +341,19 @@ export async function POST(req: Request) {
 
     // Neuen Kunden speichern
     try {
-      const customer = await db.customer.create({ data: customerData });
+      const customer = await CustomerModel.create(customerData);
 
       // If referral transaction was inserted earlier referencing referrer.id, we should update newCustomerId now.
       if (referrerCode) {
         // Find the latest referral transaction for this referrerCode with null/placeholder newCustomerId and update it.
         // Simpler approach: create a referral transaction here instead of earlier; we'll create it now referencing customer.id
-        await db.referralTransaction.create({
-          data: {
-            referrerCode,
-            newCustomerId: customer.id,
-            discountRate: referrerDiscount,
-            originalPrice: body.price,
-            finalPrice: body.price,
-            referralLevel: Math.ceil(referrerDiscount / 3),
-            createdAt: new Date(),
-          },
+        await ReferralTransactionModel.create({
+          referrerCode,
+          newCustomerId: customer._id.toString(),
+          discountRate: referrerDiscount,
+          originalPrice: body.price,
+          finalPrice: body.price,
+          referralLevel: Math.ceil(referrerDiscount / 3),
         });
       }
 

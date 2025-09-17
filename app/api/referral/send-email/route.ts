@@ -1,21 +1,24 @@
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
 import nodemailer from "nodemailer";
+import CustomerModel from "@/models/Customer";
 
 export async function POST(request: Request) {
   try {
     const { customerId, customerEmail } = await request.json();
 
-    if (!customerId || !customerEmail) {
+    if (!customerId) {
       return NextResponse.json(
-        { success: false, error: "Customer ID and email are required" },
+        { success: false, error: "Customer ID is required" },
         { status: 400 }
       );
     }
 
-    // Müşteriyi ve referans kodunu getir (Prisma)
-    const customer = await db.customer.findUnique({ where: { id: customerId } });
-    if (!customer) return NextResponse.json({ success: false, error: "Customer not found" }, { status: 404 });
+    // Fetch the customer from MongoDB using Mongoose. Use findById because
+    // the frontend may pass the Mongo `_id` value.
+    const customer = await CustomerModel.findById(customerId).lean().exec();
+    if (!customer) {
+      return NextResponse.json({ success: false, error: "Customer not found" }, { status: 404 });
+    }
 
     if (!customer.myReferralCode) {
       return NextResponse.json(
@@ -36,23 +39,29 @@ export async function POST(request: Request) {
           <li>Jede Empfehlung bringt Sie dem Maximum näher.</li>
         </ul>`;
 
-    // Nodemailer yapılandırması (env değişkenleri gerekli)
-    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-      return NextResponse.json(
-        { success: false, error: "Email credentials not configured" },
-        { status: 500 }
-      );
-    }
+    // Nodemailer yapılandırması. Eğer gerçek SMTP bilgileri yoksa Ethereal test
+    // hesabına düşerek geliştirmede gönderimi denemeye izin ver.
+    let transporter;
+    if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+      transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
+      });
 
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
-    });
-
-    try {
-      await transporter.verify();
-    } catch (e) {
-      throw new Error("Email configuration invalid: " + e);
+      try {
+        await transporter.verify();
+      } catch (e) {
+        throw new Error("Email configuration invalid: " + e);
+      }
+    } else {
+      // Fallback: Ethereal test account (development)
+      const testAccount = await nodemailer.createTestAccount();
+      transporter = nodemailer.createTransport({
+        host: "smtp.ethereal.email",
+        port: 587,
+        auth: { user: testAccount.user, pass: testAccount.pass },
+      });
+      console.warn("EMAIL_USER/PASS not configured — using Ethereal test account for sending emails.");
     }
 
     const subject = `🎉 Ihr Empfehlungscode: ${customer.myReferralCode} – Ali Ramazan Yildirim`;
@@ -127,20 +136,31 @@ export async function POST(request: Request) {
     </div>
     </body></html>`;
 
+    const toAddress = customerEmail || customer.email;
+    if (!toAddress) {
+      return NextResponse.json({ success: false, error: "No recipient email provided" }, { status: 400 });
+    }
+
+    const fromAddress = process.env.EMAIL_USER || `"No-Reply" <no-reply@localhost>`;
+
     const result = await transporter.sendMail({
-      from: `"Ali Ramazan Yildirim" <${process.env.EMAIL_USER}>`,
-      to: customerEmail,
+      from: fromAddress,
+      to: toAddress,
       subject,
       html: html,
     });
+
+    // If using Ethereal, attach a preview URL for debugging
+    const previewUrl = nodemailer.getTestMessageUrl(result) || null;
 
     return NextResponse.json({
       success: true,
       data: {
         referralCode: customer.myReferralCode,
         customerName: `${customer.firstname} ${customer.lastname}`,
-        customerEmail,
+        customerEmail: toAddress,
         messageId: result.messageId,
+        previewUrl,
       },
     });
   } catch (error: any) {

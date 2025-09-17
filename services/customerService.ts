@@ -50,9 +50,10 @@ export const customerService = {
     customerData: Partial<Customer>,
     editingCustomer?: Customer | null
   ): Promise<void> {
-    const url = editingCustomer
-      ? `/api/admin/customers/${editingCustomer.id}`
-      : "/api/admin/customers";
+    const url =
+      editingCustomer && (editingCustomer as any).id
+        ? `/api/admin/customers/${(editingCustomer as any).id}`
+        : "/api/admin/customers";
     const method = editingCustomer ? "PUT" : "POST";
 
     const promise = (async () => {

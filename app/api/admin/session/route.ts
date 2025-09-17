@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import AdminModel from "@/models/Admin";
+import { connectToMongo } from "@/lib/mongodb";
 import { verifyToken, AUTH_COOKIE_NAME } from "@/lib/auth";
 
 // GET /api/admin/session - Session-Status prüfen - Check session status
@@ -33,19 +34,13 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Supabase ile admin user sorgula
-    const { data, error } = await supabase
-      .from("admin_users")
-      .select("id, email, name, active")
-      .eq("id", decoded.userId)
-      .eq("active", true)
-      .single();
+    // MongoDB ile admin user sorgula
+    await connectToMongo();
+    const adminUser = await AdminModel.findById(decoded.userId).exec();
 
-    if (error || !data) {
+    if (!adminUser || !adminUser.active) {
       return NextResponse.json({ success: false, authenticated: false, error: "User not found" }, { status: 401 });
     }
-
-    const adminUser = data;
 
     // Erfolgreiche Session-Prüfung - Successful session check
     return NextResponse.json({

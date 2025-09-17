@@ -1,4 +1,5 @@
-import { db } from "../lib/db";
+import { connectToMongo } from "../lib/mongodb";
+import AdminModel from "../models/Admin";
 
 async function main() {
     const hash = process.argv[2];
@@ -10,26 +11,20 @@ async function main() {
     }
 
     try {
-        const upserted = await db.adminUser.upsert({
-            where: { email },
-            update: {
-                password: hash,
-                active: true,
-            },
-            create: {
-                email,
-                name: "Admin",
-                password: hash,
-                active: true,
-            },
-        });
+        await connectToMongo();
 
-        console.log("✅ Admin user updated/created:", upserted.email, upserted.id);
+        const updated = await AdminModel.findOneAndUpdate(
+            { email },
+            { password: hash, active: true, name: "Admin" },
+            { upsert: true, new: true }
+        ).exec();
+
+        console.log("✅ Admin user updated/created:", updated?.email, updated?._id?.toString());
     } catch (error) {
         console.error("❌ Error updating admin user:", error);
         process.exit(2);
     } finally {
-        await db.$disconnect();
+        await (await connectToMongo()).close();
     }
 }
 

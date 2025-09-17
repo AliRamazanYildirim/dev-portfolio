@@ -31,9 +31,9 @@ export default function CustomerList({
 
           <div className="flex-1 overflow-y-auto custom-scrollbar">
             <div className="p-2 space-y-2">
-              {currentCustomers.map((customer) => (
+              {currentCustomers.map((customer, index) => (
                 <div
-                  key={customer.id}
+                  key={customer.id || `customer-${index}`}
                   onClick={() => setSelectedCustomer(customer)}
                   className={`group cursor-pointer relative p-5 rounded-2xl transition-all duration-300 hover:scale-[1.02] ${
                     selectedCustomer?.id === customer.id

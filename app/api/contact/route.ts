@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { randomUUID } from "crypto";
 import { getIpFromHeaders } from "@/lib/ip";
+import { checkRateLimitKey } from "@/lib/mongoRateLimiter";
 
 export const runtime = "nodejs"; // Supabase/crypto için Node runtime
 
@@ -25,25 +26,12 @@ async function checkRateLimit(
   const key = `ip:${ip}:/api/contact:${scope}`;
   const { limit, window } = scope === "POST" ? RL_POST : RL_GET;
 
-  // Verwende Prisma Raw Query, um die Postgres-Funktion `hit_rate_limit` aufzurufen.
-  // Die Funktion gibt ein RECORD / TABLE zurück — wir casten das Ergebnis entsprechend.
   try {
-    const rows: any = await db.$queryRaw`
-      SELECT * FROM hit_rate_limit(${key}::text, ${window}::bigint, ${limit}::bigint)`;
-
-    const row = Array.isArray(rows) ? rows[0] : rows;
-    const success = !!row?.success;
-    const meta: RLMeta = {
-      limit: Number(row?.limit ?? row?.lim ?? limit),
-      remaining: Number(row?.remaining ?? row?.remaining ?? 0),
-      reset: Number(row?.reset ?? row?.reset_at ?? 0),
-    };
-
-    return success ? { allowed: true, meta } : { allowed: false, meta };
+    const data = await checkRateLimitKey(key, window, limit)
+    return data.allowed ? { allowed: true, meta: data.meta } : { allowed: false, meta: data.meta }
   } catch (err: any) {
-    // fail-closed: Blockiere die Anfrage, wenn der Ratenbegrenzer ausfällt
-    console.error("rate_limit rpc error:", err?.message || err);
-    throw new Error(`rate_limit rpc error: ${err?.message || String(err)}`);
+    console.error("rate_limit error:", err?.message || err);
+    throw new Error(`rate_limit error: ${err?.message || String(err)}`);
   }
 }
 

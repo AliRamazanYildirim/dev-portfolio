@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import AdminModel from "@/models/Admin";
+import { connectToMongo } from "@/lib/mongodb";
 import { verifyPassword, createToken, AUTH_COOKIE_NAME, COOKIE_OPTIONS } from "@/lib/auth";
 
 // POST /api/admin/login - Admin login
@@ -25,19 +26,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 3️⃣ Admin-Benutzerabfrage (Supabase)
-    const { data, error } = await supabase
-      .from("admin_users")
-      .select("id, email, name, password, active")
-      .eq("email", email.toLowerCase().trim())
-      .eq("active", true)
-      .single();
+    // 3️⃣ Admin-Benutzerabfrage (MongoDB)
+    await connectToMongo();
+    const adminUser = await AdminModel.findOne({ email: email.toLowerCase().trim(), active: true }).exec();
 
-    if (error || !data) {
+    if (!adminUser) {
       return NextResponse.json({ success: false, error: "Invalid credentials" }, { status: 401 });
     }
-
-    const adminUser = data;
     // 4️⃣ Passwortüberprüfung
     const isPasswordValid = await verifyPassword(password, adminUser.password);
     if (!isPasswordValid) {
@@ -48,21 +43,13 @@ export async function POST(request: NextRequest) {
     }
 
     // 5️⃣ JWT-Token erstellen
-    const token = createToken({
-      id: adminUser.id,
-      email: adminUser.email,
-      name: adminUser.name,
-    });
+    const token = createToken({ id: adminUser._id.toString(), email: adminUser.email, name: adminUser.name });
 
     // 6️⃣ Antwort erstellen und Cookie setzen
     const response = NextResponse.json({
       success: true,
       message: "Successfully logged in",
-      user: {
-        id: adminUser.id,
-        email: adminUser.email,
-        name: adminUser.name,
-      },
+      user: { id: adminUser._id.toString(), email: adminUser.email, name: adminUser.name },
     });
 
     response.cookies.set(AUTH_COOKIE_NAME, token, COOKIE_OPTIONS);

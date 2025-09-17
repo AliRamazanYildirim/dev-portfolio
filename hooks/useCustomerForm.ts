@@ -107,7 +107,9 @@ export const useCustomerForm = (onFieldChange?: (field: string, value: string) =
       reference: customer.reference,
       price: customer.price != null ? String(customer.price) : "",
     });
-    setEditingCustomer(customer);
+    // Normalize Mongo returned documents which may have `_id` instead of `id`.
+    const normalized = (customer as any)._id ? { ...customer, id: (customer as any)._id } : customer;
+    setEditingCustomer(normalized as Customer);
     setReferralValidation(null);
   };
 

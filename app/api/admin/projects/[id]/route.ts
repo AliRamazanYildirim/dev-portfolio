@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import ProjectModel from "@/models/Project";
+import ProjectImageModel from "@/models/ProjectImage";
 import { randomUUID } from "crypto";
 
 // PUT /api/projects/admin/[id] - Projekt aktualisieren (Admin) - Update project (Admin)
@@ -26,14 +28,14 @@ export async function PUT(
       nextSlug,
     } = body;
 
-    const existingProject = await db.project.findUnique({ where: { id } });
+    const existingProject = await ProjectModel.findById(id).lean().exec();
     if (!existingProject) {
       return NextResponse.json({ success: false, error: "Project not found" }, { status: 404 });
     }
 
     // Slug-Eindeutigkeit prüfen bei Änderung (Supabase)
     if (slug !== existingProject.slug) {
-      const slugExists = await db.project.findUnique({ where: { slug } });
+      const slugExists = await ProjectModel.findOne({ slug }).lean().exec();
       if (slugExists) {
         return NextResponse.json({ success: false, error: "A project with this slug already exists" }, { status: 400 });
       }
@@ -41,7 +43,6 @@ export async function PUT(
 
     // Galerie vorbereiten (Supabase)
     const galleryData = gallery.map((url: string, index: number) => ({
-      id: randomUUID(),
       projectId: id,
       url,
       publicId: `portfolio_${slug}_${index}`,
@@ -49,19 +50,17 @@ export async function PUT(
       order: index,
     }));
 
-    // Lösche die alte Galerie (Prisma)
-    await db.projectImage.deleteMany({ where: { projectId: id } });
-    // Neue Galerie hinzufügen (Prisma)
+    // Lösche die alte Galerie (Mongo)
+    await ProjectImageModel.deleteMany({ projectId: id }).exec();
+    // Neue Galerie hinzufügen (Mongo)
     if (galleryData.length > 0) {
-      await db.projectImage.createMany({ data: galleryData });
+      await ProjectImageModel.insertMany(galleryData);
     }
 
     // Projekt aktualisieren (Supabase)
-    const updatedProject = await db.project.update({ where: { id }, data: { slug, title, description, role, duration, category, technologies, mainImage, featured, previousSlug, nextSlug, updatedAt: new Date() } });
-
-    // Ziehe das Projekt erneut zusammen mit der Galerie.
-    const fullProject = await db.project.findUnique({ where: { id }, include: { gallery: true, tags: true } });
-    return NextResponse.json({ success: true, data: fullProject, message: "Project updated successfully" }, { status: 200 });
+    const updatedProject = await ProjectModel.findByIdAndUpdate(id, { slug, title, description, role, duration, category, technologies, mainImage, featured, previousSlug, nextSlug, updatedAt: new Date() }, { new: true }).exec();
+    const galleryRes = await ProjectImageModel.find({ projectId: id }).sort({ order: 1 }).lean().exec();
+    return NextResponse.json({ success: true, data: { ...updatedProject?.toObject(), gallery: galleryRes }, message: "Project updated successfully" }, { status: 200 });
   } catch (error: any) {
     return NextResponse.json(
       {
@@ -82,10 +81,10 @@ export async function DELETE(
   try {
     const { id } = await params;
 
-    const existing = await db.project.findUnique({ where: { id } });
+    const existing = await ProjectModel.findById(id).lean().exec();
     if (!existing) return NextResponse.json({ success: false, error: "Project not found" }, { status: 404 });
-    await db.projectImage.deleteMany({ where: { projectId: id } });
-    await db.project.delete({ where: { id } });
+    await ProjectImageModel.deleteMany({ projectId: id }).exec();
+    await ProjectModel.findByIdAndDelete(id).exec();
 
     return NextResponse.json(
       {

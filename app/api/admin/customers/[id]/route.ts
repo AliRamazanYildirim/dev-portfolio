@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import CustomerModel from "@/models/Customer";
+import ReferralTransactionModel from "@/models/ReferralTransaction";
 
 // GET: Einzelnen Kunden abrufen
 export async function GET(
@@ -7,7 +9,7 @@ export async function GET(
   context: { params: Promise<{ id: string }> }
 ) {
   const { id } = await context.params;
-  const data = await db.customer.findUnique({ where: { id } });
+  const data = await CustomerModel.findById(id).lean().exec();
 
   if (!data) {
     return NextResponse.json({ success: false, error: "Customer not found" }, { status: 404 });
@@ -26,7 +28,7 @@ export async function PUT(
     const body = await req.json();
 
     // Abrufen der aktuellen Kundeninformationen
-    const existingCustomer = await db.customer.findUnique({ where: { id } });
+    const existingCustomer = await CustomerModel.findById(id).exec();
 
     if (!existingCustomer) {
       return NextResponse.json({ success: false, error: "Customer not found" }, { status: 404 });
@@ -38,7 +40,7 @@ export async function PUT(
 
     if (body.reference && body.price && !existingCustomer.reference) {
       // Wenn diesem Kunden zum ersten Mal ein Referenzcode hinzugefügt wird
-      const referrer = await db.customer.findUnique({ where: { myReferralCode: body.reference } });
+      const referrer = await CustomerModel.findOne({ myReferralCode: body.reference }).exec();
 
       if (referrer && referrer.price && referrer.myReferralCode) {
         referrerCode = referrer.myReferralCode;
@@ -49,26 +51,20 @@ export async function PUT(
 
         const referrerFinalPrice = referrer.price - (referrer.price * referrerDiscount) / 100;
 
-        await db.customer.update({
-          where: { id: referrer.id },
-          data: {
-            referralCount: currentReferralCount + 1,
-            discountRate: referrerDiscount,
-            finalPrice: referrerFinalPrice,
-            updatedAt: new Date(),
-          },
-        });
+        await CustomerModel.findByIdAndUpdate(referrer._id, {
+          referralCount: currentReferralCount + 1,
+          discountRate: referrerDiscount,
+          finalPrice: referrerFinalPrice,
+          updatedAt: new Date(),
+        }).exec();
 
-        await db.referralTransaction.create({
-          data: {
-            referrerCode,
-            newCustomerId: existingCustomer.id,
-            discountRate: referrerDiscount,
-            originalPrice: body.price,
-            finalPrice: body.price,
-            referralLevel: Math.ceil(referrerDiscount / 3),
-            createdAt: new Date(),
-          },
+        await ReferralTransactionModel.create({
+          referrerCode,
+          newCustomerId: existingCustomer._id.toString(),
+          discountRate: referrerDiscount,
+          originalPrice: body.price,
+          finalPrice: body.price,
+          referralLevel: Math.ceil(referrerDiscount / 3),
         });
       }
     }
@@ -82,7 +78,7 @@ export async function PUT(
     };
 
     try {
-      const result = await db.customer.update({ where: { id }, data: updateData });
+      const result = await CustomerModel.findByIdAndUpdate(id, updateData, { new: true }).exec();
       return NextResponse.json({
         success: true,
         data: result,
@@ -109,7 +105,7 @@ export async function DELETE(
     const { id } = await context.params;
 
     try {
-      await db.customer.delete({ where: { id } });
+      await CustomerModel.findByIdAndDelete(id).exec();
       return NextResponse.json({ success: true });
     } catch (err: any) {
       return NextResponse.json({ success: false, error: err?.message || String(err) }, { status: 500 });

@@ -1,5 +1,8 @@
 import { db } from '../lib/db'
-import type { Prisma } from '.prisma/client' // 🔧 NOT: Type-Import direkt aus dem generierten Prisma-Client
+import ProjectModel from '@/models/Project'
+import ProjectImageModel from '@/models/ProjectImage'
+import { connectToMongo } from '@/lib/mongodb'
+// Removed Prisma runtime/type dependency for seeding — use local types instead
 
 // 🔹 Tippdefinition nur für Seed-Daten (staticProjects)
 interface StaticProject {
@@ -17,10 +20,7 @@ interface StaticProject {
   gallery: string[]
 }
 
-// 🔹 Tip tanımı: Prisma-Projekt mit Gallery
-type ProjectWithGallery = Prisma.ProjectGetPayload<{
-  include: { gallery: true }
-}>
+// Prisma-specific types removed for seed script — using local `StaticProject` type instead
 
 // 🔸 Statische Projektdaten
 const staticProjects: StaticProject[] = [
@@ -75,66 +75,72 @@ async function seedProjects() {
   try {
     console.log('🌱 Projekte werden in die Datenbank übertragen...')
 
+    // Ensure MongoDB is connected before running any model operations
+    try {
+      await connectToMongo()
+    } catch (connErr) {
+      console.error('❌ Fehler beim Verbinden zu MongoDB:', connErr)
+      process.exit(1)
+    }
+
     for (const project of staticProjects) {
-      const existingProject = await db.project.findUnique({
-        where: { slug: project.slug },
-      })
+      const existingProject = await ProjectModel.findOne({ slug: project.slug }).exec()
 
       if (existingProject) {
         console.log(`⚠️  Das Projekt existiert bereits: ${project.title}`)
         continue
       }
 
+      // Create project
+      const createdProject = await ProjectModel.create({
+        slug: project.slug,
+        title: project.title,
+        author: project.author,
+        description: project.description,
+        role: project.role,
+        duration: project.duration,
+        category: project.category,
+        technologies: project.technologies,
+        mainImage: project.mainImage,
+        previousSlug: project.previousSlug,
+        nextSlug: project.nextSlug,
+        featured: false,
+        published: true,
+      })
+
       const galleryImages = project.gallery.map((url, index) => ({
+        projectId: createdProject._id,
         url,
         publicId: `portfolio_${project.slug}_${index}`,
         alt: `${project.title} screenshot ${index + 1}`,
         order: index,
       }))
 
-      const createdProject = await db.project.create({
-        data: {
-          slug: project.slug,
-          title: project.title,
-          author: project.author,
-          description: project.description,
-          role: project.role,
-          duration: project.duration,
-          category: project.category,
-          technologies: project.technologies,
-          mainImage: project.mainImage,
-          previousSlug: project.previousSlug,
-          nextSlug: project.nextSlug,
-          featured: false,
-          published: true,
-          gallery: {
-            create: galleryImages,
-          },
-        },
-        include: {
-          gallery: true,
-        },
-      })
+      await ProjectImageModel.insertMany(galleryImages)
 
       console.log(`✅ Projekt erstellt: ${createdProject.title}`)
-      console.log(`   📸 ${createdProject.gallery.length} Bilder hinzugefügt`)
+      console.log(`   📸 ${galleryImages.length} Bilder hinzugefügt`)
     }
 
     console.log('🎉 Alle Projekte wurden erfolgreich übertragen!')
 
-    const allProjects: ProjectWithGallery[] = await db.project.findMany({
-      include: { gallery: true },
-    })
+    const allProjects = await ProjectModel.find().lean().exec()
 
     console.log('\n📊 Projekte in der Datenbank:')
-    allProjects.forEach((project) => {
-      console.log(`- ${project.title} (${project.gallery.length} Bilder)`)
-    })
+    for (const p of allProjects) {
+      const images = await ProjectImageModel.find({ projectId: p._id }).lean().exec()
+      console.log(`- ${p.title} (${images.length} Bilder)`)
+    }
   } catch (error) {
     console.error('❌ Fehler beim Seeding:', error)
     process.exit(1)
   } finally {
-    await db.$disconnect()
+    try {
+      const conn = await connectToMongo()
+      if (conn && typeof (conn as any).close === 'function') await (conn as any).close()
+    } catch (e) {
+      // ignore
+    }
   }
 }
 

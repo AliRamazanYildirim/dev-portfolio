@@ -23,7 +23,9 @@ export const useCustomers = () => {
   const fetchCustomers = async (opts?: FetchCustomersOptions) => {
     setLoading(true);
     const data = await customerService.fetchCustomers(opts);
-    setCustomers(data);
+    // Normalize Mongo documents that may include `_id` instead of `id`
+    const normalized = data.map((c: any) => (c._id ? { ...c, id: c._id } : c));
+    setCustomers(normalized);
     setLoading(false);
   };
 

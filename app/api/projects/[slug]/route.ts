@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import ProjectModel from "@/models/Project";
+import ProjectImageModel from "@/models/ProjectImage";
 
 // GET /api/projects/[slug] - Retrieve single project by slug
 export async function GET(
@@ -9,8 +11,8 @@ export async function GET(
   try {
     const { slug } = await params;
 
-    // Einzelnes Projekt mit Galerie/Tags laden (Prisma)
-    const project = await db.project.findUnique({ where: { slug }, include: { gallery: true, tags: true } });
+    // Einzelnes Projekt mit Galerie laden (MongoDB)
+    const project = await ProjectModel.findOne({ slug }).lean().exec();
     if (!project || !project.published) {
       return NextResponse.json({ success: false, error: "Project not found" }, { status: 404 });
     }
@@ -19,7 +21,7 @@ export async function GET(
     let prev = project.previousSlug ?? null;
     let next = project.nextSlug ?? null;
     if (prev === null || next === null) {
-      const allProjects = await db.project.findMany({ where: { published: true }, select: { slug: true, createdAt: true }, orderBy: { createdAt: 'asc' } });
+      const allProjects = await ProjectModel.find({ published: true }).sort({ createdAt: 1 }).lean().exec();
       if (allProjects && allProjects.length > 0) {
         const index = allProjects.findIndex((p) => p.slug === slug);
         prev = index > 0 ? allProjects[index - 1].slug : null;
@@ -41,8 +43,9 @@ export async function GET(
           ? project.technologies.split(",").map((tech) => tech.trim())
           : [];
     }
+    const gallery = await ProjectImageModel.find({ projectId: project._id }).sort({ order: 1 }).lean().exec();
 
-    return NextResponse.json({ success: true, data: { ...project, technologies, previousSlug: prev, nextSlug: next } });
+    return NextResponse.json({ success: true, data: { ...project, gallery, technologies, previousSlug: prev, nextSlug: next } });
   } catch (error) {
     return NextResponse.json(
       { success: false, error: "Failed to fetch project" },
