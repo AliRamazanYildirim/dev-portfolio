@@ -1,4 +1,4 @@
-import mongoose from 'mongoose'
+import mongoose from './mongodb'
 import { connectToMongo } from './mongodb'
 
 const RATE_LIMIT_MODEL = 'RateLimit'
@@ -15,12 +15,11 @@ const RateLimitSchema = new mongoose.Schema<RateLimitDoc>({
     expiresAt: { type: Date, required: true, index: true },
 })
 
-function getModel() {
-    try {
-        return mongoose.model<RateLimitDoc>(RATE_LIMIT_MODEL)
-    } catch (e) {
-        return mongoose.models[RATE_LIMIT_MODEL] || mongoose.model<RateLimitDoc>(RATE_LIMIT_MODEL, RateLimitSchema)
+function getModel(): mongoose.Model<RateLimitDoc> {
+    if (mongoose.models && mongoose.models[RATE_LIMIT_MODEL]) {
+        return mongoose.models[RATE_LIMIT_MODEL] as mongoose.Model<RateLimitDoc>;
     }
+    return mongoose.model<RateLimitDoc>(RATE_LIMIT_MODEL, RateLimitSchema);
 }
 
 export async function checkRateLimitKey(key: string, windowSec: number, limit: number) {
@@ -34,7 +33,7 @@ export async function checkRateLimitKey(key: string, windowSec: number, limit: n
         { key, expiresAt: { $gt: now } },
         { $inc: { count: 1 } },
         { new: true }
-    ).lean().exec()
+    ).exec()
 
     if (updated) {
         const allowed = updated.count <= limit
@@ -49,7 +48,7 @@ export async function checkRateLimitKey(key: string, windowSec: number, limit: n
     }
 
     // Create new window
-    const created = await Model.create({ key, count: 1, expiresAt })
+    const created = await Model.create({ key, count: 1, expiresAt });
     return {
         allowed: 1 <= limit,
         meta: {
