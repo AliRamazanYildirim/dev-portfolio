@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { supabase } from "@/lib/supabase";
 import { verifyPassword, createToken, AUTH_COOKIE_NAME, COOKIE_OPTIONS } from "@/lib/auth";
 
 // POST /api/admin/login - Admin login
@@ -25,17 +25,19 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 3️⃣ Admin-Benutzerabfrage (Direkt-DB mit Prisma)
-    const adminUser = await db.adminUser.findUnique({
-      where: { email: email.toLowerCase().trim() },
-    });
+    // 3️⃣ Admin-Benutzerabfrage (Supabase)
+    const { data, error } = await supabase
+      .from("admin_users")
+      .select("id, email, name, password, active")
+      .eq("email", email.toLowerCase().trim())
+      .eq("active", true)
+      .single();
 
-    if (!adminUser || !adminUser.active) {
-      return NextResponse.json(
-        { success: false, error: "Invalid credentials" },
-        { status: 401 }
-      );
+    if (error || !data) {
+      return NextResponse.json({ success: false, error: "Invalid credentials" }, { status: 401 });
     }
+
+    const adminUser = data;
     // 4️⃣ Passwortüberprüfung
     const isPasswordValid = await verifyPassword(password, adminUser.password);
     if (!isPasswordValid) {
