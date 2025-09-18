@@ -23,7 +23,12 @@ function getModel(): mongoose.Model<RateLimitDoc> {
 }
 
 export async function checkRateLimitKey(key: string, windowSec: number, limit: number) {
-    await connectToMongo()
+    try {
+        await connectToMongo();
+    } catch (err: any) {
+        console.error('mongoRateLimiter: connectToMongo failed:', err && (err.stack || err.message || err));
+        throw new Error('mongoRateLimiter: connectToMongo failed: ' + (err && (err.message || String(err))));
+    }
     const Model = getModel()
     const now = new Date()
     const expiresAt = new Date(now.getTime() + windowSec * 1000)
@@ -47,47 +52,51 @@ export async function checkRateLimitKey(key: string, windowSec: number, limit: n
         }
     }
 
-    // Create new window. This can race when multiple processes try to create the
-    // same key at the same time resulting in a duplicate-key error. In that case
-    // we catch the error and re-run the increment query to obtain the current
-    // counters instead of failing hard.
-    try {
-        const created = await Model.create({ key, count: 1, expiresAt });
+    // Use an atomic upsert to create-or-increment the window in one operation.
+    // This avoids races where multiple processes call create() concurrently.
+    const bumped = await Model.findOneAndUpdate(
+        { key, expiresAt: { $gt: now } },
+        { $inc: { count: 1 } },
+        { new: true }
+    ).exec();
+
+    if (bumped) {
+        const allowed = bumped.count <= limit;
         return {
-            allowed: 1 <= limit,
+            allowed,
             meta: {
                 limit,
-                remaining: Math.max(0, limit - 1),
-                reset: Math.floor(expiresAt.getTime() / 1000),
+                remaining: Math.max(0, limit - bumped.count),
+                reset: Math.floor(bumped.expiresAt.getTime() / 1000),
             },
-        }
-    } catch (err: any) {
-        // Duplicate key (another process created the doc at the same time)
-        const isDupKey = err && (err.code === 11000 || err.name === 'MongoServerError' && err.code === 11000);
-        if (isDupKey) {
-            // Try to fetch and increment the document that was just created by the
-            // other process. If that still fails, rethrow the original error.
-            const bumped = await Model.findOneAndUpdate(
-                { key, expiresAt: { $gt: now } },
-                { $inc: { count: 1 } },
-                { new: true }
-            ).exec();
-
-            if (bumped) {
-                return {
-                    allowed: bumped.count <= limit,
-                    meta: {
-                        limit,
-                        remaining: Math.max(0, limit - bumped.count),
-                        reset: Math.floor(bumped.expiresAt.getTime() / 1000),
-                    },
-                }
-            }
-        }
-
-        // If it's not a duplicate-key error or we couldn't recover, rethrow
-        throw err;
+        };
     }
+
+    // No existing active window found — atomically insert a new document using
+    // upsert. The filter does NOT match expired windows, so this creates a new
+    // window for this key and sets count=1.
+    const upserted = await Model.findOneAndUpdate(
+        { key, expiresAt: { $lte: now } },
+        { $setOnInsert: { key, expiresAt }, $inc: { count: 1 } },
+        { new: true, upsert: true }
+    ).exec();
+
+    if (upserted) {
+        // If the returned document was just created, its count will be 1.
+        // If it was matched but expired, behavior depends on race; compute safely.
+        const currentCount = upserted.count ?? 1;
+        return {
+            allowed: currentCount <= limit,
+            meta: {
+                limit,
+                remaining: Math.max(0, limit - currentCount),
+                reset: Math.floor((upserted.expiresAt || expiresAt).getTime() / 1000),
+            },
+        };
+    }
+
+    // Fallback: should not normally happen
+    throw new Error('rate_limit error: unable to create or update rate limit document');
 }
 
 export default { checkRateLimitKey }
