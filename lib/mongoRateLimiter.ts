@@ -33,70 +33,47 @@ export async function checkRateLimitKey(key: string, windowSec: number, limit: n
     const now = new Date()
     const expiresAt = new Date(now.getTime() + windowSec * 1000)
 
-    // Try incrementing existing doc within window
-    const updated = await Model.findOneAndUpdate(
-        { key, expiresAt: { $gt: now } },
-        { $inc: { count: 1 } },
-        { new: true }
-    ).exec()
-
-    if (updated) {
-        const allowed = updated.count <= limit
-        return {
-            allowed: allowed,
-            meta: {
-                limit,
-                remaining: Math.max(0, limit - updated.count),
-                reset: Math.floor(updated.expiresAt.getTime() / 1000),
+    // Perform a single atomic upsert using an aggregation pipeline. The pipeline
+    // will either increment the existing active window's count, or reset/create
+    // a new window with count=1 if expired or missing. Using a pipeline avoids
+    // races that lead to duplicate-key errors on unique indexes.
+    const result = await Model.findOneAndUpdate(
+        { key },
+        [
+            { $set: { _existingExpires: { $ifNull: ["$expiresAt", new Date(0)] } } },
+            { $set: { _isActive: { $gt: ["$_existingExpires", now] } } },
+            {
+                $set: {
+                    count: {
+                        $cond: [
+                            { $eq: ["$_isActive", true] },
+                            { $add: [{ $ifNull: ["$count", 0] }, 1] },
+                            1,
+                        ],
+                    },
+                    expiresAt: {
+                        $cond: [{ $eq: ["$_isActive", true] }, "$_existingExpires", expiresAt],
+                    },
+                },
             },
-        }
-    }
-
-    // Use an atomic upsert to create-or-increment the window in one operation.
-    // This avoids races where multiple processes call create() concurrently.
-    const bumped = await Model.findOneAndUpdate(
-        { key, expiresAt: { $gt: now } },
-        { $inc: { count: 1 } },
-        { new: true }
-    ).exec();
-
-    if (bumped) {
-        const allowed = bumped.count <= limit;
-        return {
-            allowed,
-            meta: {
-                limit,
-                remaining: Math.max(0, limit - bumped.count),
-                reset: Math.floor(bumped.expiresAt.getTime() / 1000),
-            },
-        };
-    }
-
-    // No existing active window found — atomically insert a new document using
-    // upsert. The filter does NOT match expired windows, so this creates a new
-    // window for this key and sets count=1.
-    const upserted = await Model.findOneAndUpdate(
-        { key, expiresAt: { $lte: now } },
-        { $setOnInsert: { key, expiresAt }, $inc: { count: 1 } },
+            { $unset: ["_existingExpires", "_isActive"] },
+        ],
         { new: true, upsert: true }
     ).exec();
 
-    if (upserted) {
-        // If the returned document was just created, its count will be 1.
-        // If it was matched but expired, behavior depends on race; compute safely.
-        const currentCount = upserted.count ?? 1;
-        return {
-            allowed: currentCount <= limit,
-            meta: {
-                limit,
-                remaining: Math.max(0, limit - currentCount),
-                reset: Math.floor((upserted.expiresAt || expiresAt).getTime() / 1000),
-            },
-        };
+    if (!result) {
+        throw new Error('rate_limit error: unable to create or update rate limit document');
     }
 
-    // Fallback: should not normally happen
-    throw new Error('rate_limit error: unable to create or update rate limit document');
+    const currCount = result.count ?? 1;
+    return {
+        allowed: currCount <= limit,
+        meta: {
+            limit,
+            remaining: Math.max(0, limit - currCount),
+            reset: Math.floor((result.expiresAt || expiresAt).getTime() / 1000),
+        },
+    };
 }
 
 export default { checkRateLimitKey }
