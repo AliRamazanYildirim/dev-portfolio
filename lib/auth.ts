@@ -5,11 +5,24 @@ import jwt from "jsonwebtoken";
 const JWT_SECRET =
   process.env.JWT_SECRET || "fallback-secret-key-change-in-production";
 
+// Helper: clean ADMIN_PASSWORD_HASH from envs that may contain escaped dollars or surrounding quotes
+function cleanAdminPasswordHash(raw?: string): string {
+  if (!raw) return "";
+  let s = String(raw).trim();
+  // remove surrounding single or double quotes if present
+  if ((s.startsWith('"') && s.endsWith('"')) || (s.startsWith("'") && s.endsWith("'"))) {
+    s = s.slice(1, -1);
+  }
+  // convert escaped dollar sequences "\$" -> "$" (common when copying envs into hosting UIs)
+  s = s.replace(/\\\$/g, "$");
+  return s;
+}
+
 // Admin-Anmeldedaten - Admin credentials
 export const ADMIN_CREDENTIALS = {
   email: process.env.ADMIN_EMAIL || "admin@portfolio.com",
   // Gehashtes Passwort aus Umgebungsvariable - Hashed password from environment variable
-  passwordHash: process.env.ADMIN_PASSWORD_HASH || "",
+  passwordHash: cleanAdminPasswordHash(process.env.ADMIN_PASSWORD_HASH),
 };
 
 // Interface für Admin-Benutzer - Interface for admin user

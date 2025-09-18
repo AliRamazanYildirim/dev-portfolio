@@ -2,6 +2,17 @@ import { connectToMongo } from "../lib/mongodb";
 import AdminModel from "../models/Admin";
 import { hashPassword, ADMIN_CREDENTIALS } from "../lib/auth";
 
+// Ensure any escaped env hash is cleaned (in case hosting UI injects escaped dollars or quotes)
+function cleanAdminPasswordHash(raw?: string): string {
+  if (!raw) return "";
+  let s = String(raw).trim();
+  if ((s.startsWith('"') && s.endsWith('"')) || (s.startsWith("'") && s.endsWith("'"))) {
+    s = s.slice(1, -1);
+  }
+  s = s.replace(/\\\$/g, "$");
+  return s;
+}
+
 /**
  * Admin-Benutzer in der Datenbank erstellen - Create admin user in database
  * Dieses Script wird nur einmal manuell ausgeführt - This script is run manually only once
@@ -28,7 +39,9 @@ async function createAdminUser() {
 
     // Admin-Benutzer erstellen - Create admin user
     console.log("👤 Admin-Benutzer wird erstellt... - Creating admin user...");
-    const passwordHash = ADMIN_CREDENTIALS.passwordHash || (await hashPassword("changeme"));
+    const rawHash = ADMIN_CREDENTIALS.passwordHash;
+    const cleaned = cleanAdminPasswordHash(rawHash);
+    const passwordHash = cleaned || (await hashPassword("changeme"));
 
     const adminUser = await AdminModel.create({
       email: ADMIN_CREDENTIALS.email,
