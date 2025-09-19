@@ -22,7 +22,7 @@ export class InvoiceService {
   private static calculateDueDate(): string {
     const dueDate = new Date();
     dueDate.setDate(dueDate.getDate() + INVOICE_CONSTANTS.PAYMENT_TERMS_DAYS);
-    return dueDate.toLocaleDateString("de-DE");
+    return dueDate.toISOString();
   }
 
   /**
@@ -73,7 +73,7 @@ export class InvoiceService {
 
     return {
       invoiceNumber: this.generateInvoiceNumber(),
-      issueDate: new Date().toLocaleDateString("de-DE"),
+      issueDate: new Date().toISOString(),
       dueDate: this.calculateDueDate(),
       paymentTerms: `${INVOICE_CONSTANTS.PAYMENT_TERMS_DAYS} days`,
       from: {

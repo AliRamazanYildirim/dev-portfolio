@@ -9,6 +9,23 @@ export async function POST(request: NextRequest) {
   try {
     const invoiceData: InvoiceData = await request.json();
 
+    // Helper to robustly parse incoming date values
+    function parseDate(input?: string | number): Date {
+      if (!input) return new Date();
+      // If it's a number-like string, try Number
+      if (typeof input === "number") return new Date(input);
+      const num = Number(input);
+      if (!Number.isNaN(num) && input.toString().trim() !== "") {
+        return new Date(num);
+      }
+      // Try ISO / built-in parsing
+      const d = new Date(input as string);
+      if (!isNaN(d.getTime())) return d;
+      // Fallback to now and log
+      console.warn("Invalid invoice date provided, falling back to now:", input);
+      return new Date();
+    }
+
     const doc = new jsPDF({
       orientation: "portrait",
       unit: "pt",
@@ -97,18 +114,15 @@ export async function POST(request: NextRequest) {
     doc.text(invoiceData.invoiceNumber, pageWidth - 50, yPos + 15, {
       align: "right",
     });
-    doc.text(
-      new Date(invoiceData.issueDate).toLocaleDateString(),
-      pageWidth - 50,
-      yPos + 30,
-      { align: "right" }
-    );
-    doc.text(
-      new Date(invoiceData.dueDate).toLocaleDateString(),
-      pageWidth - 50,
-      yPos + 45,
-      { align: "right" }
-    );
+    const issueDate = parseDate(invoiceData.issueDate);
+    const dueDate = parseDate(invoiceData.dueDate);
+
+    doc.text(issueDate.toLocaleDateString(), pageWidth - 50, yPos + 30, {
+      align: "right",
+    });
+    doc.text(dueDate.toLocaleDateString(), pageWidth - 50, yPos + 45, {
+      align: "right",
+    });
     doc.text(invoiceData.project?.title || "", pageWidth - 50, yPos + 60, {
       align: "right",
     });
