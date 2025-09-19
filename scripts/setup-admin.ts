@@ -1,17 +1,9 @@
 import { connectToMongo } from "../lib/mongodb";
 import AdminModel from "../models/Admin";
 import { hashPassword, ADMIN_CREDENTIALS } from "../lib/auth";
-
-// Ensure any escaped env hash is cleaned (in case hosting UI injects escaped dollars or quotes)
-function cleanAdminPasswordHash(raw?: string): string {
-  if (!raw) return "";
-  let s = String(raw).trim();
-  if ((s.startsWith('"') && s.endsWith('"')) || (s.startsWith("'") && s.endsWith("'"))) {
-    s = s.slice(1, -1);
-  }
-  s = s.replace(/\\\$/g, "$");
-  return s;
-}
+import fs from "fs";
+import path from "path";
+import dotenv from "dotenv";
 
 /**
  * Admin-Benutzer in der Datenbank erstellen - Create admin user in database
@@ -26,29 +18,27 @@ async function createAdminUser() {
     // Connect to Mongo
     await connectToMongo();
 
-    // Prüfen ob bereits ein Admin existiert - Check if admin already exists
-    const existingAdmin = await AdminModel.findOne({ email: ADMIN_CREDENTIALS.email }).exec();
-
-    if (existingAdmin) {
-      console.log(
-        `❌ Admin-Benutzer mit E-Mail ${ADMIN_CREDENTIALS.email} existiert bereits!`
-      );
-      console.log("   Admin user with email already exists!");
-      return;
+    // Upsert admin user: ensure ADMIN_PASSWORD_HASH from .env is written
+    console.log("👤 Admin-Benutzer wird erstellt/aktualisiert... - Creating/updating admin user...");
+    // Prefer raw value from .env file to avoid any environment/expansion issues
+    let rawEnvHash = "";
+    try {
+      const envPath = path.resolve(process.cwd(), ".env");
+      if (fs.existsSync(envPath)) {
+        const parsed = dotenv.parse(fs.readFileSync(envPath));
+        rawEnvHash = parsed["ADMIN_PASSWORD_HASH"] || "";
+      }
+    } catch (err) {
+      // ignore and fall back to ADMIN_CREDENTIALS
     }
 
-    // Admin-Benutzer erstellen - Create admin user
-    console.log("👤 Admin-Benutzer wird erstellt... - Creating admin user...");
-    const rawHash = ADMIN_CREDENTIALS.passwordHash;
-    const cleaned = cleanAdminPasswordHash(rawHash);
-    const passwordHash = cleaned || (await hashPassword("changeme"));
+    const passwordHash = rawEnvHash || ADMIN_CREDENTIALS.passwordHash || (await hashPassword("changeme"));
 
-    const adminUser = await AdminModel.create({
-      email: ADMIN_CREDENTIALS.email,
-      name: "Admin",
-      password: passwordHash,
-      active: true,
-    });
+    const adminUser = await AdminModel.findOneAndUpdate(
+      { email: ADMIN_CREDENTIALS.email },
+      { email: ADMIN_CREDENTIALS.email, name: "Admin", password: passwordHash, active: true },
+      { upsert: true, new: true, setDefaultsOnInsert: true }
+    ).exec();
 
     console.log(
       "✅ Admin-Benutzer erfolgreich erstellt! - Admin user created successfully!"
