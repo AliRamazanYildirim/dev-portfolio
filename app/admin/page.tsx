@@ -94,7 +94,7 @@ export default function AdminPage() {
           }
 
           return {
-            id: project.id,
+            id: project.id || project._id || project._id?.toString(),
             title: project.title,
             description: project.description,
             shortDescription:
