@@ -40,16 +40,12 @@ const ProjectsUI = () => {
           featured: Boolean((p as any).featured),
         }));
 
-        // Seeds zuerst, danach DB; Duplikate per slug entfernen
-        const combined = [...seedItems, ...dbItems].reduce<LittleProject[]>(
-          (acc, curr) => {
-            if (!acc.find((x) => x.slug === curr.slug)) acc.push(curr);
-            return acc;
-          },
-          []
-        );
-
-        setProjects(combined);
+        // If DB returned items, prefer showing DB projects (first). Otherwise fall back to seeds.
+        if (dbItems && dbItems.length > 0) {
+          setProjects(dbItems);
+        } else {
+          setProjects(seedItems);
+        }
       } catch (err) {
         console.error("Fehler beim Laden der kleinen Projekte:", err);
         // Bei Fehler: Nur Seed-Daten anzeigen (alle Seeds)
@@ -136,28 +132,28 @@ const ProjectsUI = () => {
           </div>
         ) : (
           <div className="text-center py-16 sm:py-24">
-              <div className="bg-[#eeede9] rounded-xl sm:rounded-2xl shadow-lg border border-white/20 p-8 sm:p-12 max-w-sm sm:max-w-md mx-auto">
-                <svg
-                  className="mx-auto h-12 w-12 sm:h-16 sm:w-16 text-[#131313]/50 mb-4 sm:mb-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 48 48"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1.5}
-                    d="M34 40h10v-4a6 6 0 00-10.712-3.714M34 40H14m20 0v-4a9.971 9.971 0 00-.712-3.714M14 40H4v-4a6 6 0 0110.713-3.714M14 40v-4c0-1.313.253-2.566.713-3.714m0 0A9.971 9.971 0 0122 34c4.09 0 7.691 2.462 9.287 6M6 16a6 6 0 0112 0v3.586l.707.707c.63.63.293 1.707-.707 1.707H6z"
-                  />
-                </svg>
-                <h3 className="text-lg sm:text-xl font-medium text-[#131313] mb-2 sm:mb-3">
-                  No projects yet
-                </h3>
-                <p className="text-sm sm:text-base text-[#131313]/70">
-                  Click the button above to add your first project.
-                </p>
-              </div>
+            <div className="bg-[#eeede9] rounded-xl sm:rounded-2xl shadow-lg border border-white/20 p-8 sm:p-12 max-w-sm sm:max-w-md mx-auto">
+              <svg
+                className="mx-auto h-12 w-12 sm:h-16 sm:w-16 text-[#131313]/50 mb-4 sm:mb-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 48 48"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.5}
+                  d="M34 40h10v-4a6 6 0 00-10.712-3.714M34 40H14m20 0v-4a9.971 9.971 0 00-.712-3.714M14 40H4v-4a6 6 0 0110.713-3.714M14 40v-4c0-1.313.253-2.566.713-3.714m0 0A9.971 9.971 0 0122 34c4.09 0 7.691 2.462 9.287 6M6 16a6 6 0 0112 0v3.586l.707.707c.63.63.293 1.707-.707 1.707H6z"
+                />
+              </svg>
+              <h3 className="text-lg sm:text-xl font-medium text-[#131313] mb-2 sm:mb-3">
+                No projects yet
+              </h3>
+              <p className="text-sm sm:text-base text-[#131313]/70">
+                Click the button above to add your first project.
+              </p>
             </div>
+          </div>
         )}
 
         {/* Link zu allen Projekten */}
