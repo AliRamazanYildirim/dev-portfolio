@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db";
 import ProjectModel from "@/models/Project";
 import ProjectImageModel from "@/models/ProjectImage";
-import { randomUUID } from "crypto";
 
 // PUT /api/projects/admin/[id] - Projekt aktualisieren (Admin) - Update project (Admin)
 export async function PUT(
