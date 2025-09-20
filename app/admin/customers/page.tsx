@@ -175,7 +175,7 @@ export default function CustomersAdminPage() {
                 <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-end gap-3 sm:gap-4">
                   <a
                     href="/admin"
-                    className="button bg-[#131313] text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full hover:bg-[#232323] transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105 w-full sm:w-auto font-semibold text-lg flex items-center justify-center gap-2"
+                    className="bg-white text-[#131313] px-4 py-2 rounded-lg font-semibold shadow hover:shadow-md flex items-center gap-2"
                   >
                     <svg
                       className="w-5 h-5"
@@ -194,26 +194,21 @@ export default function CustomersAdminPage() {
                   </a>
                   <a
                     href="/admin/customers/statistics"
-                    className="button bg-[#131313] text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full hover:bg-[#232323] transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105 w-full sm:w-auto font-semibold text-lg flex items-center justify-center gap-2"
+                    className="bg-white text-[#131313] px-4 py-2 rounded-lg font-semibold shadow hover:shadow-md flex items-center gap-2"
                   >
                     <svg
                       className="w-4 h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                      xmlns="http://www.w3.org/2000/svg"
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M11 3v18M21 7l-9 4-9-4"
-                      />
+                      <path d="M3 13h2v4H3v-4zM7 9h2v8H7V9zM11 5h2v12h-2V5zM15 1h2v16h-2V1z" />
                     </svg>
-                    Statistics
+                    <span>Statistics</span>
                   </a>
                   <button
                     onClick={() => setShowForm(true)}
-                    className="button bg-white text-[#131313] px-6 sm:px-8 py-3 sm:py-4 rounded-lg hover:bg-white/90 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 w-full sm:w-auto"
+                    className="bg-white text-[#131313] px-4 py-2 rounded-lg font-semibold shadow hover:shadow-md"
                   >
                     <span className="flex items-center justify-center gap-2 sm:gap-3 font-bold text-sm sm:text-base">
                       <svg
