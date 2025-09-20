@@ -1,9 +1,7 @@
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
 import CustomerModel from "@/models/Customer";
 import ReferralTransactionModel from "@/models/ReferralTransaction";
 import nodemailer from "nodemailer";
-import { createId } from "@paralleldrive/cuid2";
 
 // - sort=price.asc | price.desc | name.asc
 // - from=YYYY-MM-DD (inclusive)
@@ -11,55 +9,52 @@ import { createId } from "@paralleldrive/cuid2";
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-    const sort = searchParams.get("sort");
+    const sortParam = searchParams.get("sort");
     const from = searchParams.get("from");
     const to = searchParams.get("to");
     const q = searchParams.get("q");
 
-    // Build Prisma query
-    const where: any = {};
+    // Build a mongoose-compatible query (was previously using Prisma-style filters)
+    const query: any = {};
     if (from && to) {
       const fromIso = from.length === 10 ? `${from}T00:00:00.000Z` : from;
       const toIso = to.length === 10 ? `${to}T23:59:59.999Z` : to;
-      where.createdAt = { gte: new Date(fromIso), lte: new Date(toIso) };
+      query.createdAt = { $gte: new Date(fromIso), $lte: new Date(toIso) };
     }
 
     if (q) {
       const qClean = q.replace(/%/g, "");
-      where.OR = [
-        { firstname: { contains: qClean, mode: "insensitive" } },
-        { lastname: { contains: qClean, mode: "insensitive" } },
-        { companyname: { contains: qClean, mode: "insensitive" } },
-        { address: { contains: qClean, mode: "insensitive" } },
-        { reference: { contains: qClean, mode: "insensitive" } },
+      const fields = [
+        "firstname",
+        "lastname",
+        "companyname",
+        "address",
+        "reference",
+        "myReferralCode",
       ];
+      query.$or = fields.map((f) => ({ [f]: { $regex: qClean, $options: "i" } }));
     }
 
-    const orderBy: any[] = [];
-    if (sort) {
-      const [field, dir] = sort.split(".");
+    // Build mongoose sort object from `sortParam` (e.g. price.asc)
+    const sortObj: any = {};
+    if (sortParam) {
+      const [field, dir] = sortParam.split(".");
       const ascending = dir === "asc";
       if (field === "price") {
-        orderBy.push({ price: ascending ? "asc" : "desc" });
+        sortObj.price = ascending ? 1 : -1;
       } else if (field === "name") {
-        orderBy.push({ firstname: ascending ? "asc" : "desc" });
-        orderBy.push({ lastname: ascending ? "asc" : "desc" });
+        // sort firstname then lastname
+        sortObj.firstname = ascending ? 1 : -1;
+        sortObj.lastname = ascending ? 1 : -1;
       } else if (field === "created") {
-        orderBy.push({ createdAt: ascending ? "asc" : "desc" });
+        sortObj.createdAt = ascending ? 1 : -1;
       }
     }
 
     try {
-      // Convert Prisma-style where/orderBy to mongoose query as much as needed
-      const query: any = where || {};
-      const sort: any = {};
-      if (orderBy && orderBy.length > 0) {
-        for (const ob of orderBy) {
-          const key = Object.keys(ob)[0];
-          sort[key] = ob[key] === 'asc' ? 1 : -1;
-        }
-      }
-      const data = await CustomerModel.find(query).sort(sort).lean().exec();
+      const cursor = CustomerModel.find(query);
+      if (Object.keys(sortObj).length > 0) cursor.sort(sortObj);
+      const data = await cursor.lean().exec();
       return NextResponse.json({ success: true, data });
     } catch (err: any) {
       return NextResponse.json({ success: false, error: err?.message || String(err) }, { status: 500 });

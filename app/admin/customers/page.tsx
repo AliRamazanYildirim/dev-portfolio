@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import NoiseBackground from "@/components/NoiseBackground";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { useCustomers } from "@/hooks/useCustomers";
@@ -60,6 +60,9 @@ export default function CustomersAdminPage() {
   const [dateFrom, setDateFrom] = useState<string>("");
   const [dateTo, setDateTo] = useState<string>("");
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [liveResults, setLiveResults] = useState<any[]>([]);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const debounceRef = useRef<number | null>(null);
 
   const handleSaveCustomer = async () => {
     if (!validateForm(customers)) return;
@@ -245,13 +248,80 @@ export default function CustomersAdminPage() {
                     }}
                     className="flex flex-col sm:flex-row w-full sm:w-auto gap-2"
                   >
-                    <input
-                      type="search"
-                      placeholder="Search name, company, address or reference..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="w-full sm:w-64 bg-white/90 text-black px-3 py-1.5 rounded-md text-sm focus:outline-none"
-                    />
+                    <div className="relative w-full sm:w-64">
+                      <input
+                        type="search"
+                        placeholder="Search name, company, address or reference..."
+                        value={searchQuery}
+                        onChange={(e) => {
+                          const v = e.target.value;
+                          setSearchQuery(v);
+                          // debounce live fetch
+                          if (debounceRef.current)
+                            window.clearTimeout(debounceRef.current);
+                          debounceRef.current = window.setTimeout(async () => {
+                            if (!v || v.trim() === "") {
+                              setLiveResults([]);
+                              setShowDropdown(false);
+                              return;
+                            }
+                            try {
+                              const res = await fetch(
+                                `/api/admin/customers?q=${encodeURIComponent(
+                                  v
+                                )}`
+                              );
+                              const json = await res.json();
+                              if (json?.success && Array.isArray(json.data)) {
+                                setLiveResults(json.data.slice(0, 6));
+                                setShowDropdown(true);
+                              } else {
+                                setLiveResults([]);
+                                setShowDropdown(false);
+                              }
+                            } catch (err) {
+                              setLiveResults([]);
+                              setShowDropdown(false);
+                            }
+                          }, 250);
+                        }}
+                        className="w-full bg-white/90 text-black px-3 py-1.5 rounded-md text-sm focus:outline-none"
+                        onFocus={() => {
+                          if (liveResults.length > 0) setShowDropdown(true);
+                        }}
+                        onBlur={() =>
+                          setTimeout(() => setShowDropdown(false), 150)
+                        }
+                      />
+
+                      {showDropdown && liveResults.length > 0 && (
+                        <ul className="absolute z-50 left-0 right-0 mt-1 bg-white rounded-md shadow-lg max-h-60 overflow-auto text-sm">
+                          {liveResults.map((c) => (
+                            <li
+                              key={c._id || c.id}
+                              className="px-3 py-2 hover:bg-gray-100 cursor-pointer"
+                              onMouseDown={() => {
+                                // select this customer
+                                setSearchQuery(
+                                  `${c.firstname || ""} ${
+                                    c.lastname || ""
+                                  }`.trim()
+                                );
+                                setSelectedCustomer(c);
+                                setShowDropdown(false);
+                              }}
+                            >
+                              <div className="font-semibold text-gray-900">
+                                {c.firstname} {c.lastname}
+                              </div>
+                              <div className="text-gray-600">
+                                {c.companyname || c.email || c.myReferralCode}
+                              </div>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
                     <button
                       type="submit"
                       className="w-full sm:w-auto bg-white text-[#131313] px-3 py-1 rounded-md text-sm font-semibold"
