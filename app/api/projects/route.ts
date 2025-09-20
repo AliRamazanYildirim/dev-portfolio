@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 export const runtime = "nodejs"; // Sicherstellen, dass Node-APIs (crypto) verfügbar sind
-import { db } from "@/lib/db";
+import { connectToMongo } from "@/lib/mongodb";
 import ProjectModel from "@/models/Project";
 import ProjectImageModel from "@/models/ProjectImage";
 import ProjectTagModel from "@/models/ProjectTag";
-import { randomUUID } from "crypto";
 
 // Navigation aktualisieren (Supabase) - Aktualisiert die vorherigen und nächsten Slugs für Projekte
 async function updateProjectNavigation() {
@@ -23,6 +22,7 @@ async function updateProjectNavigation() {
 // GET /api/projects - Alle Projekte abrufen
 export async function GET(request: NextRequest) {
   try {
+    await connectToMongo();
     const searchParams = request.nextUrl.searchParams;
     const featured = searchParams.get("featured");
     const limit = searchParams.get("limit");
@@ -57,6 +57,7 @@ export async function GET(request: NextRequest) {
 // POST /api/projects - Create new project
 export async function POST(request: NextRequest) {
   try {
+    await connectToMongo();
     const body = await request.json();
 
     const {
