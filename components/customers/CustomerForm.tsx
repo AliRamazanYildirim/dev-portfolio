@@ -22,7 +22,6 @@ interface CustomerFormProps {
   onCancel: () => void;
 }
 
-
 export default function CustomerForm({
   show,
   formData,
@@ -32,8 +31,6 @@ export default function CustomerForm({
   onSave,
   onCancel,
 }: CustomerFormProps) {
-  if (!show) return null;
-
   const [emailTouched, setEmailTouched] = useState(false);
   const emailValid = useMemo(() => {
     if (!formData.email) return false;
@@ -59,6 +56,7 @@ export default function CustomerForm({
     // Accept exactly 5 digits
     return /^\d{5}$/.test(p);
   }, [formData.postcode]);
+  if (!show) return null;
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-lg flex items-center justify-center p-2 sm:p-4 z-50">
@@ -171,7 +169,8 @@ export default function CustomerForm({
                 />
                 {phoneTouched && !phoneValid && (
                   <p className="mt-2 text-xs text-red-600">
-                    Please enter the phone number in the format with country code +49 (e.g., +4915112345678).
+                    Please enter the phone number in the format with country
+                    code +49 (e.g., +4915112345678).
                   </p>
                 )}
               </div>
