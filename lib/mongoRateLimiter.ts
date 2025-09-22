@@ -76,4 +76,6 @@ export async function checkRateLimitKey(key: string, windowSec: number, limit: n
     };
 }
 
-export default { checkRateLimitKey }
+const mongoRateLimiter = { checkRateLimitKey };
+
+export default mongoRateLimiter;
