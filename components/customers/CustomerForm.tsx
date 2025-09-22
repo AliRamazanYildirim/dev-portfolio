@@ -1,4 +1,5 @@
 import { Customer } from "@/services/customerService";
+import { useMemo, useState } from "react";
 
 interface CustomerFormProps {
   show: boolean;
@@ -21,6 +22,7 @@ interface CustomerFormProps {
   onCancel: () => void;
 }
 
+
 export default function CustomerForm({
   show,
   formData,
@@ -31,6 +33,32 @@ export default function CustomerForm({
   onCancel,
 }: CustomerFormProps) {
   if (!show) return null;
+
+  const [emailTouched, setEmailTouched] = useState(false);
+  const emailValid = useMemo(() => {
+    if (!formData.email) return false;
+    // Simple RFC-ish email regex (good enough for basic validation)
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email);
+  }, [formData.email]);
+  const [phoneTouched, setPhoneTouched] = useState(false);
+  const phoneValid = useMemo(() => {
+    const v = formData.phone || "";
+    if (!v) return false;
+    // Normalize by removing spaces, dashes and parentheses
+    const norm = v.replace(/[\s-.()]/g, "");
+    // Accept formats like +4915112345678 (mobile: prefixes 15,16,17) or +49 30 123456 (landline)
+    // Mobile: +49(15|16|17) followed by 7-9 digits
+    const mobileRe = /^\+49(?:1[5-7])\d{7,9}$/;
+    // Landline: +49 followed by area code starting 2-9 and then 6-12 digits total
+    const landlineRe = /^\+49[2-9]\d{6,12}$/;
+    return mobileRe.test(norm) || landlineRe.test(norm);
+  }, [formData.phone]);
+  const [postcodeTouched, setPostcodeTouched] = useState(false);
+  const postcodeValid = useMemo(() => {
+    const p = formData.postcode || "";
+    // Accept exactly 5 digits
+    return /^\d{5}$/.test(p);
+  }, [formData.postcode]);
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-lg flex items-center justify-center p-2 sm:p-4 z-50">
@@ -116,9 +144,17 @@ export default function CustomerForm({
                   type="email"
                   placeholder="Email..."
                   value={formData.email ?? ""}
-                  onChange={(e) => onUpdateField("email", e.target.value)}
+                  onChange={(e) => {
+                    onUpdateField("email", e.target.value);
+                  }}
+                  onBlur={() => setEmailTouched(true)}
                   className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
                 />
+                {emailTouched && !emailValid && (
+                  <p className="mt-2 text-xs text-red-600">
+                    Please enter a valid email address.
+                  </p>
+                )}
               </div>
 
               <div className="lg:col-span-2">
@@ -130,8 +166,14 @@ export default function CustomerForm({
                   placeholder="Telefon..."
                   value={formData.phone ?? ""}
                   onChange={(e) => onUpdateField("phone", e.target.value)}
+                  onBlur={() => setPhoneTouched(true)}
                   className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
                 />
+                {phoneTouched && !phoneValid && (
+                  <p className="mt-2 text-xs text-red-600">
+                    Please enter the phone number in the format with country code +49 (e.g., +4915112345678).
+                  </p>
+                )}
               </div>
 
               <div className="lg:col-span-2">
@@ -169,8 +211,14 @@ export default function CustomerForm({
                   placeholder="Postcode..."
                   value={formData.postcode ?? ""}
                   onChange={(e) => onUpdateField("postcode", e.target.value)}
+                  onBlur={() => setPostcodeTouched(true)}
                   className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
                 />
+                {postcodeTouched && !postcodeValid && (
+                  <p className="mt-2 text-xs text-red-600">
+                    Postcode must be exactly 5 digits.
+                  </p>
+                )}
               </div>
 
               <div className="lg:col-span-2">
@@ -266,7 +314,12 @@ export default function CustomerForm({
           </button>
           <button
             onClick={onSave}
-            className="w-full sm:w-auto px-6 sm:px-8 py-3 bg-[#131313] hover:bg-[#131313]/90 text-white rounded-xl font-medium shadow-lg transition-all duration-200 hover:shadow-xl hover:scale-105 text-sm sm:text-base order-1 sm:order-2"
+            disabled={!(emailValid && phoneValid && postcodeValid)}
+            className={`w-full sm:w-auto px-6 sm:px-8 py-3 rounded-xl font-medium shadow-lg transition-all duration-200 text-sm sm:text-base order-1 sm:order-2 ${
+              emailValid && phoneValid && postcodeValid
+                ? "bg-[#131313] hover:bg-[#131313]/90 text-white hover:shadow-xl hover:scale-105"
+                : "bg-gray-200 text-gray-500 cursor-not-allowed shadow-none"
+            }`}
           >
             {editingCustomer ? "Update" : "Save"}
           </button>
