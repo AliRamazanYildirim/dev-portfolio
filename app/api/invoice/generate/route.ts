@@ -117,10 +117,18 @@ export async function POST(request: NextRequest) {
     const issueDate = parseDate(invoiceData.issueDate);
     const dueDate = parseDate(invoiceData.dueDate);
 
-    doc.text(issueDate.toLocaleDateString(), pageWidth - 50, yPos + 30, {
+    // Deterministic German-style date formatting (DD.MM.YYYY)
+    function formatDate(date: Date): string {
+      const day = String(date.getDate()).padStart(2, "0");
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const year = String(date.getFullYear());
+      return `${day}.${month}.${year}`;
+    }
+
+    doc.text(formatDate(issueDate), pageWidth - 50, yPos + 30, {
       align: "right",
     });
-    doc.text(dueDate.toLocaleDateString(), pageWidth - 50, yPos + 45, {
+    doc.text(formatDate(dueDate), pageWidth - 50, yPos + 45, {
       align: "right",
     });
     doc.text(invoiceData.project?.title || "", pageWidth - 50, yPos + 60, {
