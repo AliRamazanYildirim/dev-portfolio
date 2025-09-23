@@ -68,7 +68,20 @@ export default function CustomersAdminPage() {
     if (!validateForm(customers)) return;
 
     try {
-      await saveCustomer(getCustomerData(), editingCustomer);
+      const saved = await saveCustomer(getCustomerData(), editingCustomer);
+      // Trigger referral email after save (both create and update)
+      if (saved && (saved as any).id) {
+        try {
+          await (
+            await import("@/services/customerService")
+          ).customerService.sendReferralEmail(
+            (saved as any).id,
+            (saved as any).email
+          );
+        } catch (err) {
+          // sendReferralEmail already shows toasts on error, but catch to avoid breaking flow
+        }
+      }
       setShowForm(false);
       resetForm();
     } catch (error: any) {

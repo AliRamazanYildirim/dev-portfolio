@@ -31,11 +31,11 @@ export const useCustomerForm = (onFieldChange?: (field: string, value: string) =
     }
 
     if (field === "reference" || field === "price") {
-      const newReference = field === "reference" ? value : formData.reference;
-      const newPrice = field === "price" ? value : formData.price;
+      const newReference = String(field === "reference" ? value : formData.reference || "");
+      const newPrice = String(field === "price" ? value : formData.price || "");
 
-      if (newReference.trim() && newPrice.trim()) {
-        validateReferralCode(newReference, newPrice);
+      if (newReference.trim() !== "" && newPrice.trim() !== "") {
+        validateReferralCode(newReference.trim(), newPrice.trim());
       } else {
         setReferralValidation(null);
       }

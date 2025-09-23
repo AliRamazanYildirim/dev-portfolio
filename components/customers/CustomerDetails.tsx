@@ -64,14 +64,6 @@ export default function CustomerDetails({
     }
   };
 
-  const handleSendEmail = async () => {
-    try {
-      await customerService.sendReferralEmail(customer.id, customer.email);
-    } catch (error) {
-      toast.error("Email sending error");
-    }
-  };
-
   const handleGenerateInvoice = () => {
     // Modal'ı aç
     setShowInvoiceModal(true);
@@ -263,11 +255,11 @@ export default function CustomerDetails({
                     Actions
                   </h3>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                   <button
                     onClick={handleGenerateInvoice}
                     disabled={false}
-                    className="relative group/btn overflow-hidden inline-flex items-center justify-center px-6 py-4 bg-gradient-to-r from-violet-600 via-purple-700 to-purple-800 text-white rounded-2xl font-bold shadow-lg hover:shadow-violet-500/40 hover:shadow-2xl transition-all duration-300 hover:scale-105"
+                    className="w-full relative group/btn overflow-hidden inline-flex items-center justify-center px-6 py-4 bg-gradient-to-r from-violet-600 via-purple-700 to-purple-800 text-white rounded-2xl font-bold shadow-lg hover:shadow-violet-500/40 hover:shadow-2xl transition-all duration-300 hover:scale-105"
                   >
                     <svg
                       className="w-5 h-5 mr-2"
@@ -286,7 +278,7 @@ export default function CustomerDetails({
                   </button>
                   <button
                     onClick={handleCopyReferral}
-                    className="relative group/btn overflow-hidden inline-flex items-center justify-center px-6 py-4 bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 text-white rounded-2xl font-bold shadow-lg hover:shadow-blue-500/40 hover:shadow-2xl transition-all duration-300 hover:scale-105"
+                    className="w-full relative group/btn overflow-hidden inline-flex items-center justify-center px-6 py-4 bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 text-white rounded-2xl font-bold shadow-lg hover:shadow-blue-500/40 hover:shadow-2xl transition-all duration-300 hover:scale-105"
                   >
                     <svg
                       className="w-5 h-5 mr-2"
@@ -303,28 +295,10 @@ export default function CustomerDetails({
                     </svg>
                     Share Referral
                   </button>
-                  <button
-                    onClick={handleSendEmail}
-                    className="relative group/btn overflow-hidden inline-flex items-center justify-center px-6 py-4 bg-gradient-to-r from-emerald-600 via-emerald-700 to-teal-700 text-white rounded-2xl font-bold shadow-lg hover:shadow-emerald-500/40 hover:shadow-2xl transition-all duration-300 hover:scale-105"
-                  >
-                    <svg
-                      className="w-5 h-5 mr-2"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M3 8l7.89 7.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                      />
-                    </svg>
-                    Send Email
-                  </button>
+                  {/* 'Send Email' button removed; server now sends referrer notification on create */}
                   <button
                     onClick={() => onEdit(customer)}
-                    className="relative group/btn overflow-hidden inline-flex items-center justify-center px-6 py-4 bg-gradient-to-r from-amber-600 via-orange-600 to-orange-700 text-white rounded-2xl font-bold shadow-lg hover:shadow-amber-500/40 hover:shadow-2xl transition-all duration-300 hover:scale-105"
+                    className="w-full relative group/btn overflow-hidden inline-flex items-center justify-center px-6 py-4 bg-gradient-to-r from-amber-600 via-orange-600 to-orange-700 text-white rounded-2xl font-bold shadow-lg hover:shadow-amber-500/40 hover:shadow-2xl transition-all duration-300 hover:scale-105"
                   >
                     <svg
                       className="w-5 h-5 mr-2"
@@ -343,7 +317,7 @@ export default function CustomerDetails({
                   </button>
                   <button
                     onClick={() => onDelete(customer.id)}
-                    className="relative group/btn overflow-hidden inline-flex items-center justify-center px-6 py-4 bg-gradient-to-r from-red-600 via-red-700 to-rose-700 text-white rounded-2xl font-bold shadow-lg hover:shadow-red-500/40 hover:shadow-2xl transition-all duration-300 hover:scale-105"
+                    className="w-full relative group/btn overflow-hidden inline-flex items-center justify-center px-6 py-4 bg-gradient-to-r from-red-600 via-red-700 to-rose-700 text-white rounded-2xl font-bold shadow-lg hover:shadow-red-500/40 hover:shadow-2xl transition-all duration-300 hover:scale-105"
                   >
                     <svg
                       className="w-5 h-5 mr-2"

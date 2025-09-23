@@ -49,12 +49,14 @@ export const customerService = {
   async saveCustomer(
     customerData: Partial<Customer>,
     editingCustomer?: Customer | null
-  ): Promise<void> {
+  ): Promise<Customer | null> {
     const url =
       editingCustomer && (editingCustomer as any).id
         ? `/api/admin/customers/${(editingCustomer as any).id}`
         : "/api/admin/customers";
     const method = editingCustomer ? "PUT" : "POST";
+
+    let savedCustomer: Customer | null = null;
 
     const promise = (async () => {
       const res = await fetch(url, {
@@ -65,6 +67,22 @@ export const customerService = {
       const json = await res.json();
       if (!res.ok || !json.success) {
         throw new Error(json?.error || `HTTP ${res.status}`);
+      }
+
+      // If server returned the created/updated customer, normalize it
+      // server may return `_id` so map to `id` if necessary
+      const data = json.data || null;
+      if (data) {
+        savedCustomer = data._id ? { ...data, id: data._id } : data;
+      } else if (editingCustomer) {
+        // Server didn't return the saved data on update — create a best-effort
+        // returned object by merging the existing editingCustomer and the
+        // provided customerData (this ensures callers can use an id/email)
+        savedCustomer = {
+          ...(editingCustomer as any),
+          ...customerData,
+          id: (editingCustomer as any).id,
+        } as Customer;
       }
 
       // Server versendet Referrer-Mail jetzt direkt via Nodemailer.
@@ -83,6 +101,8 @@ export const customerService = {
       error: (e) =>
         e instanceof Error ? e.message : "The process has failed.",
     });
+
+    return savedCustomer;
   },
 
   async deleteCustomer(id: string): Promise<void> {

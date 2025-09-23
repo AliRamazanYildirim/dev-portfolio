@@ -33,8 +33,13 @@ export const useCustomers = () => {
     customerData: Partial<Customer>,
     editingCustomer?: Customer | null
   ) => {
-    await customerService.saveCustomer(customerData, editingCustomer);
+    const saved = await customerService.saveCustomer(
+      customerData,
+      editingCustomer
+    );
+    // Refresh list regardless
     fetchCustomers();
+    return saved;
   };
 
   const deleteCustomer = async (id: string) => {
