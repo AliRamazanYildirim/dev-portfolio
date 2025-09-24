@@ -2,7 +2,7 @@ import { Customer, customerService } from "@/services/customerService";
 import NoiseBackground from "@/components/NoiseBackground";
 import { useInvoiceGenerator } from "@/hooks/useInvoiceGenerator";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import InvoiceModal from "./InvoiceModal";
 
@@ -24,6 +24,11 @@ export default function CustomerDetails({
     "gestart" | "in-vorbereitung" | "abgeschlossen"
   >(() => customer?.projectStatus ?? "gestart");
   const [updatingStatus, setUpdatingStatus] = useState(false);
+
+  // Keep local projectStatus in sync when a different customer is selected
+  useEffect(() => {
+    setProjectStatus(customer?.projectStatus ?? "gestart");
+  }, [customer?.id]);
 
   if (!customer) {
     return (
