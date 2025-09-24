@@ -99,8 +99,19 @@ export const customerService = {
     await toast.promise(promise, {
       loading: editingCustomer ? "Updating..." : "Saving...",
       success: (msg) => (typeof msg === "string" ? msg : "Successful"),
-      error: (e) =>
-        e instanceof Error ? e.message : "The process has failed.",
+      error: (e) => {
+        const msg = e instanceof Error ? e.message : "The process has failed.";
+        const lower = String(msg).toLowerCase();
+        if (
+          lower.includes("duplicate") ||
+          lower.includes("e11000") ||
+          lower.includes("duplicate key") ||
+          lower.includes("email_1")
+        ) {
+          return "A customer with this email already exists.";
+        }
+        return msg;
+      },
     });
 
     return savedCustomer;

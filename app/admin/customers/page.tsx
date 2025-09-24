@@ -33,18 +33,7 @@ export default function CustomersAdminPage() {
     getCustomerData,
     resetForm,
     setEditForm,
-  } = useCustomerForm((field: string, value: string) => {
-    // Mirror live changes into the selected customer while editing
-    if (!editingCustomer) return;
-    setSelectedCustomer(
-      (prev) =>
-        ({
-          ...(prev || editingCustomer),
-          [field]:
-            field === "price" ? (value !== "" ? Number(value) : null) : value,
-        } as any)
-    );
-  });
+  } = useCustomerForm();
 
   const [showForm, setShowForm] = useState(false);
   const [filter, setFilter] = useState<
@@ -69,21 +58,45 @@ export default function CustomersAdminPage() {
 
     try {
       const saved = await saveCustomer(getCustomerData(), editingCustomer);
-      // Trigger referral email after save (both create and update)
-      if (saved && (saved as any).id) {
+      // If saved is truthy, refresh list from server and select the saved customer
+      if (saved) {
+        let newSel: any = null;
         try {
-          await (
-            await import("@/services/customerService")
-          ).customerService.sendReferralEmail(
-            (saved as any).id,
-            (saved as any).email
+          const fresh = await fetchCustomers();
+          // find the freshly saved customer in the returned list
+          const savedId = (saved as any)._id
+            ? (saved as any)._id
+            : (saved as any).id;
+          newSel = fresh.find(
+            (c: any) => String(c.id || c._id) === String(savedId)
           );
-        } catch (err) {
-          // sendReferralEmail already shows toasts on error, but catch to avoid breaking flow
+          if (newSel) setSelectedCustomer(newSel);
+        } catch (e) {
+          // ignore fetch errors here
         }
+
+        // Trigger referral email after save (both create and update)
+        const toNotify = newSel
+          ? newSel
+          : (saved as any)._id
+          ? { ...(saved as any), id: (saved as any)._id }
+          : saved;
+        if ((toNotify as any)?.id) {
+          try {
+            await (
+              await import("@/services/customerService")
+            ).customerService.sendReferralEmail(
+              (toNotify as any).id,
+              (toNotify as any).email
+            );
+          } catch (err) {
+            // sendReferralEmail already shows toasts on error, but catch to avoid breaking flow
+          }
+        }
+
+        setShowForm(false);
+        resetForm();
       }
-      setShowForm(false);
-      resetForm();
     } catch (error: any) {
       toast.error(error?.message || "Registration failed");
     }
@@ -95,25 +108,8 @@ export default function CustomersAdminPage() {
     setSelectedCustomer(customer);
   };
 
-  // While editing, mirror the form data into the selected customer so
-  // CustomerDetails updates live as fields change in the form.
-  useEffect(() => {
-    if (!editingCustomer) return;
-
-    setSelectedCustomer((prev) => ({
-      ...editingCustomer,
-      firstname: formData.firstname,
-      lastname: formData.lastname,
-      companyname: formData.companyname,
-      email: formData.email,
-      phone: formData.phone,
-      address: formData.address,
-      city: (formData as any).city || "",
-      postcode: (formData as any).postcode || "",
-      reference: formData.reference,
-      price: formData.price !== "" ? Number(formData.price) : null,
-    }));
-  }, [formData, editingCustomer, setSelectedCustomer]);
+  // Do not mirror form changes into `selectedCustomer` on the client.
+  // The selected customer will only change if the server confirms the save.
 
   const handleCancelForm = () => {
     setShowForm(false);

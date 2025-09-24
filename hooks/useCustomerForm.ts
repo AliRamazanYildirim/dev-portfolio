@@ -57,11 +57,23 @@ export const useCustomerForm = (onFieldChange?: (field: string, value: string) =
       return false;
     }
 
-    if (!editingCustomer) {
-      const existingCustomer = customers.find(
-        (c) => c.email.toLowerCase() === formData.email.toLowerCase()
-      );
-      if (existingCustomer) {
+    // Check duplicates both in create and edit modes.
+    const existingCustomer = customers.find(
+      (c) => c.email.toLowerCase() === formData.email.toLowerCase()
+    );
+    if (existingCustomer) {
+      // If creating a new customer, any existing match is a conflict.
+      if (!editingCustomer) {
+        toast.error(
+          `This email address is already registered to: ${existingCustomer.firstname} ${existingCustomer.lastname}`
+        );
+        return false;
+      }
+
+      // If editing, only conflict when the found customer is a different record.
+      const normalizedExistingId = (existingCustomer as any).id || (existingCustomer as any)._id;
+      const editingId = (editingCustomer as any).id || (editingCustomer as any)._id;
+      if (String(normalizedExistingId) !== String(editingId)) {
         toast.error(
           `This email address is already registered to: ${existingCustomer.firstname} ${existingCustomer.lastname}`
         );

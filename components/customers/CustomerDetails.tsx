@@ -273,7 +273,16 @@ export default function CustomerDetails({
                               }
                             } catch (err) {
                               console.error(err);
-                              toast.error("Could not update status");
+                              const msg = (err as any)?.message || String(err);
+                              // If the service already showed a friendly duplicate-key message,
+                              // avoid showing a second generic toast. Show generic only for other errors.
+                              if (
+                                !/duplicate|e11000|email|already registered/i.test(
+                                  msg
+                                )
+                              ) {
+                                toast.error("Could not update status");
+                              }
                             } finally {
                               setUpdatingStatus(false);
                             }

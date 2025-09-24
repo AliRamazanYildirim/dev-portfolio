@@ -27,6 +27,7 @@ export const useCustomers = () => {
     const normalized = data.map((c: any) => (c._id ? { ...c, id: c._id } : c));
     setCustomers(normalized);
     setLoading(false);
+    return normalized;
   };
 
   const saveCustomer = async (
@@ -37,8 +38,10 @@ export const useCustomers = () => {
       customerData,
       editingCustomer
     );
-    // Refresh list regardless
-    fetchCustomers();
+    // Refresh list only when server returned a saved customer
+    if (saved) {
+      await fetchCustomers();
+    }
     return saved;
   };
 

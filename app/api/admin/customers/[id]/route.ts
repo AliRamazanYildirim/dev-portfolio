@@ -85,7 +85,24 @@ export async function PUT(
         referrerReward: referrerDiscount > 0 ? { rate: referrerDiscount, message: `Der empfehlende Kunde hat ${referrerDiscount}% Rabatt erhalten!` } : null,
       });
     } catch (err: any) {
-      return NextResponse.json({ success: false, error: err?.message || String(err) }, { status: 500 });
+      const msg = err?.message || String(err);
+      // Handle Mongo duplicate key error to return a friendly message
+      if (msg.includes("duplicate key") || msg.includes("E11000") || msg.includes("email_1")) {
+        // Try to find who owns the conflicting email to show a name-aware message
+        try {
+          const conflictEmailMatch = msg.match(/\{\s*email:\s*"([^"]+)"\s*\}/);
+          const conflictEmail = conflictEmailMatch ? conflictEmailMatch[1] : updateData.email;
+          const owner = await CustomerModel.findOne({ email: conflictEmail }).lean().exec();
+          if (owner) {
+            return NextResponse.json({ success: false, error: `This email address is already registered to: ${owner.firstname} ${owner.lastname}` }, { status: 409 });
+          }
+        } catch (e) {
+          // ignore lookup errors
+        }
+        return NextResponse.json({ success: false, error: "This email address is already registered." }, { status: 409 });
+      }
+
+      return NextResponse.json({ success: false, error: msg }, { status: 500 });
     }
   } catch (error: any) {
     return NextResponse.json(
