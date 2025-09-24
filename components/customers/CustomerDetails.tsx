@@ -20,6 +20,10 @@ export default function CustomerDetails({
   const { isGenerating, generateInvoice } = useInvoiceGenerator();
   const router = useRouter();
   const [showInvoiceModal, setShowInvoiceModal] = useState(false);
+  const [projectStatus, setProjectStatus] = useState<
+    "gestart" | "in-vorbereitung" | "abgeschlossen"
+  >(() => customer?.projectStatus ?? "gestart");
+  const [updatingStatus, setUpdatingStatus] = useState(false);
 
   if (!customer) {
     return (
@@ -136,6 +140,210 @@ export default function CustomerDetails({
                     </div>
                   </div>
                 </div>
+              </div>
+
+              {/* Project Progress Panel (admin only editable) */}
+              <div className="bg-gradient-to-r from-white/95 to-white/90 rounded-3xl p-6 border border-slate-200/40">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-3 h-3 bg-gradient-to-r from-indigo-500 to-violet-500 rounded-full"></div>
+                  <h3 className="text-2xl font-bold text-slate-800">
+                    Project Progress
+                  </h3>
+                </div>
+
+                <div className="grid grid-cols-3 gap-4 items-start">
+                  {[
+                    {
+                      key: "gestart",
+                      label: "Gestart",
+                      color: "bg-blue-500",
+                      percent: "33%",
+                    },
+                    {
+                      key: "in-vorbereitung",
+                      label: "In Vorbereitung",
+                      color: "bg-amber-400",
+                      percent: "66%",
+                    },
+                    {
+                      key: "abgeschlossen",
+                      label: "Abgeschlossen",
+                      color: "bg-emerald-500",
+                      percent: "100%",
+                    },
+                  ].map((step) => {
+                    const key = step.key as
+                      | "gestart"
+                      | "in-vorbereitung"
+                      | "abgeschlossen";
+                    const doneOrder =
+                      projectStatus === "gestart"
+                        ? 0
+                        : projectStatus === "in-vorbereitung"
+                        ? 1
+                        : 2;
+                    const stepOrder =
+                      key === "gestart" ? 0 : key === "in-vorbereitung" ? 1 : 2;
+                    const done = stepOrder < doneOrder;
+                    const active = stepOrder === doneOrder;
+
+                    const showDash = !done && !active && doneOrder >= 0;
+
+                    return (
+                      <div
+                        key={step.key}
+                        className="flex flex-col items-center text-center"
+                      >
+                        <button
+                          aria-pressed={active}
+                          aria-label={`Set status to ${step.label}`}
+                          disabled={updatingStatus}
+                          onClick={async () => {
+                            if (key === projectStatus) return;
+                            setUpdatingStatus(true);
+                            try {
+                              // quick admin session check
+                              const session = await fetch("/api/admin/session");
+                              if (!session.ok) {
+                                toast.error(
+                                  "Admin login required to change status"
+                                );
+                                setUpdatingStatus(false);
+                                return;
+                              }
+
+                              // save to server and get result
+                              const saved = await customerService.saveCustomer(
+                                { projectStatus: key },
+                                customer
+                              );
+                              if (!saved) throw new Error("Save failed");
+
+                              // send notification email (admin-only route)
+                              const mailRes = await fetch(
+                                "/api/project-status-email",
+                                {
+                                  method: "POST",
+                                  headers: {
+                                    "Content-Type": "application/json",
+                                  },
+                                  credentials: "include",
+                                  body: JSON.stringify({
+                                    clientName: `${customer?.firstname ?? ""} ${
+                                      customer?.lastname ?? ""
+                                    }`.trim(),
+                                    clientEmail: customer?.email ?? "",
+                                    projectTitle:
+                                      customer?.companyname ||
+                                      `${customer?.firstname ?? ""} ${
+                                        customer?.lastname ?? ""
+                                      }`,
+                                    status: key,
+                                    message: `Der Status Ihres Projekts wurde auf "${step.label}" gesetzt.`,
+                                    projectImage:
+                                      (customer as any)?.logo || undefined,
+                                    ctaUrl:
+                                      process.env.NEXT_PUBLIC_SITE_URL ||
+                                      undefined,
+                                  }),
+                                }
+                              );
+
+                              const mailJson = await mailRes
+                                .json()
+                                .catch(() => ({ success: false }));
+                              if (!mailRes.ok || !mailJson.success) {
+                                console.error("Mail send failed", mailJson);
+                                setProjectStatus(key);
+                                toast(
+                                  mailJson?.error ||
+                                    "Status updated but could not notify customer",
+                                  { icon: "⚠️" }
+                                );
+                              } else {
+                                setProjectStatus(key);
+                                toast.success(
+                                  "Status updated and customer notified"
+                                );
+                              }
+                            } catch (err) {
+                              console.error(err);
+                              toast.error("Could not update status");
+                            } finally {
+                              setUpdatingStatus(false);
+                            }
+                          }}
+                          className={`inline-flex items-center justify-center w-20 h-20 rounded-full shadow-md transform transition-all duration-200 ${
+                            active
+                              ? `${step.color} text-white scale-100 ring-4 ring-white/20`
+                              : done
+                              ? "bg-white text-slate-900 border border-slate-200"
+                              : "bg-white text-slate-500 border border-slate-200"
+                          }`}
+                        >
+                          <div className="flex items-center justify-center w-full h-full">
+                            {done ? (
+                              <svg
+                                className="w-6 h-6"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth={2}
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              >
+                                <path d="M20 6L9 17l-5-5" />
+                              </svg>
+                            ) : active ? (
+                              <span className="text-sm font-bold">
+                                {(step as any).percent}
+                              </span>
+                            ) : showDash ? (
+                              <svg
+                                className="w-4 h-4 text-slate-900"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                aria-hidden="true"
+                              >
+                                <line
+                                  x1="6"
+                                  y1="12"
+                                  x2="18"
+                                  y2="12"
+                                  stroke="currentColor"
+                                  strokeWidth="2"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                />
+                              </svg>
+                            ) : (
+                              <span className="text-sm font-semibold">
+                                &nbsp;
+                              </span>
+                            )}
+                          </div>
+                        </button>
+
+                        <div
+                          className="mt-3 text-sm font-semibold"
+                          style={{
+                            color: active
+                              ? undefined
+                              : done
+                              ? "#0f172a"
+                              : "#64748b",
+                          }}
+                        >
+                          {step.label}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+                <p className="text-sm text-slate-500 mt-3">
+                  You can update the project stage — the customer will receive
+                  an email notification.
+                </p>
               </div>
 
               {/* Pricing Information */}

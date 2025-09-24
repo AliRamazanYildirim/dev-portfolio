@@ -8,6 +8,7 @@ export interface Customer {
   email: string;
   phone: string;
   address: string;
+  projectStatus?: 'gestart' | 'in-vorbereitung' | 'abgeschlossen';
   city?: string;
   postcode?: string;
   reference: string;
