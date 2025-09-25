@@ -75,7 +75,14 @@ export default function CustomersStatisticsPage() {
       setLoading(true);
       const res = await fetch("/api/admin/customers");
       const json = await res.json();
-      if (json?.success) setCustomers(json.data || []);
+      if (json?.success)
+        setCustomers(
+          (json.data || []).map((c: any) => ({
+            // normalize Mongo _id to id for stable React keys
+            ...c,
+            id: c.id ?? c._id ?? (c._id ? String(c._id) : undefined),
+          }))
+        );
       else setCustomers([]);
     } catch (e) {
       setCustomers([]);
@@ -153,7 +160,7 @@ export default function CustomersStatisticsPage() {
     const topCustomers = [...customers]
       .filter((c) => typeof c.price === "number")
       .sort((a, b) => (b.price || 0) - (a.price || 0))
-      .slice(0, 5);
+      .slice(0, 3);
 
     return { total, revenue, avg, days, counts, topCustomers };
   }, [customers, rangeDays]);
@@ -261,7 +268,21 @@ export default function CustomersStatisticsPage() {
                     </p>
                   </div>
                   <div className="text-lg text-emerald-500">
-                    {loading ? "" : stats.revenue > 0 ? "+" : ""}
+                    {!loading && stats.revenue > 0 && (
+                      <svg
+                        className="inline-block w-5 h-5 text-emerald-500"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M4 17l6-6 4 4 6-6"
+                        />
+                      </svg>
+                    )}
                   </div>
                 </div>
                 <p className="mt-4 text-sm text-white">
@@ -384,7 +405,7 @@ export default function CustomersStatisticsPage() {
                   <ul className="space-y-3">
                     {stats.topCustomers.map((c) => (
                       <li
-                        key={c.id}
+                        key={c.id ?? (c as any)._id}
                         className="flex items-center justify-between"
                       >
                         <div>
@@ -436,7 +457,10 @@ export default function CustomersStatisticsPage() {
                         </thead>
                         <tbody>
                           {paginatedCustomers.map((c) => (
-                            <tr key={c.id} className="odd:bg-white/60">
+                            <tr
+                              key={c.id ?? (c as any)._id}
+                              className="odd:bg-white/60"
+                            >
                               <td className="py-3 text-sm text-[#131313] font-medium">
                                 {c.firstname} {c.lastname}
                               </td>

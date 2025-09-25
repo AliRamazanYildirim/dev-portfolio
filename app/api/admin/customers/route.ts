@@ -54,7 +54,11 @@ export async function GET(request: Request) {
     try {
       const cursor = CustomerModel.find(query);
       if (Object.keys(sortObj).length > 0) cursor.sort(sortObj);
-      const data = await cursor.lean().exec();
+      const raw = await cursor.lean().exec();
+      // Ensure each returned document has a stable `id` string (derived from MongoDB _id)
+      const data = Array.isArray(raw)
+        ? raw.map((d: any) => ({ ...d, id: d._id ? String(d._id) : d.id }))
+        : raw;
       return NextResponse.json({ success: true, data });
     } catch (err: any) {
       return NextResponse.json({ success: false, error: err?.message || String(err) }, { status: 500 });
