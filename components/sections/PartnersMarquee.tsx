@@ -6,7 +6,7 @@ import SplitText from "@/TextAnimations/SplitText";
 
 const PartnersMarquee: React.FC = () => {
   const partners = [
-    { src: "/logo.svg", text: "KARACA" },
+    { src: "/partners/karaca.png", text: "KARACA" },
     { src: "/logo.svg", text: "KARAKAYA" },
     { src: "/logo.svg", text: "CSIH" },
   ];

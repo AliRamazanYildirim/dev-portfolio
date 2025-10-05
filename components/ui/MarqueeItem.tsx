@@ -12,7 +12,7 @@ const MarqueeItem: React.FC<MarqueeItemProps> = ({ images, from, to }) => {
   const renderItem = (item: { src: string; text: string }, index: number) => (
     <div
       key={index}
-      className="flex items-center justify-center space-x-2 pr-10 h-20 md:h-40 w-fit rounded-xl border border-white/30 bg-gray-800/70 shadow-lg m-4 px-4"
+      className="flex items-center justify-center space-x-2 pr-10 h-20 md:h-40 w-fit rounded-xl m-4 px-4"
       style={{ borderRadius: "1rem" }}
     >
       <Image
