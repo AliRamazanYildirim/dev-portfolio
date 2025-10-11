@@ -5,6 +5,9 @@ import fs from "fs";
 import path from "path";
 import { INVOICE_CONSTANTS } from "@/constants/invoice";
 
+// Ensure this API route runs on Node runtime (required for fs, path, jsPDF)
+export const runtime = "nodejs";
+
 export async function POST(request: NextRequest) {
   try {
     const invoiceData: InvoiceData = await request.json();
