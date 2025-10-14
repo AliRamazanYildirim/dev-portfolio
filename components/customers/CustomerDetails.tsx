@@ -204,7 +204,11 @@ export default function CustomerDetails({
                           aria-label={`Set status to ${step.label}`}
                           disabled={updatingStatus}
                           onClick={async () => {
-                            if (key === projectStatus) return;
+                            // Allow clicking the active step when it's the initial 'gestart' state
+                            // so the admin can re-send the project-status email even if the
+                            // status hasn't changed. For other statuses, keep early-return.
+                            if (key === projectStatus && key !== "gestart")
+                              return;
                             setUpdatingStatus(true);
                             try {
                               // quick admin session check

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import CustomerModel from "@/models/Customer";
 import ReferralTransactionModel from "@/models/ReferralTransaction";
+import { connectToMongo } from "@/lib/mongodb";
 
 // GET: Einzelnen Kunden abrufen
 export async function GET(
@@ -8,6 +9,7 @@ export async function GET(
   context: { params: Promise<{ id: string }> }
 ) {
   const { id } = await context.params;
+  await connectToMongo();
   const data = await CustomerModel.findById(id).lean().exec();
 
   if (!data) {
@@ -24,6 +26,7 @@ export async function PUT(
 ) {
   try {
     const { id } = await context.params;
+    await connectToMongo();
     const body = await req.json();
 
     // Abrufen der aktuellen Kundeninformationen
@@ -121,6 +124,7 @@ export async function DELETE(
     const { id } = await context.params;
 
     try {
+      await connectToMongo();
       await CustomerModel.findByIdAndDelete(id).exec();
       return NextResponse.json({ success: true });
     } catch (err: any) {

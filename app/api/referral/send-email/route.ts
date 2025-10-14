@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 import CustomerModel from "@/models/Customer";
+import { connectToMongo } from "@/lib/mongodb";
 
 export async function POST(request: Request) {
   try {
@@ -13,6 +14,7 @@ export async function POST(request: Request) {
       );
     }
 
+    await connectToMongo();
     // Fetch the customer from MongoDB using Mongoose. Use findById because
     // the frontend may pass the Mongo `_id` value.
     const customer = await CustomerModel.findById(customerId).lean().exec();
@@ -27,7 +29,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // Referral verilerini hazırla
+    // Bereitstellung von Empfehlungsdaten
     const currentCount = customer.referralCount || 0;
     const hasReachedMaximum = currentCount >= 3;
     const referrerPrice = customer.price || 0;
@@ -39,8 +41,8 @@ export async function POST(request: Request) {
           <li>Jede Empfehlung bringt Sie dem Maximum näher.</li>
         </ul>`;
 
-    // Nodemailer yapılandırması. Eğer gerçek SMTP bilgileri yoksa Ethereal test
-    // hesabına düşerek geliştirmede gönderimi denemeye izin ver.
+    // Nodemailer-Konfiguration. Wenn keine echten SMTP-Informationen vorhanden sind, 
+    // wird die Nachricht an ein Ethereal-Testkonto gesendet, um das Senden während der Entwicklung zu testen.
     let transporter;
     if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
       transporter = nodemailer.createTransport({
