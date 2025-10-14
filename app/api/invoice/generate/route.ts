@@ -462,7 +462,7 @@ export async function POST(request: NextRequest) {
     doc.setFontSize(8);
     doc.setFont("helvetica", "normal");
     doc.text(
-      "Ali Ramazan Yildirim - Full Stack Developer - Hamburg, Germany",
+      "Ali Ramazan Yildirim - Full Stack Developer - Offenburg, Germany",
       pageWidth / 2,
       footerY,
       { align: "center" }
