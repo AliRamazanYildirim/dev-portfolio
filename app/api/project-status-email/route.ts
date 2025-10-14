@@ -138,7 +138,7 @@ function buildHtml(p: Payload, baseUrl?: string, logoCid?: string) {
 
           ${p.ctaUrl ? `<p style="margin:0 0 18px 0"><a href="${p.ctaUrl}" style="display:inline-block;background:linear-gradient(90deg,#6366f1,#8b5cf6);color:#fff;padding:12px 18px;border-radius:10px;text-decoration:none;font-weight:700">Zum Projekt</a></p>` : ''}
 
-          <p style="margin:0;color:#64748b;font-size:13px;line-height:1.6">Bei Fragen antworte einfach auf diese E‑Mail oder kontaktiere uns über die <a href="https://dev-portfolio-obhj.onrender.com/#contact" target="_blank" rel="noopener noreferrer" style="color:#6366f1;text-decoration:none;font-weight:700">Website</a>.</p>
+          <p style="margin:0;color:#64748b;font-size:13px;line-height:1.6">Bei Fragen antworte einfach auf diese E‑Mail oder kontaktiere uns über die <a href="https://dev-portfolio-eight-khaki.vercel.app/#contact" target="_blank" rel="noopener noreferrer" style="color:#6366f1;text-decoration:none;font-weight:700">Website</a>.</p>
         </td>
       </tr>
       <tr><td style="background:#fafafa;padding:14px 18px;color:#64748b;font-size:12px;text-align:center">Diese E‑Mail wurde automatisch gesendet. Bei Rückfragen einfach antworten.</td></tr>

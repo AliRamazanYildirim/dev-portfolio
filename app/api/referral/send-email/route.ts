@@ -124,7 +124,7 @@ export async function POST(request: Request) {
         </div>
         <div style="background:linear-gradient(135deg,#f8fafc,#f1f5f9);border:1px solid #e2e8f0;border-radius:14px;padding:24px 22px;text-align:center;margin-bottom:30px;">
           <p style="margin:0 0 8px 0;color:#334155;font-size:14px;">📧 Kontakt: <a style="color:#6366f1;text-decoration:none;font-weight:600;" href="mailto:aliramazanyildirim@gmail.com">aliramazanyildirim@gmail.com</a></p>
-          <p style="margin:0;color:#334155;font-size:14px;">🌐 Portfolio: <a style="color:#6366f1;text-decoration:none;font-weight:600;" href="https://dev-portfolio-obhj.onrender.com">Website besuchen</a></p>
+          <p style="margin:0;color:#334155;font-size:14px;">🌐 Portfolio: <a style="color:#6366f1;text-decoration:none;font-weight:600;" href="https://dev-portfolio-eight-khaki.vercel.app/">Website besuchen</a></p>
         </div>
         <div style="text-align:center;margin-bottom:10px;">
           <p style="color:#1e293b;font-weight:600;margin:0 0 4px 0;">Herzliche Grüße</p>
