@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import NoiseBackground from "../NoiseBackground";
 import SplitText from "@/TextAnimations/SplitText";
 import toast from "react-hot-toast";
+import ContactInfo from "./ContactInfo";
 
 const Contact = () => {
   return (
@@ -180,6 +181,10 @@ const ContactForm = () => {
               >
                 Send message
               </button>
+            </div>
+            {/* Phone contact rendered under the submit button */}
+            <div className="col-span-12 flex justify-center mt-6">
+              <ContactInfo />
             </div>
           </motion.form>
         )}
