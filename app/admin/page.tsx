@@ -389,9 +389,14 @@ export default function AdminPage() {
                       {paginatedProjects.map((project) => (
                         <div key={project.id} className="group">
                           {/* Responsive Project Card */}
-                          <div className="bg-[#eee4c1] rounded-xl sm:rounded-2xl shadow-lg border border-white/20 overflow-hidden hover:shadow-xl transition-all duration-300 hover:scale-[1.01] sm:hover:scale-[1.02] p-4 sm:p-6 lg:p-8">
-                            <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 lg:gap-6">
-                              <div className="flex-1">
+                          <div className="rounded-xl sm:rounded-2xl shadow-lg border border-white/20 overflow-hidden hover:shadow-xl transition-all duration-300 hover:scale-[1.01] sm:hover:scale-[1.02]">
+                            <NoiseBackground
+                              mode="light"
+                              intensity={0.05}
+                              className="rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8"
+                            >
+                              <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 lg:gap-6">
+                                <div className="flex-1">
                                 <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 mb-4">
                                   <h3 className="text-xl sm:text-2xl lg:text-3xl font-semibold text-[#131313] break-words">
                                     {project.title}
@@ -424,7 +429,7 @@ export default function AdminPage() {
                                   {project.techStack?.map((tech, i) => (
                                     <span
                                       key={`${tech}-${i}`}
-                                      className="inline-flex items-center px-2.5 sm:px-3 lg:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium bg-blue-500/30 text-[#131313] border border-[#131313]/20"
+                                      className="inline-flex items-center px-2.5 sm:px-3 lg:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium bg-amber-500/20 text-[#131313] border border-[#131313]/20"
                                     >
                                       {tech}
                                     </span>
@@ -501,7 +506,8 @@ export default function AdminPage() {
                                   Delete
                                 </button>
                               </div>
-                            </div>
+                              </div>
+                            </NoiseBackground>
                           </div>
                         </div>
                       ))}
