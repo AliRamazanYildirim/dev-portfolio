@@ -7,6 +7,7 @@ interface ContactInfoProps {
   phoneNumber?: string;
   email?: string;
   availabilityLabel?: string;
+  badgeLabel?: string;
 }
 
 const MotionNoiseBackground = motion(NoiseBackground);
@@ -15,6 +16,7 @@ const ContactInfo = ({
   phoneNumber = "+49 151 67145187",
   email = "aliramazanyildirim@gmail.com",
   availabilityLabel = "Available Mon–Fri • 09:00–17:00 CET",
+  badgeLabel = "Direct line",
 }: ContactInfoProps) => {
   return (
     <MotionNoiseBackground
@@ -43,7 +45,7 @@ const ContactInfo = ({
       </span>
       <div className="flex flex-col text-center">
         <span className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
-          Direct line
+          {badgeLabel}
         </span>
         <a
           href={`tel:${phoneNumber.replace(/\s+/g, "")}`}

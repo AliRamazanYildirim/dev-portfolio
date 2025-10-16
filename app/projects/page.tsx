@@ -9,6 +9,7 @@ import SplitText from "@/TextAnimations/SplitText";
 import { ProjectsAPI } from "@/lib/api";
 import { usePagination } from "@/hooks/usePagination";
 import Pagination from "@/components/ui/Pagination";
+import { useTranslation } from "@/hooks/useTranslation";
 
 // TypeScript Interface für Projekte
 interface Project {
@@ -26,6 +27,9 @@ interface Project {
 }
 
 const ProjectsPage = () => {
+  const { dictionary } = useTranslation();
+  const projectsDictionary = dictionary.projectsPage;
+
   // State für Projekte und Loading
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
@@ -50,10 +54,10 @@ const ProjectsPage = () => {
         if (response.success) {
           setProjects(response.data);
         } else {
-          setError(response.error || "Fehler beim Laden der Projekte");
+          setError(response.error || projectsDictionary.loadError);
         }
       } catch (err) {
-        setError("Verbindungsfehler beim Laden der Projekte");
+        setError(projectsDictionary.connectionError);
         console.error("Fehler beim Laden der Projekte:", err);
       } finally {
         setLoading(false);
@@ -61,7 +65,7 @@ const ProjectsPage = () => {
     };
 
     fetchProjects();
-  }, []);
+  }, [projectsDictionary]);
 
   // Animation Variants
   const containerVariants = {
@@ -99,7 +103,9 @@ const ProjectsPage = () => {
         <div className="text-white px-5 pb-10 md:px-20 md:pb-20 min-h-screen flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-            <p className="content md:text-lgContent">Projects are loading...</p>
+            <p className="content md:text-lgContent">
+              {projectsDictionary.projectsLoading}
+            </p>
           </div>
         </div>
       </NoiseBackground>
@@ -119,7 +125,7 @@ const ProjectsPage = () => {
               onClick={() => window.location.reload()}
               className="button md:text-lgButton border border-white px-6 py-2 rounded hover:bg-white hover:text-black transition"
             >
-              Try again
+              {projectsDictionary.retry}
             </button>
           </div>
         </div>
@@ -138,10 +144,16 @@ const ProjectsPage = () => {
         <div className="container mx-auto">
           {/* Header mit Projektanzahl */}
           <div className="mb-10" ref={listTopRef}>
-            <SplitText text="Projects" className="title md:text-lgTitle mb-4" />
+            <SplitText
+              text={projectsDictionary.heading}
+              className="title md:text-lgTitle mb-4"
+            />
             <p className="content md:text-lgContent text-gray">
-              {projects.length} {projects.length === 1 ? "Project" : "projects"}{" "}
-              found
+              {projects.length}{" "}
+              {projects.length === 1
+                ? projectsDictionary.projectLabelSingular
+                : projectsDictionary.projectLabelPlural}{" "}
+              {projectsDictionary.resultsSuffix}
             </p>
           </div>
 
@@ -173,7 +185,7 @@ const ProjectsPage = () => {
                     {/* Featured Badge */}
                     {project.featured && (
                       <div className="absolute top-4 right-4 bg-[#c9184a] text-white px-3 py-1 rounded-full text-sm font-bold">
-                        Featured
+                        {projectsDictionary.featured}
                       </div>
                     )}
                   </div>
@@ -233,10 +245,10 @@ const ProjectsPage = () => {
                   />
                 </svg>
                 <h3 className="text-lg sm:text-xl font-medium text-[#131313] mb-2 sm:mb-3">
-                  No projects yet
+                  {projectsDictionary.noneTitle}
                 </h3>
                 <p className="text-sm sm:text-base text-[#131313]/70">
-                  Click the button above to add your first project.
+                  {projectsDictionary.noneDescription}
                 </p>
               </div>
             </div>

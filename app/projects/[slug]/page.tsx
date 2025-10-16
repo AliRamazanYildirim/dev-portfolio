@@ -6,6 +6,7 @@ import Image from "next/image";
 import NoiseBackground from "@/components/NoiseBackground";
 import { ProjectsAPI } from "@/lib/api";
 import { use } from "react";
+import { useTranslation } from "@/hooks/useTranslation";
 
 // TypeScript Interface für Projekt Details
 interface ProjectDetail {
@@ -40,6 +41,8 @@ interface ProjectDetail {
 const ProjectPage = ({ params }: { params: Promise<{ slug: string }> }) => {
   const router = useRouter();
   const { slug } = use(params);
+  const { dictionary } = useTranslation();
+  const projectTexts = dictionary.projectDetail;
 
   // State für Projekt und Loading
   const [project, setProject] = useState<ProjectDetail | null>(null);
@@ -56,10 +59,10 @@ const ProjectPage = ({ params }: { params: Promise<{ slug: string }> }) => {
         if (response.success) {
           setProject(response.data);
         } else {
-          setError(response.error || "Projekt nicht gefunden");
+          setError(response.error || projectTexts.notFoundTitle);
         }
       } catch (err) {
-        setError("Fehler beim Laden des Projekts");
+        setError(projectTexts.loadError);
         console.error("Fehler beim Laden des Projekts:", err);
       } finally {
         setLoading(false);
@@ -69,7 +72,7 @@ const ProjectPage = ({ params }: { params: Promise<{ slug: string }> }) => {
     if (slug) {
       fetchProject();
     }
-  }, [slug]);
+  }, [slug, projectTexts]);
 
   // Loading State
   if (loading) {
@@ -78,7 +81,7 @@ const ProjectPage = ({ params }: { params: Promise<{ slug: string }> }) => {
         <div className="text-white px-5 py-10 md:px-20 md:py-20 min-h-screen flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-            <p className="content md:text-lgContent">Project is loading...</p>
+            <p className="content md:text-lgContent">{projectTexts.loading}</p>
           </div>
         </div>
       </NoiseBackground>
@@ -92,14 +95,14 @@ const ProjectPage = ({ params }: { params: Promise<{ slug: string }> }) => {
         <div className="text-white px-5 py-10 md:px-20 md:py-20 min-h-screen flex items-center justify-center">
           <div className="text-center">
             <h1 className="heading md:text-lgHeading mb-4">
-              Project not found
+              {projectTexts.notFoundTitle}
             </h1>
             <p className="content md:text-lgContent text-gray mb-6">{error}</p>
             <button
               onClick={() => router.push("/projects")}
               className="button md:text-lgButton border border-white px-6 py-2 rounded hover:bg-white hover:text-black transition"
             >
-              Back to the projects
+              {projectTexts.notFoundAction}
             </button>
           </div>
         </div>
@@ -118,13 +121,18 @@ const ProjectPage = ({ params }: { params: Promise<{ slug: string }> }) => {
               {/* Featured Badge */}
               {project.featured && (
                 <span className="bg-[#c9184a] text-white px-4 py-2 rounded-full text-sm font-bold">
-                  Featured Project
+                  {projectTexts.featuredBadge}
                 </span>
               )}
             </div>
             <p className="content md:text-lgContent text-white text-sm">
-              von {project.author} •{" "}
-              {new Date(project.createdAt).toLocaleDateString("de-DE")}
+              {projectTexts.authorPrefix
+                ? `${projectTexts.authorPrefix} ${project.author}`
+                : project.author}{" "}
+              •{" "}
+              {new Date(project.createdAt).toLocaleDateString(
+                projectTexts.dateLocale
+              )}
             </p>
           </div>
 
@@ -146,7 +154,7 @@ const ProjectPage = ({ params }: { params: Promise<{ slug: string }> }) => {
           <div className="mb-16 grid grid-cols-1 md:grid-cols-2 md:gap-8">
             <div>
               <h2 className="heading md:text-lgHeading font-bold mb-4">
-                About The Project
+                {projectTexts.aboutHeading}
               </h2>
             </div>
             <div>
@@ -159,19 +167,19 @@ const ProjectPage = ({ params }: { params: Promise<{ slug: string }> }) => {
             <div className="grid grid-cols-3 gap-4 mt-8">
               <div>
                 <p className="font-bold content md:text-lgContent text-white">
-                  Project Role
+                  {projectTexts.role}
                 </p>
                 <p className="text-white">{project.role}</p>
               </div>
               <div>
                 <p className="font-bold content md:text-lgContent text-white">
-                  Duration
+                  {projectTexts.duration}
                 </p>
                 <p className="text-white">{project.duration}</p>
               </div>
               <div>
                 <p className="font-bold content md:text-lgContent text-white">
-                  Category
+                  {projectTexts.category}
                 </p>
                 <p className="text-white">{project.category}</p>
               </div>
@@ -182,7 +190,7 @@ const ProjectPage = ({ params }: { params: Promise<{ slug: string }> }) => {
           {project.gallery && project.gallery.length > 0 && (
             <div className="mb-16">
               <h2 className="heading md:text-lgHeading mb-6">
-                Project Galerie
+                {projectTexts.galleryHeading}
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {project.gallery
@@ -209,7 +217,7 @@ const ProjectPage = ({ params }: { params: Promise<{ slug: string }> }) => {
           {/* Technologies Section */}
           <div className="mb-16">
             <h2 className="heading md:text-lgHeading mb-4">
-              Technologies Used
+              {projectTexts.technologiesHeading}
             </h2>
             <div className="bg-gray-800/50 rounded-lg p-6">
               <p className="content md:text-lgContent text-white leading-relaxed">
@@ -223,7 +231,9 @@ const ProjectPage = ({ params }: { params: Promise<{ slug: string }> }) => {
           {/* Tags Section */}
           {project.tags && project.tags.length > 0 && (
             <div className="mb-16">
-              <h2 className="heading md:text-lgHeading mb-4">Tags</h2>
+              <h2 className="heading md:text-lgHeading mb-4">
+                {projectTexts.tagsHeading}
+              </h2>
               <div className="flex flex-wrap gap-3">
                 {project.tags.map((tag) => (
                   <span
@@ -254,7 +264,9 @@ const ProjectPage = ({ params }: { params: Promise<{ slug: string }> }) => {
               className="text-white hover:text-[#c9184a] heading md:text-lgHeading font-bold transition flex items-center gap-2"
             >
               <span>&lt;</span>
-              {project.previousSlug ? "Last" : "Projects"}
+              {project.previousSlug
+                ? projectTexts.previous
+                : projectTexts.indexFallback}
             </button>
 
             <button
@@ -265,7 +277,9 @@ const ProjectPage = ({ params }: { params: Promise<{ slug: string }> }) => {
               }
               className="text-white hover:text-[#c9184a] heading md:text-lgHeading font-bold transition flex items-center gap-2"
             >
-              {project.nextSlug ? "Next" : "Projects"}
+              {project.nextSlug
+                ? projectTexts.next
+                : projectTexts.indexFallback}
               <span>&gt;</span>
             </button>
           </div>

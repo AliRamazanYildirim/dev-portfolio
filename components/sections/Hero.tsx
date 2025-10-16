@@ -5,8 +5,14 @@ import { motion } from "framer-motion";
 import SplitText from "@/TextAnimations/SplitText";
 import { footerItems } from "@/data";
 import Link from "next/link";
+import { useTranslation } from "@/hooks/useTranslation";
+import type { TranslationDictionary } from "@/constants/translations";
 
 export default function Hero() {
+  const { dictionary } = useTranslation();
+  const heroDictionary = dictionary.hero;
+  const footerDictionary = dictionary.footer;
+
   const handleScrollToAbout = () => {
     const aboutSection = document.getElementById("about-section");
     if (aboutSection) {
@@ -20,7 +26,10 @@ export default function Hero() {
       className="px-7 pb-10 md:pb-40 min-h-screen flex flex-col"
     >
       <div className="container mx-auto flex-1 flex flex-col justify-center">
-        <IntroHeader />
+        <IntroHeader
+          topLine={heroDictionary.headlineTop}
+          bottomLine={heroDictionary.headlineBottom}
+        />
         <div className="flex-1 md:pl-10">
           <div className="flex flex-col md:flex-row-reverse md:items-start lg:items-center gap-8 md:gap-12 lg:gap-16 xl:gap-24">
             <div className="flex-shrink-0 order-first md:order-none">
@@ -28,13 +37,19 @@ export default function Hero() {
             </div>
             <div className="flex-1 min-w-0">
               <IntroParagraph />
-              <AboutSectionText />
+              <AboutSectionText
+                about={heroDictionary.about}
+                socialAriaPrefix={footerDictionary.socialAriaPrefix}
+              />
             </div>
           </div>
 
           <div className="flex justify-between items-center mt-auto pt-8">
-            <Location />
-            <ScrollForMore onClick={handleScrollToAbout} />
+            <Location locationLabel={heroDictionary.location} />
+            <ScrollForMore
+              onClick={handleScrollToAbout}
+              label={heroDictionary.scrollLabel}
+            />
           </div>
         </div>
       </div>
@@ -42,10 +57,16 @@ export default function Hero() {
   );
 }
 
-const IntroHeader = () => (
+const IntroHeader = ({
+  topLine,
+  bottomLine,
+}: {
+  topLine: string;
+  bottomLine: string;
+}) => (
   <h1 className="title md:text-lgTitle mb-8 md:mb-12">
-    <SplitText text="HI THERE -" />
-    <SplitText text="I'M ALI RAMAZAN" className="justify-end" />
+    <SplitText text={topLine} />
+    <SplitText text={bottomLine} className="justify-end" />
   </h1>
 );
 
@@ -55,8 +76,7 @@ const IntroParagraph = () => (
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.8 }}
-  >
-  </motion.div>
+  ></motion.div>
 );
 
 const Portrait = () => (
@@ -70,7 +90,7 @@ const Portrait = () => (
   />
 );
 
-const Socials = () => (
+const Socials = ({ ariaPrefix }: { ariaPrefix: string }) => (
   <div className="flex flex-wrap gap-3 sm:gap-4 md:gap-5 lg:gap-6 justify-center md:justify-start items-center pt-4 md:pt-6">
     {footerItems.map((item) => (
       <Link
@@ -78,7 +98,7 @@ const Socials = () => (
         href={item.path}
         target="_blank"
         rel="noopener noreferrer"
-        aria-label={`Go to ${item.title}`}
+        aria-label={`${ariaPrefix} ${item.title}`}
         className="group flex items-center gap-2 md:gap-3 text-gray hover:text-black transition-all duration-300 ease-in-out transform hover:scale-110"
       >
         <div className="relative">
@@ -123,7 +143,7 @@ const Icon: React.FC<IconProps> = ({
   />
 );
 
-const Location = () => (
+const Location = ({ locationLabel }: { locationLabel: string }) => (
   <div className="button md:text-lgButton flex items-center gap-2">
     <div className="text-[#260a03]">
       <Icon
@@ -134,14 +154,20 @@ const Location = () => (
         additionalClasses="md:w-4 md:h-4 lg:w-6 lg:h-6 brightness-0"
       />
     </div>
-    <span className="text-[#260a03]">Frankfurt am Main</span>
+    <span className="text-[#260a03]">{locationLabel}</span>
   </div>
 );
 
-const ScrollForMore = ({ onClick }: { onClick: () => void }) => (
+const ScrollForMore = ({
+  onClick,
+  label,
+}: {
+  onClick: () => void;
+  label: string;
+}) => (
   <div className="button md:text-lgButton text-gray hidden md:flex md:items-center">
     <button onClick={onClick} className="flex items-center gap-2">
-      <span className="text-[#260a03]">(Scroll For More)</span>
+      <span className="text-[#260a03]">{label}</span>
       <motion.div
         initial={{ y: 0 }}
         animate={{ y: [0, 10, 0] }}
@@ -160,54 +186,34 @@ const ScrollForMore = ({ onClick }: { onClick: () => void }) => (
   </div>
 );
 
-const AboutSectionText = () => (
-  <div className="mt-8 md:mt-12 text-base md:text-lg lg:text-xl text-[#260a03] leading-relaxed space-y-4">
-    <p>
-      Fast, scalable, and reliable web solutions built with a clear focus on
-      business goals and user needs. With strong fullstack experience and a
-      background in both modern and enterprise technologies, every solution is
-      designed to work efficiently—and the right way.
-    </p>
-    <p>
-      From new product development to system optimization, complex challenges
-      are addressed through clean architecture and user-centered design,
-      creating sustainable digital products with long-term value.
-    </p>
-    <div>
-      <strong>Core Competencies</strong>
-      <ul className="list-disc pl-5">
-        <li>Frontend: React, Next.js, Tailwind CSS</li>
-        <li>Backend: Node.js, Express, MongoDB</li>
-        <li>Integrations: Stripe, Uploadthing</li>
-        <li>Enterprise Systems: SAP, ABAP</li>
-        <li>Architecture: Scalable, maintainable, high-performance systems</li>
-      </ul>
+const AboutSectionText = ({
+  about,
+  socialAriaPrefix,
+}: {
+  about: TranslationDictionary["hero"]["about"];
+  socialAriaPrefix: string;
+}) => {
+  const [firstParagraph, secondParagraph, finalParagraph] =
+    about.introParagraphs;
+
+  return (
+    <div className="mt-8 md:mt-12 text-base md:text-lg lg:text-xl text-[#260a03] leading-relaxed space-y-4">
+      {firstParagraph && <p>{firstParagraph}</p>}
+      {secondParagraph && <p>{secondParagraph}</p>}
+      {about.sections.map((section) => (
+        <div key={section.title}>
+          <strong>{section.title}</strong>
+          <ul className="list-disc pl-5">
+            {section.items.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </div>
+      ))}
+      {finalParagraph && <p>{finalParagraph}</p>}
+      <div className="pt-8">
+        <Socials ariaPrefix={socialAriaPrefix} />
+      </div>
     </div>
-    <div>
-      <strong>Collaboration Approach</strong>
-      <ul className="list-disc pl-5">
-        <li>Focus on quality, clarity, and scalability</li>
-        <li>Transparent communication and aligned workflows</li>
-        <li>Technically sound solutions with real business value</li>
-        <li>Long-term thinking behind every decision</li>
-      </ul>
-    </div>
-    <div>
-      <strong>Who I Work With</strong>
-      <ul className="list-disc pl-5">
-        <li>Startups: MVP to stable product</li>
-        <li>Enterprises: SAP modernization and integrations</li>
-        <li>Agencies: Flexible frontend/backend development</li>
-        <li>Entrepreneurs: From idea to launch-ready product</li>
-      </ul>
-      <p>
-        Every project starts with understanding the problem, delivering the
-        right solution, and creating lasting impact through thoughtful
-        engineering.
-      </p>
-    </div>
-    <div className="pt-8">
-      <Socials />
-    </div>
-  </div>
-);
+  );
+};

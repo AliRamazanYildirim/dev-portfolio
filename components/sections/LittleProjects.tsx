@@ -6,6 +6,7 @@ import Image from "next/image";
 import SplitText from "@/TextAnimations/SplitText";
 import { ProjectsAPI } from "@/lib/api";
 import { projects as seedProjects } from "@/data/projects";
+import { useTranslation } from "@/hooks/useTranslation";
 
 // TypeScript Interface für kleine Projekte
 interface LittleProject {
@@ -16,6 +17,9 @@ interface LittleProject {
 }
 
 const ProjectsUI = () => {
+  const { dictionary } = useTranslation();
+  const texts = dictionary.littleProjects;
+
   // State für Projekte und Loading
   const [projects, setProjects] = useState<LittleProject[]>([]);
   const [loading, setLoading] = useState(true);
@@ -70,7 +74,7 @@ const ProjectsUI = () => {
       <section className="text-white px-7 py-12 md:py-44">
         <div className="container mx-auto">
           <SplitText
-            text="MY PROJECTS"
+            text={texts.loadingTitle}
             className="title md:text-lgHeading font-bold mb-10"
           />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
@@ -90,7 +94,7 @@ const ProjectsUI = () => {
     <section className="text-white px-7 py-12 md:py-44">
       <div className="container mx-auto">
         <SplitText
-          text="MY PROJECTS"
+          text={texts.heading}
           className="title md:text-lgHeading font-bold mb-10"
         />
 
@@ -115,7 +119,7 @@ const ProjectsUI = () => {
                     <p className="text-heading font-bold">{project.title}</p>
                     {project.featured && (
                       <p className="text-sm text-[#c9184a] font-medium">
-                        Featured Project
+                        {texts.featuredBadge}
                       </p>
                     )}
                   </div>
@@ -147,10 +151,10 @@ const ProjectsUI = () => {
                 />
               </svg>
               <h3 className="text-lg sm:text-xl font-medium text-[#131313] mb-2 sm:mb-3">
-                No projects yet
+                {texts.emptyTitle}
               </h3>
               <p className="text-sm sm:text-base text-[#131313]/70">
-                Click the button above to add your first project.
+                {texts.emptyDescription}
               </p>
             </div>
           </div>
@@ -162,7 +166,7 @@ const ProjectsUI = () => {
             href="/projects"
             className="inline-block button md:text-lgButton border border-white px-8 py-3 rounded hover:bg-white hover:text-black transition"
           >
-            Show all projects
+            {texts.showAll}
           </Link>
         </div>
       </div>

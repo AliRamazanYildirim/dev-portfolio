@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export interface PaginationProps {
   currentPage: number;
@@ -31,6 +32,9 @@ const Pagination: React.FC<PaginationProps> = ({
   size = "md",
   className = "",
 }) => {
+  const { dictionary } = useTranslation();
+  const paginationDictionary = dictionary.pagination;
+
   // Themenstile
   const themeStyles = {
     dark: {
@@ -143,7 +147,7 @@ const Pagination: React.FC<PaginationProps> = ({
                   ? currentTheme.button.disabled
                   : currentTheme.button.enabled
               }`}
-              aria-label="Previous page"
+              aria-label={paginationDictionary.prevAria}
             >
               <ChevronLeftIcon />
             </button>
@@ -192,7 +196,7 @@ const Pagination: React.FC<PaginationProps> = ({
                   ? currentTheme.button.disabled
                   : currentTheme.button.enabled
               }`}
-              aria-label="Next page"
+              aria-label={paginationDictionary.nextAria}
             >
               <ChevronRightIcon />
             </button>
@@ -205,8 +209,13 @@ const Pagination: React.FC<PaginationProps> = ({
         <p
           className={`mt-3 text-center ${currentTheme.info} ${currentSize.info}`}
         >
-          Page {currentPage} / {totalPages} ({range.start}-{range.end} /{" "}
-          {range.total})
+          {paginationDictionary.info({
+            current: currentPage,
+            total: totalPages,
+            start: range.start,
+            end: range.end,
+            overall: range.total,
+          })}
         </p>
       )}
     </nav>

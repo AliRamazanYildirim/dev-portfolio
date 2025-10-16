@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import NoiseBackground from "@/components/NoiseBackground";
+import { useTranslation } from "@/hooks/useTranslation";
 
-// Interface für Login-Form-Daten - Interface for login form data
 interface LoginFormData {
   email: string;
   password: string;
@@ -13,6 +13,8 @@ interface LoginFormData {
 
 export default function AdminLoginPage() {
   const router = useRouter();
+  const { dictionary } = useTranslation();
+  const loginTexts = dictionary.admin.login;
   const [formData, setFormData] = useState<LoginFormData>({
     email: "",
     password: "",
@@ -22,7 +24,6 @@ export default function AdminLoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [checkingSession, setCheckingSession] = useState(true);
 
-  // Session prüfen - bereits eingeloggt? - Check if already logged in
   useEffect(() => {
     const checkExistingSession = async () => {
       try {
@@ -32,14 +33,11 @@ export default function AdminLoginPage() {
         const result = await response.json();
 
         if (result.success && result.authenticated) {
-          // Bereits eingeloggt - bereits im Admin-Panel weiterleiten
-          // Already logged in - redirect to admin panel
           router.push("/admin");
           return;
         }
-      } catch (error) {
-        // Fehler ignorieren - Session nicht vorhanden
-        // Ignore error - no session exists
+      } catch (err) {
+        // ignore session lookup issues
       } finally {
         setCheckingSession(false);
       }
@@ -48,66 +46,56 @@ export default function AdminLoginPage() {
     checkExistingSession();
   }, [router]);
 
-  // Eingabe-Handler - Input handler
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
-    // Fehler zurücksetzen bei neuer Eingabe - Reset error on new input
     if (error) setError("");
   };
 
-  // Login-Handler - Login handler
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError("");
 
     try {
-      // Einfache Client-Side-Validierung - Simple client-side validation
       if (!formData.email.trim() || !formData.password.trim()) {
-        setError("All fields are required");
+        setError(loginTexts.errorAllFields);
         return;
       }
 
-      // Login-API aufrufen - Call login API
       const response = await fetch("/api/admin/login", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
 
       const result = await response.json();
 
       if (result.success) {
-        // Erfolgreiche Anmeldung - Successful login
         router.push("/admin");
-        router.refresh(); // Seite aktualisieren für Session - Refresh page for session
+        router.refresh();
       } else {
-        // Fehler anzeigen - Show error
-        setError(result.error || "Login failed");
+        setError(result.error || loginTexts.errorLoginFailed);
       }
-    } catch (error) {
-      console.error("Login error:", error);
-      setError("Connection error");
+    } catch (err) {
+      console.error("Login error:", err);
+      setError(loginTexts.errorConnection);
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Session wird geprüft - Checking session
   if (checkingSession) {
     return (
       <div className="min-h-screen w-full">
         <NoiseBackground mode="dark" intensity={0.1}>
           <div className="relative z-10 min-h-screen flex items-center justify-center px-6 py-12">
             <div className="text-center">
-              <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-white mx-auto mb-4"></div>
-              <p className="text-white text-lg">Checking session...</p>
+              <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-white mx-auto mb-4" />
+              <p className="text-white text-lg">{loginTexts.checkingSession}</p>
             </div>
           </div>
         </NoiseBackground>
@@ -125,9 +113,7 @@ export default function AdminLoginPage() {
             transition={{ duration: 0.6, ease: "easeOut" }}
             className="w-full max-w-md"
           >
-            {/* Login Card - Admin panelindeki tasarımla uyumlu */}
             <div className="bg-[#eeede9] rounded-2xl shadow-lg border border-white/20 overflow-hidden p-8">
-              {/* Header */}
               <div className="text-center mb-8">
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
@@ -135,15 +121,14 @@ export default function AdminLoginPage() {
                   transition={{ delay: 0.2, duration: 0.5 }}
                 >
                   <h1 className="title text-4xl text-[#131313] mb-2">
-                    Admin Login
+                    {loginTexts.title}
                   </h1>
                   <p className="content text-[#131313]/70">
-                    Sign in to access the admin panel
+                    {loginTexts.subtitle}
                   </p>
                 </motion.div>
               </div>
 
-              {/* Login Form */}
               <motion.form
                 onSubmit={handleLogin}
                 initial={{ opacity: 0 }}
@@ -151,7 +136,6 @@ export default function AdminLoginPage() {
                 transition={{ delay: 0.3, duration: 0.5 }}
                 className="space-y-6"
               >
-                {/* Error Message */}
                 <AnimatePresence>
                   {error && (
                     <motion.div
@@ -167,13 +151,12 @@ export default function AdminLoginPage() {
                   )}
                 </AnimatePresence>
 
-                {/* Email Input */}
                 <div className="space-y-2">
                   <label
                     htmlFor="email"
                     className="block text-sm font-semibold text-[#131313]"
                   >
-                    Email Address
+                    {loginTexts.emailLabel}
                   </label>
                   <input
                     type="email"
@@ -181,19 +164,18 @@ export default function AdminLoginPage() {
                     name="email"
                     value={formData.email}
                     onChange={handleInputChange}
-                    placeholder="admin@example.com"
+                    placeholder={loginTexts.emailPlaceholder}
                     disabled={isLoading}
                     className="w-full px-6 py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content disabled:opacity-50 disabled:cursor-not-allowed"
                   />
                 </div>
 
-                {/* Password Input */}
                 <div className="space-y-2">
                   <label
                     htmlFor="password"
                     className="block text-sm font-semibold text-[#131313]"
                   >
-                    Password
+                    {loginTexts.passwordLabel}
                   </label>
                   <div className="relative">
                     <input
@@ -202,15 +184,15 @@ export default function AdminLoginPage() {
                       name="password"
                       value={formData.password}
                       onChange={handleInputChange}
-                      placeholder="••••••••"
+                      placeholder={loginTexts.passwordPlaceholder}
                       disabled={isLoading}
                       className="w-full px-6 py-4 pr-12 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content disabled:opacity-50 disabled:cursor-not-allowed"
                     />
                     <button
                       type="button"
-                      onClick={() => setShowPassword(!showPassword)}
+                      onClick={() => setShowPassword((prev) => !prev)}
                       disabled={isLoading}
-                      className="absolute right-4 top-1/2 transform -translate-y-1/2 text-[#131313]/50 hover:text-[#131313] transition-colors disabled:cursor-not-allowed"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-[#131313]/50 hover:text-[#131313] transition-colors disabled:cursor-not-allowed"
                     >
                       <svg
                         className="w-5 h-5"
@@ -230,7 +212,7 @@ export default function AdminLoginPage() {
                             strokeLinecap="round"
                             strokeLinejoin="round"
                             strokeWidth={2}
-                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0zm-12.542 0C3.732 7.943 7.523 5 12 5c4.478 0 8.268-2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
                           />
                         )}
                       </svg>
@@ -238,26 +220,24 @@ export default function AdminLoginPage() {
                   </div>
                 </div>
 
-                {/* Submit Button */}
                 <motion.button
                   type="submit"
                   disabled={isLoading}
                   whileHover={{ scale: isLoading ? 1 : 1.02 }}
                   whileTap={{ scale: isLoading ? 1 : 0.98 }}
-                  className="w-full px-8 py-4 bg-[#131313] hover:bg-[#131313]/90 text-white rounded-xl font-medium shadow-lg transition-all duration-200 hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                  className="w-full px-8 py-4 bg-[#131313] hover:bg-[#131313]/90 text-white rounded-xl font-medium shadow-lg transition-all duration-200 hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isLoading ? (
                     <div className="flex items-center justify-center">
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
-                      Signing in...
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3" />
+                      {loginTexts.signingIn}
                     </div>
                   ) : (
-                    "Sign In"
+                    loginTexts.signIn
                   )}
                 </motion.button>
               </motion.form>
 
-              {/* Footer */}
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -265,12 +245,11 @@ export default function AdminLoginPage() {
                 className="mt-6 text-center"
               >
                 <p className="text-sm text-[#131313]/50">
-                  For authorized administrators only
+                  {loginTexts.footerNote}
                 </p>
               </motion.div>
             </div>
 
-            {/* Zurück zur Startseite - Back to home */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -278,10 +257,11 @@ export default function AdminLoginPage() {
               className="text-center mt-8"
             >
               <button
+                type="button"
                 onClick={() => router.push("/")}
                 className="text-white/70 hover:text-white text-sm font-medium transition-colors duration-200"
               >
-                ← Back to home
+                {loginTexts.backToHome}
               </button>
             </motion.div>
           </motion.div>

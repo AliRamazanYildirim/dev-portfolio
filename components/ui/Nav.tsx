@@ -1,25 +1,64 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { navItems } from "@/data";
 import { motion, AnimatePresence } from "framer-motion";
 import NoiseBackground from "../NoiseBackground";
 import Image from "next/image";
+import { useTranslation } from "@/hooks/useTranslation";
+import type { SupportedLanguage } from "@/contexts/LanguageContext";
 
 interface NavItemType {
   title: string;
   path: string;
+  external?: boolean;
 }
 
 export const Nav = ({ className }: { className?: string }) => {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [languageMenuOpen, setLanguageMenuOpen] = useState(false);
   const pathname = usePathname();
+  const { language, setLanguage, dictionary } = useTranslation();
+  const navDictionary = dictionary.nav;
+
+  const navItems = navDictionary.items;
+  const languageLabel = navDictionary.languageMenu.label;
+  const languages = [
+    {
+      code: "en" as SupportedLanguage,
+      label: navDictionary.languageMenu.languages.en,
+    },
+    {
+      code: "de" as SupportedLanguage,
+      label: navDictionary.languageMenu.languages.de,
+    },
+    {
+      code: "tr" as SupportedLanguage,
+      label: navDictionary.languageMenu.languages.tr,
+    },
+  ];
+  const currentLanguageLabel = navDictionary.languageMenu.languages[language];
 
   const toggleMenu = () => {
     setMenuOpen((prev) => !prev);
+    setLanguageMenuOpen(false);
+  };
+
+  useEffect(() => {
+    setLanguageMenuOpen(false);
+    setMenuOpen(false);
+  }, [pathname]);
+
+  const toggleLanguageMenu = () => {
+    setLanguageMenuOpen((prev) => !prev);
+  };
+
+  const handleLanguageChange = (code: SupportedLanguage) => {
+    setLanguage(code);
+    setLanguageMenuOpen(false);
+    setMenuOpen(false);
   };
 
   const isActive = (path: string) => pathname === path;
@@ -58,8 +97,8 @@ export const Nav = ({ className }: { className?: string }) => {
       <Link
         key={item.path}
         href={item.path}
-        target={item.title === "Blog" ? "_blank" : undefined}
-        rel={item.title === "Blog" ? "noopener noreferrer" : undefined}
+        target={item.external ? "_blank" : undefined}
+        rel={item.external ? "noopener noreferrer" : undefined}
         className={`button lg:text-lgButton ${
           isProjectsOrDetail || isAdminPage
             ? "text-white hover:text-white"
@@ -136,11 +175,68 @@ export const Nav = ({ className }: { className?: string }) => {
                   ))}
                 </div>
 
+                <div className="hidden lg:block relative text-gray">
+                  <button
+                    className="button lg:text-lgButton flex items-center gap-2 text-gray hover:text-black transition"
+                    onClick={toggleLanguageMenu}
+                    aria-haspopup="true"
+                    aria-expanded={languageMenuOpen}
+                    aria-label={navDictionary.aria.language}
+                    type="button"
+                  >
+                    <span className="font-normal">{currentLanguageLabel}</span>
+                    <svg
+                      className={`w-4 h-4 transition-transform ${
+                        languageMenuOpen ? "rotate-180" : ""
+                      }`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </button>
+                  <AnimatePresence>
+                    {languageMenuOpen && (
+                      <motion.ul
+                        initial={{ opacity: 0, y: -6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -6 }}
+                        transition={{ duration: 0.15 }}
+                        className="absolute right-0 top-full mt-2 w-40 rounded-lg border border-none bg-slate/50 py-2 shadow-2xl backdrop-blur z-50 flex flex-col items-center"
+                      >
+                        {languages.map((lang) => (
+                          <li key={lang.code}>
+                            <button
+                              type="button"
+                              onClick={() => handleLanguageChange(lang.code)}
+                              className={`w-full px-4 py-2 text-center text-sm transition hover:bg-gray-100 ${
+                                language === lang.code
+                                  ? "font-semibold text-[#c9184a]"
+                                  : "text-gray-700"
+                              }`}
+                            >
+                              {lang.label}
+                            </button>
+                          </li>
+                        ))}
+                      </motion.ul>
+                    )}
+                  </AnimatePresence>
+                </div>
+
                 <button
                   className="lg:hidden text-gray focus:outline-none"
                   onClick={toggleMenu}
-                  aria-label="Toggle menu"
+                  aria-label={navDictionary.aria.toggle}
                   aria-expanded={menuOpen}
+                  type="button"
                 >
                   <svg
                     className="w-6 h-6"
@@ -183,7 +279,8 @@ export const Nav = ({ className }: { className?: string }) => {
                   <button
                     className="absolute top-4 right-4 text-gray focus:outline-none"
                     onClick={toggleMenu}
-                    aria-label="Close menu"
+                    aria-label={navDictionary.aria.close}
+                    type="button"
                   >
                     <svg
                       className="w-6 h-6"
@@ -205,11 +302,9 @@ export const Nav = ({ className }: { className?: string }) => {
                       <li key={item.path}>
                         <Link
                           href={item.path}
-                          target={item.title === "Blog" ? "_blank" : undefined}
+                          target={item.external ? "_blank" : undefined}
                           rel={
-                            item.title === "Blog"
-                              ? "noopener noreferrer"
-                              : undefined
+                            item.external ? "noopener noreferrer" : undefined
                           }
                           className={`button lg:text-lgButton ${
                             isProjectsPage
@@ -222,6 +317,27 @@ export const Nav = ({ className }: { className?: string }) => {
                         </Link>
                       </li>
                     ))}
+                    <li className="w-full border-t border-gray/20 pt-4">
+                      <div className="text-sm text-gray uppercase tracking-wide mb-2">
+                        {languageLabel}
+                      </div>
+                      <div className="flex flex-col gap-2">
+                        {languages.map((lang) => (
+                          <button
+                            key={lang.code}
+                            type="button"
+                            onClick={() => handleLanguageChange(lang.code)}
+                            className={`w-full rounded-md border px-4 py-2 text-sm transition ${
+                              language === lang.code
+                                ? "border-[#c9184a] text-[#c9184a] bg-[#c9184a]/10"
+                                : "border-gray-200 text-gray hover:border-gray-400"
+                            }`}
+                          >
+                            {lang.label}
+                          </button>
+                        ))}
+                      </div>
+                    </li>
                   </ul>
                 </motion.div>
               </>

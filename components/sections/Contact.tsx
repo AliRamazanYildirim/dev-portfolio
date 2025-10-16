@@ -6,27 +6,45 @@ import NoiseBackground from "../NoiseBackground";
 import SplitText from "@/TextAnimations/SplitText";
 import toast from "react-hot-toast";
 import ContactInfo from "./ContactInfo";
+import { useTranslation } from "@/hooks/useTranslation";
+import type { TranslationDictionary } from "@/constants/translations";
 
 const Contact = () => {
+  const { dictionary } = useTranslation();
+  const contactDictionary = dictionary.contact;
+  const contactInfoDictionary = dictionary.contactInfo;
+
   return (
     <NoiseBackground mode="light" intensity={0.1}>
       <section id="contact" className="px-7 py-10 md:py-20">
         <div className="container mx-auto">
-          <Header />
-          <ContactForm />
+          <Header
+            lineOne={contactDictionary.headingLineOne}
+            lineTwo={contactDictionary.headingLineTwo}
+          />
+          <ContactForm
+            contactDictionary={contactDictionary}
+            contactInfoDictionary={contactInfoDictionary}
+          />
         </div>
       </section>
     </NoiseBackground>
   );
 };
 
-const Header = () => (
+const Header = ({ lineOne, lineTwo }: { lineOne: string; lineTwo: string }) => (
   <div className="heading md:text-lgHeading mb-10 md:mb-20">
-    <SplitText text="Tell us your idea; " />
-    <SplitText text={"we’ll build the wow."} />
+    <SplitText text={lineOne} />
+    <SplitText text={lineTwo} />
   </div>
 );
-const ContactForm = () => {
+const ContactForm = ({
+  contactDictionary,
+  contactInfoDictionary,
+}: {
+  contactDictionary: TranslationDictionary["contact"];
+  contactInfoDictionary: TranslationDictionary["contactInfo"];
+}) => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -46,7 +64,7 @@ const ContactForm = () => {
     setError("");
 
     try {
-      const tId = toast.loading("Message is being sent...");
+      const tId = toast.loading(contactDictionary.toastSending);
       // Zuerst Nachricht in Database speichern
       const dbResponse = await fetch("/api/contact", {
         method: "POST",
@@ -63,9 +81,7 @@ const ContactForm = () => {
       const dbResult = await dbResponse.json();
 
       if (!dbResult.success) {
-        throw new Error(
-          dbResult.error || "Fehler beim Speichern der Nachricht"
-        );
+        throw new Error(dbResult.error || contactDictionary.toastErrorFallback);
       }
 
       // Nachricht gespeichert, kein Logging
@@ -87,14 +103,12 @@ const ContactForm = () => {
       if (!emailResult.success) {
         // E-posta başarısız olduysa kullanıcıya uyar
         console.warn("Email sending failed", emailResult);
-        toast.error(
-          "Failed to send notification email, but message was saved."
-        );
+        toast.error(contactDictionary.toastEmailError);
       }
 
       // Erfolg anzeigen
       setSubmitted(true);
-      toast.success("Message sent successfully.", { id: tId });
+      toast.success(contactDictionary.toastSuccess, { id: tId });
 
       // Form nach 5 Sekunden zurücksetzen
       setTimeout(() => {
@@ -102,17 +116,11 @@ const ContactForm = () => {
         setFormData({ name: "", email: "", message: "" });
       }, 5000);
     } catch (err) {
-      // Fehler beim Senden der Nachricht, kein Logging
-      setError(
-        err instanceof Error
-          ? err.message
-          : "An error has occurred. Please try again later."
-      );
-      toast.error(
-        err instanceof Error
-          ? err.message
-          : "An error has occurred. Please try again later."
-      );
+      const fallback = contactDictionary.toastErrorFallback;
+      const message =
+        err instanceof Error && err.message ? err.message : fallback;
+      setError(message);
+      toast.error(message);
     }
   };
 
@@ -127,7 +135,7 @@ const ContactForm = () => {
             exit={{ opacity: 0, y: 20 }}
             className="text-green-600 text-center text-xl"
           >
-            Your message has been sent successfully. Thank you!
+            {contactDictionary.success}
           </motion.p>
         ) : (
           <motion.form
@@ -142,7 +150,7 @@ const ContactForm = () => {
               <input
                 type="text"
                 name="name"
-                placeholder="Name"
+                placeholder={contactDictionary.placeholders.name}
                 className="content w-full bg-transparent border-none text-lg placeholder-[#260a03] focus:outline-none focus:ring-0 md:text-lgContent"
                 value={formData.name ?? ""}
                 onChange={handleChange}
@@ -154,7 +162,7 @@ const ContactForm = () => {
               <input
                 type="email"
                 name="email"
-                placeholder="E-Mail"
+                placeholder={contactDictionary.placeholders.email}
                 className="content w-full bg-transparent border-none text-lg placeholder-[#260a03] focus:outline-none focus:ring-0 md:text-lgContent"
                 value={formData.email ?? ""}
                 onChange={handleChange}
@@ -166,7 +174,7 @@ const ContactForm = () => {
             <div className="relative border-b border-gray md:col-span-6">
               <textarea
                 name="message"
-                placeholder="Message"
+                placeholder={contactDictionary.placeholders.message}
                 className="content w-full bg-transparent border-none text-lg placeholder-[#260a03] focus:outline-none focus:ring-0 md:text-lgContent"
                 value={formData.message ?? ""}
                 onChange={handleChange}
@@ -179,12 +187,15 @@ const ContactForm = () => {
                 type="submit"
                 className="py-3 px-6 bg-black text-white rounded-md hover:bg-[#260a03] transition-colors duration-200"
               >
-                Send message
+                {contactDictionary.submit}
               </button>
             </div>
             {/* Phone contact rendered under the submit button */}
             <div className="col-span-12 flex justify-center mt-6">
-              <ContactInfo />
+              <ContactInfo
+                availabilityLabel={contactInfoDictionary.availability}
+                badgeLabel={contactInfoDictionary.badge}
+              />
             </div>
           </motion.form>
         )}

@@ -5,18 +5,22 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import Marquee from "@/components/ui/Marquee";
 import SplitText from "@/TextAnimations/SplitText";
+import { useTranslation } from "@/hooks/useTranslation";
 
 const LittleAboutMe = () => {
+  const { dictionary } = useTranslation();
+  const littleAbout = dictionary.littleAbout;
+
   return (
     <section id="about-section" className="px-7 pt-12 md:pt-40 text-white">
       <div className="container pb-12 mx-auto grid grid-cols-1 gap-4 md:grid-cols-2 md:pb-36 md:gap-0 items-start ">
         <div>
-          <Header />
-          <Paragraph />
+          <Header text={littleAbout.heading} />
+          <Paragraph text={littleAbout.paragraphOne} />
         </div>
         <div className="flex flex-col h-full md:pt-48">
-          <Paragraph2 />
-          <MoreAboutMe />
+          <Paragraph2 text={littleAbout.paragraphTwo} />
+          <MoreAboutMe cta={littleAbout.cta} />
         </div>
       </div>
       <Marquee />
@@ -24,8 +28,8 @@ const LittleAboutMe = () => {
   );
 };
 
-const Header = () => (
-  <SplitText text="A Little About Me -" className="heading mb-5 md:text-lgHeading md:mb-16 " />
+const Header = ({ text }: { text: string }) => (
+  <SplitText text={text} className="heading mb-5 md:text-lgHeading md:mb-16 " />
 );
 
 const fadeInVariants = {
@@ -33,7 +37,7 @@ const fadeInVariants = {
   visible: { opacity: 1, y: 0 },
 };
 
-const Paragraph = () => (
+const Paragraph = ({ text }: { text: string }) => (
   <motion.p
     className="content md:pl-10 md:text-lgContent md:order-1"
     variants={fadeInVariants}
@@ -42,11 +46,11 @@ const Paragraph = () => (
     viewport={{ once: true, margin: "-100px" }}
     transition={{ duration: 1, ease: "easeOut" }}
   >
-    I am a Full-Stack Software Developer with extensive experience in modern web technologies such as JavaScript, Node.js, Next.js, React, Blazor, and .NET Core. Through my work on e-commerce platforms, microservices, and blog applications, I have developed a strong focus on scalable software architectures and best practices. My background includes hands-on development, problem-solving, and optimizing performance in web applications.
+    {text}
   </motion.p>
 );
 
-const Paragraph2 = () => (
+const Paragraph2 = ({ text }: { text: string }) => (
   <motion.p
     className="content md:text-lgContent md:order-1 max-w-2xl lg:ml-auto"
     variants={fadeInVariants}
@@ -55,9 +59,7 @@ const Paragraph2 = () => (
     viewport={{ once: true, margin: "-100px" }}
     transition={{ duration: 2, ease: "easeOut" }}
   >
-    JavaScript, C#, TypeScript, React, and Next.js—building real-world solutions through technology.
-    Thriving in collaborative environments, I am always looking for new ways to refine my skills and
-    create impactful solutions.
+    {text}
   </motion.p>
 );
 
@@ -69,11 +71,23 @@ interface IconProps {
   additionalClasses?: string;
 }
 
-const Icon: React.FC<IconProps> = ({ src, alt, width, height, additionalClasses = "" }) => (
-  <Image src={src} alt={alt} width={width} height={height} className={additionalClasses} />
+const Icon: React.FC<IconProps> = ({
+  src,
+  alt,
+  width,
+  height,
+  additionalClasses = "",
+}) => (
+  <Image
+    src={src}
+    alt={alt}
+    width={width}
+    height={height}
+    className={additionalClasses}
+  />
 );
 
-const MoreAboutMe = () => (
+const MoreAboutMe = ({ cta }: { cta: string }) => (
   <motion.div
     className="flex pt-5 items-center text-gray group md:order-0 max-w-lg md:pl-24 md:pb-10"
     variants={fadeInVariants}
@@ -84,7 +98,7 @@ const MoreAboutMe = () => (
   >
     <Link href="/about" passHref>
       <span className="button text-white font-bold mr-2 md:text-lgButton hover:underline transition">
-        (Know More About Me)
+        {cta}
       </span>
     </Link>
     <Link href="/about" passHref>

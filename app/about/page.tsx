@@ -3,11 +3,15 @@
 import React from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { interests } from "@/data";
 import NoiseBackground from "@/components/NoiseBackground";
 import SplitText from "@/TextAnimations/SplitText";
+import { useTranslation } from "@/hooks/useTranslation";
+import type { TranslationDictionary } from "@/constants/translations";
 
 const AboutPage = () => {
+  const { dictionary } = useTranslation();
+  const aboutDictionary = dictionary.aboutPage;
+
   return (
     <NoiseBackground mode="light" intensity={0.1}>
       <div className="relative min-h-screen overflow-hidden">
@@ -25,8 +29,8 @@ const AboutPage = () => {
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ duration: 0.8, ease: "easeOut" }}
               >
-                <Header />
-                <Paragraph />
+                <Header lines={aboutDictionary.headline} />
+                <Paragraph text={aboutDictionary.quote} />
               </motion.div>
 
               <motion.div
@@ -45,11 +49,11 @@ const AboutPage = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, ease: "easeOut", delay: 0.4 }}
               >
-                <Header2 />
+                <Header2 text={aboutDictionary.sectionHeading} />
               </motion.div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 mt-8">
-                {interests.map((interest, index) => (
+                {aboutDictionary.interests.map((interest, index) => (
                   <motion.div
                     key={index}
                     className="flex flex-col space-y-2"
@@ -61,12 +65,7 @@ const AboutPage = () => {
                       delay: 0.6 + index * 0.1,
                     }}
                   >
-                    <Interest
-                      icon={interest.icon}
-                      alt={interest.alt}
-                      title={interest.title}
-                      description={interest.description}
-                    />
+                    <Interest data={interest} />
                   </motion.div>
                 ))}
               </div>
@@ -78,34 +77,34 @@ const AboutPage = () => {
   );
 };
 
-const Header = () => (
-  <header className="title pb-5 md:pb-20">
-    <h1 className="block text-4xl md:text-8xl xl:text-[6.5rem]">
-      <SplitText text="PART-TIME" />
-    </h1>
-    <h1 className="block text-4xl md:text-8xl xl:text-[6.5rem]">
-      <SplitText text="TURKISH COFFEE," />
-    </h1>
-    <h1 className="block pl-12 md:pl-32 text-4xl md:text-8xl xl:text-[6.5rem]">
-      <SplitText text="FULL-TIME" />
-    </h1>
-    <h1 className="block pl-12 md:pl-10 text-4xl md:text-8xl xl:text-[6.5rem]">
-      <SplitText text="CODINGGGGG !" />
-    </h1>
-  </header>
-);
+const Header = ({
+  lines,
+}: {
+  lines: TranslationDictionary["aboutPage"]["headline"];
+}) => {
+  const lineClasses = [
+    "block text-4xl md:text-8xl xl:text-[6.5rem]",
+    "block text-4xl md:text-8xl xl:text-[6.5rem]",
+    "block pl-12 md:pl-32 text-4xl md:text-8xl xl:text-[6.5rem]",
+    "block pl-12 md:pl-10 text-4xl md:text-8xl xl:text-[6.5rem]",
+  ];
 
-const Paragraph = () => (
-  <p className="content md:text-lgContent text-gray italic">
-    &quot;Growing up with a passion for technology, I have always seen software
-    development as a reflection of the ever-evolving digital world—fast-paced,
-    dynamic, and full of possibilities. Just as innovation drives progress,
-    coding is about adaptability, problem-solving, and building lasting
-    solutions. Every challenge is an opportunity to grow, every setback a
-    lesson, and every achievement a new milestone. I am excited to keep
-    learning, creating, and shaping the digital world—one line of code at a
-    time.&quot;
-  </p>
+  return (
+    <header className="title pb-5 md:pb-20">
+      {lines.map((line, index) => (
+        <h1
+          key={`${line}-${index}`}
+          className={lineClasses[index] ?? lineClasses[0]}
+        >
+          <SplitText text={line} />
+        </h1>
+      ))}
+    </header>
+  );
+};
+
+const Paragraph = ({ text }: { text: string }) => (
+  <p className="content md:text-lgContent text-gray italic">{text}</p>
 );
 
 const Portrait = () => (
@@ -119,37 +118,28 @@ const Portrait = () => (
   />
 );
 
-const Header2 = () => (
-  <SplitText
-    text="-But There Is More To Me"
-    className="heading md:text-lgHeading md:pb-10"
-  />
+const Header2 = ({ text }: { text: string }) => (
+  <SplitText text={text} className="heading md:text-lgHeading md:pb-10" />
 );
 
 const Interest = ({
-  icon,
-  alt,
-  title,
-  description,
+  data,
 }: {
-  icon: string;
-  alt: string;
-  title: string;
-  description: string;
+  data: TranslationDictionary["aboutPage"]["interests"][number];
 }) => (
   <div>
     <div className="flex items-center space-x-2">
       <Image
-        src={icon}
-        alt={alt}
+        src={data.icon}
+        alt={data.alt}
         width={16}
         height={16}
         className="md:w-8 md:h-8"
       />
-      <h3 className="content2 text-gray md:text-lgContent2">{title}</h3>
+      <h3 className="content2 text-gray md:text-lgContent2">{data.title}</h3>
     </div>
 
-    <p className="content3 md:text-lgContent3">{description}</p>
+    <p className="content3 md:text-lgContent3">{data.description}</p>
   </div>
 );
 
