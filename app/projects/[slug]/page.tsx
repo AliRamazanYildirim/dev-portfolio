@@ -169,7 +169,16 @@ const ProjectPage = ({ params }: { params: Promise<{ slug: string }> }) => {
                 <p className="font-bold content md:text-lgContent text-white">
                   {projectTexts.role}
                 </p>
-                <p className="text-white">{project.role}</p>
+                <p className="text-white">
+                  {(() => {
+                    const roleKey =
+                      project.role as keyof typeof projectTexts.roleLabels;
+                    return projectTexts.roleLabels &&
+                      projectTexts.roleLabels[roleKey]
+                      ? projectTexts.roleLabels[roleKey]
+                      : project.role;
+                  })()}
+                </p>
               </div>
               <div>
                 <p className="font-bold content md:text-lgContent text-white">
@@ -191,7 +200,16 @@ const ProjectPage = ({ params }: { params: Promise<{ slug: string }> }) => {
                 <p className="font-bold content md:text-lgContent text-white">
                   {projectTexts.category}
                 </p>
-                <p className="text-white">{project.category}</p>
+                <p className="text-white">
+                  {(() => {
+                    const categoryKey =
+                      project.category as keyof typeof projectTexts.categoryLabels;
+                    return projectTexts.categoryLabels &&
+                      projectTexts.categoryLabels[categoryKey]
+                      ? projectTexts.categoryLabels[categoryKey]
+                      : project.category;
+                  })()}
+                </p>
               </div>
             </div>
           </div>

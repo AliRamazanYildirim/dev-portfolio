@@ -198,6 +198,19 @@ export const translations = {
         "5 Months": "5 Months",
         "6 Months": "6 Months",
       },
+      roleLabels: {
+        "Full Stack Developer": "Full Stack Developer",
+        Developer: "Developer",
+        Designer: "Designer",
+        "Project Manager": "Project Manager",
+      },
+      categoryLabels: {
+        "Web Development": "Web Development",
+        "Mobile App Development": "Mobile App Development",
+        "UI/UX Design": "UI/UX Design",
+        "E-Commerce": "E-Commerce",
+        Consulting: "Consulting",
+      },
     },
     pagination: {
       nextAria: "Next page",
@@ -438,6 +451,19 @@ export const translations = {
         "5 Months": "5 Monate",
         "6 Months": "6 Monate",
       },
+      roleLabels: {
+        "Full Stack Developer": "Full-Stack-Entwickler",
+        Developer: "Entwickler",
+        Designer: "Designer",
+        "Project Manager": "Projektmanager",
+      },
+      categoryLabels: {
+        "Web Development": "Webentwicklung",
+        "Mobile App Development": "Mobile App Entwicklung",
+        "UI/UX Design": "UI/UX Design",
+        "E-Commerce": "E-Commerce",
+        Consulting: "Beratung",
+      },
     },
     pagination: {
       nextAria: "Nächste Seite",
@@ -669,6 +695,19 @@ export const translations = {
         "4 Months": "4 Ay",
         "5 Months": "5 Ay",
         "6 Months": "6 Ay",
+      },
+      roleLabels: {
+        "Full Stack Developer": "Full Stack Geliştirici",
+        Developer: "Geliştirici",
+        Designer: "Tasarımcı",
+        "Project Manager": "Proje Yöneticisi",
+      },
+      categoryLabels: {
+        "Web Development": "Web Geliştirme",
+        "Mobile App Development": "Mobil Uygulama Geliştirme",
+        "UI/UX Design": "UI/UX Tasarım",
+        "E-Commerce": "E-Ticaret",
+        Consulting: "Danışmanlık",
       },
     },
     pagination: {
