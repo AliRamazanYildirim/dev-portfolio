@@ -17,12 +17,14 @@ export async function GET(
     }
 
     // previous/next aus Feldern oder fallback-berechnet ermitteln
-    let prev = project.previousSlug ?? null;
-    let next = project.nextSlug ?? null;
-    if (prev === null || next === null) {
-      const allProjects = await ProjectModel.find({ published: true }).sort({ createdAt: 1 }).lean().exec();
-      if (allProjects && allProjects.length > 0) {
-        const index = allProjects.findIndex((p) => p.slug === slug);
+    // Always recalculate to ensure correct values
+    const allProjects = await ProjectModel.find({ published: true }).sort({ createdAt: 1 }).lean().exec();
+    let prev: string | null = null;
+    let next: string | null = null;
+
+    if (allProjects && allProjects.length > 0) {
+      const index = allProjects.findIndex((p) => p.slug === slug);
+      if (index !== -1) {
         prev = index > 0 ? allProjects[index - 1].slug : null;
         next = index < allProjects.length - 1 ? allProjects[index + 1].slug : null;
       }

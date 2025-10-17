@@ -175,9 +175,13 @@ export const Nav = ({ className }: { className?: string }) => {
                   ))}
                 </div>
 
-                <div className="hidden lg:block relative text-gray">
+                <div className="hidden lg:block relative">
                   <button
-                    className="button lg:text-lgButton flex items-center gap-2 text-gray hover:text-black transition"
+                    className={`button lg:text-lgButton flex items-center gap-2 transition ${
+                      isProjectsPage || isAdminPage
+                        ? "text-white hover:text-white"
+                        : "text-gray hover:text-black"
+                    }`}
                     onClick={toggleLanguageMenu}
                     aria-haspopup="true"
                     aria-expanded={languageMenuOpen}
@@ -209,7 +213,7 @@ export const Nav = ({ className }: { className?: string }) => {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -6 }}
                         transition={{ duration: 0.15 }}
-                        className="absolute right-0 top-full mt-2 w-40 rounded-lg border border-none bg-slate/50 py-2 shadow-2xl backdrop-blur z-50 flex flex-col items-center"
+                        className="absolute right-0 top-full mt-2 w-40 rounded-md border border-none bg-white/90 py-2 shadow-lg backdrop-blur z-50 flex flex-col items-center"
                       >
                         {languages.map((lang) => (
                           <li key={lang.code}>

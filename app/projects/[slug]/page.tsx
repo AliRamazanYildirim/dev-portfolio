@@ -195,9 +195,9 @@ const ProjectPage = ({ params }: { params: Promise<{ slug: string }> }) => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {project.gallery
                   .sort((a, b) => a.order - b.order)
-                  .map((image) => (
+                  .map((image, idx) => (
                     <div
-                      key={image.id}
+                      key={image.id ?? `${image.url}-${idx}`}
                       className="relative w-full aspect-[3/2] rounded-md overflow-hidden"
                     >
                       <Image

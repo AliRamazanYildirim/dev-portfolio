@@ -220,7 +220,7 @@ const ProjectsPage = () => {
               onPrevPage={() => handlePageChange(pagination.currentPage - 1)}
               getPageNumbers={pagination.getPageNumbers}
               getCurrentRange={pagination.getCurrentRange}
-              theme="dark"
+              theme="admin"
               showInfo={true}
               size="md"
               className="mt-10"
