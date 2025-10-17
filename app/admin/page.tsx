@@ -52,6 +52,9 @@ export default function AdminPage() {
   const [shortDescription, setShortDescription] = useState<string>("");
   const [techStack, setTechStack] = useState<string>("");
   const [category, setCategory] = useState<string>("");
+  const [duration, setDuration] = useState<string>(
+    INVOICE_CONSTANTS.PROJECT.DEFAULT_DURATION[0]
+  );
   const [isFeatured, setIsFeatured] = useState<boolean>(false);
   const [gallery, setGallery] = useState<string[]>([]);
 
@@ -135,6 +138,7 @@ export default function AdminPage() {
     setShortDescription("");
     setTechStack("");
     setCategory("");
+    setDuration(INVOICE_CONSTANTS.PROJECT.DEFAULT_DURATION[0]);
     setIsFeatured(false);
     setGallery([]);
     setEditingProject(null);
@@ -172,7 +176,7 @@ export default function AdminPage() {
         title,
         description,
         role: "Full Stack Developer",
-        duration: "3 months",
+        duration: duration,
         category,
         technologies: JSON.stringify(techArray),
         mainImage: gallery[0] || "/placeholder.jpg",
@@ -672,6 +676,23 @@ export default function AdminPage() {
                       {INVOICE_CONSTANTS.PROJECT.DEFAULT_CATEGORY.map((c) => (
                         <option key={c} value={c}>
                           {c}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="lg:col-span-2">
+                    <label className="block text-sm font-semibold text-[#131313] mb-2 sm:mb-3">
+                      Project Duration
+                    </label>
+                    <select
+                      value={duration}
+                      onChange={(e) => setDuration(e.target.value)}
+                      className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
+                    >
+                      {INVOICE_CONSTANTS.PROJECT.DEFAULT_DURATION.map((d) => (
+                        <option key={d} value={d}>
+                          {d}
                         </option>
                       ))}
                     </select>

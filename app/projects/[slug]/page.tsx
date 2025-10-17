@@ -175,7 +175,17 @@ const ProjectPage = ({ params }: { params: Promise<{ slug: string }> }) => {
                 <p className="font-bold content md:text-lgContent text-white">
                   {projectTexts.duration}
                 </p>
-                <p className="text-white">{project.duration}</p>
+                <p className="text-white">
+                  {(() => {
+                    // Check if duration exists in translation labels
+                    const durationKey =
+                      project.duration as keyof typeof projectTexts.durationLabels;
+                    return projectTexts.durationLabels &&
+                      projectTexts.durationLabels[durationKey]
+                      ? projectTexts.durationLabels[durationKey]
+                      : project.duration;
+                  })()}
+                </p>
               </div>
               <div>
                 <p className="font-bold content md:text-lgContent text-white">

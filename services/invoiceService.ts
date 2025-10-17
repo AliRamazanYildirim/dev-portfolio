@@ -67,6 +67,7 @@ export class InvoiceService {
       deliverables?: string[];
       title?: string;
       description?: string;
+      duration?: string;
     }
   ): InvoiceData {
     const pricing = this.calculatePricing(customer);
@@ -104,6 +105,9 @@ export class InvoiceService {
         category:
           projectOverrides?.category ||
           INVOICE_CONSTANTS.PROJECT.DEFAULT_CATEGORY[0], // İlk kategoriyi al
+        duration:
+          projectOverrides?.duration ||
+          INVOICE_CONSTANTS.PROJECT.DEFAULT_DURATION[0], // İlk duration'ı al
         amount: pricing.netAmount, // Use calculated net amount (after discount, before MwSt)
       },
       pricing,

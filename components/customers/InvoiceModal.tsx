@@ -17,6 +17,7 @@ interface InvoiceFormData {
   deliverables: string[];
   projectTitle: string;
   projectDescription: string;
+  duration: string;
 }
 
 export default function InvoiceModal({
@@ -30,6 +31,7 @@ export default function InvoiceModal({
     deliverables: [],
     projectTitle: INVOICE_CONSTANTS.PROJECT.DEFAULT_TITLE,
     projectDescription: INVOICE_CONSTANTS.PROJECT.DEFAULT_DESCRIPTION,
+    duration: INVOICE_CONSTANTS.PROJECT.DEFAULT_DURATION[0],
   });
 
   if (!show || !customer) return null;
@@ -51,6 +53,7 @@ export default function InvoiceModal({
         deliverables: formData.deliverables,
         title: formData.projectTitle,
         description: formData.projectDescription,
+        duration: formData.duration,
       });
 
       // Call our email API
@@ -166,6 +169,7 @@ export default function InvoiceModal({
         deliverables: [],
         projectTitle: INVOICE_CONSTANTS.PROJECT.DEFAULT_TITLE,
         projectDescription: INVOICE_CONSTANTS.PROJECT.DEFAULT_DESCRIPTION,
+        duration: INVOICE_CONSTANTS.PROJECT.DEFAULT_DURATION[0],
       });
     } catch (error) {
       const errorMessage =
@@ -328,6 +332,38 @@ export default function InvoiceModal({
                     />
                     <span className="text-slate-700 font-medium group-hover:text-emerald-700 transition-colors text-sm">
                       {category}
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Duration Selection */}
+            <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl p-4 border border-amber-200/50">
+              <h3 className="text-lg font-bold text-amber-900 mb-4">
+                Project Duration
+              </h3>
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                {INVOICE_CONSTANTS.PROJECT.DEFAULT_DURATION.map((duration) => (
+                  <label
+                    key={duration}
+                    className="flex items-center space-x-2 cursor-pointer group"
+                  >
+                    <input
+                      type="radio"
+                      name="duration"
+                      value={duration}
+                      checked={formData.duration === duration}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          duration: e.target.value,
+                        }))
+                      }
+                      className="w-4 h-4 text-amber-600 focus:ring-amber-500 focus:ring-2"
+                    />
+                    <span className="text-slate-700 font-medium group-hover:text-amber-700 transition-colors text-sm">
+                      {duration}
                     </span>
                   </label>
                 ))}

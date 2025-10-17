@@ -29,6 +29,18 @@ export const INVOICE_CONSTANTS = {
             "E-Commerce",
             "Consulting"
         ],
+        DEFAULT_DURATION: [
+            "1 Week",
+            "2 Weeks",
+            "3 Weeks",
+            "4 Weeks",
+            "1 Month",
+            "2 Months",
+            "3 Months",
+            "4 Months",
+            "5 Months",
+            "6 Months"
+        ],
         DEFAULT_DELIVERABLES: [
             "Responsive website design",
             "Frontend development",

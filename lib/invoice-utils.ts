@@ -25,6 +25,7 @@ export interface InvoiceData {
     technologies?: string;
     deliverables?: string[];
     category?: string;
+    duration?: string;
     amount?: number;
   };
   pricing?: {

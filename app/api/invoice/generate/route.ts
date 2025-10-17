@@ -237,12 +237,21 @@ export async function POST(request: NextRequest) {
 
     let lineY = yPos + 45;
     wrappedText.forEach((line: string) => {
-      if (lineY < yPos + 115) {
-        // 135'den 115'e düşürdük
+      if (lineY < yPos + 105) {
+        // Metin alanını 105'e kadar sınırla
         doc.text(line, 50, lineY);
         lineY += 12;
       }
     });
+
+    const durationText = invoiceData.project?.duration;
+    if (durationText) {
+      const durationY = Math.min(lineY + 10, yPos + 110);
+      doc.setFont("helvetica", "bold");
+      doc.text("Duration:", 50, durationY);
+      doc.setFont("helvetica", "normal");
+      doc.text(durationText, 110, durationY);
+    }
 
     // Category and Amount (right side)
     const categoryX = 40 + (pageWidth - 80) * 0.7;
