@@ -89,6 +89,8 @@ export class InvoiceService {
         name: `${customer.firstname} ${customer.lastname}`,
         company: customer.companyname || undefined,
         address: customer.address,
+        city: customer.city || undefined,
+        postcode: customer.postcode || undefined,
         email: customer.email,
         phone: customer.phone || undefined,
       },

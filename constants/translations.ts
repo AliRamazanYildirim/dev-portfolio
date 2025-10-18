@@ -36,7 +36,7 @@ export const translations = {
     hero: {
       headlineTop: "HI THERE -",
       headlineBottom: "I'M ALI RAMAZAN",
-      location: "Offenburg",
+      location: "Sasbach",
       scrollLabel: "(Scroll For More)",
       about: {
         introParagraphs: [
@@ -398,7 +398,7 @@ export const translations = {
     hero: {
       headlineTop: "HI DU -",
       headlineBottom: "ICH BIN ALI RAMAZAN",
-      location: "Offenburg",
+      location: "Sasbach",
       scrollLabel: "(Scroll für mehr)",
       about: {
         introParagraphs: [
@@ -758,7 +758,7 @@ export const translations = {
     hero: {
       headlineTop: "MERHABA -",
       headlineBottom: "BEN ALİ RAMAZAN",
-      location: "Offenburg",
+      location: "Sasbach",
       scrollLabel: "(Daha fazlası için kaydır)",
       about: {
         introParagraphs: [

@@ -16,6 +16,8 @@ export interface InvoiceData {
     name: string;
     company?: string;
     address: string;
+    city?: string;
+    postcode?: string;
     email: string;
     phone?: string;
   };

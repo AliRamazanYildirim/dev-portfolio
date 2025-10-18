@@ -150,22 +150,24 @@ export async function POST(request: NextRequest) {
     doc.text("FROM", 50, yPos + 17);
 
     doc.setFillColor(247, 250, 252);
-    doc.rect(40, yPos + 25, 240, 75, "F"); // 90'dan 75'e düşürdük
+    doc.rect(40, yPos + 25, 240, 75, "F"); // 110'dan 75'e düşürdük (email/phone kaldırıldı)
     doc.setDrawColor(200, 200, 200);
     doc.setLineWidth(0.5); // İnce çerçeve
     doc.rect(40, yPos + 25, 240, 75, "S");
 
     doc.setTextColor(26, 54, 93);
-    doc.setFontSize(14);
+    doc.setFontSize(13);
     doc.setFont("helvetica", "bold");
-    doc.text("Ali Ramazan Yildirim", 50, yPos + 45);
+    doc.text("ARY Tech Solutions", 50, yPos + 45);
+
+    doc.setFontSize(11);
+    doc.setFont("helvetica", "normal");
+    doc.text("Inh. Ramazan Yildirim", 50, yPos + 62);
 
     doc.setTextColor(74, 85, 104);
     doc.setFontSize(10);
-    doc.setFont("helvetica", "normal");
-    doc.text("Full Stack Developer", 50, yPos + 60);
-    doc.text("Email: aliramazanyildirim@gmail.com", 50, yPos + 75);
-    doc.text("Phone: +49 151 67145187", 50, yPos + 90);
+    doc.text("Hebelstraße 1", 50, yPos + 78);
+    doc.text("77880 Sasbach, Germany", 50, yPos + 93);
 
     // BILL TO section - Invoice Details box ile aynı hizada
     doc.setFillColor(26, 54, 93);
@@ -176,31 +178,51 @@ export async function POST(request: NextRequest) {
     doc.text("BILL TO", pageWidth - 240, yPos + 17);
 
     doc.setFillColor(247, 250, 252);
-    doc.rect(pageWidth - 250, yPos + 25, 210, 75, "F");
+    doc.rect(pageWidth - 250, yPos + 25, 210, 75, "F"); // FROM ile aynı yükseklik
     doc.setDrawColor(200, 200, 200);
     doc.setLineWidth(0.5); // İnce çerçeve
     doc.rect(pageWidth - 250, yPos + 25, 210, 75, "S");
 
     doc.setTextColor(26, 54, 93);
-    doc.setFontSize(14);
+    doc.setFontSize(13);
     doc.setFont("helvetica", "bold");
     doc.text(invoiceData.billTo?.name || "", pageWidth - 240, yPos + 45);
 
     doc.setTextColor(74, 85, 104);
     doc.setFontSize(10);
     doc.setFont("helvetica", "normal");
-    if (invoiceData.billTo?.email) {
-      doc.text(
-        `Email: ${invoiceData.billTo.email}`,
-        pageWidth - 240,
-        yPos + 60
-      );
-    }
+
+    let billToY = yPos + 60;
+
+    // Address handling - eğer address çok satırlıysa split et, yoksa olduğu gibi göster
     if (invoiceData.billTo?.address) {
       const addressLines = invoiceData.billTo.address.split("\n");
-      addressLines.forEach((line: string, index: number) => {
-        doc.text(line, pageWidth - 240, yPos + 75 + index * 15);
+      addressLines.forEach((line: string) => {
+        if (line.trim()) {
+          doc.text(line.trim(), pageWidth - 240, billToY);
+          billToY += 13;
+        }
       });
+    }
+
+    // City and Postcode - eğer address'te yoksa ayrıca göster
+    if (invoiceData.billTo?.postcode || invoiceData.billTo?.city) {
+      const cityLine = [
+        invoiceData.billTo?.postcode,
+        invoiceData.billTo?.city
+      ].filter(Boolean).join(" ");
+
+      // Eğer cityLine address içinde yoksa, ayrı göster
+      const addressStr = invoiceData.billTo?.address || "";
+      if (!addressStr.includes(cityLine)) {
+        doc.text(cityLine, pageWidth - 240, billToY);
+        billToY += 13;
+      }
+    }
+
+    // Email (optional)
+    if (invoiceData.billTo?.email) {
+      doc.text(`Email: ${invoiceData.billTo.email}`, pageWidth - 240, billToY);
     }
 
     // Project Details Section - Boşlukları azalttık
@@ -463,7 +485,14 @@ export async function POST(request: NextRequest) {
     doc.setFont("helvetica", "normal");
     doc.text("IBAN: DE86 5009 0500 0006 4023 17", 50, yPos + 90);
     doc.text("BIC: GENODEF1XXX", 50, yPos + 105);
-    doc.text("Account Holder: Ali Ramazan Yildirim", 50, yPos + 120);
+    doc.text("Account Holder: Ramazan Yildirim", 50, yPos + 120);
+
+    // Sağ alt köşeye ek bilgiler
+    doc.setFontSize(9);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(100, 100, 100);
+    doc.text("Amtsgericht: Offenburg", pageWidth - 50, yPos + 105, { align: "right" });
+    doc.text("USt-IdNr.: DE123456789", pageWidth - 50, yPos + 120, { align: "right" });
 
     // Footer - sayfanın altında optimum konumda
     const footerY = yPos + 140; // PAYMENT kutusu sonrası
@@ -471,7 +500,7 @@ export async function POST(request: NextRequest) {
     doc.setFontSize(8);
     doc.setFont("helvetica", "normal");
     doc.text(
-      "Ali Ramazan Yildirim - Full Stack Developer - Offenburg, Germany",
+      "Ramazan Yildirim - Full Stack Developer - Sasbach, Germany",
       pageWidth / 2,
       footerY,
       { align: "center" }
