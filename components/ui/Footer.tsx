@@ -47,13 +47,22 @@ function Footer({ className }: { className?: string }) {
           ))}
         </div>
 
-        <button
-          onClick={scrollToTop}
-          className="mt-6 md:mt-0 md:text-right text-[#260a03] hover:text-gray hover:underline transition"
-          aria-label={footerDictionary.scrollTopAria}
-        >
-          {footerDictionary.copyright}
-        </button>
+        <div className="mt-6 md:mt-0 flex flex-col items-center md:items-end gap-3 text-[#260a03]">
+          <Link
+            href="/privacy"
+            aria-label={footerDictionary.privacyAria}
+            className="text-sm md:text-base hover:underline hover:text-gray transition"
+          >
+            {footerDictionary.privacyLink}
+          </Link>
+          <button
+            onClick={scrollToTop}
+            className="text-sm md:text-base hover:text-gray hover:underline transition"
+            aria-label={footerDictionary.scrollTopAria}
+          >
+            {footerDictionary.copyright}
+          </button>
+        </div>
       </footer>
     </NoiseBackground>
   );
