@@ -29,17 +29,22 @@ export const Nav = ({ className }: { className?: string }) => {
     {
       code: "en" as SupportedLanguage,
       label: navDictionary.languageMenu.languages.en,
+      flag: "/flags/us.svg",
     },
     {
       code: "de" as SupportedLanguage,
       label: navDictionary.languageMenu.languages.de,
+      flag: "/flags/de.svg",
     },
     {
       code: "tr" as SupportedLanguage,
       label: navDictionary.languageMenu.languages.tr,
+      flag: "/flags/tr.svg",
     },
   ];
-  const currentLanguageLabel = navDictionary.languageMenu.languages[language];
+  const currentLanguageData =
+    languages.find((lang) => lang.code === language) ?? languages[0];
+  const currentLanguageLabel = currentLanguageData.label;
 
   const toggleMenu = () => {
     setMenuOpen((prev) => !prev);
@@ -188,6 +193,13 @@ export const Nav = ({ className }: { className?: string }) => {
                     aria-label={navDictionary.aria.language}
                     type="button"
                   >
+                    <Image
+                      src={currentLanguageData.flag}
+                      alt={`${currentLanguageLabel} flag`}
+                      width={20}
+                      height={14}
+                      className="h-3.5 w-5 rounded-sm object-cover"
+                    />
                     <span className="font-normal">{currentLanguageLabel}</span>
                     <svg
                       className={`w-4 h-4 transition-transform ${
@@ -224,8 +236,15 @@ export const Nav = ({ className }: { className?: string }) => {
                                 language === lang.code
                                   ? "font-semibold text-[#c9184a]"
                                   : "text-gray-700"
-                              }`}
+                              } flex items-center gap-2 justify-center`}
                             >
+                              <Image
+                                src={lang.flag}
+                                alt={`${lang.label} flag`}
+                                width={18}
+                                height={12}
+                                className="h-3 w-4 rounded-sm object-cover"
+                              />
                               {lang.label}
                             </button>
                           </li>
@@ -335,8 +354,15 @@ export const Nav = ({ className }: { className?: string }) => {
                               language === lang.code
                                 ? "border-[#c9184a] text-[#c9184a] bg-[#c9184a]/10"
                                 : "border-gray-200 text-gray hover:border-gray-400"
-                            }`}
+                            } flex items-center gap-2 justify-center`}
                           >
+                            <Image
+                              src={lang.flag}
+                              alt={`${lang.label} flag`}
+                              width={18}
+                              height={12}
+                              className="h-3 w-4 rounded-sm object-cover"
+                            />
                             {lang.label}
                           </button>
                         ))}
