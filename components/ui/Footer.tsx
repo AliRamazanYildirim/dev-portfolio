@@ -48,13 +48,23 @@ function Footer({ className }: { className?: string }) {
         </div>
 
         <div className="mt-6 md:mt-0 flex flex-col items-center md:items-end gap-3 text-[#260a03]">
-          <Link
-            href="/privacy"
-            aria-label={footerDictionary.privacyAria}
-            className="text-sm md:text-base hover:underline hover:text-gray transition"
-          >
-            {footerDictionary.privacyLink}
-          </Link>
+          <div className="flex flex-col md:flex-row items-center gap-3 md:gap-4">
+            <Link
+              href="/privacy"
+              aria-label={footerDictionary.privacyAria}
+              className="text-sm md:text-base hover:underline hover:text-gray transition"
+            >
+              {footerDictionary.privacyLink}
+            </Link>
+            <span className="hidden md:inline text-gray">•</span>
+            <Link
+              href="/terms"
+              aria-label={footerDictionary.termsAria}
+              className="text-sm md:text-base hover:underline hover:text-gray transition"
+            >
+              {footerDictionary.termsLink}
+            </Link>
+          </div>
           <button
             onClick={scrollToTop}
             className="text-sm md:text-base hover:text-gray hover:underline transition"
