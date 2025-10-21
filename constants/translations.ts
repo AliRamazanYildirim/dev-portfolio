@@ -380,7 +380,7 @@ export const translations = {
       title: "Terms and Conditions",
       lastUpdated: "Last updated: 19 October 2025",
       intro: [
-        "These Terms and Conditions ('Terms') govern all professional software development services provided by Ali Ramazan Yildirim ('Service Provider', 'I', 'me') to clients ('Client', 'you') through this portfolio platform.",
+        "These Terms and Conditions ('Terms') govern all professional software development services provided by Ramazan Yildirim ('Service Provider', 'I', 'me') to clients ('Client', 'you') through this portfolio platform.",
         "By engaging my services, requesting a quote, or entering into a project agreement, you accept these Terms in full. These Terms apply alongside any individual project agreements or contracts.",
       ],
       sections: [
@@ -1494,7 +1494,7 @@ export const translations = {
       title: "Hizmet Şartları ve Koşulları",
       lastUpdated: "Güncelleme tarihi: 19 Ekim 2025",
       intro: [
-        "Bu Hizmet Şartları ve Koşulları ('Şartlar'), Ali Ramazan Yıldırım ('Hizmet Sağlayıcı', 'ben') tarafından müşterilere ('Müşteri', 'siz') bu portföy platformu aracılığıyla sunulan tüm profesyonel yazılım geliştirme hizmetlerini düzenler.",
+        "Bu Hizmet Şartları ve Koşulları ('Şartlar'), Ramazan Yıldırım ('Hizmet Sağlayıcı', 'ben') tarafından müşterilere ('Müşteri', 'siz') bu portföy platformu aracılığıyla sunulan tüm profesyonel yazılım geliştirme hizmetlerini düzenler.",
         "Hizmetlerime başvurarak, teklif talep ederek veya bir proje anlaşması yaparak, bu Şartları tamamen kabul etmiş olursunuz. Bu Şartlar, bireysel proje anlaşmaları veya sözleşmelerin yanı sıra geçerlidir.",
       ],
       sections: [

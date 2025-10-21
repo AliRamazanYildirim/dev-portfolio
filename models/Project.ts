@@ -3,12 +3,18 @@ import { createId } from "@paralleldrive/cuid2";
 
 const { Schema } = mongoose;
 
+export interface TranslatedDescription {
+    en: string;
+    de: string;
+    tr: string;
+}
+
 export interface IProject {
     _id: string;
     slug: string;
     title: string;
     author: string;
-    description: string;
+    description: TranslatedDescription | string; // Support both for migration
     role: string;
     duration: string;
     category: string;
@@ -28,7 +34,7 @@ const ProjectSchema = new Schema<IProject>(
         slug: { type: String, required: true, unique: true },
         title: { type: String, required: true },
         author: { type: String, default: "Ali Ramazan" },
-        description: { type: String },
+        description: { type: Schema.Types.Mixed }, // String or TranslatedDescription
         role: { type: String },
         duration: { type: String },
         category: { type: String },

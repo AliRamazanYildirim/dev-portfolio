@@ -10,13 +10,14 @@ import { ProjectsAPI } from "@/lib/api";
 import { usePagination } from "@/hooks/usePagination";
 import Pagination from "@/components/ui/Pagination";
 import { useTranslation } from "@/hooks/useTranslation";
+import { useLanguageContext } from "@/contexts/LanguageContext";
 
 // TypeScript Interface für Projekte
 interface Project {
   id: string;
   slug: string;
   title: string;
-  description: string;
+  description: { en: string; de: string; tr: string } | string;
   mainImage: string;
   featured: boolean;
   gallery: Array<{
@@ -28,7 +29,16 @@ interface Project {
 
 const ProjectsPage = () => {
   const { dictionary } = useTranslation();
+  const { language } = useLanguageContext();
   const projectsDictionary = dictionary.projectsPage;
+
+  // Helper: Get description text
+  const getDescriptionText = (
+    desc: { en: string; de: string; tr: string } | string
+  ): string => {
+    if (typeof desc === "string") return desc;
+    return desc[language] || desc.en || desc.de || desc.tr || "";
+  };
 
   // State für Projekte und Loading
   const [projects, setProjects] = useState<Project[]>([]);
@@ -194,9 +204,12 @@ const ProjectsPage = () => {
                       {project.title}
                     </h2>
                     <p className="button md:text-lgButton text-white mt-2 line-clamp-2">
-                      {project.description.length > 100
-                        ? `${project.description.slice(0, 100)}...`
-                        : project.description}
+                      {(() => {
+                        const desc = getDescriptionText(project.description);
+                        return desc.length > 100
+                          ? `${desc.slice(0, 100)}...`
+                          : desc;
+                      })()}
                     </p>
                     {/* Galerie Anzahl */}
                     {/* <p className="text-sm text-white mt-2">

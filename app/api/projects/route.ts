@@ -40,7 +40,24 @@ export async function GET(request: NextRequest) {
       projects.map(async (p) => {
         const gallery = await ProjectImageModel.find({ projectId: p._id }).sort({ order: 1 }).lean().exec();
         const tags = await ProjectTagModel.find({ projects: p._id }).lean().exec().catch(() => []);
-        return { ...p, gallery, tags };
+
+        // Ensure description is properly serialized
+        let description = p.description;
+        if (typeof description === 'object' && description !== null) {
+          // Already an object with translations, keep it
+          description = {
+            en: description.en || "",
+            de: description.de || "",
+            tr: description.tr || ""
+          };
+        }
+
+        return {
+          ...p,
+          description,
+          gallery,
+          tags
+        };
       })
     );
 

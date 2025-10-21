@@ -14,7 +14,7 @@ import toast from "react-hot-toast";
 interface Project {
   id: string;
   title: string;
-  description: string;
+  description: { en: string; de: string; tr: string } | string;
   shortDescription: string;
   techStack: string[];
   isFeatured: boolean;
@@ -49,6 +49,8 @@ export default function AdminPage() {
   // Formular-Status - Form state
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
+  const [descriptionDE, setDescriptionDE] = useState<string>("");
+  const [descriptionTR, setDescriptionTR] = useState<string>("");
   const [shortDescription, setShortDescription] = useState<string>("");
   const [techStack, setTechStack] = useState<string>("");
   const [category, setCategory] = useState<string>("");
@@ -57,6 +59,7 @@ export default function AdminPage() {
   );
   const [isFeatured, setIsFeatured] = useState<boolean>(false);
   const [gallery, setGallery] = useState<string[]>([]);
+  const [activeTab, setActiveTab] = useState<"en" | "de" | "tr">("en");
 
   useEffect(() => {
     fetchProjects();
@@ -96,12 +99,45 @@ export default function AdminPage() {
                 : [];
           }
 
+          // Handle description - ALWAYS convert to string for display
+          let desc = "No description available";
+          let descriptionObj = project.description;
+
+          if (
+            typeof project.description === "object" &&
+            project.description !== null
+          ) {
+            // It's already a translation object
+            desc =
+              project.description.en ||
+              project.description.de ||
+              project.description.tr ||
+              "No description available";
+            descriptionObj = project.description;
+          } else if (typeof project.description === "string") {
+            // It's a plain string
+            desc = project.description;
+            descriptionObj = project.description;
+          }
+
+          // Ensure shortDescription is ALWAYS a plain string - NO OBJECTS!
+          const shortDesc =
+            desc.length > 150 ? desc.substring(0, 150) + "..." : desc;
+
+          console.log(
+            "Processing project:",
+            project.title,
+            "shortDesc type:",
+            typeof shortDesc,
+            "value:",
+            shortDesc
+          );
+
           return {
             id: project.id || project._id || project._id?.toString(),
-            title: project.title,
-            description: project.description,
-            shortDescription:
-              project.description?.substring(0, 150) + "..." || "",
+            title: project.title || "Untitled",
+            description: descriptionObj, // Keep original for editing
+            shortDescription: String(shortDesc), // FORCE STRING CONVERSION
             techStack: techStack,
             category: project.category || "",
             isFeatured: project.featured || false,
@@ -135,6 +171,8 @@ export default function AdminPage() {
   const resetForm = () => {
     setTitle("");
     setDescription("");
+    setDescriptionDE("");
+    setDescriptionTR("");
     setShortDescription("");
     setTechStack("");
     setCategory("");
@@ -143,6 +181,7 @@ export default function AdminPage() {
     setGallery([]);
     setEditingProject(null);
     setShowForm(false);
+    setActiveTab("en");
   };
 
   // Projekt speichern - Save project
@@ -174,7 +213,11 @@ export default function AdminPage() {
       const projectData = {
         slug,
         title,
-        description,
+        description: {
+          en: description,
+          de: descriptionDE,
+          tr: descriptionTR,
+        },
         role: "Full Stack Developer",
         duration: duration,
         category,
@@ -248,7 +291,18 @@ export default function AdminPage() {
 
   const editProject = (project: Project) => {
     setTitle(project.title);
-    setDescription(project.description);
+
+    // Handle multilingual description
+    if (typeof project.description === "object") {
+      setDescription(project.description.en || "");
+      setDescriptionDE(project.description.de || "");
+      setDescriptionTR(project.description.tr || "");
+    } else {
+      setDescription(project.description || "");
+      setDescriptionDE("");
+      setDescriptionTR("");
+    }
+
     setShortDescription(project.shortDescription);
     setTechStack(project.techStack.join(", "));
     setCategory(project.category || "");
@@ -256,6 +310,16 @@ export default function AdminPage() {
     setGallery(project.gallery.map((img) => img.url));
     setEditingProject(project);
     setShowForm(true);
+  };
+
+  // Helper: Get string from description (object or string)
+  const getDescriptionText = (desc: any): string => {
+    if (!desc) return "";
+    if (typeof desc === "string") return desc;
+    if (typeof desc === "object" && desc !== null) {
+      return desc.en || desc.de || desc.tr || "";
+    }
+    return String(desc);
   };
 
   // Authentication loading
@@ -426,7 +490,12 @@ export default function AdminPage() {
                                   </div>
 
                                   <p className="text-base sm:text-lg text-[#131313]/80 mb-4 sm:mb-6 leading-relaxed">
-                                    {project.shortDescription}
+                                    {typeof project.shortDescription ===
+                                    "string"
+                                      ? project.shortDescription
+                                      : getDescriptionText(
+                                          project.shortDescription
+                                        )}
                                   </p>
 
                                   <div className="flex flex-wrap gap-2 sm:gap-3 mb-4 sm:mb-6">
@@ -638,16 +707,79 @@ export default function AdminPage() {
                   </div>
 
                   <div className="lg:col-span-2">
-                    <label className="block text-sm font-semibold text-[#131313] mb-2 sm:mb-3">
+                    <label className="block text-sm font-semibold text-[#131313] mb-3">
                       Detailed Description
                     </label>
-                    <textarea
-                      placeholder="Provide detailed information about your project..."
-                      value={description}
-                      onChange={(e) => setDescription(e.target.value)}
-                      rows={4}
-                      className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content resize-none text-sm sm:text-base"
-                    />
+
+                    {/* Language Tabs */}
+                    <div className="flex gap-2 mb-3">
+                      <button
+                        type="button"
+                        onClick={() => setActiveTab("en")}
+                        className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                          activeTab === "en"
+                            ? "bg-[#131313] text-white"
+                            : "bg-white/50 text-[#131313] hover:bg-white/80"
+                        }`}
+                      >
+                        🇬🇧 EN
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setActiveTab("de")}
+                        className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                          activeTab === "de"
+                            ? "bg-[#131313] text-white"
+                            : "bg-white/50 text-[#131313] hover:bg-white/80"
+                        }`}
+                      >
+                        🇩🇪 DE
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setActiveTab("tr")}
+                        className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                          activeTab === "tr"
+                            ? "bg-[#131313] text-white"
+                            : "bg-white/50 text-[#131313] hover:bg-white/80"
+                        }`}
+                      >
+                        🇹🇷 TR
+                      </button>
+                    </div>
+
+                    {/* English */}
+                    {activeTab === "en" && (
+                      <textarea
+                        placeholder="Provide detailed information about your project (English)..."
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                        rows={4}
+                        className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content resize-none text-sm sm:text-base"
+                      />
+                    )}
+
+                    {/* German */}
+                    {activeTab === "de" && (
+                      <textarea
+                        placeholder="Detaillierte Projektinformationen (Deutsch)..."
+                        value={descriptionDE}
+                        onChange={(e) => setDescriptionDE(e.target.value)}
+                        rows={4}
+                        className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content resize-none text-sm sm:text-base"
+                      />
+                    )}
+
+                    {/* Turkish */}
+                    {activeTab === "tr" && (
+                      <textarea
+                        placeholder="Proje hakkında detaylı bilgi (Türkçe)..."
+                        value={descriptionTR}
+                        onChange={(e) => setDescriptionTR(e.target.value)}
+                        rows={4}
+                        className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content resize-none text-sm sm:text-base"
+                      />
+                    )}
                   </div>
 
                   <div className="lg:col-span-2">

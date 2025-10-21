@@ -222,6 +222,19 @@ export default function CustomerForm({
 
               <div className="lg:col-span-2">
                 <label className="block text-sm font-semibold text-[#131313] mb-2 sm:mb-3">
+                  Price (EUR)
+                </label>
+                <input
+                  type="number"
+                  placeholder="Enter price..."
+                  value={formData.price ?? ""}
+                  onChange={(e) => onUpdateField("price", e.target.value)}
+                  className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
+                />
+              </div>
+
+              <div className="lg:col-span-2">
+                <label className="block text-sm font-semibold text-[#131313] mb-2 sm:mb-3">
                   Reference (Referenzcode - Optional)
                 </label>
                 <input
@@ -286,19 +299,6 @@ export default function CustomerForm({
                     )}
                   </div>
                 )}
-              </div>
-
-              <div className="lg:col-span-2">
-                <label className="block text-sm font-semibold text-[#131313] mb-2 sm:mb-3">
-                  Price (EUR)
-                </label>
-                <input
-                  type="number"
-                  placeholder="Enter price..."
-                  value={formData.price ?? ""}
-                  onChange={(e) => onUpdateField("price", e.target.value)}
-                  className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
-                />
               </div>
             </div>
           </div>

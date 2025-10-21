@@ -7,6 +7,10 @@ import NoiseBackground from "@/components/NoiseBackground";
 import { ProjectsAPI } from "@/lib/api";
 import { use } from "react";
 import { useTranslation } from "@/hooks/useTranslation";
+import {
+  useLanguageContext,
+  type SupportedLanguage,
+} from "@/contexts/LanguageContext";
 
 // TypeScript Interface für Projekt Details
 interface ProjectDetail {
@@ -14,7 +18,7 @@ interface ProjectDetail {
   slug: string;
   title: string;
   author: string;
-  description: string;
+  description: { en: string; de: string; tr: string } | string;
   role: string;
   duration: string;
   category: string;
@@ -42,12 +46,21 @@ const ProjectPage = ({ params }: { params: Promise<{ slug: string }> }) => {
   const router = useRouter();
   const { slug } = use(params);
   const { dictionary } = useTranslation();
+  const { language } = useLanguageContext();
   const projectTexts = dictionary.projectDetail;
 
   // State für Projekt und Loading
   const [project, setProject] = useState<ProjectDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Get description in current language
+  const getDescription = (
+    desc: { en: string; de: string; tr: string } | string
+  ): string => {
+    if (typeof desc === "string") return desc;
+    return desc[language as SupportedLanguage] || desc.en || "";
+  };
 
   // Projekt von der API laden
   useEffect(() => {
@@ -159,7 +172,7 @@ const ProjectPage = ({ params }: { params: Promise<{ slug: string }> }) => {
             </div>
             <div>
               <p className="content md:text-lgContent text-white text-lg leading-relaxed">
-                {project.description}
+                {getDescription(project.description)}
               </p>
             </div>
 
