@@ -36,47 +36,47 @@ export const translations = {
       termsAria: "Open the terms and conditions page",
     },
     hero: {
-      headlineTop: "HI THERE -",
-      headlineBottom: "I'M ALI RAMAZAN",
-      location: "Sasbach",
-      scrollLabel: "(Scroll For More)",
-      about: {
-        introParagraphs: [
-          "Fast, scalable, and reliable web solutions built with a clear focus on business goals and user needs. With strong fullstack experience and a background in both modern and enterprise technologies, every solution is designed to work efficiently—and the right way.",
-          "From new product development to system optimization, complex challenges are addressed through clean architecture and user-centered design, creating sustainable digital products with long-term value.",
-          "Every project starts with understanding the problem, delivering the right solution, and creating lasting impact through thoughtful engineering.",
-        ],
-        sections: [
-          {
-            title: "Core Competencies",
-            items: [
-              "Frontend: React, Next.js, Tailwind CSS",
-              "Backend: Node.js, Express, MongoDB",
-              "Integrations: Stripe, Uploadthing",
-              "Enterprise Systems: SAP, ABAP",
-              "Architecture: Scalable, maintainable, high-performance systems",
-            ],
-          },
-          {
-            title: "Collaboration Approach",
-            items: [
-              "Focus on quality, clarity, and scalability",
-              "Transparent communication and aligned workflows",
-              "Technically sound solutions with real business value",
-              "Long-term thinking behind every decision",
-            ],
-          },
-          {
-            title: "Who I Work With",
-            items: [
-              "Startups: MVP to stable product",
-              "Enterprises: SAP modernization and integrations",
-              "Agencies: Flexible frontend/backend development",
-              "Entrepreneurs: From idea to launch-ready product",
-            ],
-          },
-        ],
+      tagline: "Websites without guesswork",
+      headline: {
+        leading: "Win your ideal clients and team with a",
+        highlight: "website engineered for trust",
+        trailing: "and measurable growth",
       },
+      subheadline:
+        "Partner directly with a senior full-stack developer who handles strategy, content, design, and build in one streamlined process.",
+      introParagraphs: [
+        "Every collaboration starts with a deep-dive workshop to uncover your value proposition, audience pains, and conversion triggers. The insights shape messaging, UX, and technical setup before any line of code is written.",
+        "From there, I deliver weekly prototypes, transparent status updates, and launch-ready assets so your marketing can go live without delays or handover issues.",
+      ],
+      valueProps: [
+        {
+          title: "All-in-one delivery",
+          description:
+            "Discovery, copywriting, design, development, QA, and analytics—coordinated end-to-end by one accountable partner.",
+        },
+        {
+          title: "Direct senior expertise",
+          description:
+            "You work exclusively with me; no handoffs to juniors, no agency overhead, just clear decisions aligned with your business goals.",
+        },
+        {
+          title: "Conversion-first build",
+          description:
+            "Fast, secure Next.js sites with structured content, lead funnels, and data tracking baked in from day one.",
+        },
+        {
+          title: "Transparent investment",
+          description:
+            "Fixed-scope packages, clear timelines, and proactive communication so you always know what happens next.",
+        },
+      ],
+      ctas: {
+        primary: { label: "Book a discovery call", href: "/#contact" },
+        secondary: { label: "See how the process works" },
+      },
+      trustNote: "I respond within one business day with a tailored next step.",
+      location: "Remote from Sasbach · serving clients across Europe",
+      scrollLabel: "Scroll For More",
     },
     littleAbout: {
       heading: "A Little About Me -",
@@ -596,47 +596,50 @@ export const translations = {
       termsAria: "Zu den Allgemeinen Geschäftsbedingungen wechseln",
     },
     hero: {
-      headlineTop: "HI DU -",
-      headlineBottom: "ICH BIN ALI RAMAZAN",
-      location: "Sasbach",
-      scrollLabel: "(Scroll für mehr)",
-      about: {
-        introParagraphs: [
-          "Schnelle, skalierbare und zuverlässige Weblösungen mit klarem Fokus auf Geschäftsziele und Nutzerbedürfnisse. Dank umfassender Fullstack-Erfahrung und Know-how in modernen wie auch Enterprise-Technologien entstehen Lösungen, die effizient funktionieren – und zwar richtig.",
-          "Von neuer Produktentwicklung bis Systemoptimierung werden komplexe Herausforderungen mit sauberer Architektur und nutzerzentriertem Design gelöst – für nachhaltige digitale Produkte mit langfristigem Wert.",
-          "Jedes Projekt beginnt mit dem Verständnis des Problems, liefert die passende Lösung und schafft durch durchdachte Technik nachhaltigen Impact.",
-        ],
-        sections: [
-          {
-            title: "Kernkompetenzen",
-            items: [
-              "Frontend: React, Next.js, Tailwind CSS",
-              "Backend: Node.js, Express, MongoDB",
-              "Integrationen: Stripe, Uploadthing",
-              "Enterprise-Systeme: SAP, ABAP",
-              "Architektur: Skalierbare, wartbare, performante Systeme",
-            ],
-          },
-          {
-            title: "Zusammenarbeit",
-            items: [
-              "Fokus auf Qualität, Klarheit und Skalierbarkeit",
-              "Transparente Kommunikation und abgestimmte Workflows",
-              "Technisch fundierte Lösungen mit echtem Geschäftswert",
-              "Langfristiges Denken bei jeder Entscheidung",
-            ],
-          },
-          {
-            title: "Mit wem ich arbeite",
-            items: [
-              "Startups: Vom MVP zum stabilen Produkt",
-              "Unternehmen: SAP-Modernisierung und Integrationen",
-              "Agenturen: Flexibles Frontend-/Backend-Development",
-              "Unternehmer:innen: Von der Idee bis zum marktreifen Produkt",
-            ],
-          },
-        ],
+      tagline: "Websites ohne Umwege",
+      headline: {
+        leading: "Mehr passende Anfragen und Talente dank einer",
+        highlight: "Website, der man vertraut",
+        trailing: "und die Ergebnisse messbar macht",
       },
+      subheadline:
+        "Arbeiten Sie direkt mit einem erfahrenen Full-Stack-Entwickler, der Strategie, Inhalte, Design und Entwicklung in einem klaren Prozess vereint.",
+      introParagraphs: [
+        "Zu Beginn analysieren wir Ihr Angebot, die Zielgruppe und konkrete Conversion-Hebel. Diese Erkenntnisse fließen in Storytelling, UX und technische Architektur, bevor die Umsetzung startet.",
+        "Sie erhalten wöchentliche Prototypen, transparente Status-Updates und launchfertige Assets, damit Marketing und Vertrieb ohne Reibungsverluste weiterarbeiten können.",
+      ],
+      valueProps: [
+        {
+          title: "Komplettservice aus einer Hand",
+          description:
+            "Discovery, Texte, UX, Entwicklung, Qualitätssicherung und Tracking – koordiniert von einem verantwortlichen Partner.",
+        },
+        {
+          title: "Direkter Senior-Kontakt",
+          description:
+            "Sie arbeiten ausschließlich mit mir – schnelle Rückmeldungen, klare Entscheidungen und Fokus auf Ihre Geschäftsziele.",
+        },
+        {
+          title: "Conversion-starke Umsetzung",
+          description:
+            "Schnelle, sichere Next.js-Seiten mit strukturierter Inhaltshierarchie, Lead-Funnels und sauberem Tracking ab dem ersten Tag.",
+        },
+        {
+          title: "Volle Kostentransparenz",
+          description:
+            "Fix definierte Pakete, klare Zeitpläne und proaktive Kommunikation, damit Sie jeden Schritt vorab kennen.",
+        },
+      ],
+      ctas: {
+        primary: {
+          label: "Unverbindliches Erstgespräch buchen",
+          href: "/#contact",
+        },
+        secondary: { label: "Ablauf der Zusammenarbeit ansehen" },
+      },
+      trustNote: "Antwort innerhalb von 24 Stunden mit konkretem Vorschlag.",
+      location: "Remote aus Sasbach · Projekte in DACH & Europa",
+      scrollLabel: "Scroll für mehr",
     },
     littleAbout: {
       heading: "Ein bisschen über mich -",
@@ -1154,47 +1157,50 @@ export const translations = {
       termsAria: "Hizmet şartları sayfasını aç",
     },
     hero: {
-      headlineTop: "MERHABA -",
-      headlineBottom: "BEN ALİ RAMAZAN",
-      location: "Sasbach",
-      scrollLabel: "(Daha fazlası için kaydır)",
-      about: {
-        introParagraphs: [
-          "İş hedeflerine ve kullanıcı ihtiyaçlarına odaklanan, hızlı, ölçeklenebilir ve güvenilir web çözümleri. Modern ve kurumsal teknolojilerdeki güçlü fullstack deneyimim sayesinde her çözümü verimli ve doğru şekilde tasarlıyorum.",
-          "Yeni ürün geliştirmeden sistem optimizasyonuna kadar karmaşık zorlukları temiz mimari ve kullanıcı odaklı tasarımla ele alıyor, uzun vadeli değer sağlayan dijital ürünler oluşturuyorum.",
-          "Her proje, problemi anlamak, doğru çözümü sunmak ve derin mühendislikle kalıcı bir etki yaratmakla başlar.",
-        ],
-        sections: [
-          {
-            title: "Temel Yetkinlikler",
-            items: [
-              "Frontend: React, Next.js, Tailwind CSS",
-              "Backend: Node.js, Express, MongoDB",
-              "Entegrasyonlar: Stripe, Uploadthing",
-              "Kurumsal Sistemler: SAP, ABAP",
-              "Mimari: Ölçeklenebilir, sürdürülebilir ve yüksek performanslı sistemler",
-            ],
-          },
-          {
-            title: "İş Birliği Yaklaşımı",
-            items: [
-              "Kalite, netlik ve ölçeklenebilirliğe odaklanma",
-              "Şeffaf iletişim ve uyumlu iş akışları",
-              "Gerçek iş değeri sağlayan teknik çözümler",
-              "Her kararda uzun vadeli düşünce",
-            ],
-          },
-          {
-            title: "Kimlerle Çalışıyorum",
-            items: [
-              "Startuplar: MVP'den sağlam ürüne",
-              "Kurumsallar: SAP modernizasyonu ve entegrasyonlar",
-              "Ajanslar: Esnek frontend/backend geliştirme",
-              "Girişimciler: Fikirden lansman hazır ürüne",
-            ],
-          },
-        ],
+      tagline: "Belirsizliğe yer yok",
+      headline: {
+        leading: "İdeal müşterilerinizi ve ekibinizi etkileyen",
+        highlight: "güven veren web sitesi",
+        trailing: "ile büyümeyi hızlandırın",
       },
+      subheadline:
+        "Strateji, içerik, tasarım ve geliştirmeyi tek süreçte bir araya getiren kıdemli bir full-stack geliştirici ile doğrudan çalışın.",
+      introParagraphs: [
+        "Onboarding atölyesiyle değer önerinizi, hedef kitlenizin sorunlarını ve dönüşüm noktalarını keşfediyorum. Bu içgörüler mesajlaşmayı, UX'i ve teknik altyapıyı kod yazmadan önce şekillendiriyor.",
+        "Ardından haftalık prototipler, şeffaf durum güncellemeleri ve lansmana hazır varlıklar teslim ediyorum; böylece pazarlama ekibiniz kesintisiz ilerleyebiliyor.",
+      ],
+      valueProps: [
+        {
+          title: "Uçtan uca teslimat",
+          description:
+            "Discovery, metin yazımı, tasarım, geliştirme, test ve analitik — tek sorumlu ortak tarafından yönetilir.",
+        },
+        {
+          title: "Doğrudan kıdemli destek",
+          description:
+            "Tüm süreçte yalnızca benimle çalışırsınız; junior devri yok, ajans karmaşası yok, hedeflerinize uygun kararlar var.",
+        },
+        {
+          title: "Dönüşüm odaklı yapı",
+          description:
+            "Hızlı, güvenli Next.js altyapısı, net içerik hiyerarşisi ve en baştan kurulu ölçümleme ile gelir.",
+        },
+        {
+          title: "Şeffaf yatırım",
+          description:
+            "Sabit kapsamlı paketler, net zaman çizelgesi ve proaktif iletişim sayesinde her adımı önceden bilirsiniz.",
+        },
+      ],
+      ctas: {
+        primary: {
+          label: "Ücretsiz keşif görüşmesi ayarla",
+          href: "/#contact",
+        },
+        secondary: { label: "Sürecin nasıl ilerlediğini gör" },
+      },
+      trustNote: "24 saat içinde size özel bir aksiyon planıyla dönüş yaparım.",
+      location: "Sasbach'tan remote · Avrupa ve Türkiye'deki işletmelerle",
+      scrollLabel: "Daha fazlası için kaydır",
     },
     littleAbout: {
       heading: "Benim Hakkımda Biraz -",

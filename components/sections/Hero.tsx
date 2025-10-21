@@ -2,9 +2,9 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
+import Link from "next/link";
 import SplitText from "@/TextAnimations/SplitText";
 import { footerItems } from "@/data";
-import Link from "next/link";
 import { useTranslation } from "@/hooks/useTranslation";
 import type { TranslationDictionary } from "@/constants/translations";
 
@@ -23,61 +23,134 @@ export default function Hero() {
   return (
     <section
       id="hero"
-      className="px-7 pb-10 md:pb-40 min-h-screen flex flex-col"
+      className="px-7 pb-12 md:pb-32 min-h-screen flex flex-col"
     >
       <div className="container mx-auto flex-1 flex flex-col justify-center">
-        <IntroHeader
-          topLine={heroDictionary.headlineTop}
-          bottomLine={heroDictionary.headlineBottom}
-        />
-        <div className="flex-1 md:pl-10">
-          <div className="flex flex-col md:flex-row-reverse md:items-start lg:items-center gap-8 md:gap-12 lg:gap-16 xl:gap-24">
-            <div className="flex-shrink-0 order-first md:order-none">
-              <Portrait />
-            </div>
-            <div className="flex-1 min-w-0">
-              <IntroParagraph />
-              <AboutSectionText
-                about={heroDictionary.about}
-                socialAriaPrefix={footerDictionary.socialAriaPrefix}
-              />
-            </div>
-          </div>
-
-          <div className="flex justify-between items-center mt-auto pt-8">
-            <Location locationLabel={heroDictionary.location} />
-            <ScrollForMore
-              onClick={handleScrollToAbout}
-              label={heroDictionary.scrollLabel}
-            />
-          </div>
+        <div className="flex flex-col lg:flex-row items-start gap-12 lg:gap-16 xl:gap-20">
+          <HeroContent
+            hero={heroDictionary}
+            onScrollToAbout={handleScrollToAbout}
+          />
+          <motion.div
+            className="w-full max-w-sm sm:max-w-md lg:max-w-lg xl:max-w-xl"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, delay: 0.1 }}
+          >
+            <Portrait />
+          </motion.div>
         </div>
+
+        <HeroFooter
+          locationLabel={heroDictionary.location}
+          scrollLabel={heroDictionary.scrollLabel}
+          onScrollToAbout={handleScrollToAbout}
+        />
+        <SocialLinksBar ariaPrefix={footerDictionary.socialAriaPrefix} />
       </div>
     </section>
   );
 }
 
-const IntroHeader = ({
-  topLine,
-  bottomLine,
-}: {
-  topLine: string;
-  bottomLine: string;
-}) => (
-  <h1 className="title md:text-lgTitle mb-8 md:mb-12">
-    <SplitText text={topLine} />
-    <SplitText text={bottomLine} className="justify-end" />
-  </h1>
-);
+type HeroDictionary = TranslationDictionary["hero"];
 
-const IntroParagraph = () => (
-  <motion.div
-    className="content text-gray md:text-lgContent w-full"
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.8 }}
-  ></motion.div>
-);
+const HeroContent = ({
+  hero,
+  onScrollToAbout,
+}: {
+  hero: HeroDictionary;
+  onScrollToAbout: () => void;
+}) => {
+  const {
+    tagline,
+    headline,
+    subheadline,
+    introParagraphs,
+    valueProps,
+    ctas,
+    trustNote,
+  } = hero;
+
+  return (
+    <div className="flex-1 space-y-8 text-[#260a03]">
+      <motion.div
+        className="space-y-6"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+      >
+        {tagline && (
+          <span className="inline-flex items-center rounded-full bg-[#f9f1dc] px-4 py-1 text-xs md:text-sm font-medium uppercase tracking-[0.35em] text-[#8b6f4d]">
+            {tagline}
+          </span>
+        )}
+
+        <div className="space-y-4">
+          {headline.leading && (
+            <SplitText
+              text={headline.leading}
+              className="flex-wrap gap-y-2 text-2xl font-light uppercase tracking-tight md:text-[40px]"
+            />
+          )}
+          {headline.highlight && (
+            <SplitText
+              text={headline.highlight}
+              className="flex-wrap gap-y-2 text-3xl font-semibold uppercase tracking-tight text-[#c58d12] md:text-[46px]"
+            />
+          )}
+          {headline.trailing && (
+            <SplitText
+              text={headline.trailing}
+              className="flex-wrap gap-y-2 text-3xl font-light uppercase tracking-tight md:text-[42px]"
+            />
+          )}
+        </div>
+
+        {subheadline && (
+          <p className="text-base md:text-lg text-[#4a3625]">{subheadline}</p>
+        )}
+      </motion.div>
+
+      {Array.isArray(introParagraphs) && introParagraphs.length > 0 && (
+        <div className="space-y-4 text-base md:text-lg leading-relaxed text-[#3a2a1c]">
+          {introParagraphs.map((paragraph) => (
+            <p key={paragraph}>{paragraph}</p>
+          ))}
+        </div>
+      )}
+
+      {Array.isArray(valueProps) && valueProps.length > 0 && (
+        <ValueGrid items={valueProps} />
+      )}
+
+      {(ctas?.primary || ctas?.secondary) && (
+        <div className="flex flex-col sm:flex-row gap-3 pt-4">
+          {ctas?.primary && (
+            <Link
+              href={ctas.primary.href}
+              className="inline-flex items-center justify-center rounded-full bg-black px-8 py-3 text-sm md:text-base font-semibold text-white transition hover:bg-[#1a1a1a]"
+            >
+              {ctas.primary.label}
+            </Link>
+          )}
+          {ctas?.secondary && (
+            <button
+              type="button"
+              onClick={onScrollToAbout}
+              className="inline-flex items-center justify-center rounded-full border border-[#c58d12] px-8 py-3 text-sm md:text-base font-semibold text-[#c58d12] transition hover:bg-[#fff7e6]"
+            >
+              {ctas.secondary.label}
+            </button>
+          )}
+        </div>
+      )}
+
+      {trustNote && (
+        <p className="text-sm md:text-base text-[#8b6f4d]">{trustNote}</p>
+      )}
+    </div>
+  );
+};
 
 const Portrait = () => (
   <Image
@@ -90,130 +163,82 @@ const Portrait = () => (
   />
 );
 
-const Socials = ({ ariaPrefix }: { ariaPrefix: string }) => (
-  <div className="flex flex-wrap gap-3 sm:gap-4 md:gap-5 lg:gap-6 justify-center md:justify-start items-center pt-4 md:pt-6">
-    {footerItems.map((item) => (
-      <Link
-        key={item.path}
-        href={item.path}
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label={`${ariaPrefix} ${item.title}`}
-        className="group flex items-center gap-2 md:gap-3 text-gray hover:text-black transition-all duration-300 ease-in-out transform hover:scale-110"
+const ValueGrid = ({
+  items,
+}: {
+  items: NonNullable<HeroDictionary["valueProps"]>;
+}) => (
+  <div className="grid gap-4 sm:grid-cols-2">
+    {items.map((item) => (
+      <div
+        key={item.title}
+        className="h-full rounded-2xl border border-[#f2ddad] bg-white/80 p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
       >
-        <div className="relative">
-          <Image
-            src={item.icon}
-            alt={`${item.title} Icon`}
-            width={32}
-            height={32}
-            className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 lg:w-11 lg:h-11 xl:w-12 xl:h-12 transition-all duration-300"
-            priority={item.title === "LinkedIn"}
-          />
-        </div>
-        <span className="hidden md:inline-block text-sm text-[#260a03] md:text-base lg:text-lg font-medium opacity-0 md:opacity-100 transition-opacity duration-300 group-hover:opacity-100">
-          {item.title}
-        </span>
-      </Link>
+        <p className="text-lg font-semibold text-[#20140d]">{item.title}</p>
+        <p className="mt-2 text-sm md:text-base text-[#4a3625]">
+          {item.description}
+        </p>
+      </div>
     ))}
   </div>
 );
 
-interface IconProps {
-  src: string;
-  alt: string;
-  width: number;
-  height: number;
-  additionalClasses?: string;
-}
-
-const Icon: React.FC<IconProps> = ({
-  src,
-  alt,
-  width,
-  height,
-  additionalClasses = "",
-}) => (
-  <Image
-    src={src}
-    alt={alt}
-    width={width}
-    height={height}
-    className={additionalClasses}
-  />
-);
-
-const Location = ({ locationLabel }: { locationLabel: string }) => (
-  <div className="button md:text-lgButton flex items-center gap-2">
-    <div className="text-[#260a03]">
-      <Icon
-        src="/icons/globe.svg"
-        alt="Globe icon"
-        width={16}
-        height={16}
-        additionalClasses="md:w-4 md:h-4 lg:w-6 lg:h-6 brightness-0"
-      />
-    </div>
-    <span className="text-[#260a03]">{locationLabel}</span>
-  </div>
-);
-
-const ScrollForMore = ({
-  onClick,
-  label,
+const HeroFooter = ({
+  locationLabel,
+  scrollLabel,
+  onScrollToAbout,
 }: {
-  onClick: () => void;
-  label: string;
+  locationLabel: string;
+  scrollLabel: string;
+  onScrollToAbout: () => void;
 }) => (
-  <div className="button md:text-lgButton text-gray hidden md:flex md:items-center">
-    <button onClick={onClick} className="flex items-center gap-2">
-      <span className="text-[#260a03]">{label}</span>
+  <div className="mt-12 border-t border-[#f2ddad] pt-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 text-[#260a03]">
+    <span className="text-xs md:text-sm uppercase tracking-[0.4em] text-[#8b6f4d]">
+      {locationLabel}
+    </span>
+    <button
+      type="button"
+      onClick={onScrollToAbout}
+      className="flex items-center gap-2 text-sm md:text-base font-semibold text-[#260a03] transition hover:text-[#c58d12]"
+    >
+      <span>{scrollLabel}</span>
       <motion.div
         initial={{ y: 0 }}
-        animate={{ y: [0, 10, 0] }}
-        transition={{ duration: 1, repeat: Infinity }}
-        className="text-[#260a03]"
+        animate={{ y: [0, 8, 0] }}
+        transition={{ duration: 1.1, repeat: Infinity }}
       >
         <Image
           src="/icons/arrowdown.svg"
           alt="Arrow Down Icon for scrolling"
           width={16}
           height={16}
-          className="md:w-4 md:h-4 lg:w-6 lg:h-6 brightness-0"
+          className="md:w-4 md:h-4 lg:w-5 lg:h-5"
         />
       </motion.div>
     </button>
   </div>
 );
 
-const AboutSectionText = ({
-  about,
-  socialAriaPrefix,
-}: {
-  about: TranslationDictionary["hero"]["about"];
-  socialAriaPrefix: string;
-}) => {
-  const [firstParagraph, secondParagraph, finalParagraph] =
-    about.introParagraphs;
-
-  return (
-    <div className="mt-8 md:mt-12 text-base md:text-lg lg:text-xl text-[#260a03] leading-relaxed space-y-4">
-      {firstParagraph && <p>{firstParagraph}</p>}
-      {secondParagraph && <p>{secondParagraph}</p>}
-      {about.sections.map((section) => (
-        <div key={section.title}>
-          <strong>{section.title}</strong>
-          <ul className="list-disc pl-5">
-            {section.items.map((item) => (
-              <li key={item}>{item}</li>
-            ))}
-          </ul>
-        </div>
-      ))}
-      {finalParagraph && <p>{finalParagraph}</p>}
-      <div className="pt-8">
-        <Socials ariaPrefix={socialAriaPrefix} />
-      </div>
-    </div>
-  );
-};
+const SocialLinksBar = ({ ariaPrefix }: { ariaPrefix: string }) => (
+  <div className="mt-10 flex flex-wrap items-center gap-6 text-[#260a03]">
+    {footerItems.map((item) => (
+      <Link
+        key={item.path}
+        href={item.path}
+        target={item.path.startsWith("/") ? undefined : "_blank"}
+        rel={item.path.startsWith("/") ? undefined : "noopener noreferrer"}
+        aria-label={`${ariaPrefix} ${item.title}`}
+        className="group flex items-center gap-3 text-sm md:text-base font-medium transition hover:text-[#c58d12]"
+      >
+        <Image
+          src={item.icon}
+          alt={`${item.title} icon`}
+          width={30}
+          height={30}
+          className="w-7 h-7 md:w-8 md:h-8 transition group-hover:scale-105"
+        />
+        <span>{item.title}</span>
+      </Link>
+    ))}
+  </div>
+);
