@@ -77,6 +77,74 @@ export const translations = {
       trustNote: "I respond within one business day with a tailored next step.",
       location: "Remote from Sasbach · serving clients across Europe",
       scrollLabel: "Scroll For More",
+      processModal: {
+        title: "The Momentum Playbook",
+        subtitle:
+          "Each phase keeps decision-makers aligned, delivers visible progress, and removes the guesswork from your launch.",
+        closeLabel: "Close overview",
+        steps: [
+          {
+            stage: "Phase 01",
+            title: "Discovery & Strategy Architecture",
+            description:
+              "I zoom in on your business model, customer motivations, and success metrics so every design choice pushes toward measurable outcomes.",
+            highlights: [
+              "Executive workshop extracting goals, constraints, and buying triggers.",
+              "Audience mapping, competitor teardown, and SEO signal analysis.",
+              "Experience roadmap outlining milestones, owners, budget, and KPIs.",
+            ],
+            duration: "Timeline: 3–5 days",
+            outcome: "Outcome: shared strategic blueprint and prioritised backlog.",
+          },
+          {
+            stage: "Phase 02",
+            title: "Messaging & Experience Blueprint",
+            description:
+              "I transform positioning into clear copy, UX flows, and content architecture that guide visitors from curiosity to commitment.",
+            highlights: [
+              "Message framework translating value propositions into persuasive narrative.",
+              "Information architecture, wireflows, and interactive prototype walkthrough.",
+              "Visual direction board covering mood, typography, and component language.",
+            ],
+            duration: "Timeline: 5–7 days",
+            outcome: "Outcome: approved prototype and content plan ready for production.",
+          },
+          {
+            stage: "Phase 03",
+            title: "Design, Build & Quality Engineering",
+            description:
+              "Design systems, animations, and performant code come together in parallel so launch assets are production perfect.",
+            highlights: [
+              "Responsive design system with reusable sections, states, and microinteractions.",
+              "Next.js build with best-in-class performance, accessibility, and SEO foundations.",
+              "Quality assurance sprints covering cross-device testing and automation.",
+            ],
+            duration: "Timeline: 2–3 weeks",
+            outcome: "Outcome: production-ready experience with analytics and CMS wired in.",
+          },
+          {
+            stage: "Phase 04",
+            title: "Launch, Training & Growth Enablement",
+            description:
+              "I choreograph deployment, train your team, and set up measurement so momentum keeps building after go-live.",
+            highlights: [
+              "Launch runbook with rollback plan, monitoring, and success checklist.",
+              "Team training sessions plus video walkthroughs for ongoing updates.",
+              "Growth dashboard combining analytics, heatmaps, and lead insights.",
+            ],
+            duration: "Timeline: 3–5 days",
+            outcome: "Outcome: confident launch and a roadmap for continuous optimisation.",
+          },
+        ],
+        finalNote:
+          "Need to scale faster? Post-launch we partner on growth sprints, conversion experiments, and new feature rollouts—always with the same transparent cadence.",
+        navigation: {
+          previous: "Previous phase",
+          next: "Next phase",
+          jumpTo: "Jump to phase",
+          progress: "Progress",
+        },
+      },
     },
     littleAbout: {
       heading: "A Little About Me -",
@@ -640,6 +708,74 @@ export const translations = {
       trustNote: "Antwort innerhalb von 24 Stunden mit konkretem Vorschlag.",
       location: "Remote aus Sasbach · Projekte in DACH & Europa",
       scrollLabel: "Scroll für mehr",
+      processModal: {
+        title: "Der Momentum-Fahrplan",
+        subtitle:
+          "Jede Phase sorgt für gemeinsame Entscheidungen, sichtbaren Fortschritt und nimmt dem Launch die Unsicherheit.",
+        closeLabel: "Übersicht schließen",
+        steps: [
+          {
+            stage: "Phase 01",
+            title: "Discovery & Strategie-Architektur",
+            description:
+              "Geschäftsmodell, Kundenerwartungen und Erfolgskennzahlen analysiere ich, damit jede Designentscheidung messbare Resultate liefert.",
+            highlights: [
+              "Executive-Workshop zur Ermittlung von Zielen, Restriktionen und Kaufmotiven.",
+              "Audience-Mapping, Wettbewerbsanalyse und SEO-Signalbewertung für klares Positioning.",
+              "Experience-Roadmap mit Meilensteinen, Verantwortlichkeiten, Budget und KPIs.",
+            ],
+            duration: "Zeitrahmen: 3–5 Tage",
+            outcome: "Ergebnis: Geteilte strategische Blaupause und priorisiertes Backlog.",
+          },
+          {
+            stage: "Phase 02",
+            title: "Messaging- & Experience-Blueprint",
+            description:
+              "Die Positionierung in klare Texte übersetze ich, UX-Flows und Content-Architektur, die Besucher:innen von Interesse zu Handlung führen.",
+            highlights: [
+              "Message-Framework, das Value Proposition in eine überzeugende Storyline verwandelt.",
+              "Informationsarchitektur, Nutzerflüsse und interaktiver Prototyp-Walkthrough.",
+              "Visuelles Direction-Board für Mood, Typografie und Komponenten-Sprache.",
+            ],
+            duration: "Zeitrahmen: 5–7 Tage",
+            outcome: "Ergebnis: Abgenommener Prototyp und Content-Plan für die Umsetzung.",
+          },
+          {
+            stage: "Phase 03",
+            title: "Design, Build & Qualitätsengineering",
+            description:
+              "Designsystem, Animationen und performanter Code entstehen parallel, damit alle Launch-Assets produktionsreif sind.",
+            highlights: [
+              "Responsives Designsystem mit wiederverwendbaren Sektionen, Zuständen und Mikrointeraktionen.",
+              "Next.js-Implementierung mit Performance-, Accessibility- und SEO-Best-Practices.",
+              "Quality-Assurance-Sprints mit Device-Tests und automatisierten Checks.",
+            ],
+            duration: "Zeitrahmen: 2–3 Wochen",
+            outcome: "Ergebnis: Launch-fertiges Erlebnis mit Analytics- und CMS-Anbindung.",
+          },
+          {
+            stage: "Phase 04",
+            title: "Launch, Training & Growth Enablement",
+            description:
+              "Ich orchestriere das Go-Live, schule das Team und richte Messpunkte ein, damit der Schwung nach dem Launch anhält.",
+            highlights: [
+              "Launch-Runbook mit Rollback-Plan, Monitoring und Erfolgskontrolle.",
+              "Team-Trainings inkl. Video-Walkthroughs für zukünftige Updates.",
+              "Growth-Dashboard mit Analytics, Heatmaps und Lead-Insights.",
+            ],
+            duration: "Zeitrahmen: 3–5 Tage",
+            outcome: "Ergebnis: Sicherer Launch und Roadmap für laufende Optimierung.",
+          },
+        ],
+        finalNote:
+          "Nach dem Launch begleiten wir auf Wunsch mit Growth-Sprints, Conversion-Experimenten und neuen Features – stets mit derselben transparenten Taktung.",
+        navigation: {
+          previous: "Vorherige Phase",
+          next: "Nächste Phase",
+          jumpTo: "Phase auswählen",
+          progress: "Fortschritt",
+        },
+      },
     },
     littleAbout: {
       heading: "Ein bisschen über mich -",
@@ -1201,6 +1337,74 @@ export const translations = {
       trustNote: "24 saat içinde size özel bir aksiyon planıyla dönüş yaparım.",
       location: "Sasbach'tan remote · Avrupa ve Türkiye'deki işletmelerle",
       scrollLabel: "Daha fazlası için kaydır",
+      processModal: {
+        title: "Momentum Yol Haritası",
+        subtitle:
+          "Her aşama karar vericileri aynı masada tutar, somut ilerleme gösterir ve lansman sürecindeki belirsizliği ortadan kaldırır.",
+        closeLabel: "Genel bakışı kapat",
+        steps: [
+          {
+            stage: "Aşama 01",
+            title: "Keşif ve Strateji Mimarisi",
+            description:
+              "İş modelinizi, müşteri motivasyonlarını ve başarı metriklerini derinlemesine analiz ederek her tasarım kararının ölçülebilir sonuçlara hizmet etmesini sağlıyorum.",
+            highlights: [
+              "Hedefleri, kısıtları ve satın alma tetikleyicilerini çıkaran yönetici atölyesi.",
+              "Hedef kitle haritası, rakip analizi ve SEO sinyali değerlendirmesi.",
+              "Milestone'ları, sorumluları, bütçeyi ve KPI'ları içeren deneyim yol haritası.",
+            ],
+            duration: "Zaman çizelgesi: 3–5 gün",
+            outcome: "Sonuç: Paylaşılan stratejik plan ve önceliklendirilmiş backlog.",
+          },
+          {
+            stage: "Aşama 02",
+            title: "Mesajlaşma ve Deneyim Taslağı",
+            description:
+              "Konumlandırmayı net metinlere, UX akışlarına ve içeriği yönlendiren bilgi mimarisine dönüştürüyorum.",
+            highlights: [
+              "Değer önerisini ikna edici hikâyeye dönüştüren mesaj çerçevesi.",
+              "Bilgi mimarisi, kullanıcı akışları ve interaktif prototip turu.",
+              "Mood, tipografi ve bileşen dilini kapsayan görsel yön tahtası.",
+            ],
+            duration: "Zaman çizelgesi: 5–7 gün",
+            outcome: "Sonuç: Üretime hazır onaylı prototip ve içerik planı.",
+          },
+          {
+            stage: "Aşama 03",
+            title: "Tasarım, Geliştirme ve Kalite Mühendisliği",
+            description:
+              "Tasarım sistemi, animasyonlar ve yüksek performanslı kod paralel ilerleyerek lansman varlıklarının tamamı üretime hazır hale gelir.",
+            highlights: [
+              "Yeniden kullanılabilir bölümler, durumlar ve mikro etkileşimler içeren duyarlı tasarım sistemi.",
+              "Performans, erişilebilirlik ve SEO temellerine sahip Next.js geliştirme.",
+              "Cihaz testleri ve otomasyon içeren kalite güvence sprintleri.",
+            ],
+            duration: "Zaman çizelgesi: 2–3 hafta",
+            outcome: "Sonuç: Analitik ve CMS bağlantıları kurulmuş lansman hazır deneyim.",
+          },
+          {
+            stage: "Aşama 04",
+            title: "Lansman, Eğitim ve Büyüme Hazırlığı",
+            description:
+              "Yayın planını, ekip eğitimini ve ölçüm araçlarını organize ederek lansman sonrasında da ivmenin devam etmesini sağlıyorum.",
+            highlights: [
+              "Rollback planı, izleme ve başarı kontrol listesi içeren lansman runbook'u.",
+              "Sürekli güncellemeler için eğitim oturumları ve video walkthrough'lar.",
+              "Analitik, ısı haritaları ve lead içgörülerini birleştiren büyüme panosu.",
+            ],
+            duration: "Zaman çizelgesi: 3–5 gün",
+            outcome: "Sonuç: Güvenli lansman ve sürekli optimizasyona hazır yol haritası.",
+          },
+        ],
+        finalNote:
+          "Lansmandan sonra da growth sprintleri, dönüşüm testleri ve yeni özellik yayınlarında aynı şeffaf tempo ile yanınızda oluruz.",
+        navigation: {
+          previous: "Önceki aşama",
+          next: "Sonraki aşama",
+          jumpTo: "Aşama seç",
+          progress: "İlerleme",
+        },
+      },
     },
     littleAbout: {
       heading: "Benim Hakkımda Biraz -",
@@ -1228,7 +1432,7 @@ export const translations = {
     },
     contact: {
       headingLineOne: "Bana fikrinizi anlatın;",
-      headingLineTwo: "ben de hayranlık uyandıran bir şey yapayım.",
+      headingLineTwo: "size şaşırtıcı bir şey yapayım.",
       placeholders: {
         name: "Ad",
         email: "E-Posta",

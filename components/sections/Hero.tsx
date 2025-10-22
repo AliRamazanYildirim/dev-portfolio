@@ -1,10 +1,12 @@
 "use client";
 
 import Image from "next/image";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import SplitText from "@/TextAnimations/SplitText";
 import { footerItems } from "@/data";
+import ProcessExperienceModal from "@/components/sections/ProcessExperienceModal";
 import { useTranslation } from "@/hooks/useTranslation";
 import type { TranslationDictionary } from "@/constants/translations";
 
@@ -12,6 +14,7 @@ export default function Hero() {
   const { dictionary } = useTranslation();
   const heroDictionary = dictionary.hero;
   const footerDictionary = dictionary.footer;
+  const [isProcessOpen, setIsProcessOpen] = useState(false);
 
   const handleScrollToAbout = () => {
     const aboutSection = document.getElementById("about-section");
@@ -19,6 +22,9 @@ export default function Hero() {
       aboutSection.scrollIntoView({ behavior: "smooth" });
     }
   };
+
+  const handleOpenProcess = () => setIsProcessOpen(true);
+  const handleCloseProcess = () => setIsProcessOpen(false);
 
   return (
     <section
@@ -29,7 +35,7 @@ export default function Hero() {
         <div className="flex flex-col lg:flex-row items-start gap-12 lg:gap-16 xl:gap-20">
           <HeroContent
             hero={heroDictionary}
-            onScrollToAbout={handleScrollToAbout}
+            onOpenProcess={handleOpenProcess}
           />
           <motion.div
             className="w-full max-w-sm sm:max-w-md lg:max-w-lg xl:max-w-xl"
@@ -48,6 +54,13 @@ export default function Hero() {
         />
         <SocialLinksBar ariaPrefix={footerDictionary.socialAriaPrefix} />
       </div>
+      {heroDictionary.processModal && (
+        <ProcessExperienceModal
+          open={isProcessOpen}
+          onClose={handleCloseProcess}
+          content={heroDictionary.processModal}
+        />
+      )}
     </section>
   );
 }
@@ -56,10 +69,10 @@ type HeroDictionary = TranslationDictionary["hero"];
 
 const HeroContent = ({
   hero,
-  onScrollToAbout,
+  onOpenProcess,
 }: {
   hero: HeroDictionary;
-  onScrollToAbout: () => void;
+  onOpenProcess: () => void;
 }) => {
   const {
     tagline,
@@ -80,7 +93,7 @@ const HeroContent = ({
         transition={{ duration: 0.8 }}
       >
         {tagline && (
-          <span className="inline-flex items-center rounded-full bg-[#f9f1dc] px-4 py-1 text-xs md:text-sm font-medium uppercase tracking-[0.35em] text-[#8b6f4d]">
+          <span className="inline-flex items-center rounded-full bg-[#c58d12] px-4 py-1 text-xs md:text-sm font-medium uppercase tracking-[0.35em] text-[#f7e7d6]">
             {tagline}
           </span>
         )}
@@ -136,7 +149,7 @@ const HeroContent = ({
           {ctas?.secondary && (
             <button
               type="button"
-              onClick={onScrollToAbout}
+              onClick={onOpenProcess}
               className="inline-flex items-center justify-center rounded-full border border-[#c58d12] px-8 py-3 text-sm md:text-base font-semibold text-[#c58d12] transition hover:bg-[#fff7e6]"
             >
               {ctas.secondary.label}
