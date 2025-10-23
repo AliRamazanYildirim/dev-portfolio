@@ -11,20 +11,30 @@ import type { SupportedLanguage } from "@/contexts/LanguageContext";
 
 interface NavItemType {
   title: string;
-  path: string;
+  path?: string;
   external?: boolean;
+  submenu?: Array<{
+    title: string;
+    description: string;
+    icon: string;
+    href: string;
+  }>;
 }
 
 export const Nav = ({ className }: { className?: string }) => {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const submenuCloseTimer = React.useRef<number | null>(null);
+  const submenuInside = React.useRef(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [languageMenuOpen, setLanguageMenuOpen] = useState(false);
+  const [solutionsOpen, setSolutionsOpen] = useState(false);
   const pathname = usePathname();
   const { language, setLanguage, dictionary } = useTranslation();
   const navDictionary = dictionary.nav;
 
   const navItems = navDictionary.items;
   const languageLabel = navDictionary.languageMenu.label;
+  const solutionsData = navDictionary.solutions;
   const languages = [
     {
       code: "en" as SupportedLanguage,
@@ -49,11 +59,13 @@ export const Nav = ({ className }: { className?: string }) => {
   const toggleMenu = () => {
     setMenuOpen((prev) => !prev);
     setLanguageMenuOpen(false);
+    setSolutionsOpen(false);
   };
 
   useEffect(() => {
     setLanguageMenuOpen(false);
     setMenuOpen(false);
+    setSolutionsOpen(false);
   }, [pathname]);
 
   const toggleLanguageMenu = () => {
@@ -98,10 +110,120 @@ export const Nav = ({ className }: { className?: string }) => {
     const hoverTextColor =
       isProjectsOrDetail || isAdminPage ? "text-white" : "text-black";
 
+    // Handle submenu items
+    if (item.submenu) {
+      return (
+        <div
+          className="relative group"
+          onMouseEnter={() => {
+            // Cancel any scheduled close and mark hovered
+            if (submenuCloseTimer.current) {
+              window.clearTimeout(submenuCloseTimer.current);
+              submenuCloseTimer.current = null;
+            }
+            setHoveredIndex(index);
+          }}
+          onMouseLeave={() => {
+            // Start a short timeout before closing to allow pointer to move into dropdown
+            submenuCloseTimer.current = window.setTimeout(() => {
+              // Only close if pointer not inside dropdown
+              if (!submenuInside.current) setHoveredIndex(null);
+              submenuCloseTimer.current = null;
+            }, 100);
+          }}
+        >
+          <button
+            type="button"
+            className={`button lg:text-lgButton transition flex items-center gap-1 ${
+              isProjectsOrDetail || isAdminPage
+                ? "text-white hover:text-white"
+                : "text-gray hover:" + hoverTextColor
+            } ${
+              hoveredIndex === index ? "font-bold" : ""
+            }`}
+          >
+            <span>{item.title}</span>
+            <svg
+              className={`w-4 h-4 transition-transform ${
+                hoveredIndex === index ? "rotate-180" : ""
+              }`}
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+          </button>
+
+          <AnimatePresence>
+            {hoveredIndex === index && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.15 }}
+                className="absolute left-0 top-full mt-3 w-80 rounded-lg border border-gray-200 bg-white shadow-xl z-50 overflow-hidden"
+                onMouseEnter={() => {
+                  // Pointer entered dropdown: cancel close and mark inside
+                  submenuInside.current = true;
+                  if (submenuCloseTimer.current) {
+                    window.clearTimeout(submenuCloseTimer.current);
+                    submenuCloseTimer.current = null;
+                  }
+                }}
+                onMouseLeave={() => {
+                  // Pointer left dropdown: schedule close
+                  submenuInside.current = false;
+                  submenuCloseTimer.current = window.setTimeout(() => {
+                    setHoveredIndex(null);
+                    submenuCloseTimer.current = null;
+                  }, 100);
+                }}
+              >
+                <div className="p-4 space-y-1">
+                  {item.submenu.map((solution, idx) => (
+                    <Link
+                      key={idx}
+                      href={solution.href}
+                      className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 transition group/item"
+                    >
+                      <div className="flex-shrink-0 mt-1 w-10 h-10 rounded-full bg-[#c58d12]/40 flex items-center justify-center">
+                        <Image
+                          src={solution.icon}
+                          alt=""
+                          width={20}
+                          height={20}
+                          className="w-5 h-5 opacity-100"
+                        />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-sm font-semibold text-gray-900 group-hover/item:text-[#c58d12] transition">
+                          {solution.title}
+                        </h3>
+                        <p className="text-xs text-gray-600 mt-0.5">
+                          {solution.description}
+                        </p>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      );
+    }
+
+    // Regular nav item
     return (
       <Link
         key={item.path}
-        href={item.path}
+        href={item.path || "#"}
         target={item.external ? "_blank" : undefined}
         rel={item.external ? "noopener noreferrer" : undefined}
         className={`button lg:text-lgButton ${
@@ -109,7 +231,7 @@ export const Nav = ({ className }: { className?: string }) => {
             ? "text-white hover:text-white"
             : "text-gray hover:" + hoverTextColor
         } relative group transition ${
-          isActive(item.path) ? "font-bold underline" : ""
+          isActive(item.path || "") ? "font-bold underline" : ""
         }`}
         onMouseEnter={() => setHoveredIndex(index)}
         onMouseLeave={() => setHoveredIndex(null)}
@@ -169,9 +291,9 @@ export const Nav = ({ className }: { className?: string }) => {
             {!isAdminPage && (
               <>
                 <div className="hidden lg:flex space-x-8">
-                  {navItems.map((item: NavItemType, index: number) => (
+                  {navItems.map((item: any, index: number) => (
                     <NavItem
-                      key={item.path}
+                      key={item.title}
                       item={item}
                       index={index}
                       hoveredIndex={hoveredIndex}
@@ -321,25 +443,94 @@ export const Nav = ({ className }: { className?: string }) => {
                     </svg>
                   </button>
                   <ul className="flex flex-col items-center space-y-4 py-4 px-6">
-                    {navItems.map((item: NavItemType) => (
-                      <li key={item.path}>
-                        <Link
-                          href={item.path}
-                          target={item.external ? "_blank" : undefined}
-                          rel={
-                            item.external ? "noopener noreferrer" : undefined
-                          }
-                          className={`button lg:text-lgButton ${
-                            isProjectsPage
-                              ? "text-gray hover:text-[#c9184a]"
-                              : "text-gray hover:text-black"
-                          } transition`}
-                          onClick={() => setMenuOpen(false)}
-                        >
-                          {item.title}
-                        </Link>
-                      </li>
+                    {navItems.map((item: any, idx: number) => (
+                      item.submenu ? (
+                        <li key={item.title} className="w-full border-t border-gray/20 pt-4">
+                          <button
+                            type="button"
+                            className="w-full flex items-center justify-between text-sm text-gray uppercase tracking-wide mb-3 hover:text-black transition"
+                            onClick={() => setSolutionsOpen(!solutionsOpen)}
+                          >
+                            <span>{item.title}</span>
+                            <svg
+                              className={`w-4 h-4 transition-transform ${
+                                solutionsOpen ? "rotate-180" : ""
+                              }`}
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="M19 9l-7 7-7-7"
+                              />
+                            </svg>
+                          </button>
+                          <AnimatePresence>
+                            {solutionsOpen && (
+                              <motion.div
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ opacity: 1, height: "auto" }}
+                                exit={{ opacity: 0, height: 0 }}
+                                transition={{ duration: 0.2 }}
+                                className="space-y-2 overflow-hidden"
+                              >
+                                {item.submenu.map((solution: any, subIdx: number) => (
+                                  <Link
+                                    key={subIdx}
+                                    href={solution.href}
+                                    className="flex items-start gap-2 p-2 rounded-md hover:bg-gray-100 transition group/item"
+                                    onClick={() => {
+                                      setMenuOpen(false);
+                                      setSolutionsOpen(false);
+                                    }}
+                                  >
+                                    <div className="flex-shrink-0 mt-0.5 w-7 h-7 rounded-full bg-[#c58d12]/40 flex items-center justify-center">
+                                      <Image
+                                        src={solution.icon}
+                                        alt=""
+                                        width={16}
+                                        height={16}
+                                        className="w-4 h-4"
+                                      />
+                                    </div>
+                                    <div className="flex-1">
+                                      <h4 className="text-xs font-semibold text-gray-900 group-hover/item:text-[#c58d12] transition">
+                                        {solution.title}
+                                      </h4>
+                                      <p className="text-xs text-gray-600 mt-0.5">
+                                        {solution.description}
+                                      </p>
+                                    </div>
+                                  </Link>
+                                ))}
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </li>
+                      ) : (
+                        <li key={item.path}>
+                          <Link
+                            href={item.path || "#"}
+                            target={item.external ? "_blank" : undefined}
+                            rel={
+                              item.external ? "noopener noreferrer" : undefined
+                            }
+                            className={`button lg:text-lgButton ${
+                              isProjectsPage
+                                ? "text-gray hover:text-[#c9184a]"
+                                : "text-gray hover:text-black"
+                            } transition`}
+                            onClick={() => setMenuOpen(false)}
+                          >
+                            {item.title}
+                          </Link>
+                        </li>
+                      )
                     ))}
+                    
                     <li className="w-full border-t border-gray/20 pt-4">
                       <div className="text-sm text-gray uppercase tracking-wide mb-2">
                         {languageLabel}

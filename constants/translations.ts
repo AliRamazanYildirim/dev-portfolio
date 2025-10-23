@@ -5,16 +5,60 @@ export const translations = {
         label: "Language",
         languages: {
           en: "English",
-          de: "German",
-          tr: "Turkish",
+          de: "Deutsch",
+          tr: "Türkçe",
         },
       },
       aria: {
         toggle: "Toggle menu",
         close: "Close menu",
-        language: "Select language",
+        language: "Choose language",
       },
       items: [
+        {
+          title: "<Solutions>",
+          submenu: [
+            {
+              title: "Websites that get you leads",
+              description:
+                "Pages designed to turn visitors into contact requests",
+              icon: "/icons/target.svg",
+              href: "/#contact",
+            },
+            {
+              title: "Faster sites & better search",
+              description: "Speed and basic SEO so people can find you",
+              icon: "/icons/speedometer.svg",
+              href: "/#contact",
+            },
+            {
+              title: "Online shop setup",
+              description: "Fast, easy-to-manage online stores",
+              icon: "/icons/shop.svg",
+              href: "/#contact",
+            },
+            {
+              title: "Easy content editing",
+              description: "A simple system that makes updating your site easy",
+              icon: "/icons/cms.svg",
+              href: "/#contact",
+            },
+            {
+              title: "Track what matters",
+              description:
+                "Simple analytics and reports to see how your site performs",
+              icon: "/icons/chart.svg",
+              href: "/#contact",
+            },
+            {
+              title: "Handover & team training",
+              description:
+                "Guides and hands-on training so your team can run the site",
+              icon: "/icons/book.svg",
+              href: "/#contact",
+            },
+          ],
+        },
         { title: "<About>", path: "/about" },
         { title: "<Projects>", path: "/projects" },
         { title: "<Contact>", path: "/#contact" },
@@ -25,6 +69,47 @@ export const translations = {
         },
         { title: "<Admin>", path: "/admin/login" },
       ],
+      solutions: {
+        label: "Solutions",
+        items: [
+          {
+            title: "Websites that get you leads",
+            description: "Pages designed to turn visitors into contact requests",
+            icon: "/icons/rocket.svg",
+            href: "/#contact",
+          },
+          {
+            title: "Faster sites & better search",
+            description: "Speed and basic SEO so people can find you",
+            icon: "/icons/zap.svg",
+            href: "/#contact",
+          },
+          {
+            title: "Online shop setup",
+            description: "Fast, easy-to-manage online stores",
+            icon: "/icons/plug.svg",
+            href: "/#contact",
+          },
+          {
+            title: "Easy content editing",
+            description: "A simple system that makes updating your site easy",
+            icon: "/icons/crown.svg",
+            href: "/#contact",
+          },
+          {
+            title: "Track what matters",
+            description: "Simple analytics and reports to see how your site performs",
+            icon: "/icons/chart.svg",
+            href: "/#contact",
+          },
+          {
+            title: "Handover & team training",
+            description: "Guides and hands-on training so your team can run the site",
+            icon: "/icons/users.svg",
+            href: "/#contact",
+          },
+        ],
+      },
     },
     footer: {
       copyright: "© 2025. Ali Ramazan Yildirim",
@@ -643,6 +728,47 @@ export const translations = {
         language: "Sprache auswählen",
       },
       items: [
+        {
+          title: "<Lösungen>",
+          submenu: [
+            {
+              title: "Websites, die Anfragen bringen",
+              description: "Seiten, die Besucher dazu bringen, Kontakt aufzunehmen",
+              icon: "/icons/target.svg",
+              href: "/#contact",
+            },
+            {
+              title: "Schnellere Seiten & bessere Sichtbarkeit",
+              description: "Mehr Geschwindigkeit und einfache SEO, damit man Sie findet",
+              icon: "/icons/zap.svg",
+              href: "/#contact",
+            },
+            {
+              title: "Online-Shop Einrichtung",
+              description: "Schnelle, leicht zu pflegende Shops",
+              icon: "/icons/plug.svg",
+              href: "/#contact",
+            },
+            {
+              title: "Einfach Inhalte bearbeiten",
+              description: "Ein System, das das Aktualisieren Ihrer Seite einfach macht",
+              icon: "/icons/crown.svg",
+              href: "/#contact",
+            },
+            {
+              title: "Wichtiges messen",
+              description: "Einfache Auswertungen, um zu sehen, wie Ihre Seite läuft",
+              icon: "/icons/chart.svg",
+              href: "/#contact",
+            },
+            {
+              title: "Übergabe & Team-Training",
+              description: "Anleitungen und Training, damit Ihr Team die Seite betreibt",
+              icon: "/icons/users.svg",
+              href: "/#contact",
+            },
+          ],
+        },
         { title: "<Über mich>", path: "/about" },
         { title: "<Projekte>", path: "/projects" },
         { title: "<Kontakt>", path: "/#contact" },
@@ -653,6 +779,47 @@ export const translations = {
         },
         { title: "<Admin>", path: "/admin/login" },
       ],
+      solutions: {
+        label: "Lösungen",
+        items: [
+          {
+            title: "Websites, die Anfragen bringen",
+            description: "Seiten, die Besucher dazu bringen, Kontakt aufzunehmen",
+            icon: "/icons/rocket.svg",
+            href: "/#contact",
+          },
+          {
+            title: "Schnellere Seiten & bessere Sichtbarkeit",
+            description: "Mehr Geschwindigkeit und einfache SEO, damit man Sie findet",
+            icon: "/icons/zap.svg",
+            href: "/#contact",
+          },
+          {
+            title: "Online-Shop Einrichtung",
+            description: "Schnelle, leicht zu pflegende Shops",
+            icon: "/icons/plug.svg",
+            href: "/#contact",
+          },
+          {
+            title: "Einfach Inhalte bearbeiten",
+            description: "Ein System, das das Aktualisieren Ihrer Seite einfach macht",
+            icon: "/icons/crown.svg",
+            href: "/#contact",
+          },
+          {
+            title: "Wichtiges messen",
+            description: "Einfache Auswertungen, um zu sehen, wie Ihre Seite läuft",
+            icon: "/icons/chart.svg",
+            href: "/#contact",
+          },
+          {
+            title: "Übergabe & Team-Training",
+            description: "Anleitungen und Training, damit Ihr Team die Seite betreibt",
+            icon: "/icons/users.svg",
+            href: "/#contact",
+          },
+        ],
+      },
     },
     footer: {
       copyright: "© 2025. Ali Ramazan Yildirim",
@@ -1272,6 +1439,47 @@ export const translations = {
         language: "Dil seç",
       },
       items: [
+        {
+          title: "<Çözümler>",
+          submenu: [
+            {
+              title: "İletişim getiren siteler",
+              description: "Ziyaretçileri size mesaj atmaya yönlendiren sayfalar",
+              icon: "/icons/speedometer.png",
+              href: "/#contact",
+            },
+            {
+              title: "Daha hızlı site & bulunabilirlik",
+              description: "Site hızı ve temel SEO ile sizi bulunur kılalım",
+              icon: "/icons/zap.svg",
+              href: "/#contact",
+            },
+            {
+              title: "Online mağaza kurulumu",
+              description: "Hızlı ve kolay yönetilebilen mağazalar",
+              icon: "/icons/plug.svg",
+              href: "/#contact",
+            },
+            {
+              title: "İçerik güncellemesi kolay",
+              description: "Siteyi güncellemesi kolay bir yönetim sistemi",
+              icon: "/icons/crown.svg",
+              href: "/#contact",
+            },
+            {
+              title: "Önemli metrikleri takip et",
+              description: "Site performansınızı gösteren basit raporlar",
+              icon: "/icons/chart.svg",
+              href: "/#contact",
+            },
+            {
+              title: "Teslim & ekip eğitimi",
+              description: "Ekip eğitimi ve kullanım kılavuzları ile teslimat",
+              icon: "/icons/users.svg",
+              href: "/#contact",
+            },
+          ],
+        },
         { title: "<Hakkımda>", path: "/about" },
         { title: "<Projeler>", path: "/projects" },
         { title: "<İletişim>", path: "/#contact" },
@@ -1282,6 +1490,47 @@ export const translations = {
         },
         { title: "<Admin>", path: "/admin/login" },
       ],
+      solutions: {
+        label: "Çözümler",
+        items: [
+          {
+            title: "İletişim getiren siteler",
+            description: "Ziyaretçileri size mesaj atmaya yönlendiren sayfalar",
+            icon: "/icons/rocket.svg",
+            href: "/#contact",
+          },
+          {
+            title: "Daha hızlı site & bulunabilirlik",
+            description: "Site hızı ve temel SEO ile sizi bulunur kılalım",
+            icon: "/icons/zap.svg",
+            href: "/#contact",
+          },
+          {
+            title: "Online mağaza kurulumu",
+            description: "Hızlı ve kolay yönetilebilen mağazalar",
+            icon: "/icons/plug.svg",
+            href: "/#contact",
+          },
+          {
+            title: "İçerik güncellemesi kolay",
+            description: "Siteyi güncellemesi kolay bir yönetim sistemi",
+            icon: "/icons/crown.svg",
+            href: "/#contact",
+          },
+          {
+            title: "Önemli metrikleri takip et",
+            description: "Site performansınızı gösteren basit raporlar",
+            icon: "/icons/chart.svg",
+            href: "/#contact",
+          },
+          {
+            title: "Teslim & ekip eğitimi",
+            description: "Ekip eğitimi ve kullanım kılavuzları ile teslimat",
+            icon: "/icons/users.svg",
+            href: "/#contact",
+          },
+        ],
+      },
     },
     footer: {
       copyright: "© 2025. Ali Ramazan Yildirim",
