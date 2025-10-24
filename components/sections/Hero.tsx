@@ -74,6 +74,7 @@ const HeroContent = ({
   hero: HeroDictionary;
   onOpenProcess: () => void;
 }) => {
+  const { language } = useTranslation();
   const {
     tagline,
     headline,
@@ -100,21 +101,36 @@ const HeroContent = ({
 
         <div className="space-y-4">
           {headline.leading && (
-            <SplitText
-              text={headline.leading}
-              className="flex-wrap gap-y-2 text-2xl font-light uppercase tracking-tight md:text-[40px]"
-            />
+            <div>
+              {language === "de" ? (
+                <>
+                  <SplitText
+                    text="Mehr passende Anfragen und Talente"
+                    className="flex-wrap gap-y-2 text-lg sm:text-xl md:text-[32px] lg:text-[40px] font-light uppercase tracking-tight leading-tight sm:leading-snug md:leading-snug"
+                  />
+                  <SplitText
+                    text="dank einer"
+                    className="flex-wrap gap-y-2 text-lg sm:text-xl md:text-[32px] lg:text-[40px] font-light uppercase tracking-tight leading-tight sm:leading-snug md:leading-snug"
+                  />
+                </>
+              ) : (
+                <SplitText
+                  text={headline.leading}
+                  className="flex-wrap gap-y-2 text-lg sm:text-xl md:text-[32px] lg:text-[40px] font-light uppercase tracking-tight leading-tight sm:leading-snug md:leading-snug"
+                />
+              )}
+            </div>
           )}
           {headline.highlight && (
             <SplitText
               text={headline.highlight}
-              className="flex-wrap gap-y-2 text-3xl font-semibold uppercase tracking-tight text-[#c58d12] md:text-[46px]"
+              className="flex-wrap gap-y-2 text-xl sm:text-2xl md:text-[36px] lg:text-[46px] font-semibold uppercase tracking-tight text-[#c58d12] leading-tight sm:leading-snug md:leading-snug"
             />
           )}
           {headline.trailing && (
             <SplitText
               text={headline.trailing}
-              className="flex-wrap gap-y-2 text-3xl font-light uppercase tracking-tight md:text-[42px]"
+              className="flex-wrap gap-y-2 text-xl sm:text-2xl md:text-[36px] lg:text-[42px] font-light uppercase tracking-tight leading-tight sm:leading-snug md:leading-snug"
             />
           )}
         </div>
