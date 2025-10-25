@@ -116,12 +116,14 @@ const ProjectsUI = () => {
 
                   {/* Hover Overlay mit Projekttitel */}
                    <div className="absolute inset-0 flex flex-col justify-end p-4 rounded-md">
-                    <p className="text-heading font-bold">{project.title}</p>
-                    {project.featured && (
-                      <p className="text-sm text-[#c9184a] font-medium">
-                        {texts.featuredBadge}
-                      </p>
-                    )}
+                    <div className="transform translate-y-[15px]">
+                      <p className="text-heading font-bold">{project.title}</p>
+                      {project.featured && (
+                        <p className="text-sm text-[#c9184a] font-medium">
+                          {texts.featuredBadge}
+                        </p>
+                      )}
+                    </div>
                   </div>
 
                   {/* Projekt Nummer */}

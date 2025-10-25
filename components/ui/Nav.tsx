@@ -192,7 +192,7 @@ export const Nav = ({ className }: { className?: string }) => {
                       href={solution.href}
                       className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 transition group/item"
                     >
-                      <div className="flex-shrink-0 mt-1 w-10 h-10 rounded-full bg-[#c58d12]/40 flex items-center justify-center">
+                      <div className="flex-shrink-0 mt-1 w-10 h-10 rounded-full flex items-center justify-center">
                         <Image
                           src={solution.icon}
                           alt=""
