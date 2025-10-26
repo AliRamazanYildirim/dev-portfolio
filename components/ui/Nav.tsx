@@ -17,6 +17,7 @@ interface NavItemType {
     title: string;
     description: string;
     icon: string;
+    alt?: string;
     href: string;
   }>;
 }
@@ -195,10 +196,10 @@ export const Nav = ({ className }: { className?: string }) => {
                       <div className="flex-shrink-0 mt-1 w-10 h-10 rounded-full flex items-center justify-center">
                         <Image
                           src={solution.icon}
-                          alt=""
+                          alt={solution.alt || solution.title}
                           width={20}
                           height={20}
-                          className="w-5 h-5 opacity-100"
+                          className="w-8 h-8 opacity-100"
                         />
                       </div>
                       <div className="flex-1">
@@ -490,7 +491,7 @@ export const Nav = ({ className }: { className?: string }) => {
                                     <div className="flex-shrink-0 mt-0.5 w-7 h-7 rounded-full bg-[#c58d12]/40 flex items-center justify-center">
                                       <Image
                                         src={solution.icon}
-                                        alt=""
+                                        alt={solution.alt || solution.title}
                                         width={16}
                                         height={16}
                                         className="w-4 h-4"

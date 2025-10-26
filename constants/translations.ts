@@ -1,3 +1,138 @@
+const enSolutions = [
+  {
+    title: "Websites that get you leads",
+    description: "Pages designed to turn visitors into contact requests",
+    icon: "/icons/global.png",
+    alt: "Website leads icon",
+    href: "/#contact",
+  },
+  {
+    title: "Faster sites & better search",
+    description: "Speed and basic SEO so people can find you",
+    icon: "/icons/blitz.png",
+    alt: "Performance icon",
+    href: "/#contact",
+  },
+  {
+    title: "Online shop setup",
+    description: "Fast, easy-to-manage online stores",
+    icon: "/icons/online-store.png",
+    alt: "Online shop icon",
+    href: "/#contact",
+  },
+  {
+    title: "Easy content editing",
+    description: "A simple system that makes updating your site easy",
+    icon: "/icons/browser.png",
+    alt: "Content management icon",
+    href: "/#contact",
+  },
+  {
+    title: "Track what matters",
+    description: "Simple analytics and reports to see how your site performs",
+    icon: "/icons/good-feedback.png",
+    alt: "Analytics icon",
+    href: "/#contact",
+  },
+  {
+    title: "Handover & team training",
+    description: "Guides and hands-on training so your team can run the site",
+    icon: "/icons/training.png",
+    alt: "Training icon",
+    href: "/#contact",
+  },
+];
+
+const deSolutions = [
+  {
+    title: "Websites, die Anfragen bringen",
+    description: "Seiten, die Besucher dazu bringen, Kontakt aufzunehmen",
+    icon: "/icons/global.png",
+    alt: "Webseiten Leads Icon",
+    href: "/#contact",
+  },
+  {
+    title: "Schnellere Seiten & bessere Sichtbarkeit",
+    description: "Mehr Geschwindigkeit und einfache SEO, damit man Sie findet",
+    icon: "/icons/blitz.png",
+    alt: "Performance Icon",
+    href: "/#contact",
+  },
+  {
+    title: "Online-Shop Einrichtung",
+    description: "Schnelle, leicht zu pflegende Shops",
+    icon: "/icons/online-store.png",
+    alt: "Online-Shop Icon",
+    href: "/#contact",
+  },
+  {
+    title: "Einfach Inhalte bearbeiten",
+    description: "Ein System, das das Aktualisieren Ihrer Seite einfach macht",
+    icon: "/icons/browser.png",
+    alt: "Content-Management Icon",
+    href: "/#contact",
+  },
+  {
+    title: "Wichtiges messen",
+    description: "Einfache Auswertungen, um zu sehen, wie Ihre Seite läuft",
+    icon: "/icons/good-feedback.png",
+    alt: "Analytics Icon",
+    href: "/#contact",
+  },
+  {
+    title: "Übergabe & Team-Training",
+    description: "Anleitungen und Training, damit Ihr Team die Seite betreibt",
+    icon: "/icons/training.png",
+    alt: "Training Icon",
+    href: "/#contact",
+  },
+];
+
+const trSolutions = [
+  {
+    title: "İletişim getiren siteler",
+    description: "Ziyaretçileri size mesaj atmaya yönlendiren sayfalar",
+    icon: "/icons/global.png",
+    alt: "İletişim siteleri simgesi",
+    href: "/#contact",
+  },
+  {
+    title: "Daha hızlı site & bulunabilirlik",
+    description: "Site hızı ve temel SEO ile sizi bulunur kılalım",
+    icon: "/icons/blitz.png",
+    alt: "Performans simgesi",
+    href: "/#contact",
+  },
+  {
+    title: "Online mağaza kurulumu",
+    description: "Hızlı ve kolay yönetilebilen mağazalar",
+    icon: "/icons/online-store.png",
+    alt: "Mağaza simgesi",
+    href: "/#contact",
+  },
+  {
+    title: "Kolay içerik güncellemesi",
+    description: "Siteyi güncellemesi kolay bir yönetim sistemi",
+    icon: "/icons/browser.png",
+    alt: "İçerik yönetimi simgesi",
+    href: "/#contact",
+  },
+  {
+    title: "Önemli metrikleri takip et",
+    description: "Site performansınızı gösteren basit raporlar",
+    icon: "/icons/good-feedback.png",
+    alt: "Analitik simgesi",
+    href: "/#contact",
+  },
+  {
+    title: "Teslim & ekip eğitimi",
+    description: "Ekip eğitimi ve kullanım kılavuzları ile teslimat",
+    icon: "/icons/training.png",
+    alt: "Eğitim simgesi",
+    href: "/#contact",
+  },
+];
+
 export const translations = {
   en: {
     nav: {
@@ -17,47 +152,7 @@ export const translations = {
       items: [
         {
           title: "<Solutions>",
-          submenu: [
-            {
-              title: "Websites that get you leads",
-              description:
-                "Pages designed to turn visitors into contact requests",
-              icon: "/icons/target.svg",
-              href: "/#contact",
-            },
-            {
-              title: "Faster sites & better search",
-              description: "Speed and basic SEO so people can find you",
-              icon: "/icons/speedometer.svg",
-              href: "/#contact",
-            },
-            {
-              title: "Online shop setup",
-              description: "Fast, easy-to-manage online stores",
-              icon: "/icons/shop.svg",
-              href: "/#contact",
-            },
-            {
-              title: "Easy content editing",
-              description: "A simple system that makes updating your site easy",
-              icon: "/icons/cms.svg",
-              href: "/#contact",
-            },
-            {
-              title: "Track what matters",
-              description:
-                "Simple analytics and reports to see how your site performs",
-              icon: "/icons/chart.svg",
-              href: "/#contact",
-            },
-            {
-              title: "Handover & team training",
-              description:
-                "Guides and hands-on training so your team can run the site",
-              icon: "/icons/book.svg",
-              href: "/#contact",
-            },
-          ],
+          submenu: enSolutions,
         },
         { title: "<About>", path: "/about" },
         { title: "<Projects>", path: "/projects" },
@@ -71,44 +166,7 @@ export const translations = {
       ],
       solutions: {
         label: "Solutions",
-        items: [
-          {
-            title: "Websites that get you leads",
-            description: "Pages designed to turn visitors into contact requests",
-            icon: "/icons/rocket.svg",
-            href: "/#contact",
-          },
-          {
-            title: "Faster sites & better search",
-            description: "Speed and basic SEO so people can find you",
-            icon: "/icons/zap.svg",
-            href: "/#contact",
-          },
-          {
-            title: "Online shop setup",
-            description: "Fast, easy-to-manage online stores",
-            icon: "/icons/plug.svg",
-            href: "/#contact",
-          },
-          {
-            title: "Easy content editing",
-            description: "A simple system that makes updating your site easy",
-            icon: "/icons/crown.svg",
-            href: "/#contact",
-          },
-          {
-            title: "Track what matters",
-            description: "Simple analytics and reports to see how your site performs",
-            icon: "/icons/chart.svg",
-            href: "/#contact",
-          },
-          {
-            title: "Handover & team training",
-            description: "Guides and hands-on training so your team can run the site",
-            icon: "/icons/users.svg",
-            href: "/#contact",
-          },
-        ],
+        items: enSolutions,
       },
     },
     footer: {
@@ -730,44 +788,7 @@ export const translations = {
       items: [
         {
           title: "<Lösungen>",
-          submenu: [
-            {
-              title: "Websites, die Anfragen bringen",
-              description: "Seiten, die Besucher dazu bringen, Kontakt aufzunehmen",
-              icon: "/icons/target.svg",
-              href: "/#contact",
-            },
-            {
-              title: "Schnellere Seiten & bessere Sichtbarkeit",
-              description: "Mehr Geschwindigkeit und einfache SEO, damit man Sie findet",
-              icon: "/icons/zap.svg",
-              href: "/#contact",
-            },
-            {
-              title: "Online-Shop Einrichtung",
-              description: "Schnelle, leicht zu pflegende Shops",
-              icon: "/icons/plug.svg",
-              href: "/#contact",
-            },
-            {
-              title: "Einfach Inhalte bearbeiten",
-              description: "Ein System, das das Aktualisieren Ihrer Seite einfach macht",
-              icon: "/icons/crown.svg",
-              href: "/#contact",
-            },
-            {
-              title: "Wichtiges messen",
-              description: "Einfache Auswertungen, um zu sehen, wie Ihre Seite läuft",
-              icon: "/icons/chart.svg",
-              href: "/#contact",
-            },
-            {
-              title: "Übergabe & Team-Training",
-              description: "Anleitungen und Training, damit Ihr Team die Seite betreibt",
-              icon: "/icons/users.svg",
-              href: "/#contact",
-            },
-          ],
+          submenu: deSolutions,
         },
         { title: "<Über mich>", path: "/about" },
         { title: "<Projekte>", path: "/projects" },
@@ -781,44 +802,7 @@ export const translations = {
       ],
       solutions: {
         label: "Lösungen",
-        items: [
-          {
-            title: "Websites, die Anfragen bringen",
-            description: "Seiten, die Besucher dazu bringen, Kontakt aufzunehmen",
-            icon: "/icons/rocket.svg",
-            href: "/#contact",
-          },
-          {
-            title: "Schnellere Seiten & bessere Sichtbarkeit",
-            description: "Mehr Geschwindigkeit und einfache SEO, damit man Sie findet",
-            icon: "/icons/zap.svg",
-            href: "/#contact",
-          },
-          {
-            title: "Online-Shop Einrichtung",
-            description: "Schnelle, leicht zu pflegende Shops",
-            icon: "/icons/plug.svg",
-            href: "/#contact",
-          },
-          {
-            title: "Einfach Inhalte bearbeiten",
-            description: "Ein System, das das Aktualisieren Ihrer Seite einfach macht",
-            icon: "/icons/crown.svg",
-            href: "/#contact",
-          },
-          {
-            title: "Wichtiges messen",
-            description: "Einfache Auswertungen, um zu sehen, wie Ihre Seite läuft",
-            icon: "/icons/chart.svg",
-            href: "/#contact",
-          },
-          {
-            title: "Übergabe & Team-Training",
-            description: "Anleitungen und Training, damit Ihr Team die Seite betreibt",
-            icon: "/icons/users.svg",
-            href: "/#contact",
-          },
-        ],
+        items: deSolutions,
       },
     },
     footer: {
@@ -1441,44 +1425,7 @@ export const translations = {
       items: [
         {
           title: "<Çözümler>",
-          submenu: [
-            {
-              title: "İletişim getiren siteler",
-              description: "Ziyaretçileri size mesaj atmaya yönlendiren sayfalar",
-              icon: "/icons/speedometer.png",
-              href: "/#contact",
-            },
-            {
-              title: "Daha hızlı site & bulunabilirlik",
-              description: "Site hızı ve temel SEO ile sizi bulunur kılalım",
-              icon: "/icons/zap.svg",
-              href: "/#contact",
-            },
-            {
-              title: "Online mağaza kurulumu",
-              description: "Hızlı ve kolay yönetilebilen mağazalar",
-              icon: "/icons/plug.svg",
-              href: "/#contact",
-            },
-            {
-              title: "İçerik güncellemesi kolay",
-              description: "Siteyi güncellemesi kolay bir yönetim sistemi",
-              icon: "/icons/crown.svg",
-              href: "/#contact",
-            },
-            {
-              title: "Önemli metrikleri takip et",
-              description: "Site performansınızı gösteren basit raporlar",
-              icon: "/icons/chart.svg",
-              href: "/#contact",
-            },
-            {
-              title: "Teslim & ekip eğitimi",
-              description: "Ekip eğitimi ve kullanım kılavuzları ile teslimat",
-              icon: "/icons/users.svg",
-              href: "/#contact",
-            },
-          ],
+          submenu: trSolutions,
         },
         { title: "<Hakkımda>", path: "/about" },
         { title: "<Projeler>", path: "/projects" },
@@ -1492,44 +1439,7 @@ export const translations = {
       ],
       solutions: {
         label: "Çözümler",
-        items: [
-          {
-            title: "İletişim getiren siteler",
-            description: "Ziyaretçileri size mesaj atmaya yönlendiren sayfalar",
-            icon: "/icons/rocket.svg",
-            href: "/#contact",
-          },
-          {
-            title: "Daha hızlı site & bulunabilirlik",
-            description: "Site hızı ve temel SEO ile sizi bulunur kılalım",
-            icon: "/icons/zap.svg",
-            href: "/#contact",
-          },
-          {
-            title: "Online mağaza kurulumu",
-            description: "Hızlı ve kolay yönetilebilen mağazalar",
-            icon: "/icons/plug.svg",
-            href: "/#contact",
-          },
-          {
-            title: "İçerik güncellemesi kolay",
-            description: "Siteyi güncellemesi kolay bir yönetim sistemi",
-            icon: "/icons/crown.svg",
-            href: "/#contact",
-          },
-          {
-            title: "Önemli metrikleri takip et",
-            description: "Site performansınızı gösteren basit raporlar",
-            icon: "/icons/chart.svg",
-            href: "/#contact",
-          },
-          {
-            title: "Teslim & ekip eğitimi",
-            description: "Ekip eğitimi ve kullanım kılavuzları ile teslimat",
-            icon: "/icons/users.svg",
-            href: "/#contact",
-          },
-        ],
+        items: trSolutions,
       },
     },
     footer: {
@@ -1656,7 +1566,7 @@ export const translations = {
       },
     },
     littleAbout: {
-      heading: "Benim Hakkımda Biraz -",
+      heading: "Biraz Benim Hakkımda  -",
       paragraphOne:
         "JavaScript, Node.js, Next.js, React, Blazor ve .NET Core gibi modern web teknolojilerinde geniş deneyime sahip bir Full-Stack Yazılım Geliştiricisiyim. E-ticaret platformları, mikro servisler ve blog uygulamaları üzerine çalışmalarım sayesinde ölçeklenebilir yazılım mimarilerine ve en iyi uygulamalara odaklandım. Arka planım, uygulamalı geliştirme, problem çözme ve web uygulamalarında performans optimizasyonunu içeriyor.",
       paragraphTwo:
