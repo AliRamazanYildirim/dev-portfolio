@@ -15,7 +15,7 @@
     "baseUrl": ".",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "incremental": true,
     "plugins": [
       {
@@ -36,7 +36,8 @@
     ".next/types/**/*.ts",
     "components/sections/Hero.js",
     "TextAnimations/BlurText/BlurText.jsx",
-    "components/ui/Nav.jsx"
+    "components/ui/Nav.jsx",
+    ".next/dev/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"

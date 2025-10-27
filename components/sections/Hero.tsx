@@ -221,7 +221,7 @@ const HeroFooter = ({
   scrollLabel: string;
   onScrollToAbout: () => void;
 }) => (
-  <div className="mt-12 border-t border-[#f2ddad] pt-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 text-[#260a03]">
+  <div className="mt-12 border-t border-[#dbae4c] pt-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 text-[#260a03]">
     <span className="text-xs md:text-sm uppercase tracking-[0.4em] text-[#8b6f4d]">
       {locationLabel}
     </span>
