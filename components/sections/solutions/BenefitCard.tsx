@@ -57,7 +57,6 @@ export default function BenefitCard({
               transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
             />
             <motion.div
-              whileHover={{ rotate: 360 }}
               transition={{ duration: 0.6, ease: "easeOut" }}
               className="relative z-10 flex items-center justify-center"
             >
@@ -87,11 +86,16 @@ export default function BenefitCard({
             transition={{ duration: 0.8, delay: index * 0.15 + 0.3, ease: "easeOut" }}
           />
 
-          <motion.div
-            className="pointer-events-none absolute bottom-8 right-4 h-2 w-2 rounded-full bg-[#c58d12] opacity-0 group-hover:opacity-70"
-            animate={{ y: [0, -20, 0], scale: [1, 1.4, 1], opacity: [0, 0.6, 0] }}
+          {/* <motion.svg
+            className="pointer-events-none absolute top-4 left-4 w-5 h-5 text-[#c58d12] opacity-0 group-hover:opacity-70"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            xmlns="http://www.w3.org/2000/svg"
+            animate={{ y: [0, -12, 0], x: [0, 12, 0], scale: [1, 1.6, 1], opacity: [0, 0.9, 0] }}
             transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-          />
+          >
+            <path d="M12 2.5l2.39 4.85 5.36.78-3.88 3.78.92 5.35L12 15.9l-4.79 2.36.92-5.35L4.25 8.13l5.36-.78L12 2.5z" />
+          </motion.svg> */}
         </div>
       </div>
     </motion.div>

@@ -139,9 +139,7 @@ export const Nav = ({ className }: { className?: string }) => {
               isProjectsOrDetail || isAdminPage
                 ? "text-white hover:text-white"
                 : "text-gray hover:" + hoverTextColor
-            } ${
-              hoveredIndex === index ? "font-bold" : ""
-            }`}
+            } ${hoveredIndex === index ? "font-bold" : ""}`}
           >
             <span>{item.title}</span>
             <svg
@@ -444,12 +442,19 @@ export const Nav = ({ className }: { className?: string }) => {
                     </svg>
                   </button>
                   <ul className="flex flex-col items-center space-y-4 py-4 px-6">
-                    {navItems.map((item: any, idx: number) => (
+                    {navItems.map((item: any, idx: number) =>
                       item.submenu ? (
-                        <li key={item.title} className="w-full border-t border-gray/20 pt-4">
+                        <li
+                          key={item.title}
+                          className="border-t border-gray/20 pt-4"
+                        >
                           <button
                             type="button"
-                            className="w-full flex items-center justify-between text-sm text-gray uppercase tracking-wide mb-3 hover:text-black transition"
+                            className={`button lg:text-lgButton ${
+                              isProjectsPage
+                                ? "text-gray hover:text-[#c9184a]"
+                                : "text-gray hover:text-black"
+                            } transition flex items-center justify-center gap-2 mb-3 mx-auto`}
                             onClick={() => setSolutionsOpen(!solutionsOpen)}
                           >
                             <span>{item.title}</span>
@@ -478,35 +483,37 @@ export const Nav = ({ className }: { className?: string }) => {
                                 transition={{ duration: 0.2 }}
                                 className="space-y-2 overflow-hidden"
                               >
-                                {item.submenu.map((solution: any, subIdx: number) => (
-                                  <Link
-                                    key={subIdx}
-                                    href={solution.href}
-                                    className="flex items-start gap-2 p-2 rounded-md hover:bg-gray-100 transition group/item"
-                                    onClick={() => {
-                                      setMenuOpen(false);
-                                      setSolutionsOpen(false);
-                                    }}
-                                  >
-                                    <div className="flex-shrink-0 mt-0.5 w-7 h-7 rounded-full bg-[#c58d12]/40 flex items-center justify-center">
-                                      <Image
-                                        src={solution.icon}
-                                        alt={solution.alt || solution.title}
-                                        width={16}
-                                        height={16}
-                                        className="w-4 h-4"
-                                      />
-                                    </div>
-                                    <div className="flex-1">
-                                      <h4 className="text-xs font-semibold text-gray-900 group-hover/item:text-[#c58d12] transition">
-                                        {solution.title}
-                                      </h4>
-                                      <p className="text-xs text-gray-600 mt-0.5">
-                                        {solution.description}
-                                      </p>
-                                    </div>
-                                  </Link>
-                                ))}
+                                {item.submenu.map(
+                                  (solution: any, subIdx: number) => (
+                                    <Link
+                                      key={subIdx}
+                                      href={solution.href}
+                                      className="flex items-start gap-2 p-2 rounded-md hover:bg-gray-100 transition group/item"
+                                      onClick={() => {
+                                        setMenuOpen(false);
+                                        setSolutionsOpen(false);
+                                      }}
+                                    >
+                                      <div className="flex-shrink-0 mt-0.5 w-7 h-7 rounded-full bg-[#c58d12]/40 flex items-center justify-center">
+                                        <Image
+                                          src={solution.icon}
+                                          alt={solution.alt || solution.title}
+                                          width={16}
+                                          height={16}
+                                          className="w-4 h-4"
+                                        />
+                                      </div>
+                                      <div className="flex-1">
+                                        <h4 className="text-xs font-semibold text-gray-900 group-hover/item:text-[#c58d12] transition">
+                                          {solution.title}
+                                        </h4>
+                                        <p className="text-xs text-gray-600 mt-0.5">
+                                          {solution.description}
+                                        </p>
+                                      </div>
+                                    </Link>
+                                  )
+                                )}
                               </motion.div>
                             )}
                           </AnimatePresence>
@@ -530,8 +537,8 @@ export const Nav = ({ className }: { className?: string }) => {
                           </Link>
                         </li>
                       )
-                    ))}
-                    
+                    )}
+
                     <li className="w-full border-t border-gray/20 pt-4">
                       <div className="text-sm text-gray uppercase tracking-wide mb-2">
                         {languageLabel}
