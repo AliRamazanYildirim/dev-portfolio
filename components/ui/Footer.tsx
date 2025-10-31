@@ -52,7 +52,7 @@ function Footer({ className }: { className?: string }) {
             <Link
               href="/privacy"
               aria-label={footerDictionary.privacyAria}
-              className="text-sm md:text-base hover:underline hover:text-gray transition"
+              className="inline-block rounded px-2 py-1.5 text-sm md:text-base hover:underline hover:text-gray transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-[#260a03]/30"
             >
               {footerDictionary.privacyLink}
             </Link>
@@ -60,14 +60,14 @@ function Footer({ className }: { className?: string }) {
             <Link
               href="/terms"
               aria-label={footerDictionary.termsAria}
-              className="text-sm md:text-base hover:underline hover:text-gray transition"
+              className="inline-block rounded px-2 py-1.5 text-sm md:text-base hover:underline hover:text-gray transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-[#260a03]/30"
             >
               {footerDictionary.termsLink}
             </Link>
           </div>
           <button
             onClick={scrollToTop}
-            className="text-sm md:text-base hover:text-gray hover:underline transition"
+            className="rounded px-2 py-1.5 text-sm md:text-base hover:text-gray hover:underline transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-[#260a03]/30"
             aria-label={footerDictionary.scrollTopAria}
           >
             {footerDictionary.copyright}

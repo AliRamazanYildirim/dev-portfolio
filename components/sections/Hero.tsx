@@ -94,7 +94,7 @@ const HeroContent = ({
         transition={{ duration: 0.8 }}
       >
         {tagline && (
-          <span className="inline-flex items-center rounded-full bg-[#c58d12] px-4 py-1 text-xs md:text-sm font-medium uppercase tracking-[0.35em] text-[#f7e7d6]">
+          <span className="inline-flex items-center rounded-full bg-[#c58d12] px-4 py-1 text-xs md:text-sm font-medium uppercase tracking-[0.35em] text-[#1a0f00]">
             {tagline}
           </span>
         )}

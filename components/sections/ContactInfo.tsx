@@ -49,13 +49,13 @@ const ContactInfo = ({
         </span>
         <a
           href={`tel:${phoneNumber.replace(/\s+/g, "")}`}
-          className="text-lg font-semibold text-slate-900"
+          className="inline-block rounded px-2 py-1.5 text-lg font-semibold text-slate-900 transition-colors duration-200 hover:text-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-900/30"
         >
           {phoneNumber}
         </a>
         <a
           href={`mailto:${email}`}
-          className="text-sm text-slate-600 underline decoration-slate-300 underline-offset-2 transition-colors duration-200 hover:text-slate-800 hover:decoration-slate-500"
+          className="inline-block rounded px-2 py-1.5 text-sm text-slate-600 underline decoration-slate-300 underline-offset-2 transition-colors duration-200 hover:text-slate-800 hover:decoration-slate-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-600/30"
         >
           {email}
         </a>
