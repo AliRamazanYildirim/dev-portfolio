@@ -10,7 +10,7 @@ interface ContactInfoProps {
   badgeLabel?: string;
 }
 
-const MotionNoiseBackground = motion(NoiseBackground);
+const MotionNoiseBackground = motion.create(NoiseBackground);
 
 const ContactInfo = ({
   phoneNumber = "+49 151 67145187",
