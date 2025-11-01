@@ -101,7 +101,7 @@ const HeroContent = ({
 
         <div className="space-y-4">
           {headline.leading && (
-            <div>
+            <h1>
               {language === "de" ? (
                 <>
                   <SplitText
@@ -119,7 +119,7 @@ const HeroContent = ({
                   className="flex-wrap gap-y-2 text-lg sm:text-xl md:text-[32px] lg:text-[40px] font-light uppercase tracking-tight leading-tight sm:leading-snug md:leading-snug"
                 />
               )}
-            </div>
+            </h1>
           )}
           {headline.highlight && (
             <SplitText

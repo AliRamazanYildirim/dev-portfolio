@@ -29,7 +29,9 @@ const LittleAboutMe = () => {
 };
 
 const Header = ({ text }: { text: string }) => (
-  <SplitText text={text} className="heading mb-5 md:text-lgHeading md:mb-16 " />
+  <h2 className="heading mb-5 md:text-lgHeading md:mb-16">
+    <SplitText text={text} />
+  </h2>
 );
 
 const fadeInVariants = {

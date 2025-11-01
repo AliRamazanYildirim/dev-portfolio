@@ -154,10 +154,9 @@ const ProjectsPage = () => {
         <div className="container mx-auto">
           {/* Header mit Projektanzahl */}
           <div className="mb-10" ref={listTopRef}>
-            <SplitText
-              text={projectsDictionary.heading}
-              className="title md:text-lgTitle mb-4"
-            />
+            <h1 className="title md:text-lgTitle mb-4">
+              <SplitText text={projectsDictionary.heading} />
+            </h1>
             <p className="content md:text-lgContent text-gray">
               {projects.length}{" "}
               {projects.length === 1

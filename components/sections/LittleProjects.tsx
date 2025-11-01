@@ -73,10 +73,9 @@ const ProjectsUI = () => {
     return (
       <section className="text-white px-7 py-12 md:py-44">
         <div className="container mx-auto">
-          <SplitText
-            text={texts.loadingTitle}
-            className="title md:text-lgHeading font-bold mb-10"
-          />
+          <h2 className="title md:text-lgHeading font-bold mb-10">
+            <SplitText text={texts.loadingTitle} />
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
             {[1, 2].map((i) => (
               <div key={i} className="animate-pulse">
@@ -93,10 +92,9 @@ const ProjectsUI = () => {
   return (
     <section className="text-white px-7 py-12 md:py-44">
       <div className="container mx-auto">
-        <SplitText
-          text={texts.heading}
-          className="title md:text-lgHeading font-bold mb-10"
-        />
+        <h2 className="title md:text-lgHeading font-bold mb-10">
+          <SplitText text={texts.heading} />
+        </h2>
 
         {projects.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
@@ -115,7 +113,7 @@ const ProjectsUI = () => {
                   </div>
 
                   {/* Hover Overlay mit Projekttitel */}
-                   <div className="absolute inset-0 flex flex-col justify-end p-4 rounded-md">
+                  <div className="absolute inset-0 flex flex-col justify-end p-4 rounded-md">
                     <div className="transform translate-y-[15px]">
                       <p className="text-heading font-bold">{project.title}</p>
                       {project.featured && (

@@ -33,10 +33,10 @@ const Contact = () => {
 };
 
 const Header = ({ lineOne, lineTwo }: { lineOne: string; lineTwo: string }) => (
-  <div className="heading md:text-lgHeading mb-10 md:mb-20">
+  <h2 className="heading md:text-lgHeading mb-10 md:mb-20">
     <SplitText text={lineOne} />
     <SplitText text={lineTwo} />
-  </div>
+  </h2>
 );
 const ContactForm = ({
   contactDictionary,

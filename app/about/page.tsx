@@ -119,7 +119,9 @@ const Portrait = () => (
 );
 
 const Header2 = ({ text }: { text: string }) => (
-  <SplitText text={text} className="heading md:text-lgHeading md:pb-10" />
+  <h2 className="heading md:text-lgHeading md:pb-10">
+    <SplitText text={text} />
+  </h2>
 );
 
 const Interest = ({
