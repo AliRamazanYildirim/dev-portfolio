@@ -1,10 +1,5 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
-import path from "path";
-
-// Ensure local .env is loaded for scripts executed via `bun run` or node.
-dotenv.config({ path: path.resolve(process.cwd(), ".env") });
 
 // JWT Secret - Umgebungsvariable aus .env.local - Environment variable from .env.local
 const JWT_SECRET =
