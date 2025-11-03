@@ -17,7 +17,13 @@ export async function connectToMongo() {
     }
 
     const conn = await mongoose.connect(MONGODB_URI, {
-        // keep default options minimal and let mongoose manage compatibility
+        maxPoolSize: 10,
+        minPoolSize: 2,
+        serverSelectionTimeoutMS: 5000,
+        socketTimeoutMS: 45000,
+        family: 4,
+        retryWrites: true,
+        w: "majority",
     });
 
     globalForMongoose.mongoose = mongoose;
