@@ -2,6 +2,7 @@
 
 import React from "react";
 import MarqueeItem from "@/components/ui/MarqueeItem";
+import PremiumSeparator from "@/components/ui/PremiumSeparator";
 import SplitText from "@/TextAnimations/SplitText";
 import { useTranslation } from "@/hooks/useTranslation";
 
@@ -16,9 +17,12 @@ const PartnersMarquee: React.FC = () => {
   ];
 
   return (
-    <div className="container mx-auto md:px-28 mt-16">
+    <div className="container mx-auto md:px-28 mt-16 px-4">
+      {/* Premium Separator */}
+      <PremiumSeparator />
+
       {/* Kreativer Titelbereich */}
-      <div className="text-center mb-8 md:mb-12">
+      <div className="text-center mb-8 mt-8 md:mb-12">
         <span className="uppercase tracking-[0.5em] font-semibold text-sm md:text-base lg:text-lg text-white/90">
           {partnersTexts.strapline}
         </span>

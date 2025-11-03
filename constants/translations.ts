@@ -329,11 +329,21 @@ export const translations = {
     },
     partners: {
       strapline: "Stronger together",
-      heading: "Our partners",
+      heading: "My partners",
+    },
+    googleRatings: {
+      heading: "Trusted by Businesses",
+      subheading: "See what my clients say about my services",
+      verified: "Verified on Google",
+      reviews: "reviews",
+      testimonials: "Testimonials",
+      averageRating: "Average Rating",
+      positiveReviews: "Positive Reviews",
+      seeMore: "See all reviews on Google",
     },
     contact: {
-      headingLineOne: "Tell us your idea;",
-      headingLineTwo: "we'll build the wow.",
+      headingLineOne: "Tell me your idea;",
+      headingLineTwo: "I'll build the wow.",
       placeholders: {
         name: "Name",
         email: "E-Mail",
@@ -969,7 +979,17 @@ export const translations = {
     },
     partners: {
       strapline: "Gemeinsam stärker",
-      heading: "Unsere Partner",
+      heading: "Meine Partner",
+    },
+    googleRatings: {
+      heading: "Von Unternehmen vertraut",
+      subheading: "Sehen Sie, was meine Kunden über meine Dienstleistungen sagen",
+      verified: "Bei Google verifiziert",
+      reviews: "Bewertungen",
+      testimonials: "Erfahrungsberichte",
+      averageRating: "Durchschnittliche Bewertung",
+      positiveReviews: "Positive Bewertungen",
+      seeMore: "Alle Bewertungen auf Google ansehen",
     },
     contact: {
       headingLineOne: "Teilen Sie mir Ihre Idee mit;",
@@ -1605,7 +1625,17 @@ export const translations = {
     },
     partners: {
       strapline: "Birlikte daha güçlüyüz",
-      heading: "İş ortaklarımız",
+      heading: "İş ortaklarım",
+    },
+    googleRatings: {
+      heading: "İşletmeler Tarafından Güvenilir",
+      subheading: "Müşterilerimin hizmetlerim hakkında neler söylediğini görün",
+      verified: "Google'da Doğrulanmış",
+      reviews: "değerlendirme",
+      testimonials: "Referanslar",
+      averageRating: "Ortalama Puan",
+      positiveReviews: "Olumlu Yorumlar",
+      seeMore: "Google'da tüm yorumları gör",
     },
     contact: {
       headingLineOne: "Bana fikrinizi anlatın;",

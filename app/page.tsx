@@ -4,6 +4,7 @@ import Hero from "@/components/sections/Hero";
 import LittleAboutMe from "@/components/sections/LittleAboutMe";
 import LittleProjects from "@/components/sections/LittleProjects";
 import PartnersMarquee from "@/components/sections/PartnersMarquee";
+import GoogleRatings from "@/components/sections/GoogleRatings";
 import NoiseBackground from "@/components/NoiseBackground";
 
 export default function Home() {
@@ -17,6 +18,7 @@ export default function Home() {
           <LittleAboutMe />
           <LittleProjects />
           <PartnersMarquee />
+          <GoogleRatings />
         </NoiseBackground>
       </div>
     </main>

@@ -71,7 +71,7 @@ const ProjectsUI = () => {
   // Loading State
   if (loading) {
     return (
-      <section className="text-white px-7 py-12 md:py-44">
+      <section className="text-white px-7 py-12 md:py-14">
         <div className="container mx-auto">
           <h2 className="title md:text-lgHeading font-bold mb-10">
             <SplitText text={texts.loadingTitle} />
@@ -90,7 +90,7 @@ const ProjectsUI = () => {
   }
 
   return (
-    <section className="text-white px-7 py-12 md:py-44">
+    <section className="text-white px-7 py-12 md:py-14">
       <div className="container mx-auto">
         <h2 className="title md:text-lgHeading font-bold mb-10">
           <SplitText text={texts.heading} />
