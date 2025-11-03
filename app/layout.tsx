@@ -3,7 +3,6 @@ import "./globals.css";
 import AppShell from "@/components/ui/AppShell";
 import { Toaster } from "react-hot-toast";
 import { LanguageProvider } from "@/contexts/LanguageContext";
-import { ConsoleGreeting } from "@/components/ConsoleGreeting";
 
 export const metadata: Metadata = {
   title: "Ali Ramazan Portfolio",
@@ -22,7 +21,6 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning={true}>
       <body className="overflow-x-hidden">
-        <ConsoleGreeting />
         <LanguageProvider>
           <AppShell>{children}</AppShell>
         </LanguageProvider>
