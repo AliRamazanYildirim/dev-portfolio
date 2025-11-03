@@ -61,23 +61,6 @@ const ContactInfo = ({
         </a>
         <span className="text-sm text-slate-500">{availabilityLabel}</span>
       </div>
-      <span className="ml-auto hidden h-9 w-9 items-center justify-center rounded-full border border-slate-400 text-slate-400 transition-colors duration-200 group-hover:border-slate-600 group-hover:text-slate-600 sm:flex">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth={1.5}
-          className="h-4 w-4"
-          aria-hidden="true"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M8.25 4.5l7.5 7.5-7.5 7.5"
-          />
-        </svg>
-      </span>
     </MotionNoiseBackground>
   );
 };
