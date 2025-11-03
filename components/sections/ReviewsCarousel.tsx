@@ -106,7 +106,7 @@ const ReviewsCarousel: React.FC<ReviewsCarouselProps> = ({
             : "grid-cols-1"
         }`}
       >
-        <AnimatePresence mode="wait">
+        <AnimatePresence>
           {visibleReviews.map((review, index) => (
             <motion.div
               key={review.id}

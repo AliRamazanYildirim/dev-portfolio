@@ -107,14 +107,6 @@ const GoogleRatings: React.FC = () => {
           >
             {/* Average Rating */}
             <div className="flex items-center gap-3 relative z-10">
-              <div className="text-center">
-                <div className="text-3xl md:text-4xl font-bold text-black">
-                  {averageRating}
-                </div>
-                <div className="text-xs md:text-sm text-black/60 mt-1">
-                  {t("googleRatings.averageRating")}
-                </div>
-              </div>
               <div className="flex items-center">
                 <svg
                   className="w-6 h-6 md:w-8 md:h-8"
@@ -169,6 +161,14 @@ const GoogleRatings: React.FC = () => {
                     />
                   </g>
                 </svg>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl md:text-4xl font-bold text-black">
+                  {averageRating}
+                </div>
+                <div className="text-xs md:text-sm text-black/60 mt-1">
+                  {t("googleRatings.averageRating")}
+                </div>
               </div>
             </div>
 
