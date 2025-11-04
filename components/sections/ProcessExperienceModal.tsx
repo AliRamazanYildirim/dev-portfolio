@@ -2,12 +2,12 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import type { TranslationDictionary } from "@/constants/translations";
+import type { HeroProcessModalContent } from "@/constants/translations-hero";
 
 interface ProcessExperienceModalProps {
   open: boolean;
   onClose: () => void;
-  content: NonNullable<TranslationDictionary["hero"]["processModal"]>;
+  content: HeroProcessModalContent;
 }
 
 const overlayVariants = {

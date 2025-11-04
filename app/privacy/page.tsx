@@ -2,9 +2,12 @@
 
 import NoiseBackground from "@/components/NoiseBackground";
 import { useTranslation } from "@/hooks/useTranslation";
-import type { TranslationDictionary } from "@/constants/translations";
+import {
+  privacyTranslations,
+  type PrivacyDictionary,
+} from "@/constants/translations-privacy";
 
-type PrivacySection = TranslationDictionary["privacy"]["sections"][number];
+type PrivacySection = PrivacyDictionary["sections"][number];
 
 function hasParagraphs(
   section: PrivacySection
@@ -25,8 +28,8 @@ function hasBullets(
 }
 
 export default function PrivacyPage() {
-  const { dictionary } = useTranslation();
-  const privacy = dictionary.privacy;
+  const { language } = useTranslation();
+  const privacy = privacyTranslations[language];
 
   return (
     <main className="w-full">

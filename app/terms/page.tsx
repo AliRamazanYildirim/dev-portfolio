@@ -2,9 +2,12 @@
 
 import NoiseBackground from "@/components/NoiseBackground";
 import { useTranslation } from "@/hooks/useTranslation";
-import type { TranslationDictionary } from "@/constants/translations";
+import {
+  termsTranslations,
+  type TermsDictionary,
+} from "@/constants/translations-terms";
 
-type TermsSection = TranslationDictionary["terms"]["sections"][number];
+type TermsSection = TermsDictionary["sections"][number];
 
 function hasParagraphs(
   section: TermsSection
@@ -25,8 +28,8 @@ function hasBullets(
 }
 
 export default function TermsPage() {
-  const { dictionary } = useTranslation();
-  const terms = dictionary.terms;
+  const { language } = useTranslation();
+  const terms = termsTranslations[language];
 
   return (
     <main className="w-full">
@@ -65,9 +68,7 @@ export default function TermsPage() {
                 {hasBullets(section) && (
                   <ul className="mt-4 space-y-3 list-disc list-inside text-base md:text-lg text-[#3a2018]">
                     {section.bullets.map((bullet, bulletIndex) => (
-                      <li
-                        key={`terms-section-${index}-bullet-${bulletIndex}`}
-                      >
+                      <li key={`terms-section-${index}-bullet-${bulletIndex}`}>
                         {bullet}
                       </li>
                     ))}

@@ -7,12 +7,15 @@ import Link from "next/link";
 import SplitText from "@/TextAnimations/SplitText";
 import { footerItems } from "@/data";
 import ProcessExperienceModal from "@/components/sections/ProcessExperienceModal";
+import {
+  heroTranslations,
+  type HeroDictionary,
+} from "@/constants/translations-hero";
 import { useTranslation } from "@/hooks/useTranslation";
-import type { TranslationDictionary } from "@/constants/translations";
 
 export default function Hero() {
-  const { dictionary } = useTranslation();
-  const heroDictionary = dictionary.hero;
+  const { dictionary, language } = useTranslation();
+  const heroDictionary = heroTranslations[language];
   const footerDictionary = dictionary.footer;
   const [isProcessOpen, setIsProcessOpen] = useState(false);
 
@@ -64,8 +67,6 @@ export default function Hero() {
     </section>
   );
 }
-
-type HeroDictionary = TranslationDictionary["hero"];
 
 const HeroContent = ({
   hero,
