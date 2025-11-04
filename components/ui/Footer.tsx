@@ -25,38 +25,16 @@ function Footer({ className }: { className?: string }) {
       >
         <div className="flex gap-6 justify-center items-center md:justify-start">
           {footerItems.map((item) => {
-            const isStaticFile = item.path.endsWith(".pdf");
             const isExternal = item.path.startsWith("http");
-
-            if (isStaticFile) {
-              return (
-                <a
-                  key={item.path}
-                  href={item.path}
-                  download
-                  rel="noopener noreferrer"
-                  aria-label={`${footerDictionary.socialAriaPrefix} ${item.title}`}
-                  className="flex items-center gap-2 text-gray hover:text-black hover:scale-105 transition"
-                >
-                  <Image
-                    src={item.icon}
-                    alt={`${item.title} Icon`}
-                    width={32}
-                    height={32}
-                  />
-                  <span className="hidden md:inline text-[#260a03]">
-                    {item.title}
-                  </span>
-                </a>
-              );
-            }
+            const isPdf = item.path.endsWith(".pdf");
 
             return (
               <Link
                 key={item.path}
                 href={item.path}
-                target={isExternal ? "_blank" : undefined}
-                rel={isExternal ? "noopener noreferrer" : undefined}
+                target={isExternal || isPdf ? "_blank" : undefined}
+                rel={isExternal || isPdf ? "noopener noreferrer" : undefined}
+                prefetch={isPdf ? false : undefined}
                 aria-label={`${footerDictionary.socialAriaPrefix} ${item.title}`}
                 className="flex items-center gap-2 text-gray hover:text-black hover:scale-105 transition"
               >
