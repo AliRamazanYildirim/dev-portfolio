@@ -184,9 +184,10 @@ const HeroContent = ({
 const Portrait = () => (
   <Image
     alt="Portrait of Ali Ramazan"
-    src="/me.jpeg"
+    src="/me.webp"
     width={408}
     height={488}
+    sizes="(max-width: 768px) 80vw, 408px"
     className="rounded-md w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl h-auto object-cover"
     priority
   />

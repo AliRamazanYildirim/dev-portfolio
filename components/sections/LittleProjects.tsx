@@ -108,7 +108,6 @@ const ProjectsUI = () => {
                       fill
                       className="w-full h-full transition-transform duration-300 group-hover:scale-90"
                       sizes="(max-width: 900px) 100vw, 900px"
-                      priority
                     />
                   </div>
 
