@@ -24,27 +24,55 @@ function Footer({ className }: { className?: string }) {
         className={`flex flex-col md:flex-row justify-between items-center py-8 px-5 button md:text-lgButton md:px-20 ${className}`}
       >
         <div className="flex gap-6 justify-center items-center md:justify-start">
-          {footerItems.map((item) => (
-            <Link
-              key={item.path}
-              href={item.path}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={`${footerDictionary.socialAriaPrefix} ${item.title}`}
-              className="flex items-center gap-2 text-gray hover:text-black hover:scale-105 transition"
-            >
-              <Image
-                src={item.icon}
-                alt={`${item.title} Icon`}
-                width={32}
-                height={32}
-                priority={item.title === "LinkedIn"}
-              />
-              <span className="hidden md:inline text-[#260a03]">
-                {item.title}
-              </span>
-            </Link>
-          ))}
+          {footerItems.map((item) => {
+            const isStaticFile = item.path.endsWith(".pdf");
+            const isExternal = item.path.startsWith("http");
+
+            if (isStaticFile) {
+              return (
+                <a
+                  key={item.path}
+                  href={item.path}
+                  download
+                  rel="noopener noreferrer"
+                  aria-label={`${footerDictionary.socialAriaPrefix} ${item.title}`}
+                  className="flex items-center gap-2 text-gray hover:text-black hover:scale-105 transition"
+                >
+                  <Image
+                    src={item.icon}
+                    alt={`${item.title} Icon`}
+                    width={32}
+                    height={32}
+                  />
+                  <span className="hidden md:inline text-[#260a03]">
+                    {item.title}
+                  </span>
+                </a>
+              );
+            }
+
+            return (
+              <Link
+                key={item.path}
+                href={item.path}
+                target={isExternal ? "_blank" : undefined}
+                rel={isExternal ? "noopener noreferrer" : undefined}
+                aria-label={`${footerDictionary.socialAriaPrefix} ${item.title}`}
+                className="flex items-center gap-2 text-gray hover:text-black hover:scale-105 transition"
+              >
+                <Image
+                  src={item.icon}
+                  alt={`${item.title} Icon`}
+                  width={32}
+                  height={32}
+                  priority={item.title === "LinkedIn"}
+                />
+                <span className="hidden md:inline text-[#260a03]">
+                  {item.title}
+                </span>
+              </Link>
+            );
+          })}
         </div>
 
         <div className="mt-6 md:mt-0 flex flex-col items-center md:items-end gap-3 text-[#260a03]">
