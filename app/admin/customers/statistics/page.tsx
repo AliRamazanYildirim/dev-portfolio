@@ -58,6 +58,7 @@ export default function CustomersStatisticsPage() {
   const [loading, setLoading] = useState(true);
   const [rangeDays, setRangeDays] = useState<number>(30);
   const pageSize = 10; // fixed 10 items per page
+  const [hydrated, setHydrated] = useState(false);
 
   // Verwende den Pagination-Hook.
   const pagination = usePagination({
@@ -66,7 +67,9 @@ export default function CustomersStatisticsPage() {
     initialPage: 1,
   });
 
+  // Hydration check + fetch customers
   useEffect(() => {
+    setHydrated(true);
     fetchCustomers();
   }, []);
 
@@ -188,6 +191,22 @@ export default function CustomersStatisticsPage() {
   }
 
   if (!isAuthenticated) return null;
+
+  // Hydration önlemek için - Prevent hydration mismatch
+  if (!hydrated) {
+    return (
+      <div className="fixed inset-0 w-full h-full">
+        <NoiseBackground mode="dark" intensity={0.08}>
+          <div className="relative z-10 flex items-center justify-center min-h-screen">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4" />
+              <p className="text-white">Loading statistics...</p>
+            </div>
+          </div>
+        </NoiseBackground>
+      </div>
+    );
+  }
 
   return (
     <main className="relative flex justify-center items-start flex-col overflow-x-hidden mx-auto w-full">
