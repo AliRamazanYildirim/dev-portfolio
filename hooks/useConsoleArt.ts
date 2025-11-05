@@ -38,5 +38,13 @@ export const useConsoleArt = () => {
             "font-family: monospace; font-size: 8px; color: #fff; white-space: pre; line-height: 1.2;"
         );
         console.log("%cQualität spricht für sich.", "font-size:16px; font-weight:bold; color:#00ab6b;");
+        if (typeof window !== "undefined") {
+            const loginUrl = `${window.location.origin}/admin/login`;
+            console.log(
+                "%cSuchst du den Login-Bildschirm? 😄 Kluge Wahl, hier ist die Adresse aber nur für mich 😎",
+                "font-size:12px; font-weight:bold; color:#c9184a;"
+            );
+            console.log(`%c${loginUrl}`, "font-size:14px; color:#00ab6b; text-decoration: underline;");
+        }
     }, []);
 };

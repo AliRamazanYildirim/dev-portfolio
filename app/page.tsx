@@ -9,7 +9,7 @@ import NoiseBackground from "@/components/NoiseBackground";
 
 export default function Home() {
   return (
-    <main className="relative flex justify-center items-center flex-col overflow-x-hidden mx-auto">
+    <main className="w-full">
       <div className="w-full">
         <NoiseBackground mode="light" intensity={0.1}>
           <Hero />

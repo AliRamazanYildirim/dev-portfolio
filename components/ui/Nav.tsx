@@ -33,7 +33,9 @@ export const Nav = ({ className }: { className?: string }) => {
   const { language, setLanguage, dictionary } = useTranslation();
   const navDictionary = dictionary.nav;
 
-  const navItems = navDictionary.items;
+  const navItems: readonly NavItemType[] = (
+    navDictionary.items as readonly NavItemType[]
+  ).filter((item) => item.path !== "/admin/login");
   const languageLabel = navDictionary.languageMenu.label;
   const solutionsData = navDictionary.solutions;
   const languages = [
@@ -440,12 +442,12 @@ export const Nav = ({ className }: { className?: string }) => {
                       />
                     </svg>
                   </button>
-                  <ul className="flex flex-col items-center space-y-4 py-4 px-6">
+                  <ul className="flex flex-col items-center w-full gap-4 py-6 px-6">
                     {navItems.map((item: any, idx: number) =>
                       item.submenu ? (
                         <li
                           key={item.title}
-                          className="border-t border-gray/20 pt-4"
+                          className="w-full flex flex-col items-center"
                         >
                           <button
                             type="button"
@@ -453,7 +455,7 @@ export const Nav = ({ className }: { className?: string }) => {
                               isProjectsPage
                                 ? "text-gray hover:text-[#c9184a]"
                                 : "text-gray hover:text-black"
-                            } transition flex items-center justify-center gap-2 mb-3 mx-auto`}
+                            } transition flex items-center justify-center gap-2 mx-auto`}
                             onClick={() => setSolutionsOpen(!solutionsOpen)}
                           >
                             <span>{item.title}</span>
@@ -480,7 +482,7 @@ export const Nav = ({ className }: { className?: string }) => {
                                 animate={{ opacity: 1, height: "auto" }}
                                 exit={{ opacity: 0, height: 0 }}
                                 transition={{ duration: 0.2 }}
-                                className="space-y-2 overflow-hidden"
+                                className="mt-3 space-y-2 overflow-hidden"
                               >
                                 {item.submenu.map(
                                   (solution: any, subIdx: number) => (
@@ -518,7 +520,10 @@ export const Nav = ({ className }: { className?: string }) => {
                           </AnimatePresence>
                         </li>
                       ) : (
-                        <li key={item.path}>
+                        <li
+                          key={item.path}
+                          className="w-full flex justify-center"
+                        >
                           <Link
                             href={item.path || "#"}
                             target={item.external ? "_blank" : undefined}
