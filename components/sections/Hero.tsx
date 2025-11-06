@@ -7,6 +7,7 @@ import Link from "next/link";
 import SplitText from "@/TextAnimations/SplitText";
 import { footerItems } from "@/data";
 import ProcessExperienceModal from "@/components/sections/ProcessExperienceModal";
+import { ShimmerButton } from "@/registry/magicui/shimmer-button";
 import {
   heroTranslations,
   type HeroDictionary,
@@ -164,13 +165,16 @@ const HeroContent = ({
             </Link>
           )}
           {ctas?.secondary && (
-            <button
-              type="button"
+            <ShimmerButton
               onClick={onOpenProcess}
-              className="inline-flex items-center justify-center rounded-full border border-[#c58d12] px-8 py-3 text-sm md:text-base font-semibold text-[#c58d12] transition hover:bg-[#fff7e6]"
+              shimmerColor="#c58d12"
+              shimmerDuration="6s"
+              className="w-full sm:w-auto flex items-center justify-center rounded-full border border-[#c58d12] px-8 py-3 shadow-lg hover:bg-[#fff7e6] transition bg-white"
             >
-              {ctas.secondary.label}
-            </button>
+              <span className="text-center text-sm md:text-base leading-none font-semibold tracking-tight text-black">
+                {ctas.secondary.label}
+              </span>
+            </ShimmerButton>
           )}
         </div>
       )}
