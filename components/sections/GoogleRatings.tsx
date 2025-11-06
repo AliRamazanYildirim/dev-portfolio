@@ -236,13 +236,21 @@ const GoogleRatings: React.FC = () => {
             className="group inline-flex items-center gap-2 px-6 md:px-8 py-3 md:py-4 font-satoshi font-semibold text-black hover:text-black/90 transition-all duration-300 relative z-10"
           >
             <span>{t("googleRatings.seeMore")}</span>
-            <motion.span
-              className="group-hover:translate-x-1 transition-transform duration-300"
+            <motion.svg
+              className="w-5 h-5 md:w-6 md:h-6 text-black drop-shadow-md group-hover:drop-shadow-lg transition-all"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              strokeWidth="2.5"
               initial={{ x: 0 }}
               whileHover={{ x: 4 }}
             >
-              →
-            </motion.span>
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M9 5l7 7-7 7"
+              />
+            </motion.svg>
           </a>
         </motion.div>
       </motion.div>
