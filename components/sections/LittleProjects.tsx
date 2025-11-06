@@ -163,9 +163,41 @@ const ProjectsUI = () => {
         <div className="text-center mt-12">
           <Link
             href="/projects"
-            className="inline-block button md:text-lgButton border border-white px-8 py-3 rounded hover:bg-white hover:text-black transition"
+            className="group relative inline-flex items-center justify-center px-8 py-3 md:px-10 md:py-4 font-semibold text-sm md:text-base overflow-hidden rounded-full transition-all duration-500"
+            style={{
+              background:
+                "linear-gradient(135deg, #c58d12 0%, #d4a917 50%, #e6b934 100%)",
+            }}
           >
-            {texts.showAll}
+            {/* Shimmer Effect Background */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 -skew-x-12 animate-pulse" />
+
+            {/* Content */}
+            <span className="relative z-10 text-black font-bold flex items-center gap-2 group-hover:gap-3 transition-all duration-300">
+              {texts.showAll}
+              <svg
+                className="w-5 h-5 md:w-6 md:h-6 transform group-hover:translate-x-1 transition-transform duration-300"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                strokeWidth="2.5"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </span>
+
+            {/* Glow Effect on Hover */}
+            <div
+              className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-40 transition-opacity duration-500 blur-lg -z-10"
+              style={{
+                background:
+                  "linear-gradient(135deg, #c58d12 0%, #d4a917 50%, #e6b934 100%)",
+              }}
+            />
           </Link>
         </div>
       </div>
