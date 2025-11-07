@@ -185,39 +185,7 @@ export default function CustomersAdminPage() {
                   </p>
                 </div>
                 <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-end gap-3 sm:gap-4">
-                  <a
-                    href="/admin"
-                    className="bg-white text-[#131313] px-4 py-2 rounded-lg font-semibold shadow hover:shadow-md flex items-center gap-2"
-                  >
-                    <svg
-                      className="w-5 h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M15 19l-7-7 7-7"
-                      />
-                    </svg>
-                    Admin Panel
-                  </a>
-                  <a
-                    href="/admin/customers/statistics"
-                    className="bg-white text-[#131313] px-4 py-2 rounded-lg font-semibold shadow hover:shadow-md flex items-center gap-2"
-                  >
-                    <svg
-                      className="w-4 h-4"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path d="M3 13h2v4H3v-4zM7 9h2v8H7V9zM11 5h2v12h-2V5zM15 1h2v16h-2V1z" />
-                    </svg>
-                    <span>Statistics</span>
-                  </a>
+                  
                   <button
                     onClick={() => setShowForm(true)}
                     className="bg-white text-[#131313] px-4 py-2 rounded-lg font-semibold shadow hover:shadow-md"
@@ -304,7 +272,7 @@ export default function CustomersAdminPage() {
                       />
 
                       {showDropdown && liveResults.length > 0 && (
-                        <ul className="absolute z-50 left-0 right-0 mt-1 bg-white rounded-md shadow-lg max-h-60 overflow-auto text-sm">
+                        <ul className="absolute z-50 left-0 right-0 mt-1 bg-white rounded-md shadow-lg max-h-60 overflow-auto text-sm text-black">
                           {liveResults.map((c) => (
                             <li
                               key={c._id || c.id}

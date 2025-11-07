@@ -104,7 +104,7 @@ export default function CustomerForm({
                   placeholder="Name..."
                   value={formData.firstname ?? ""}
                   onChange={(e) => onUpdateField("firstname", e.target.value)}
-                  className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
+                  className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl text-[#131313] placeholder:text-[#131313]/60 focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
                 />
               </div>
 
@@ -117,7 +117,7 @@ export default function CustomerForm({
                   placeholder="Last name..."
                   value={formData.lastname ?? ""}
                   onChange={(e) => onUpdateField("lastname", e.target.value)}
-                  className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
+                  className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl text-[#131313] placeholder:text-[#131313]/60 focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
                 />
               </div>
 
@@ -130,7 +130,7 @@ export default function CustomerForm({
                   placeholder="Company name..."
                   value={formData.companyname ?? ""}
                   onChange={(e) => onUpdateField("companyname", e.target.value)}
-                  className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
+                  className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl text-[#131313] placeholder:text-[#131313]/60 focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
                 />
               </div>
 
@@ -146,7 +146,7 @@ export default function CustomerForm({
                     onUpdateField("email", e.target.value);
                   }}
                   onBlur={() => setEmailTouched(true)}
-                  className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
+                  className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl text-[#131313] placeholder:text-[#131313]/60 focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
                 />
                 {emailTouched && !emailValid && (
                   <p className="mt-2 text-xs text-red-600">
@@ -165,7 +165,7 @@ export default function CustomerForm({
                   value={formData.phone ?? ""}
                   onChange={(e) => onUpdateField("phone", e.target.value)}
                   onBlur={() => setPhoneTouched(true)}
-                  className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
+                  className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl text-[#131313] placeholder:text-[#131313]/60 focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
                 />
                 {phoneTouched && !phoneValid && (
                   <p className="mt-2 text-xs text-red-600">
@@ -184,7 +184,7 @@ export default function CustomerForm({
                   placeholder="Address..."
                   value={formData.address ?? ""}
                   onChange={(e) => onUpdateField("address", e.target.value)}
-                  className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
+                  className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl text-[#131313] placeholder:text-[#131313]/60 focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
                 />
               </div>
 
@@ -197,7 +197,7 @@ export default function CustomerForm({
                   placeholder="City..."
                   value={formData.city ?? ""}
                   onChange={(e) => onUpdateField("city", e.target.value)}
-                  className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
+                  className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl text-[#131313] placeholder:text-[#131313]/60 focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
                 />
               </div>
 
@@ -211,7 +211,7 @@ export default function CustomerForm({
                   value={formData.postcode ?? ""}
                   onChange={(e) => onUpdateField("postcode", e.target.value)}
                   onBlur={() => setPostcodeTouched(true)}
-                  className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
+                  className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl text-[#131313] placeholder:text-[#131313]/60 focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
                 />
                 {postcodeTouched && !postcodeValid && (
                   <p className="mt-2 text-xs text-red-600">
@@ -229,7 +229,7 @@ export default function CustomerForm({
                   placeholder="Enter price..."
                   value={formData.price ?? ""}
                   onChange={(e) => onUpdateField("price", e.target.value)}
-                  className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
+                  className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl text-[#131313] placeholder:text-[#131313]/60 focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
                 />
               </div>
 
@@ -242,7 +242,7 @@ export default function CustomerForm({
                   placeholder="Enter reference code..."
                   value={formData.reference ?? ""}
                   onChange={(e) => onUpdateField("reference", e.target.value)}
-                  className={`w-full px-4 sm:px-6 py-3 sm:py-4 border rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 content text-sm sm:text-base ${
+                  className={`w-full px-4 sm:px-6 py-3 sm:py-4 border rounded-xl text-[#131313] placeholder:text-[#131313]/60 focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 content text-sm sm:text-base ${
                     referralValidation?.isValid
                       ? "bg-emerald-50 border-emerald-300 focus:ring-emerald-500"
                       : referralValidation?.error

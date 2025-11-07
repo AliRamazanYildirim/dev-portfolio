@@ -350,7 +350,7 @@ export default function AdminPage() {
         <NoiseBackground mode="dark" intensity={0.1}>
           {/* Header - Responsive Design Upgrade */}
           <div className="relative z-10">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:pt-0">
               <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
                 <div className="text-center lg:text-left">
                   <h1 className="title text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white mb-2">
@@ -382,48 +382,6 @@ export default function AdminPage() {
                       New Project
                     </span>
                   </button>
-                  <a
-                    href="/admin/customers"
-                    className="button bg-[#c9184a] text-white px-6 sm:px-8 py-3 sm:py-4 rounded-lg hover:bg-[#a3153a] transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 w-full sm:w-auto font-bold text-sm sm:text-base flex items-center justify-center gap-2"
-                  >
-                    <svg
-                      className="w-4 h-4 sm:w-5 sm:h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M4 6h16M4 10h16M4 14h16M4 18h16"
-                      />
-                    </svg>
-                    Manage Customers
-                  </a>
-
-                  {/* Logout Button - Responsive */}
-                  <button
-                    onClick={logout}
-                    className="inline-flex items-center justify-center px-4 sm:px-6 py-3 sm:py-4 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-xl font-medium shadow-sm transition-all duration-200 hover:shadow-md hover:scale-105 w-full sm:w-auto"
-                  >
-                    <span className="flex items-center gap-2 sm:gap-3 text-sm sm:text-base">
-                      <svg
-                        className="w-4 h-4 sm:w-5 sm:h-5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                        />
-                      </svg>
-                      Logout
-                    </span>
-                  </button>
                 </div>
               </div>
             </div>
@@ -431,7 +389,7 @@ export default function AdminPage() {
 
           {/* Main Content - Responsive Design Upgrade */}
           <div className="relative z-10 min-h-screen">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:pt-0">
               {/* Projects Header with Pagination Ref */}
               <div className="mb-6" ref={listTopRef}>
                 <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">
@@ -689,7 +647,7 @@ export default function AdminPage() {
                       placeholder="Enter your amazing project name..."
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
-                      className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
+                      className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl text-[#131313] placeholder:text-[#131313]/60 focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
                     />
                   </div>
 
@@ -702,7 +660,7 @@ export default function AdminPage() {
                       value={shortDescription}
                       onChange={(e) => setShortDescription(e.target.value)}
                       rows={3}
-                      className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content resize-none text-sm sm:text-base"
+                      className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl text-[#131313] placeholder:text-[#131313]/60 focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content resize-none text-sm sm:text-base"
                     />
                   </div>
 
@@ -755,7 +713,7 @@ export default function AdminPage() {
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
                         rows={4}
-                        className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content resize-none text-sm sm:text-base"
+                        className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl text-[#131313] placeholder:text-[#131313]/60 focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content resize-none text-sm sm:text-base"
                       />
                     )}
 
@@ -766,7 +724,7 @@ export default function AdminPage() {
                         value={descriptionDE}
                         onChange={(e) => setDescriptionDE(e.target.value)}
                         rows={4}
-                        className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content resize-none text-sm sm:text-base"
+                        className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl text-[#131313] placeholder:text-[#131313]/60 focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content resize-none text-sm sm:text-base"
                       />
                     )}
 
@@ -777,7 +735,7 @@ export default function AdminPage() {
                         value={descriptionTR}
                         onChange={(e) => setDescriptionTR(e.target.value)}
                         rows={4}
-                        className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content resize-none text-sm sm:text-base"
+                        className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl text-[#131313] placeholder:text-[#131313]/60 focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content resize-none text-sm sm:text-base"
                       />
                     )}
                   </div>
@@ -791,7 +749,7 @@ export default function AdminPage() {
                       placeholder="React, Next.js, TypeScript (comma separated)"
                       value={techStack}
                       onChange={(e) => setTechStack(e.target.value)}
-                      className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
+                      className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl text-[#131313] placeholder:text-[#131313]/60 focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
                     />
                   </div>
 
@@ -802,7 +760,7 @@ export default function AdminPage() {
                     <select
                       value={category}
                       onChange={(e) => setCategory(e.target.value)}
-                      className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
+                      className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl text-[#131313] focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
                     >
                       <option value="">Select category</option>
                       {INVOICE_CONSTANTS.PROJECT.DEFAULT_CATEGORY.map((c) => (
@@ -820,7 +778,7 @@ export default function AdminPage() {
                     <select
                       value={duration}
                       onChange={(e) => setDuration(e.target.value)}
-                      className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
+                      className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl text-[#131313] focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
                     >
                       {INVOICE_CONSTANTS.PROJECT.DEFAULT_DURATION.map((d) => (
                         <option key={d} value={d}>

@@ -14,7 +14,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <>
-      <Nav />
+      {!isAdmin && <Nav />}
       {children}
       {!isAdmin && (
         <>

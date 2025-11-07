@@ -281,7 +281,7 @@ export default function InvoiceModal({
                         projectTitle: e.target.value,
                       }))
                     }
-                    className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-sm"
+                    className="w-full px-4 py-3 rounded-xl border border-slate-300 text-slate-900 placeholder:text-slate-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-sm"
                     placeholder="Enter project title"
                   />
                 </div>
@@ -299,7 +299,7 @@ export default function InvoiceModal({
                       }))
                     }
                     rows={3}
-                    className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none text-sm"
+                    className="w-full px-4 py-3 rounded-xl border border-slate-300 text-slate-900 placeholder:text-slate-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none text-sm"
                     placeholder="Enter project description"
                   />
                 </div>
