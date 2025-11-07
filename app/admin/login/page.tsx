@@ -106,7 +106,7 @@ export default function AdminLoginPage() {
   return (
     <div className="min-h-screen w-full">
       <NoiseBackground mode="dark" intensity={0.1}>
-        <div className="relative z-10 min-h-screen flex justify-center pt-5 px-2">
+        <div className="relative z-10 min-h-screen flex items-center justify-center px-4 py-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
