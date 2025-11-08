@@ -9,12 +9,15 @@ import {
   LayoutDashboard,
   LineChart,
   LogOut,
+  Menu,
   Users2,
+  X,
 } from "lucide-react";
 
 interface AdminSidebarProps {
   isOpen: boolean;
   onClose: () => void;
+  onToggle: () => void;
 }
 
 const navigation = [
@@ -28,7 +31,9 @@ const navigation = [
     label: "Customers",
     href: "/admin/customers",
     icon: Users2,
-    match: (pathname: string) => pathname.startsWith("/admin/customers") && !pathname.includes("statistics"),
+    match: (pathname: string) =>
+      pathname.startsWith("/admin/customers") &&
+      !pathname.includes("statistics"),
   },
   {
     label: "Analytics",
@@ -38,14 +43,17 @@ const navigation = [
   },
 ];
 
-export function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
+export function AdminSidebar({ isOpen, onClose, onToggle }: AdminSidebarProps) {
   const router = useRouter();
   const pathname = usePathname();
+  const collapsed = !isOpen;
 
   const handleNavigate = useCallback(
     (href: string) => {
       router.push(href);
-      onClose();
+      if (typeof window !== "undefined" && window.innerWidth < 1024) {
+        onClose();
+      }
     },
     [router, onClose]
   );
@@ -68,45 +76,57 @@ export function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
   return (
     <aside
       className={cn(
-        "fixed inset-y-0 left-0 z-40 w-72 transform transition-transform duration-300 ease-out lg:static lg:translate-x-0 lg:flex-shrink-0",
-        isOpen ? "translate-x-0" : "-translate-x-full"
+        "fixed inset-y-0 left-0 z-40 transform overflow-hidden transition-all duration-300 ease-out lg:static lg:flex-shrink-0 lg:translate-x-0",
+        isOpen ? "w-64 translate-x-0" : "w-64 -translate-x-full",
+        collapsed ? "lg:w-20" : "lg:w-72"
       )}
     >
       <NoiseBackground
         mode="light"
         intensity={0.08}
-        className="flex h-full flex-col border-r border-black/10 bg-[#eeede9]"
+        className="relative flex h-full flex-col border-r border-black/10 bg-[#eeede9]"
       >
-        <div className="flex items-center justify-between px-5 pb-6 pt-8">
-          <div className="flex items-center gap-3">
-            <div className="relative flex h-12 w-12 items-center justify-center overflow-hidden rounded-full border border-black/10 bg-white">
-              <Image
-                src="/ali-ramazan-yildirim.svg"
-                alt="Admin"
-                width={32}
-                height={32}
-                className="h-9 w-9"
-              />
-            </div>
+        <button
+          type="button"
+          aria-label={collapsed ? "Open sidebar" : "Close sidebar"}
+          onClick={onToggle}
+          className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-white/40 text-[#131313] shadow-sm transition hover:bg-white"
+        >
+          {collapsed ? <Menu className="h-5 w-5" /> : <X className="h-5 w-5" />}
+        </button>
+
+        <div
+          className={cn(
+            "flex flex-col items-center px-5 pt-16 pb-8 text-center transition-all",
+            collapsed ? "gap-3" : "gap-4"
+          )}
+        >
+          <div className="relative h-28 w-28 transition-all">
+            <Image
+              src="/ali-ramazan-yildirim.svg"
+              alt="Admin"
+              fill
+              className="object-contain"
+            />
+          </div>
+          {!collapsed && (
             <div className="flex flex-col">
               <span className="text-lg font-semibold text-[#131313]">
                 Admin Panel
               </span>
               <span className="text-xs font-medium text-[#131313]/70">
-                Actyra Control Center
+                Control Center
               </span>
             </div>
-          </div>
-          <button
-            type="button"
-            className="rounded-full border border-black/10 px-3 py-1 text-sm font-medium text-[#131313] transition hover:bg-black/5 lg:hidden"
-            onClick={onClose}
-          >
-            Close
-          </button>
+          )}
         </div>
 
-        <nav className="flex-1 space-y-1 px-3">
+        <nav
+          className={cn(
+            "flex-1 space-y-1 px-3 transition-all",
+            collapsed ? "px-1" : "px-3"
+          )}
+        >
           {navigation.map((item) => {
             const Icon = item.icon;
             const active = item.match(pathname || "");
@@ -116,10 +136,11 @@ export function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
                 type="button"
                 onClick={() => handleNavigate(item.href)}
                 className={cn(
-                  "group flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition",
+                  "group flex w-full items-center rounded-xl text-sm font-medium transition",
                   active
-                    ? "bg-gradient-to-r from-[#04724d] via-[#b8dbd9] to-[#04471c] text-white shadow-lg"
-                    : "text-[#131313]/80 hover:bg-black/5 hover:text-[#131313]"
+                    ? "bg-gradient-to-r from-[#04724d] via-[#04471c] to-[#b8dbd9] text-white shadow-lg"
+                    : "text-[#131313]/80 hover:bg-black/15 hover:text-[#131313]",
+                  collapsed ? "justify-center px-0 py-3" : "gap-3 px-4 py-3"
                 )}
               >
                 <Icon
@@ -128,20 +149,28 @@ export function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
                     active ? "text-white" : "text-[#131313]/70"
                   )}
                 />
-                <span>{item.label}</span>
+                {!collapsed && <span>{item.label}</span>}
               </button>
             );
           })}
         </nav>
 
-        <div className="px-5 pb-8 pt-4">
+        <div
+          className={cn(
+            "px-5 pb-8 pt-4 transition-all",
+            collapsed ? "px-2" : "px-5"
+          )}
+        >
           <button
             type="button"
             onClick={handleLogout}
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#131313] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#131313]/90"
+            className={cn(
+              "flex w-full items-center justify-center rounded-xl bg-[#131313] text-sm font-semibold text-white transition hover:bg-[#131313]/90",
+              collapsed ? "gap-0 px-0 py-3" : "gap-2 px-4 py-3"
+            )}
           >
             <LogOut className="h-4 w-4" />
-            Logout
+            {!collapsed && <span>Logout</span>}
           </button>
         </div>
       </NoiseBackground>

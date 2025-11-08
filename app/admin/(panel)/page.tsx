@@ -124,15 +124,6 @@ export default function AdminPage() {
           const shortDesc =
             desc.length > 150 ? desc.substring(0, 150) + "..." : desc;
 
-          console.log(
-            "Processing project:",
-            project.title,
-            "shortDesc type:",
-            typeof shortDesc,
-            "value:",
-            shortDesc
-          );
-
           return {
             id: project.id || project._id || project._id?.toString(),
             title: project.title || "Untitled",

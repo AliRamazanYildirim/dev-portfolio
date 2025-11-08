@@ -39,12 +39,17 @@ export const useConsoleArt = () => {
         );
         console.log("%cQualität spricht für sich.", "font-size:16px; font-weight:bold; color:#00ab6b;");
         if (typeof window !== "undefined") {
-            const loginUrl = `${window.location.origin}/admin/login`;
-            console.log(
-                "%cSuchst du den Login-Bildschirm? 😄 Kluge Wahl, hier ist die Adresse aber nur für mich 😎",
-                "font-size:12px; font-weight:bold; color:#c9184a;"
-            );
-            console.log(`%c${loginUrl}`, "font-size:14px; color:#00ab6b; text-decoration: underline;");
+            const pathname = window.location.pathname;
+            const isInsideAdminPanel = pathname.startsWith("/admin") && pathname !== "/admin/login";
+
+            if (!isInsideAdminPanel) {
+                const loginUrl = `${window.location.origin}/admin/login`;
+                console.log(
+                    "%cSuchst du den Login-Bildschirm? 😄 Kluge Wahl, hier ist die Adresse aber nur für mich 😎",
+                    "font-size:12px; font-weight:bold; color:#c9184a;"
+                );
+                console.log(`%c${loginUrl}`, "font-size:14px; color:#00ab6b; text-decoration: underline;");
+            }
         }
     }, []);
 };
