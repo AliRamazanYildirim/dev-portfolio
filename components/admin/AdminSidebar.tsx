@@ -12,6 +12,7 @@ import {
   Menu,
   Users2,
   X,
+  FileText,
 } from "lucide-react";
 
 interface AdminSidebarProps {
@@ -34,6 +35,12 @@ const navigation = [
     match: (pathname: string) =>
       pathname.startsWith("/admin/customers") &&
       !pathname.includes("statistics"),
+  },
+  {
+    label: "Discounts",
+    href: "/admin/discounts",
+    icon: FileText,
+    match: (pathname: string) => pathname.startsWith("/admin/discounts"),
   },
   {
     label: "Analytics",

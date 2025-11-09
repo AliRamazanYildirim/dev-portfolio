@@ -66,6 +66,8 @@ export default function InvoiceModal({
           invoiceData,
           customerEmail: customer.email,
           customerName: `${customer.firstname} ${customer.lastname}`,
+          customerId: (customer as any).id || (customer as any)._id,
+          referrerCode: customer.myReferralCode ?? null,
         }),
       });
 

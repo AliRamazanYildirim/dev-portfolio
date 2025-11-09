@@ -134,8 +134,16 @@ model ReferralTransaction {
   originalPrice   Float    // Orijinal fiyat
   finalPrice      Float    // İndirimli fiyat
   referralLevel   Int      // Referans seviyesi (1, 2, 3...)
+  invoiceStatus   InvoiceStatus @default(pending)
+  invoiceNumber   String?
+  invoiceSentAt   DateTime?
   
   createdAt       DateTime @default(now())
   
   @@map("referral_transactions")
+}
+
+enum InvoiceStatus {
+  pending
+  sent
 }

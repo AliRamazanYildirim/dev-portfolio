@@ -67,6 +67,9 @@ export async function PUT(
           originalPrice: body.price,
           finalPrice: body.price,
           referralLevel: Math.ceil(referrerDiscount / 3),
+          invoiceStatus: "pending",
+          invoiceNumber: null,
+          invoiceSentAt: null,
         });
       }
     }

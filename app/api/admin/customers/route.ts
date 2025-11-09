@@ -336,6 +336,8 @@ export async function POST(req: Request) {
     let referrerCode: string | null = null;
     let referrerDiscount = 0;
     let referrerEmailHTML: { html: string; subject: string } | null = null;
+    let referrerOriginalPrice: number | null = null;
+    let referrerDiscountedPrice: number | null = null;
 
     // NEUKUNDE ZAHLT DEN NORMALEN PREIS
     const finalPriceForNewCustomer = body.price || 0;
@@ -352,6 +354,8 @@ export async function POST(req: Request) {
         const previousPrice = calcDiscountedPrice(referrer.price, currentReferralCount);
         const referrerFinalPrice = calcDiscountedPrice(referrer.price, newReferralCount);
         const currentDiscountAmount = previousPrice - referrerFinalPrice;
+        referrerOriginalPrice = previousPrice;
+        referrerDiscountedPrice = referrerFinalPrice;
         referrerDiscount = Math.min(newReferralCount * 3, 9);
 
         try {
@@ -393,18 +397,6 @@ export async function POST(req: Request) {
             } else {
               console.warn("Email credentials not configured; skipping referrer notification email.");
             }
-          }
-
-          // Insert referral transaction (only if referrer's code exists)
-          if (referrer.myReferralCode) {
-            await ReferralTransactionModel.create({
-              referrerCode: referrer.myReferralCode,
-              newCustomerId: referrer._id.toString(),
-              discountRate: referrerDiscount,
-              originalPrice: body.price,
-              finalPrice: body.price,
-              referralLevel: Math.ceil(referrerDiscount / 3),
-            });
           }
         } catch (updateErr) {
           console.error("Error updating referrer:", updateErr);
@@ -452,9 +444,12 @@ export async function POST(req: Request) {
           referrerCode,
           newCustomerId: customer._id.toString(),
           discountRate: referrerDiscount,
-          originalPrice: body.price,
-          finalPrice: body.price,
+          originalPrice: referrerOriginalPrice ?? body.price,
+          finalPrice: referrerDiscountedPrice ?? body.price,
           referralLevel: Math.ceil(referrerDiscount / 3),
+          invoiceStatus: "pending",
+          invoiceNumber: null,
+          invoiceSentAt: null,
         });
       }
 

@@ -11,7 +11,11 @@ export interface IReferralTransaction {
     originalPrice: number;
     finalPrice: number;
     referralLevel: number;
+    invoiceStatus: "pending" | "sent";
+    invoiceNumber?: string | null;
+    invoiceSentAt?: Date | null;
     createdAt: Date;
+    updatedAt?: Date;
 }
 
 const ReferralTransactionSchema = new Schema<IReferralTransaction>(
@@ -23,6 +27,9 @@ const ReferralTransactionSchema = new Schema<IReferralTransaction>(
         originalPrice: { type: Number, required: true },
         finalPrice: { type: Number, required: true },
         referralLevel: { type: Number, required: true },
+        invoiceStatus: { type: String, enum: ["pending", "sent"], default: "pending" },
+        invoiceNumber: { type: String, default: null },
+        invoiceSentAt: { type: Date, default: null },
     },
     { timestamps: true }
 );
