@@ -49,22 +49,22 @@ const STAGE_COUNT = 3;
 
 const stageStatusConfig = {
   sent: {
-    label: "Gönderildi",
+    label: "Sent",
     badgeClass: "bg-emerald-500/15 text-emerald-100 border border-emerald-500/30",
     icon: CheckCircle2,
   },
   pending: {
-    label: "Bekliyor",
+    label: "Pending",
     badgeClass: "bg-amber-500/15 text-amber-100 border border-amber-500/30",
     icon: Clock3,
   },
   upcoming: {
-    label: "Beklenen aşama",
+    label: "Upcoming stage",
     badgeClass: "bg-slate-500/15 text-slate-100 border border-slate-500/20",
     icon: Clock3,
   },
   locked: {
-    label: "Önceki aşama tamamlanmalı",
+    label: "Previous stage must be completed",
     badgeClass: "bg-slate-700/20 text-slate-200 border border-slate-600/30",
     icon: Lock,
   },
@@ -97,41 +97,41 @@ function StageCard({ stage }: { stage: StageSlot }) {
     : null;
 
   return (
-    <div className="rounded-xl border border-white/10 bg-white/5 p-4 shadow-inner">
+    <div className="rounded-xl border border-white/10 bg-white/5 p-4 shadow-inner relative">
       <div className="flex flex-col gap-3">
-        <div className="flex items-start justify-between gap-3">
+        <div className="flex items-start justify-between gap-2">
           <div>
-            <p className="text-xs uppercase tracking-wide text-white/50">Aşama {stage.level}</p>
+            <p className="text-xs uppercase tracking-wide text-white/50">Stage {stage.level}</p>
             <p className="text-lg font-semibold text-white">
               {stage.entry ? currencyFormatter.format(stage.amount) : "-"}
             </p>
           </div>
-          <span className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold ${statusMeta.badgeClass}`}>
-            <StatusIcon className="h-4 w-4" />
-            {statusMeta.label}
+          <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold flex-shrink-0 ${statusMeta.badgeClass}`}>
+            <StatusIcon className="h-3 w-3" />
+            <span className="hidden sm:inline">{statusMeta.label}</span>
           </span>
         </div>
 
         {stage.entry ? (
           <div className="space-y-2 text-xs text-white/70">
             <div className="flex justify-between">
-              <span>İndirim oranı</span>
+              <span>Discount rate</span>
               <span className="font-semibold text-white">%{stage.entry.discountRate.toFixed(0)}</span>
             </div>
             <div className="flex justify-between">
-              <span>Referansı kullanan</span>
+              <span>Customer using referral</span>
               <span className="text-right text-white/80">
                 {stageCustomerName ?? "-"}
               </span>
             </div>
             <div className="flex justify-between">
-              <span>Gönderim</span>
+              <span>Sent date</span>
               <span>{formatDate(stage.invoiceSentAt)}</span>
             </div>
           </div>
         ) : (
           <p className="text-sm text-white/60">
-            Bu aşama için henüz kayıt bulunmuyor.
+            No records for this stage yet.
           </p>
         )}
       </div>
@@ -174,13 +174,13 @@ export default function InvoiceTrackingPage() {
       const json = await response.json();
 
       if (!json.success) {
-        throw new Error(json.error || "Failed to load invoices");
+        throw new Error(json.error || "Failed to load discounts");
       }
 
       setData(json.data);
     } catch (error) {
       console.error(error);
-      toast.error("Indirimler yüklenemedi");
+      toast.error("Discounts could not be loaded");
     } finally {
       setLoading(false);
     }
@@ -240,7 +240,7 @@ export default function InvoiceTrackingPage() {
         requestBody.invoiceSentAt = payload.invoiceSentAt;
       }
 
-      const response = await fetch("/api/invoices", {
+      const response = await fetch("/api/discounts", {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -251,7 +251,7 @@ export default function InvoiceTrackingPage() {
       const json = await response.json();
 
       if (!response.ok || !json.success) {
-        throw new Error(json.error || "Indirim güncellenemedi");
+        throw new Error(json.error || "Discount could not be updated");
       }
 
       const { invoiceStatus, invoiceNumber, invoiceSentAt } = json.data as {
@@ -292,7 +292,7 @@ export default function InvoiceTrackingPage() {
       });
 
       await loadData().catch((error) => {
-        console.error("Failed to reload invoices after patch", error);
+        console.error("Failed to reload discounts after patch", error);
       });
 
       return { invoiceStatus };
@@ -307,17 +307,17 @@ export default function InvoiceTrackingPage() {
         invoiceStatus: "sent",
       });
 
-      toast.success("Indirim gönderildi olarak işaretlendi");
+      toast.success("Discount marked as sent");
     } catch (error) {
       console.error(error);
-      toast.error("Indirim durumu güncellenemedi");
+      toast.error("Discount status could not be updated");
     }
   };
 
   const handleMarkAsPending = async (entry: InvoiceEntry) => {
     try {
       const confirmReset = window.confirm(
-        "Bu indirimi yeniden bekliyor olarak işaretlemek istediğine emin misin?"
+        "Are you sure you want to mark this discount as pending again?"
       );
 
       if (!confirmReset) {
@@ -329,10 +329,10 @@ export default function InvoiceTrackingPage() {
         invoiceSentAt: null,
       });
 
-      toast.success("Indirim bekliyor olarak güncellendi");
+      toast.success("Discount marked as pending");
     } catch (error) {
       console.error(error);
-      toast.error("Indirim durumu güncellenemedi");
+      toast.error("Discount status could not be updated");
     }
   };
 
@@ -439,7 +439,7 @@ export default function InvoiceTrackingPage() {
           <div className="relative z-10 flex items-center justify-center min-h-screen w-full h-full">
             <div className="text-center">
               <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-white mx-auto mb-4" />
-              <p className="text-white text-lg">Loading invoices...</p>
+              <p className="text-white text-lg">Loading discounts...</p>
             </div>
           </div>
         </NoiseBackground>
@@ -452,14 +452,14 @@ export default function InvoiceTrackingPage() {
       <div className="w-full">
         <NoiseBackground mode="light" intensity={0.08}>
           <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-10">
-            <header className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+            <header className="flex flex-col gap-6">
               <div>
                 <h1 className="title text-3xl sm:text-4xl md:text-5xl text-black font-bold flex items-center gap-3">
                   <FileText className="h-8 w-8 text-[#131313]" />
-                  Indirim Takibi
+                  Discount Tracking
                 </h1>
                 <p className="content text-[#131313]/70 mt-2 max-w-2xl">
-                  Referral indirimlerinden doğan indirimleri burada takip et. Göndermeyi bekleyen ve gönderimi tamamlanan kayıtlar ayrı bölümler halinde listelenir.
+                  Track discounts from referral programs here. Records awaiting transmission and completed transmissions are listed in separate sections.
                 </p>
               </div>
               <div className="flex flex-col md:flex-row md:items-center md:justify-end gap-3 md:gap-4 w-full">
@@ -469,7 +469,7 @@ export default function InvoiceTrackingPage() {
                     type="text"
                     value={searchTerm}
                     onChange={(event) => setSearchTerm(event.target.value)}
-                    placeholder="Müşteri, e-posta veya referral kodu ara"
+                    placeholder="Search customer, email or referral code"
                     className="w-full rounded-lg border border-[#131313]/10 bg-white px-10 py-2 text-sm text-[#131313] shadow focus:outline-none focus:ring focus:ring-[#0f1724]/20"
                   />
                 </div>
@@ -481,9 +481,9 @@ export default function InvoiceTrackingPage() {
                       onChange={(event) => setStatusFilter(event.target.value as "all" | "pending" | "sent")}
                       className="appearance-none cursor-pointer rounded-lg border border-[#131313]/10 bg-white pl-10 pr-8 py-2 text-sm text-[#131313] shadow focus:outline-none focus:ring focus:ring-[#0f1724]/20"
                     >
-                      <option value="all">Tüm durumlar</option>
-                      <option value="pending">Bekleyen</option>
-                      <option value="sent">Gönderilen</option>
+                      <option value="all">All statuses</option>
+                      <option value="pending">Pending</option>
+                      <option value="sent">Sent</option>
                     </select>
                   </div>
                   <button
@@ -491,7 +491,7 @@ export default function InvoiceTrackingPage() {
                     className="flex items-center gap-2 rounded-lg border border-[#131313]/10 bg-white px-3 py-2 text-sm font-semibold text-[#131313] shadow hover:bg-[#131313]/10"
                   >
                     <X className="h-4 w-4" />
-                    Sıfırla
+                    Reset
                   </button>
                   <button
                     onClick={loadData}
@@ -499,192 +499,290 @@ export default function InvoiceTrackingPage() {
                     className="flex items-center justify-center gap-2 bg-[#131313] text-white px-5 py-2 rounded-lg font-semibold shadow hover:bg-[#131313]/90 transition disabled:opacity-60 disabled:cursor-not-allowed"
                   >
                     <RefreshCcw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
-                    <span>Yenile</span>
+                    <span>Refresh</span>
                   </button>
                 </div>
               </div>
             </header>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-[#0f1724]/60 rounded-2xl p-5 border border-white/5 shadow-lg">
-                <p className="text-sm text-white/80">Bekleyen kayıtlar</p>
+                            <div className="bg-[#0f1724]/60 rounded-2xl p-5 border border-white/5 shadow-lg">
+                <p className="text-sm text-white/80">Pending records</p>
                 <p className="text-3xl font-bold text-white mt-2">{data.pending.length}</p>
                 <p className="mt-4 text-sm text-white/60">
-                  Henüz indirimi gönderilmeyen referral işlemleri.
+                  Referral transactions whose discount has not yet been sent.
                 </p>
               </div>
 
               <div className="bg-[#0f1724]/60 rounded-2xl p-5 border border-white/5 shadow-lg">
-                <p className="text-sm text-white/80">Gönderilen kayıtlar</p>
+                <p className="text-sm text-white/80">Sent records</p>
                 <p className="text-3xl font-bold text-white mt-2">{data.sent.length}</p>
                 <p className="mt-4 text-sm text-white/60">
-                  Indirim gönderim süreci tamamlanan kayıtlar.
+                  Records whose discount transmission has been completed.
                 </p>
               </div>
 
               <div className="bg-[#0f1724]/60 rounded-2xl p-5 border border-white/5 shadow-lg">
-                <p className="text-sm text-white/80">Gönderilen indirim toplamı</p>
+                <p className="text-sm text-white/80">Total sent discounts</p>
                 <p className="text-3xl font-bold text-white mt-2">{currencyFormatter.format(totalRecovered)}</p>
                 <p className="mt-4 text-sm text-white/60">
-                  Gönderimi tamamlanan aşamaların toplam indirim tutarı.
+                  Total discount amount of completed stages.
                 </p>
               </div>
             </div>
 
             <section className="space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                <h2 className="text-2xl font-semibold text-[#131313]">Indirim Kayıtları</h2>
-                <span className="rounded-full bg-[#0f1724]/10 px-4 py-1 text-[#0f1724] text-sm font-semibold">
-                  {filteredInvoices.length} kayıt listeleniyor
+                <h2 className="text-2xl font-semibold text-[#131313]">Discount Records</h2>
+                <span className="rounded-full bg-amber-500/50 px-4 py-1 text-[#0f1724] text-sm font-semibold">
+                  {filteredInvoices.length} records listed
                 </span>
               </div>
 
               <div className="overflow-x-auto rounded-2xl border border-white/10 bg-[#0f1724]/95 shadow-lg">
-                <table className="min-w-full text-sm text-white">
-                  <thead>
-                      <tr className="border-b border-white/10 text-left text-white/80">
-                      <th className="px-5 py-3 font-semibold">Referrer / Kullanan</th>
-                      <th className="px-5 py-3 font-semibold">Referral Kodu</th>
-                      <th className="px-5 py-3 font-semibold">Kazandığı İndirim %</th>
-                      <th className="px-5 py-3 font-semibold">İndirim Tutarı (₺)</th>
-                      <th className="px-5 py-3 font-semibold">Gönderim Tarihi</th>
-                      <th className="px-5 py-3 font-semibold">Durum</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredInvoices.length === 0 ? (
-                      <tr>
-                        <td colSpan={6} className="px-5 py-8 text-center text-white/60">
-                          Seçilen filtrelere uygun indirim kaydı bulunamadı.
-                        </td>
+                <div className="hidden md:block">
+                  <table className="min-w-full text-sm text-white">
+                    <thead>
+                        <tr className="border-b border-white/10 text-left text-white/80">
+                        <th className="px-5 py-3 font-semibold">Referrer / User</th>
+                        <th className="px-5 py-3 font-semibold">Referral Code</th>
+                        <th className="px-5 py-3 font-semibold">Discount Rate %</th>
+                        <th className="px-5 py-3 font-semibold">Discount Amount (₺)</th>
+                        <th className="px-5 py-3 font-semibold">Sent Date</th>
+                        <th className="px-5 py-3 font-semibold">Status</th>
                       </tr>
-                    ) : (
-                      filteredInvoices.map((item) => {
-                        const customerName = item.customer
-                          ? `${item.customer.firstname} ${item.customer.lastname}`.trim()
-                          : "Bilinmeyen müşteri";
-                        const discountAmount = item.discountAmount ?? Math.max(item.originalPrice - item.finalPrice, 0);
-                        return (
-                          <tr key={item.id} className="border-b border-white/5 last:border-none">
-                            <td className="px-5 py-4 align-top font-medium text-white">
-                              <div className="flex flex-col gap-2">
-                                <div>
-                                  <p className="text-xs uppercase tracking-wide text-white/50">Referrer</p>
-                                  <p className="text-sm font-semibold text-white">
-                                    {item.referrer
-                                      ? `${item.referrer.firstname} ${item.referrer.lastname}`.trim() || "Bilinmeyen müşteri"
-                                      : "Referrer bulunamadı"}
-                                  </p>
-                                  <p className="text-xs text-white/60">{item.referrer?.email ?? "-"}</p>
+                    </thead>
+                    <tbody>
+                      {filteredInvoices.length === 0 ? (
+                        <tr>
+                          <td colSpan={6} className="px-5 py-8 text-center text-white/60">
+                            No discount record found matching the selected filters.
+                          </td>
+                        </tr>
+                      ) : (
+                        filteredInvoices.map((item) => {
+                          const customerName = item.customer
+                            ? `${item.customer.firstname} ${item.customer.lastname}`.trim()
+                            : "Unknown customer";
+                          const discountAmount = item.discountAmount ?? Math.max(item.originalPrice - item.finalPrice, 0);
+                          return (
+                            <tr key={item.id} className="border-b border-white/5 last:border-none">
+                              <td className="px-5 py-4 align-top font-medium text-white">
+                                <div className="flex flex-col gap-2">
+                                  <div>
+                                    <p className="text-xs uppercase tracking-wide text-white/50">Referrer</p>
+                                    <p className="text-sm font-semibold text-white">
+                                      {item.referrer
+                                        ? `${item.referrer.firstname} ${item.referrer.lastname}`.trim() || "Unknown customer"
+                                        : "Referrer not found"}
+                                    </p>
+                                    <p className="text-xs text-white/60">{item.referrer?.email ?? "-"}</p>
+                                  </div>
+                                  <div>
+                                    <p className="text-xs uppercase tracking-wide text-white/50">User of referral</p>
+                                    <p className="text-xs text-white/70">
+                                      {customerName || "Unknown customer"}
+                                    </p>
+                                    <p className="text-[11px] text-white/40">{item.customer?.email ?? "-"}</p>
+                                  </div>
                                 </div>
-                                <div>
-                                  <p className="text-xs uppercase tracking-wide text-white/50">Referansı kullanan</p>
-                                  <p className="text-xs text-white/70">
-                                    {customerName || "Bilinmeyen müşteri"}
-                                  </p>
-                                  <p className="text-[11px] text-white/40">{item.customer?.email ?? "-"}</p>
+                              </td>
+                              <td className="px-5 py-4 align-top text-white/80">{item.referrerCode}</td>
+                              <td className="px-5 py-4 align-top text-white/80">
+                                <div className="flex flex-col">
+                                  <span className="font-semibold text-white">%{item.discountRate.toFixed(0)}</span>
+                                  <span className="text-xs text-white/60">Stage {item.referralLevel}</span>
                                 </div>
-                              </div>
-                            </td>
-                            <td className="px-5 py-4 align-top text-white/80">{item.referrerCode}</td>
-                            <td className="px-5 py-4 align-top text-white/80">
-                              <div className="flex flex-col">
-                                <span className="font-semibold text-white">%{item.discountRate.toFixed(0)}</span>
-                                <span className="text-xs text-white/60">Aşama {item.referralLevel}</span>
-                              </div>
-                            </td>
-                            <td className="px-5 py-4 align-top text-white/80">
-                              <div className="flex flex-col">
-                                <span>{currencyFormatter.format(discountAmount)}</span>
-                                <span className="text-xs text-white/50">
-                                  {currencyFormatter.format(item.finalPrice)} / {currencyFormatter.format(item.originalPrice)}
-                                </span>
-                              </div>
-                            </td>
-                            <td className="px-5 py-4 align-top text-white/80">{formatDate(item.invoiceSentAt)}</td>
-                            <td className="px-5 py-4 align-top">
-                              <span
-                                className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide ${
-                                  item.invoiceStatus === "sent"
-                                    ? "bg-emerald-500/20 text-emerald-200"
-                                    : "bg-amber-500/20 text-amber-100"
-                                }`}
-                              >
-                                {item.invoiceStatus === "sent" ? "Gönderildi" : "Bekliyor"}
-                              </span>
-                              <p className="mt-1 text-xs text-white/50">Oluşturulma: {formatDate(item.createdAt)}</p>
-                              <div className="mt-2 flex flex-col gap-2">
-                                {item.invoiceStatus === "pending" ? (
-                                  <button
-                                    onClick={() => handleMarkAsSent(item)}
-                                    disabled={mutatingId === item.id}
-                                    className="rounded-md bg-emerald-500/20 px-3 py-1 text-xs font-semibold text-emerald-100 transition hover:bg-emerald-500/30 disabled:cursor-not-allowed disabled:opacity-60"
+                              </td>
+                              <td className="px-5 py-4 align-top text-white/80">
+                                <div className="flex flex-col">
+                                  <span>{currencyFormatter.format(discountAmount)}</span>
+                                  <span className="text-xs text-white/50">
+                                    {currencyFormatter.format(item.finalPrice)} / {currencyFormatter.format(item.originalPrice)}
+                                  </span>
+                                </div>
+                              </td>
+                              <td className="px-5 py-4 align-top text-white/80">{formatDate(item.invoiceSentAt)}</td>
+                              <td className="px-5 py-4 align-top">
+                                <div className="flex justify-center">
+                                  <span
+                                    className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide ${
+                                      item.invoiceStatus === "sent"
+                                        ? "bg-emerald-500/20 text-emerald-200"
+                                        : "bg-amber-500/20 text-amber-100"
+                                    }`}
                                   >
-                                    {mutatingId === item.id ? "Güncelleniyor..." : "Gönder"}
-                                  </button>
-                                ) : (
-                                  <button
-                                    onClick={() => handleMarkAsPending(item)}
-                                    disabled={mutatingId === item.id}
-                                    className="rounded-md bg-amber-500/20 px-3 py-1 text-xs font-semibold text-amber-100 transition hover:bg-amber-500/30 disabled:cursor-not-allowed disabled:opacity-60"
-                                  >
-                                    {mutatingId === item.id ? "Güncelleniyor..." : "Bekle"}
-                                  </button>
-                                )}
-                              </div>
-                            </td>
-                          </tr>
-                        );
-                      })
-                    )}
-                  </tbody>
-                </table>
+                                    {item.invoiceStatus === "sent" ? "Sent" : "Pending"}
+                                  </span>
+                                </div>
+                                <p className="mt-2 text-xs text-center text-white/50">Created: {formatDate(item.createdAt)}</p>
+                                <div className="mt-2 flex flex-col gap-2">
+                                  {item.invoiceStatus === "pending" ? (
+                                    <button
+                                      onClick={() => handleMarkAsSent(item)}
+                                      disabled={mutatingId === item.id}
+                                      className="rounded-md bg-emerald-500/20 px-3 py-1 text-xs font-semibold text-emerald-100 transition hover:bg-emerald-500/30 disabled:cursor-not-allowed disabled:opacity-60"
+                                    >
+                                      {mutatingId === item.id ? "Updating..." : "Send"}
+                                    </button>
+                                  ) : (
+                                    <button
+                                      onClick={() => handleMarkAsPending(item)}
+                                      disabled={mutatingId === item.id}
+                                      className="rounded-md bg-amber-500/20 px-3 py-1 text-xs font-semibold text-amber-100 transition hover:bg-amber-500/30 disabled:cursor-not-allowed disabled:opacity-60"
+                                    >
+                                      {mutatingId === item.id ? "Updating..." : "Revert"}
+                                    </button>
+                                  )}
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+
+                <div className="md:hidden space-y-4 p-4">
+                  {filteredInvoices.length === 0 ? (
+                    <div className="text-center text-white/60 py-8">
+                      No discount record found matching the selected filters.
+                    </div>
+                  ) : (
+                    filteredInvoices.map((item) => {
+                      const customerName = item.customer
+                        ? `${item.customer.firstname} ${item.customer.lastname}`.trim()
+                        : "Unknown customer";
+                      const discountAmount = item.discountAmount ?? Math.max(item.originalPrice - item.finalPrice, 0);
+                      return (
+                        <div key={item.id} className="bg-white/5 border border-white/10 rounded-lg p-4 space-y-3">
+                          <div className="flex flex-col gap-3">
+                            <div>
+                              <p className="text-xs uppercase tracking-wide text-white/50 mb-1">Referrer</p>
+                              <p className="text-sm font-semibold text-white">
+                                {item.referrer
+                                  ? `${item.referrer.firstname} ${item.referrer.lastname}`.trim() || "Unknown customer"
+                                  : "Referrer not found"}
+                              </p>
+                              <p className="text-xs text-white/60">{item.referrer?.email ?? "-"}</p>
+                            </div>
+
+                            <div>
+                              <p className="text-xs uppercase tracking-wide text-white/50 mb-1">User of Referral</p>
+                              <p className="text-xs text-white/70">{customerName || "Unknown customer"}</p>
+                              <p className="text-[11px] text-white/40">{item.customer?.email ?? "-"}</p>
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-3 text-sm">
+                            <div>
+                              <p className="text-xs text-white/50 mb-1">Referral Code</p>
+                              <p className="font-semibold text-white">{item.referrerCode}</p>
+                            </div>
+                            <div>
+                              <p className="text-xs text-white/50 mb-1">Discount Rate</p>
+                              <p className="font-semibold text-white">%{item.discountRate.toFixed(0)}</p>
+                              <p className="text-xs text-white/60">Stage {item.referralLevel}</p>
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-3 text-sm">
+                            <div>
+                              <p className="text-xs text-white/50 mb-1">Discount Amount</p>
+                              <p className="font-semibold text-white">{currencyFormatter.format(discountAmount)}</p>
+                              <p className="text-xs text-white/50">
+                                {currencyFormatter.format(item.finalPrice)} / {currencyFormatter.format(item.originalPrice)}
+                              </p>
+                            </div>
+                            <div>
+                              <p className="text-xs text-white/50 mb-1">Sent Date</p>
+                              <p className="text-white text-xs">{formatDate(item.invoiceSentAt)}</p>
+                            </div>
+                          </div>
+
+                          <div className="border-t border-white/10 pt-3">
+                            <span
+                              className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide mb-2 ${
+                                item.invoiceStatus === "sent"
+                                  ? "bg-emerald-500/20 text-emerald-200"
+                                  : "bg-amber-500/20 text-amber-100"
+                              }`}
+                            >
+                              {item.invoiceStatus === "sent" ? "Sent" : "Pending"}
+                            </span>
+                            <p className="text-xs text-white/50 mb-2">Created: {formatDate(item.createdAt)}</p>
+                            <div className="flex gap-2">
+                              {item.invoiceStatus === "pending" ? (
+                                <button
+                                  onClick={() => handleMarkAsSent(item)}
+                                  disabled={mutatingId === item.id}
+                                  className="flex-1 rounded-md bg-emerald-500/20 px-3 py-2 text-xs font-semibold text-emerald-100 transition hover:bg-emerald-500/30 disabled:cursor-not-allowed disabled:opacity-60"
+                                >
+                                  {mutatingId === item.id ? "Updating..." : "Send"}
+                                </button>
+                              ) : (
+                                <button
+                                  onClick={() => handleMarkAsPending(item)}
+                                  disabled={mutatingId === item.id}
+                                  className="flex-1 rounded-md bg-amber-500/20 px-3 py-2 text-xs font-semibold text-amber-100 transition hover:bg-amber-500/30 disabled:cursor-not-allowed disabled:opacity-60"
+                                >
+                                  {mutatingId === item.id ? "Updating..." : "Revert"}
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
               </div>
             </section>
 
             <section className="space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                <h2 className="text-2xl font-semibold text-[#131313]">İndirim Aşamaları (3 Adım)</h2>
-                <span className="rounded-full bg-[#0f1724]/10 px-4 py-1 text-[#0f1724] text-sm font-semibold">
-                  {stageGroups.length} referrer takip ediliyor
+                <h2 className="text-2xl font-semibold text-[#131313]">Discount Stages (3 Steps)</h2>
+                <span className="rounded-full bg-amber-400/50 px-4 py-1 text-[#0f1724] text-sm font-semibold">
+                  {stageGroups.length} referrers being tracked
                 </span>
               </div>
 
               {stageGroups.length === 0 ? (
                 <div className="rounded-2xl border border-white/20 bg-[#eeede9] p-6 text-center text-[#131313]/60 shadow-lg">
-                  Henüz indirim aşaması oluşturulmamış.
+                  No discount stages have been created yet.
                 </div>
               ) : (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="space-y-6">
                   {stageGroups.map((group) => {
                     const referrerName = group.referrer
                       ? `${group.referrer.firstname} ${group.referrer.lastname}`.trim()
-                      : "Bilinmeyen referrer";
+                      : "Unknown referrer";
 
                     return (
                       <div
                         key={group.referrerCode}
                         className="rounded-3xl border border-white/10 bg-[#0f1724]/95 p-6 shadow-lg"
                       >
-                        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between mb-6">
                           <div>
                             <p className="text-xs uppercase tracking-wide text-white/60">Referrer</p>
                             <p className="text-xl font-semibold text-white">{referrerName}</p>
                             <p className="text-sm text-white/60">{group.referrer?.email ?? "-"}</p>
-                            <p className="text-xs text-white/40 mt-1">Referral kodu: {group.referrer?.referralCode ?? group.referrerCode}</p>
+                            <p className="text-xs text-white/40 mt-1">Referral code: {group.referrer?.referralCode ?? group.referrerCode}</p>
                           </div>
                           <div className="text-sm text-white/70 space-y-1 text-right">
                             <p className="font-semibold text-white">
-                              {currencyFormatter.format(group.totalDiscount)} toplam indirim
+                              {currencyFormatter.format(group.totalDiscount)} total discount
                             </p>
-                            <p>{group.completedCount} / {STAGE_COUNT} aşama tamamlandı</p>
+                            <p>{group.completedCount} / {STAGE_COUNT} stages completed</p>
                             {group.pendingCount > 0 && (
-                              <p>{group.pendingCount} aşama gönderim bekliyor</p>
+                              <p>{group.pendingCount} stages awaiting transmission</p>
                             )}
                           </div>
                         </div>
 
-                        <div className="mt-5 grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 auto-rows-max">
                           {group.stages.map((stage) => (
                             <StageCard key={`${group.referrerCode}-${stage.level}`} stage={stage} />
                           ))}

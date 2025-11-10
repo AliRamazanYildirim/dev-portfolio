@@ -120,22 +120,22 @@ export async function GET(request: NextRequest) {
         createdAt,
         referrer: referrer
           ? {
-              id: String(referrer._id),
-              firstname: referrer.firstname ?? "",
-              lastname: referrer.lastname ?? "",
-              email: referrer.email ?? "",
-              companyname: referrer.companyname ?? "",
-              referralCode: referrer.myReferralCode ?? tx.referrerCode,
-            }
+            id: String(referrer._id),
+            firstname: referrer.firstname ?? "",
+            lastname: referrer.lastname ?? "",
+            email: referrer.email ?? "",
+            companyname: referrer.companyname ?? "",
+            referralCode: referrer.myReferralCode ?? tx.referrerCode,
+          }
           : null,
         customer: customer
           ? {
-              id: String(customer._id),
-              firstname: customer.firstname,
-              lastname: customer.lastname,
-              email: customer.email,
-              companyname: customer.companyname,
-            }
+            id: String(customer._id),
+            firstname: customer.firstname,
+            lastname: customer.lastname,
+            email: customer.email,
+            companyname: customer.companyname,
+          }
           : null,
       };
     });
@@ -151,11 +151,11 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Failed to load invoices:", error);
+    console.error("Failed to load discounts:", error);
     return NextResponse.json(
       {
         success: false,
-        error: "Failed to load referral invoices",
+        error: "Failed to load referral discounts",
       },
       { status: 500 }
     );
@@ -164,19 +164,19 @@ export async function GET(request: NextRequest) {
 
 export async function PATCH(request: NextRequest) {
   try {
-  const { id, invoiceStatus, invoiceNumber, invoiceSentAt } = await request.json();
-    console.log("[PATCH /api/invoices] Received body:", { id, invoiceStatus, invoiceNumber, invoiceSentAt });
+    const { id, invoiceStatus, invoiceNumber, invoiceSentAt } = await request.json();
+    console.log("[PATCH /api/discounts] Received body:", { id, invoiceStatus, invoiceNumber, invoiceSentAt });
 
     if (!id) {
       return NextResponse.json(
-        { success: false, error: "Invoice transaction id is required" },
+        { success: false, error: "Discount transaction id is required" },
         { status: 400 }
       );
     }
 
     if (invoiceStatus && !["pending", "sent"].includes(invoiceStatus)) {
       return NextResponse.json(
-        { success: false, error: "Invalid invoice status" },
+        { success: false, error: "Invalid discount status" },
         { status: 400 }
       );
     }
@@ -187,7 +187,7 @@ export async function PATCH(request: NextRequest) {
     if (typeof invoiceStatus === "string") {
       update.invoiceStatus = invoiceStatus;
     }
-    console.log("[PATCH /api/invoices] Update object after status:", update);
+    console.log("[PATCH /api/discounts] Update object after status:", update);
 
     if (invoiceNumber !== undefined) {
       update.invoiceNumber = invoiceNumber || null;
@@ -216,7 +216,7 @@ export async function PATCH(request: NextRequest) {
         { status: 400 }
       );
     }
-    console.log("[PATCH /api/invoices] Final update to save:", update);
+    console.log("[PATCH /api/discounts] Final update to save:", update);
 
     const updated = await ReferralTransactionModel.findByIdAndUpdate(
       id,
@@ -226,12 +226,12 @@ export async function PATCH(request: NextRequest) {
 
     if (!updated) {
       return NextResponse.json(
-        { success: false, error: "Invoice transaction not found" },
+        { success: false, error: "Discount transaction not found" },
         { status: 404 }
       );
     }
 
-    console.log("[PATCH /api/invoices] Successfully updated:", { id: String(updated._id), invoiceStatus: updated.invoiceStatus });
+    console.log("[PATCH /api/discounts] Successfully updated:", { id: String(updated._id), invoiceStatus: updated.invoiceStatus });
 
     return NextResponse.json({
       success: true,
@@ -245,9 +245,9 @@ export async function PATCH(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Failed to update invoice status:", error);
+    console.error("Failed to update discount status:", error);
     return NextResponse.json(
-      { success: false, error: "Failed to update invoice status" },
+      { success: false, error: "Failed to update discount status" },
       { status: 500 }
     );
   }
