@@ -114,9 +114,9 @@ export async function GET(request: NextRequest) {
         finalPrice,
         discountAmount,
         referralLevel: tx.referralLevel,
-        invoiceStatus: normalizedStatus,
-        invoiceNumber,
-        invoiceSentAt,
+        discountStatus: normalizedStatus,
+        discountNumber: invoiceNumber,
+        discountSentAt: invoiceSentAt,
         createdAt,
         referrer: referrer
           ? {
@@ -140,8 +140,8 @@ export async function GET(request: NextRequest) {
       };
     });
 
-    const pending = mapped.filter((item) => item.invoiceStatus === "pending");
-    const sent = mapped.filter((item) => item.invoiceStatus === "sent");
+    const pending = mapped.filter((item) => item.discountStatus === "pending");
+    const sent = mapped.filter((item) => item.discountStatus === "sent");
 
     return NextResponse.json({
       success: true,
@@ -164,8 +164,8 @@ export async function GET(request: NextRequest) {
 
 export async function PATCH(request: NextRequest) {
   try {
-    const { id, invoiceStatus, invoiceNumber, invoiceSentAt } = await request.json();
-    console.log("[PATCH /api/discounts] Received body:", { id, invoiceStatus, invoiceNumber, invoiceSentAt });
+    const { id, discountStatus, discountNumber, discountSentAt } = await request.json();
+    console.log("[PATCH /api/discounts] Received body:", { id, discountStatus, discountNumber, discountSentAt });
 
     if (!id) {
       return NextResponse.json(
@@ -174,7 +174,7 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
-    if (invoiceStatus && !["pending", "sent"].includes(invoiceStatus)) {
+    if (discountStatus && !["pending", "sent"].includes(discountStatus)) {
       return NextResponse.json(
         { success: false, error: "Invalid discount status" },
         { status: 400 }
@@ -183,22 +183,23 @@ export async function PATCH(request: NextRequest) {
 
     await connectToMongo();
 
+    // Map incoming discount-* fields to the DB fields (which still use invoice-*)
     const update: Record<string, unknown> = {};
-    if (typeof invoiceStatus === "string") {
-      update.invoiceStatus = invoiceStatus;
+    if (typeof discountStatus === "string") {
+      update.invoiceStatus = discountStatus;
     }
     console.log("[PATCH /api/discounts] Update object after status:", update);
 
-    if (invoiceNumber !== undefined) {
-      update.invoiceNumber = invoiceNumber || null;
+    if (discountNumber !== undefined) {
+      update.invoiceNumber = discountNumber || null;
     }
 
-    if (invoiceSentAt !== undefined) {
-      if (invoiceSentAt) {
-        const parsedDate = new Date(invoiceSentAt);
+    if (discountSentAt !== undefined) {
+      if (discountSentAt) {
+        const parsedDate = new Date(discountSentAt);
         if (Number.isNaN(parsedDate.getTime())) {
           return NextResponse.json(
-            { success: false, error: "Invalid invoiceSentAt value" },
+            { success: false, error: "Invalid discountSentAt value" },
             { status: 400 }
           );
         }
@@ -206,7 +207,7 @@ export async function PATCH(request: NextRequest) {
       } else {
         update.invoiceSentAt = null;
       }
-    } else if (invoiceStatus === "sent") {
+    } else if (discountStatus === "sent") {
       update.invoiceSentAt = new Date();
     }
 
@@ -231,15 +232,15 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
-    console.log("[PATCH /api/discounts] Successfully updated:", { id: String(updated._id), invoiceStatus: updated.invoiceStatus });
+    console.log("[PATCH /api/discounts] Successfully updated:", { id: String(updated._id), discountStatus: updated.invoiceStatus });
 
     return NextResponse.json({
       success: true,
       data: {
         id: String(updated._id),
-        invoiceStatus: updated.invoiceStatus,
-        invoiceNumber: updated.invoiceNumber ?? null,
-        invoiceSentAt: updated.invoiceSentAt
+        discountStatus: updated.invoiceStatus,
+        discountNumber: updated.invoiceNumber ?? null,
+        discountSentAt: updated.invoiceSentAt
           ? new Date(updated.invoiceSentAt).toISOString()
           : null,
       },
