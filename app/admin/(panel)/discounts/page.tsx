@@ -14,6 +14,7 @@ import {
   Lock,
 } from "lucide-react";
 import toast from "react-hot-toast";
+import Pagination from "@/components/ui/Pagination";
 
 interface DiscountEntry {
   id: string;
@@ -55,6 +56,8 @@ const currencyFormatter = new Intl.NumberFormat("de-DE", {
 });
 
 const STAGE_COUNT = 3;
+const RECORDS_PER_PAGE = 3;
+const STAGE_GROUPS_PER_PAGE = 2;
 
 const stageStatusConfig = {
   sent: {
@@ -178,6 +181,8 @@ export default function DiscountTrackingPage() {
   );
   const [searchTerm, setSearchTerm] = useState("");
   const [mutatingId, setMutatingId] = useState<string | null>(null);
+  const [recordsPage, setRecordsPage] = useState(1);
+  const [stagesPage, setStagesPage] = useState(1);
 
   const totalRecovered = useMemo(() => {
     return data.sent.reduce(
@@ -250,6 +255,50 @@ export default function DiscountTrackingPage() {
       );
     });
   }, [allInvoices, searchTerm, statusFilter]);
+
+  const totalRecordPages = Math.max(
+    1,
+    Math.ceil(filteredInvoices.length / RECORDS_PER_PAGE)
+  );
+
+  useEffect(() => {
+    if (recordsPage > totalRecordPages) {
+      setRecordsPage(totalRecordPages);
+    }
+  }, [recordsPage, totalRecordPages]);
+
+  const paginatedRecords = useMemo(() => {
+    const startIndex = (recordsPage - 1) * RECORDS_PER_PAGE;
+    return filteredInvoices.slice(startIndex, startIndex + RECORDS_PER_PAGE);
+  }, [filteredInvoices, recordsPage]);
+
+  const recordPagination = useMemo(() => {
+    const totalItems = filteredInvoices.length;
+    const changePage = (page: number) => {
+      const next = Math.min(Math.max(page, 1), totalRecordPages);
+      setRecordsPage(next);
+    };
+
+    return {
+      currentPage: recordsPage,
+      totalPages: totalRecordPages,
+      hasNextPage: recordsPage < totalRecordPages,
+      hasPrevPage: recordsPage > 1,
+      onPageChange: changePage,
+      onNextPage: () => changePage(recordsPage + 1),
+      onPrevPage: () => changePage(recordsPage - 1),
+      getPageNumbers: () =>
+        Array.from({ length: totalRecordPages }, (_, index) => index + 1),
+      getCurrentRange: () => {
+        if (totalItems === 0) {
+          return { start: 0, end: 0, total: 0 };
+        }
+        const start = (recordsPage - 1) * RECORDS_PER_PAGE + 1;
+        const end = Math.min(start + RECORDS_PER_PAGE - 1, totalItems);
+        return { start, end, total: totalItems };
+      },
+    };
+  }, [filteredInvoices.length, recordsPage, totalRecordPages]);
 
   const resetFilters = () => {
     setStatusFilter("all");
@@ -487,6 +536,50 @@ export default function DiscountTrackingPage() {
     });
   }, [allInvoices]);
 
+  const totalStagePages = Math.max(
+    1,
+    Math.ceil(stageGroups.length / STAGE_GROUPS_PER_PAGE)
+  );
+
+  useEffect(() => {
+    if (stagesPage > totalStagePages) {
+      setStagesPage(totalStagePages);
+    }
+  }, [stagesPage, totalStagePages]);
+
+  const paginatedStageGroups = useMemo(() => {
+    const startIndex = (stagesPage - 1) * STAGE_GROUPS_PER_PAGE;
+    return stageGroups.slice(startIndex, startIndex + STAGE_GROUPS_PER_PAGE);
+  }, [stageGroups, stagesPage]);
+
+  const stagePagination = useMemo(() => {
+    const totalItems = stageGroups.length;
+    const changePage = (page: number) => {
+      const next = Math.min(Math.max(page, 1), totalStagePages);
+      setStagesPage(next);
+    };
+
+    return {
+      currentPage: stagesPage,
+      totalPages: totalStagePages,
+      hasNextPage: stagesPage < totalStagePages,
+      hasPrevPage: stagesPage > 1,
+      onPageChange: changePage,
+      onNextPage: () => changePage(stagesPage + 1),
+      onPrevPage: () => changePage(stagesPage - 1),
+      getPageNumbers: () =>
+        Array.from({ length: totalStagePages }, (_, index) => index + 1),
+      getCurrentRange: () => {
+        if (totalItems === 0) {
+          return { start: 0, end: 0, total: 0 };
+        }
+        const start = (stagesPage - 1) * STAGE_GROUPS_PER_PAGE + 1;
+        const end = Math.min(start + STAGE_GROUPS_PER_PAGE - 1, totalItems);
+        return { start, end, total: totalItems };
+      },
+    };
+  }, [stageGroups.length, stagesPage, totalStagePages]);
+
   if (authLoading) {
     return (
       <div className="fixed inset-0 w-full h-full">
@@ -662,7 +755,7 @@ export default function DiscountTrackingPage() {
                           </td>
                         </tr>
                       ) : (
-                        filteredInvoices.map((item) => {
+                        paginatedRecords.map((item) => {
                           const customerName = item.customer
                             ? `${item.customer.firstname} ${item.customer.lastname}`.trim()
                             : "Unknown customer";
@@ -788,7 +881,7 @@ export default function DiscountTrackingPage() {
                       No discount record found matching the selected filters.
                     </div>
                   ) : (
-                    filteredInvoices.map((item) => {
+                    paginatedRecords.map((item) => {
                       const customerName = item.customer
                         ? `${item.customer.firstname} ${item.customer.lastname}`.trim()
                         : "Unknown customer";
@@ -921,6 +1014,20 @@ export default function DiscountTrackingPage() {
               </div>
             </section>
 
+            <Pagination
+              currentPage={recordPagination.currentPage}
+              totalPages={recordPagination.totalPages}
+              hasNextPage={recordPagination.hasNextPage}
+              hasPrevPage={recordPagination.hasPrevPage}
+              onPageChange={recordPagination.onPageChange}
+              onNextPage={recordPagination.onNextPage}
+              onPrevPage={recordPagination.onPrevPage}
+              getPageNumbers={recordPagination.getPageNumbers}
+              getCurrentRange={recordPagination.getCurrentRange}
+              theme="admin"
+              className="mt-4"
+            />
+
             <section className="space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <h2 className="text-2xl font-semibold text-[#131313]">
@@ -937,7 +1044,7 @@ export default function DiscountTrackingPage() {
                 </div>
               ) : (
                 <div className="space-y-6">
-                  {stageGroups.map((group) => {
+                  {paginatedStageGroups.map((group) => {
                     const referrerName = group.referrer
                       ? `${group.referrer.firstname} ${group.referrer.lastname}`.trim()
                       : "Unknown referrer";
@@ -996,6 +1103,20 @@ export default function DiscountTrackingPage() {
                 </div>
               )}
             </section>
+
+            <Pagination
+              currentPage={stagePagination.currentPage}
+              totalPages={stagePagination.totalPages}
+              hasNextPage={stagePagination.hasNextPage}
+              hasPrevPage={stagePagination.hasPrevPage}
+              onPageChange={stagePagination.onPageChange}
+              onNextPage={stagePagination.onNextPage}
+              onPrevPage={stagePagination.onPrevPage}
+              getPageNumbers={stagePagination.getPageNumbers}
+              getCurrentRange={stagePagination.getCurrentRange}
+              theme="admin"
+              className="mt-4"
+            />
           </div>
         </NoiseBackground>
       </div>
