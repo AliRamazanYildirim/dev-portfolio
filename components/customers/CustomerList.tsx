@@ -87,7 +87,7 @@ export default function CustomerList({
           </div>
 
           {/* Pagination - Zentrale Komponente */}
-          <div className="flex-shrink-0 p-4 border-t border-slate-200/50 bg-transparent">
+          <div className="flex-shrink-0 p-1 border-t border-slate-200/50 bg-transparent">
             <Pagination
               currentPage={pagination.currentPage}
               totalPages={pagination.totalPages}

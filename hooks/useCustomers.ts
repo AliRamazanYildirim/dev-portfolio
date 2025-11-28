@@ -16,7 +16,7 @@ export const useCustomers = () => {
   // Page creation hook
   const pagination = usePagination({
     totalItems: customers.length,
-    itemsPerPage: 8,
+    itemsPerPage: 10,
     initialPage: 1,
   });
 

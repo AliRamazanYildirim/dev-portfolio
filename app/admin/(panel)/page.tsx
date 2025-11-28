@@ -39,10 +39,10 @@ export default function AdminPage() {
   // Pagination için ref
   const listTopRef = useRef<HTMLDivElement | null>(null);
 
-  // Pagination Hook - 3'er 3'er sayfalama
+  // Pagination Hook - 2'er 2'er sayfalama
   const pagination = usePagination({
     totalItems: projects.length,
-    itemsPerPage: 3,
+    itemsPerPage: 2,
     initialPage: 1,
   });
 
@@ -550,7 +550,7 @@ export default function AdminPage() {
                           }
                           getPageNumbers={pagination.getPageNumbers}
                           getCurrentRange={pagination.getCurrentRange}
-                          theme="dark"
+                          theme="admin"
                           showInfo={true}
                           size="md"
                           className="mt-12"

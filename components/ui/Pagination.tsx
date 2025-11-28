@@ -72,7 +72,7 @@ const Pagination: React.FC<PaginationProps> = ({
         active:
           "bg-gradient-to-br from-[#131313] to-[#131313]/90 text-white border-[#131313] shadow-xl hover:from-[#131313]/90 hover:to-[#131313]/80",
       },
-      info: "text-gray-600 font-medium",
+      info: "text-gray font-medium",
       ellipsis: "text-[#131313]/60 font-medium",
     },
   };
