@@ -80,6 +80,13 @@ export function AdminSidebar({ isOpen, onClose, onToggle }: AdminSidebarProps) {
     }
   }, [router, onClose]);
 
+  const handleGoHome = useCallback(() => {
+    router.push("/");
+    if (typeof window !== "undefined" && window.innerWidth < 1024) {
+      onClose();
+    }
+  }, [router, onClose]);
+
   return (
     <aside
       className={cn(
@@ -108,14 +115,19 @@ export function AdminSidebar({ isOpen, onClose, onToggle }: AdminSidebarProps) {
             collapsed ? "gap-3" : "gap-4"
           )}
         >
-          <div className="relative h-28 w-28 transition-all">
+          <button
+            type="button"
+            onClick={handleGoHome}
+            className="relative h-28 w-28 transition-all focus:outline-none"
+            aria-label="Go to home page"
+          >
             <Image
               src="/ali-ramazan-yildirim.svg"
-              alt="Admin"
+              alt="Admin logo"
               fill
               className="object-contain"
             />
-          </div>
+          </button>
           {!collapsed && (
             <div className="flex flex-col">
               <span className="text-lg font-semibold text-[#131313]">

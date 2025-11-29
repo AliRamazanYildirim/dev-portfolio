@@ -53,6 +53,14 @@ export default function CustomersAdminPage() {
   const [showDropdown, setShowDropdown] = useState(false);
   const debounceRef = useRef<number | null>(null);
 
+  const setSidebarOpenState = (open: boolean) => {
+    if (typeof window === "undefined") return;
+    if (window.innerWidth < 1024) return;
+    window.dispatchEvent(
+      new CustomEvent("admin-sidebar:set", { detail: { open } })
+    );
+  };
+
   const handleSaveCustomer = async () => {
     if (!validateForm(customers)) return;
 
@@ -95,6 +103,7 @@ export default function CustomersAdminPage() {
         }
 
         setShowForm(false);
+        setSidebarOpenState(true);
         resetForm();
       }
     } catch (error: any) {
@@ -104,6 +113,7 @@ export default function CustomersAdminPage() {
 
   const handleEditCustomer = (customer: any) => {
     setEditForm(customer);
+    setSidebarOpenState(false);
     setShowForm(true);
     setSelectedCustomer(customer);
   };
@@ -112,6 +122,7 @@ export default function CustomersAdminPage() {
   // The selected customer will only change if the server confirms the save.
 
   const handleCancelForm = () => {
+    setSidebarOpenState(true);
     setShowForm(false);
     resetForm();
   };
@@ -185,9 +196,11 @@ export default function CustomersAdminPage() {
                   </p>
                 </div>
                 <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-end gap-3 sm:gap-4">
-                  
                   <button
-                    onClick={() => setShowForm(true)}
+                    onClick={() => {
+                      setSidebarOpenState(false);
+                      setShowForm(true);
+                    }}
                     className="bg-white text-[#131313] px-4 py-2 rounded-lg font-semibold shadow hover:shadow-md"
                   >
                     <span className="flex items-center justify-center gap-2 sm:gap-3 font-bold text-sm sm:text-base">

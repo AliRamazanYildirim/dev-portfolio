@@ -19,6 +19,22 @@ export default function AdminShell({ children }: AdminShellProps) {
     }
   }, []);
 
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const handleSidebarEvent = (event: Event) => {
+      const detail = (event as CustomEvent<{ open?: boolean }>).detail;
+      if (detail && typeof detail.open === "boolean") {
+        setIsSidebarOpen(detail.open);
+      }
+    };
+
+    window.addEventListener("admin-sidebar:set", handleSidebarEvent);
+    return () => {
+      window.removeEventListener("admin-sidebar:set", handleSidebarEvent);
+    };
+  }, []);
+
   const closeSidebar = useCallback(() => setIsSidebarOpen(false), []);
   const toggleSidebar = useCallback(
     () => setIsSidebarOpen((prev) => !prev),

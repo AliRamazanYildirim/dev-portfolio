@@ -36,6 +36,14 @@ export default function AdminPage() {
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const setSidebarOpenState = (open: boolean) => {
+    if (typeof window === "undefined") return;
+    if (window.innerWidth < 1024) return;
+    window.dispatchEvent(
+      new CustomEvent("admin-sidebar:set", { detail: { open } })
+    );
+  };
+
   // Pagination için ref
   const listTopRef = useRef<HTMLDivElement | null>(null);
 
@@ -173,6 +181,7 @@ export default function AdminPage() {
     setEditingProject(null);
     setShowForm(false);
     setActiveTab("en");
+    setSidebarOpenState(true);
   };
 
   // Projekt speichern - Save project
@@ -329,6 +338,7 @@ export default function AdminPage() {
     setIsFeatured(project.isFeatured);
     setGallery(project.gallery.map((img) => img.url));
     setEditingProject(project);
+    setSidebarOpenState(false);
     setShowForm(true);
   };
 
@@ -382,7 +392,10 @@ export default function AdminPage() {
                 </div>
                 <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-end gap-3 sm:gap-4">
                   <button
-                    onClick={() => setShowForm(true)}
+                    onClick={() => {
+                      setSidebarOpenState(false);
+                      setShowForm(true);
+                    }}
                     className="button bg-white text-[#131313] px-6 sm:px-8 py-3 sm:py-4 rounded-lg hover:bg-white/90 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 w-full sm:w-auto"
                   >
                     <span className="flex items-center justify-center gap-2 sm:gap-3 font-bold text-sm sm:text-base">
