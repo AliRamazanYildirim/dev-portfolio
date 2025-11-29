@@ -26,7 +26,10 @@ export default function RootLayout({
         </LanguageProvider>
         <Toaster
           position="top-center"
-          toastOptions={{ duration: 4000, style: { borderRadius: 8 } }}
+          toastOptions={{
+            duration: 4000,
+            style: { borderRadius: 8, maxWidth: 600 },
+          }}
         />
       </body>
     </html>

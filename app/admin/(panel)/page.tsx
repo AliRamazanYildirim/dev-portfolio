@@ -255,29 +255,58 @@ export default function AdminPage() {
 
   // Projekt löschen - Delete project
   const deleteProject = async (id: string) => {
-    try {
-      const promise = (async () => {
-        const res = await fetch(`/api/admin/projects/${id}`, {
-          method: "DELETE",
-        });
-        const json = await res.json();
-        if (!res.ok || !json.success) {
-          throw new Error(json?.error || `HTTP ${res.status}`);
-        }
-        return "Project deleted!";
-      })();
+    toast(
+      (t) => (
+        <div className="flex flex-col gap-2 w-96">
+          <p className="font-semibold">
+            Are you sure you want to delete this project?
+          </p>
+          <p className="text-sm text-gray-600">This action cannot be undone.</p>
+          <div className="flex gap-2 mt-2">
+            <button
+              onClick={async () => {
+                toast.dismiss(t.id);
+                try {
+                  const promise = (async () => {
+                    const res = await fetch(`/api/admin/projects/${id}`, {
+                      method: "DELETE",
+                    });
+                    const json = await res.json();
+                    if (!res.ok || !json.success) {
+                      throw new Error(json?.error || `HTTP ${res.status}`);
+                    }
+                    return "Project deleted successfully!";
+                  })();
 
-      await toast.promise(promise, {
-        loading: "Deleting project...",
-        success: (msg) => (typeof msg === "string" ? msg : "Deleted"),
-        error: (e) => (e instanceof Error ? e.message : "Delete failed"),
-      });
+                  await toast.promise(promise, {
+                    loading: "Deleting project...",
+                    success: (msg) =>
+                      typeof msg === "string" ? msg : "Deleted",
+                    error: (e) =>
+                      e instanceof Error ? e.message : "Delete failed",
+                  });
 
-      // Refresh on success
-      fetchProjects();
-    } catch (error: any) {
-      toast.error(error?.message || "Delete failed");
-    }
+                  // Refresh on success
+                  fetchProjects();
+                } catch (error: any) {
+                  toast.error(error?.message || "Delete failed");
+                }
+              }}
+              className="flex-1 bg-red-600 text-white px-3 py-1.5 rounded text-sm font-medium hover:bg-red-700 transition"
+            >
+              Delete
+            </button>
+            <button
+              onClick={() => toast.dismiss(t.id)}
+              className="flex-1 bg-gray-300 text-gray-800 px-3 py-1.5 rounded text-sm font-medium hover:bg-gray-400 transition"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      ),
+      { duration: Infinity }
+    );
   };
 
   const editProject = (project: Project) => {

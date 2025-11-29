@@ -542,7 +542,36 @@ export default function CustomerDetails({
                     Edit
                   </button>
                   <button
-                    onClick={() => onDelete(customer.id)}
+                    onClick={() => {
+                      toast(
+                        (t) => (
+                          <div className="flex flex-col gap-2 w-96">
+                            <p className="font-semibold">Are you sure?</p>
+                            <p className="text-sm text-gray-600">
+                              This action cannot be undone.
+                            </p>
+                            <div className="flex gap-2 mt-2">
+                              <button
+                                onClick={() => {
+                                  toast.dismiss(t.id);
+                                  onDelete(customer.id);
+                                }}
+                                className="flex-1 bg-red-600 text-white px-3 py-1.5 rounded text-sm font-medium hover:bg-red-700 transition"
+                              >
+                                Delete
+                              </button>
+                              <button
+                                onClick={() => toast.dismiss(t.id)}
+                                className="flex-1 bg-gray-300 text-gray-800 px-3 py-1.5 rounded text-sm font-medium hover:bg-gray-400 transition"
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          </div>
+                        ),
+                        { duration: Infinity }
+                      );
+                    }}
                     className="w-full relative group/btn overflow-hidden inline-flex items-center justify-center px-6 py-4 bg-gradient-to-r from-red-600 via-red-700 to-rose-700 text-white rounded-2xl font-bold shadow-lg hover:shadow-red-500/40 hover:shadow-2xl transition-all duration-300 hover:scale-105"
                   >
                     <svg
