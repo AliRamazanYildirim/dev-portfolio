@@ -8,6 +8,7 @@ import { INVOICE_CONSTANTS } from "@/constants/invoice";
 import Pagination from "@/components/ui/Pagination";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { usePagination } from "@/hooks/usePagination";
+import { RefreshCcw } from "lucide-react";
 import toast from "react-hot-toast";
 
 // Interface-Definitionen - Interface definitions
@@ -425,10 +426,24 @@ export default function AdminPage() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:pt-0">
               {/* Projects Header with Pagination Ref */}
               <div className="mb-6" ref={listTopRef}>
-                <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">
-                  Projects ({projects.length})
-                </h2>
-                <p className="text-white/70">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                  <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2 sm:mb-0">
+                    Projects ({projects.length})
+                  </h2>
+                  <button
+                    onClick={fetchProjects}
+                    disabled={loading}
+                    className="flex items-center justify-center gap-2 bg-white text-[#131313] px-5 py-2 rounded-lg font-semibold shadow hover:bg-white/90 transition disabled:opacity-60 disabled:cursor-not-allowed"
+                  >
+                    <RefreshCcw
+                      className={`h-4 w-4 text-[#131313] ${
+                        loading ? "animate-spin" : ""
+                      }`}
+                    />
+                    <span>Refresh</span>
+                  </button>
+                </div>
+                <p className="text-white/70 mt-2">
                   {projects.length === 0
                     ? "No projects yet"
                     : `Showing ${pagination.getCurrentRange().start} - ${
