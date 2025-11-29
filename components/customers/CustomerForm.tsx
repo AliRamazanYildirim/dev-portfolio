@@ -317,7 +317,7 @@ export default function CustomerForm({
             className={`w-full sm:w-auto px-6 sm:px-8 py-3 rounded-xl font-medium shadow-lg transition-all duration-200 text-sm sm:text-base order-1 sm:order-2 ${
               emailValid && phoneValid && postcodeValid
                 ? "bg-[#131313] hover:bg-[#131313]/90 text-white hover:shadow-xl hover:scale-105"
-                : "bg-gray-200 text-gray-500 cursor-not-allowed shadow-none"
+                : "bg-gray-200 text-gray cursor-not-allowed shadow-none"
             }`}
           >
             {editingCustomer ? "Update" : "Save"}
