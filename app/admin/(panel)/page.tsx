@@ -20,6 +20,7 @@ interface Project {
   techStack: string[];
   isFeatured: boolean;
   category?: string;
+  duration?: string;
   gallery: { url: string }[];
   createdAt?: string;
 }
@@ -194,6 +195,8 @@ export default function AdminPage() {
             shortDescription: String(shortDesc), // FORCE STRING CONVERSION
             techStack: techStack,
             category: project.category || "",
+            duration:
+              project.duration || INVOICE_CONSTANTS.PROJECT.DEFAULT_DURATION[0],
             isFeatured: project.featured || false,
             gallery: project.gallery || [],
             createdAt: project.createdAt
@@ -410,6 +413,9 @@ export default function AdminPage() {
     setShortDescription(project.shortDescription);
     setTechStack(project.techStack.join(", "));
     setCategory(project.category || "");
+    setDuration(
+      project.duration || INVOICE_CONSTANTS.PROJECT.DEFAULT_DURATION[0]
+    );
     setIsFeatured(project.isFeatured);
     setGallery(project.gallery.map((img) => img.url));
     setEditingProject(project);
