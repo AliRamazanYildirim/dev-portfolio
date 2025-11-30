@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import CustomerModel from "@/models/Customer";
 import ReferralTransactionModel from "@/models/ReferralTransaction";
+import { connectToMongo } from "@/lib/mongodb";
 import nodemailer from "nodemailer";
 import path from "path";
 import fs from "fs";
@@ -10,6 +11,7 @@ import fs from "fs";
 // - to=YYYY-MM-DD (inclusive)
 export async function GET(request: Request) {
   try {
+    await connectToMongo();
     const { searchParams } = new URL(request.url);
     const sortParam = searchParams.get("sort");
     const from = searchParams.get("from");
@@ -330,6 +332,7 @@ function buildWelcomeEmailHTML({
 // POST: Neuen Kunden hinzufügen
 export async function POST(req: Request) {
   try {
+    await connectToMongo();
     const body = await req.json();
 
     // Wenn er mit einem Referenzcode gekommen ist: Finde die Person, die ihn empfohlen hat, aktualisiere den Rabatt und bereite die E-Mail vor.
