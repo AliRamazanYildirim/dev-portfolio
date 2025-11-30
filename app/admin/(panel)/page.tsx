@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo, FormEvent } from "react";
 import Image from "next/image";
 import NoiseBackground from "@/components/NoiseBackground";
 import ImageUpload from "@/components/ui/ImageUpload";
@@ -21,7 +21,15 @@ interface Project {
   isFeatured: boolean;
   category?: string;
   gallery: { url: string }[];
+  createdAt?: string;
 }
+
+type ProjectSortOption =
+  | "none"
+  | "name_asc"
+  | "name_desc"
+  | "created_asc"
+  | "created_desc";
 
 export default function AdminPage() {
   // Admin-Authentifizierung - Admin authentication
@@ -36,6 +44,10 @@ export default function AdminPage() {
   const [showForm, setShowForm] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState<ProjectSortOption>("none");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [liveResults, setLiveResults] = useState<Project[]>([]);
+  const [showDropdown, setShowDropdown] = useState(false);
 
   const setSidebarOpenState = (open: boolean) => {
     if (typeof window === "undefined") return;
@@ -47,13 +59,7 @@ export default function AdminPage() {
 
   // Pagination için ref
   const listTopRef = useRef<HTMLDivElement | null>(null);
-
-  // Pagination Hook - 2'er 2'er sayfalama
-  const pagination = usePagination({
-    totalItems: projects.length,
-    itemsPerPage: 2,
-    initialPage: 1,
-  });
+  const debounceRef = useRef<number | null>(null);
 
   // Formular-Status - Form state
   const [title, setTitle] = useState<string>("");
@@ -73,6 +79,54 @@ export default function AdminPage() {
   useEffect(() => {
     fetchProjects();
   }, []);
+
+  const filteredProjects = useMemo(() => {
+    let data = [...projects];
+
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      data = data.filter((project) =>
+        project.title.toLowerCase().includes(query)
+      );
+    }
+
+    const compareDates = (a?: string, b?: string) => {
+      const first = a ? new Date(a).getTime() : 0;
+      const second = b ? new Date(b).getTime() : 0;
+      return first - second;
+    };
+
+    switch (filter) {
+      case "name_asc":
+        data.sort((a, b) =>
+          a.title.localeCompare(b.title, undefined, { sensitivity: "base" })
+        );
+        break;
+      case "name_desc":
+        data.sort((a, b) =>
+          b.title.localeCompare(a.title, undefined, { sensitivity: "base" })
+        );
+        break;
+      case "created_asc":
+        data.sort((a, b) => compareDates(a.createdAt, b.createdAt));
+        break;
+      case "created_desc":
+        data.sort((a, b) => compareDates(b.createdAt, a.createdAt));
+        break;
+      default:
+        break;
+    }
+
+    return data;
+  }, [projects, searchQuery, filter]);
+
+  // Pagination Hook - 2'er 2'er sayfalama
+  const pagination = usePagination({
+    totalItems: filteredProjects.length,
+    itemsPerPage: 2,
+    initialPage: 1,
+  });
+  const { currentPage, totalPages, goToPage } = pagination;
 
   // Projekte laden - Load projects
   const fetchProjects = async () => {
@@ -142,6 +196,11 @@ export default function AdminPage() {
             category: project.category || "",
             isFeatured: project.featured || false,
             gallery: project.gallery || [],
+            createdAt: project.createdAt
+              ? new Date(project.createdAt).toISOString()
+              : project.created_at
+              ? new Date(project.created_at).toISOString()
+              : new Date().toISOString(),
           };
         });
         setProjects(formattedProjects);
@@ -156,16 +215,31 @@ export default function AdminPage() {
   };
 
   // Erstellte Projekte abrufen
-  const paginatedProjects = pagination.paginatedData(projects);
+  const paginatedProjects = pagination.paginatedData(filteredProjects);
 
   // Beim Seitenwechsel weiches Scrollen
   const handlePageChange = (page: number) => {
-    pagination.goToPage(page);
+    goToPage(page);
     // Weiches Scrollen
     if (listTopRef.current) {
       listTopRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   };
+
+  const handleSearchSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setSearchQuery((prev) => prev.trim());
+  };
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      goToPage(totalPages);
+    }
+  }, [filteredProjects.length, currentPage, totalPages, goToPage]);
+
+  useEffect(() => {
+    goToPage(1);
+  }, [searchQuery, filter, goToPage]);
 
   // Formular zurücksetzen - Reset form
   const resetForm = () => {
@@ -353,6 +427,20 @@ export default function AdminPage() {
     return String(desc);
   };
 
+  const formatCreatedDate = (isoDate?: string) => {
+    if (!isoDate) return "Created: Unknown";
+    try {
+      const formatted = new Intl.DateTimeFormat("de-DE", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      }).format(new Date(isoDate));
+      return `Created: ${formatted}`;
+    } catch (err) {
+      return "Created: Unknown";
+    }
+  };
+
   // Authentication loading
   if (authLoading) {
     return (
@@ -427,29 +515,122 @@ export default function AdminPage() {
               {/* Projects Header with Pagination Ref */}
               <div className="mb-6" ref={listTopRef}>
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                  <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2 sm:mb-0">
-                    Projects ({projects.length})
-                  </h2>
-                  <button
-                    onClick={fetchProjects}
-                    disabled={loading}
-                    className="flex items-center justify-center gap-2 bg-white text-[#131313] px-5 py-2 rounded-lg font-semibold shadow hover:bg-white/90 transition disabled:opacity-60 disabled:cursor-not-allowed"
-                  >
-                    <RefreshCcw
-                      className={`h-4 w-4 text-[#131313] ${
-                        loading ? "animate-spin" : ""
-                      }`}
-                    />
-                    <span>Refresh</span>
-                  </button>
+                  <div className="w-full">
+                    <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2 sm:mb-0">
+                      Projects (
+                      {filteredProjects.length === projects.length
+                        ? projects.length
+                        : `${filteredProjects.length} / ${projects.length}`}
+                      )
+                    </h2>
+                    <p className="text-white/70 mt-2">
+                      {filteredProjects.length === 0
+                        ? projects.length === 0
+                          ? "No projects yet"
+                          : "No projects match your current search or filter"
+                        : `Showing ${pagination.getCurrentRange().start} - ${
+                            pagination.getCurrentRange().end
+                          } of ${pagination.getCurrentRange().total}`}
+                    </p>
+                  </div>
+                  <div className="w-full sm:w-auto flex flex-col sm:flex-row items-start sm:items-center gap-2">
+                    <form
+                      onSubmit={handleSearchSubmit}
+                      className="flex flex-col sm:flex-row w-full sm:w-auto gap-2"
+                    >
+                      <div className="relative w-full sm:w-64">
+                        <input
+                          type="search"
+                          placeholder="Search project name..."
+                          value={searchQuery}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            setSearchQuery(value);
+                            if (debounceRef.current)
+                              window.clearTimeout(debounceRef.current);
+                            debounceRef.current = window.setTimeout(() => {
+                              const trimmed = value.trim();
+                              if (!trimmed) {
+                                setLiveResults([]);
+                                setShowDropdown(false);
+                                return;
+                              }
+                              const matches = projects.filter((project) =>
+                                project.title
+                                  .toLowerCase()
+                                  .includes(trimmed.toLowerCase())
+                              );
+                              setLiveResults(matches.slice(0, 6));
+                              setShowDropdown(matches.length > 0);
+                            }, 250);
+                          }}
+                          className="w-full bg-white/90 text-black px-3 py-1.5 rounded-md text-sm focus:outline-none"
+                          onFocus={() => {
+                            if (liveResults.length > 0) setShowDropdown(true);
+                          }}
+                          onBlur={() =>
+                            setTimeout(() => setShowDropdown(false), 150)
+                          }
+                        />
+
+                        {showDropdown && liveResults.length > 0 && (
+                          <ul className="absolute z-50 left-0 right-0 mt-1 bg-white rounded-md shadow-lg max-h-60 overflow-auto text-sm text-black">
+                            {liveResults.map((project) => (
+                              <li
+                                key={project.id}
+                                className="px-3 py-2 hover:bg-gray-100 cursor-pointer"
+                                onMouseDown={() => {
+                                  setSearchQuery(project.title);
+                                  setShowDropdown(false);
+                                }}
+                              >
+                                <div className="font-semibold text-gray-900">
+                                  {project.title}
+                                </div>
+                                {project.category && (
+                                  <div className="text-gray-600">
+                                    {project.category}
+                                  </div>
+                                )}
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+                      <button
+                        type="submit"
+                        className="w-full sm:w-auto bg-white text-[#131313] px-3 py-1 rounded-md text-sm font-semibold"
+                      >
+                        Search
+                      </button>
+                    </form>
+                    <select
+                      value={filter}
+                      onChange={(e) =>
+                        setFilter(e.target.value as ProjectSortOption)
+                      }
+                      className="bg-[#131313] text-white font-semibold px-6 py-2 rounded-lg text-sm shadow-lg w-full sm:w-auto"
+                    >
+                      <option value="none">Filter / Sort</option>
+                      <option value="name_asc">Name: A → Z</option>
+                      <option value="name_desc">Name: Z → A</option>
+                      <option value="created_asc">Created: Old → New</option>
+                      <option value="created_desc">Created: New → Old</option>
+                    </select>
+                    <button
+                      onClick={fetchProjects}
+                      disabled={loading}
+                      className="flex items-center justify-center gap-2 bg-white text-[#131313] px-5 py-2 rounded-lg font-semibold shadow hover:bg-white/90 transition disabled:opacity-60 disabled:cursor-not-allowed w-full sm:w-auto"
+                    >
+                      <RefreshCcw
+                        className={`h-4 w-4 text-[#131313] ${
+                          loading ? "animate-spin" : ""
+                        }`}
+                      />
+                      <span>Refresh</span>
+                    </button>
+                  </div>
                 </div>
-                <p className="text-white/70 mt-2">
-                  {projects.length === 0
-                    ? "No projects yet"
-                    : `Showing ${pagination.getCurrentRange().start} - ${
-                        pagination.getCurrentRange().end
-                      } of ${pagination.getCurrentRange().total}`}
-                </p>
               </div>
 
               {loading ? (
@@ -458,7 +639,7 @@ export default function AdminPage() {
                 </div>
               ) : (
                 <div className="grid gap-6 sm:gap-8">
-                  {projects && projects.length > 0 ? (
+                  {filteredProjects.length > 0 ? (
                     <>
                       {paginatedProjects.map((project) => (
                         <div key={project.id} className="group">
@@ -467,8 +648,11 @@ export default function AdminPage() {
                             <NoiseBackground
                               mode="light"
                               intensity={0.05}
-                              className="rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8"
+                              className="rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8 relative"
                             >
+                              <div className="absolute top-4 right-4 font-semibold text-xs sm:text-sm text-[#131313]/80 bg-white/80 border border-[#131313]/20 rounded-full px-3 py-1 shadow-sm">
+                                {formatCreatedDate(project.createdAt)}
+                              </div>
                               <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 lg:gap-6">
                                 <div className="flex-1">
                                   <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 mb-4">
@@ -592,7 +776,7 @@ export default function AdminPage() {
                       ))}
 
                       {/* Pagination Controls - Spezialdesign für die Admin-Seite*/}
-                      {projects.length > 0 && (
+                      {filteredProjects.length > 0 && (
                         <Pagination
                           currentPage={pagination.currentPage}
                           totalPages={pagination.totalPages}
@@ -631,10 +815,14 @@ export default function AdminPage() {
                           />
                         </svg>
                         <h3 className="text-lg sm:text-xl font-medium text-[#131313] mb-2 sm:mb-3">
-                          No projects yet
+                          {projects.length === 0
+                            ? "No projects yet"
+                            : "No projects match your filters"}
                         </h3>
                         <p className="text-sm sm:text-base text-[#131313]/70">
-                          Click the button above to add your first project.
+                          {projects.length === 0
+                            ? "Click the button above to add your first project."
+                            : "Try adjusting your search or clearing the filters."}
                         </p>
                       </div>
                     </div>
