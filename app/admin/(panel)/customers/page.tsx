@@ -9,6 +9,7 @@ import CustomerList from "@/components/customers/CustomerList";
 import CustomerDetails from "@/components/customers/CustomerDetails";
 import CustomerForm from "@/components/customers/CustomerForm";
 import toast from "react-hot-toast";
+import { RefreshCcw } from "lucide-react";
 
 export default function CustomersAdminPage() {
   const { isAuthenticated, loading: authLoading } = useAdminAuth();
@@ -336,9 +337,14 @@ export default function CustomersAdminPage() {
                   </select>
                   <button
                     onClick={() => fetchCustomers()}
-                    className="bg-white text-[#131313] px-4 py-2 rounded-md text-sm font-semibold shadow hover:shadow-md ml-2"
+                    className="flex items-center justify-center gap-2 bg-white text-[#131313] px-5 py-2 rounded-lg font-semibold shadow hover:bg-white/90 transition disabled:opacity-60 disabled:cursor-not-allowed w-full sm:w-auto"
                   >
-                    Refresh
+                    <RefreshCcw
+                      className={`h-4 w-4 text-[#131313] ${
+                        loading ? "animate-spin" : ""
+                      }`}
+                    />
+                    <span>Refresh</span>
                   </button>
                 </div>
 

@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { usePagination } from "@/hooks/usePagination";
 import Pagination from "@/components/ui/Pagination";
+import { RefreshCcw } from "lucide-react";
 
 // Customer type (kept in sync with customers page)
 interface Customer {
@@ -236,9 +237,14 @@ export default function CustomersStatisticsPage() {
                 </select>
                 <button
                   onClick={fetchCustomers}
-                  className="bg-white text-[#131313] px-4 py-2 rounded-lg font-semibold shadow hover:shadow-md"
+                  className="flex items-center justify-center gap-2 bg-white text-[#131313] px-5 py-2 rounded-lg font-semibold shadow hover:bg-white/90 transition disabled:opacity-60 disabled:cursor-not-allowed w-full sm:w-auto"
                 >
-                  Refresh
+                  <RefreshCcw
+                    className={`h-4 w-4 text-[#131313] ${
+                      loading ? "animate-spin" : ""
+                    }`}
+                  />
+                  <span>Refresh</span>
                 </button>
               </div>
             </div>
