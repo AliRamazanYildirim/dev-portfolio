@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Customer } from "@/services/customerService";
 import { INVOICE_CONSTANTS } from "@/constants/invoice";
 import { InvoiceService } from "@/services/invoiceService";
@@ -25,6 +25,25 @@ export default function InvoiceModal({
   customer,
   onClose,
 }: InvoiceModalProps) {
+  // Mirror sidebar behaviour used in admin pages: collapse sidebar on modal open
+  const setSidebarOpenState = (open: boolean) => {
+    if (typeof window === "undefined") return;
+    if (window.innerWidth < 1024) return;
+    window.dispatchEvent(
+      new CustomEvent("admin-sidebar:set", { detail: { open } })
+    );
+  };
+
+  useEffect(() => {
+    if (show) {
+      setSidebarOpenState(false);
+    } else {
+      setSidebarOpenState(true);
+    }
+
+    // Ensure sidebar restored if component unmounts
+    return () => setSidebarOpenState(true);
+  }, [show]);
   const [sending, setSending] = useState(false);
   const [formData, setFormData] = useState<InvoiceFormData>({
     category: INVOICE_CONSTANTS.PROJECT.DEFAULT_CATEGORY[0],
