@@ -45,7 +45,7 @@ export default function ScrollToTopButton() {
       aria-label="Scroll to top"
       title="Scroll to top"
       onClick={handleClick}
-      className={`fixed right-6 bottom-6 z-[60] flex items-center justify-center w-14 h-14 rounded-full
+      className={`fixed right-1 bottom-6 z-[60] flex items-center justify-center w-12 h-12 rounded-full md:w-14 md:h-14
         bg-gradient-to-br from-amber-600 via-orange-500 to-red-700 text-white shadow-2xl
         ring-1 ring-white/10 hover:scale-105 active:scale-95 transform transition-all duration-200
         focus:outline-none focus:ring-4 focus:ring-indigo-300/40
