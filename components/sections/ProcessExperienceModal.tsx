@@ -29,6 +29,7 @@ export default function ProcessExperienceModal({
 }: ProcessExperienceModalProps) {
   const steps = content?.steps ?? [];
   const [activeIndex, setActiveIndex] = useState(0);
+  const [isMobileCarousel, setIsMobileCarousel] = useState(false);
 
   useEffect(() => {
     if (!open) {
@@ -61,6 +62,32 @@ export default function ProcessExperienceModal({
   useEffect(() => {
     setActiveIndex((index) => Math.min(index, Math.max(steps.length - 1, 0)));
   }, [steps.length]);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 767px)");
+    const handleChange = () => setIsMobileCarousel(mediaQuery.matches);
+
+    handleChange();
+    mediaQuery.addEventListener("change", handleChange);
+
+    return () => {
+      mediaQuery.removeEventListener("change", handleChange);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!open || !isMobileCarousel || steps.length <= 1) {
+      return;
+    }
+
+    const intervalId = window.setInterval(() => {
+      setActiveIndex((index) => (index + 1) % steps.length);
+    }, 9000);
+
+    return () => {
+      window.clearInterval(intervalId);
+    };
+  }, [open, isMobileCarousel, steps.length]);
 
   const currentIndex =
     steps.length > 0 ? Math.min(activeIndex, steps.length - 1) : 0;
@@ -241,48 +268,73 @@ export default function ProcessExperienceModal({
                     </AnimatePresence>
                   </div>
 
-                  <div className="space-y-4 md:hidden">
-                    {steps.map((step) => (
-                      <motion.section
-                        key={step.stage}
-                        className="rounded-3xl border border-white/10 bg-white/5 p-6"
-                        initial={{ opacity: 0, y: 24 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.35, ease: "easeOut" }}
-                      >
-                        <div className="space-y-4">
-                          <div className="flex flex-col gap-2">
-                            <span className="text-xs uppercase tracking-[0.4em] text-[#f6c268]">
-                              {step.stage}
-                            </span>
-                            <h3 className="text-xl font-semibold text-white">
-                              {step.title}
-                            </h3>
-                          </div>
-                          <p className="text-sm leading-relaxed text-white/85">
-                            {step.description}
-                          </p>
-                          <div className="space-y-2">
-                            {step.highlights.map((highlight) => (
-                              <div
-                                key={highlight}
-                                className="rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white/80"
-                              >
-                                {highlight}
+                  <div className="md:hidden">
+                    <div className="-mx-4 px-4">
+                      <div className="overflow-hidden">
+                        <motion.div
+                          className="flex"
+                          animate={{ x: `-${currentIndex * 100}%` }}
+                          transition={{ duration: 0.9, ease: "easeInOut" }}
+                        >
+                          {steps.map((step) => (
+                            <div
+                              key={step.stage}
+                              className="w-full shrink-0 px-1 py-2"
+                            >
+                              <div className="h-full rounded-3xl border border-white/10 bg-white/5 p-6">
+                                <div className="space-y-4">
+                                  <div className="flex flex-col gap-2">
+                                    <span className="text-xs uppercase tracking-[0.4em] text-[#f6c268]">
+                                      {step.stage}
+                                    </span>
+                                    <h3 className="text-xl font-semibold text-white">
+                                      {step.title}
+                                    </h3>
+                                  </div>
+                                  <p className="text-sm leading-relaxed text-white/85">
+                                    {step.description}
+                                  </p>
+                                  <div className="space-y-2">
+                                    {step.highlights.map((highlight) => (
+                                      <div
+                                        key={highlight}
+                                        className="rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white/80"
+                                      >
+                                        {highlight}
+                                      </div>
+                                    ))}
+                                  </div>
+                                  <div className="flex flex-wrap items-center gap-3 text-xs text-[#f5d9a6]">
+                                    <span className="rounded-full border border-white/15 bg-white/10 px-4 py-2 uppercase tracking-[0.25em]">
+                                      {step.duration}
+                                    </span>
+                                    <span className="rounded-full border border-white/15 bg-gradient-to-r from-[#f6c268]/20 to-transparent px-4 py-2 text-white/90">
+                                      {step.outcome}
+                                    </span>
+                                  </div>
+                                </div>
+                                <div className="mt-4 h-px w-full bg-white/20" />
                               </div>
-                            ))}
-                          </div>
-                          <div className="flex flex-wrap items-center gap-3 text-xs text-[#f5d9a6]">
-                            <span className="rounded-full border border-white/15 bg-white/10 px-4 py-2 uppercase tracking-[0.25em]">
-                              {step.duration}
-                            </span>
-                            <span className="rounded-full border border-white/15 bg-gradient-to-r from-[#f6c268]/20 to-transparent px-4 py-2 text-white/90">
-                              {step.outcome}
-                            </span>
-                          </div>
-                        </div>
-                      </motion.section>
-                    ))}
+                            </div>
+                          ))}
+                        </motion.div>
+                      </div>
+                      <div className="mt-5 flex items-center justify-center gap-2">
+                        {steps.map((step, index) => (
+                          <button
+                            key={step.stage}
+                            type="button"
+                            onClick={() => setActiveIndex(index)}
+                            className={`h-2 rounded-full transition-all ${
+                              index === currentIndex
+                                ? "w-8 bg-[#f6c268]"
+                                : "w-3 bg-white/25 hover:bg-white/40"
+                            }`}
+                            aria-label={`${step.stage} ${step.title}`}
+                          />
+                        ))}
+                      </div>
+                    </div>
                   </div>
 
                   {/* Mobile view renders stacked phases; desktop navigation already handled above */}
