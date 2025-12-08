@@ -78,7 +78,7 @@ const stageStatusConfig = {
   },
   locked: {
     label: "Previous stage must be completed",
-    badgeClass: "bg-slate-700/20 text-slate-200 border border-slate-600/30",
+    badgeClass: "bg-slate-700/20 text-slate-100 border border-slate-600/30",
     icon: Lock,
   },
 } as const;
@@ -107,7 +107,7 @@ function StageCard({ stage }: { stage: StageSlot }) {
   const StatusIcon = statusMeta.icon;
   const stageCustomerName = stage.entry?.customer
     ? `${stage.entry.customer.firstname} ${stage.entry.customer.lastname}`.trim() ||
-      "Bilinmeyen müşteri"
+      "Unknown customer"
     : null;
 
   return (
@@ -181,6 +181,9 @@ export default function DiscountTrackingPage() {
   );
   const [searchTerm, setSearchTerm] = useState("");
   const [mutatingId, setMutatingId] = useState<string | null>(null);
+  const [mutationAction, setMutationAction] = useState<
+    "status" | "delete" | null
+  >(null);
   const [recordsPage, setRecordsPage] = useState(1);
   const [stagesPage, setStagesPage] = useState(1);
 
@@ -310,6 +313,7 @@ export default function DiscountTrackingPage() {
     payload: Partial<Pick<DiscountEntry, "discountStatus" | "discountSentAt">>
   ) => {
     setMutatingId(entry.id);
+    setMutationAction("status");
     try {
       const requestBody: Record<string, unknown> = { id: entry.id };
 
@@ -383,6 +387,7 @@ export default function DiscountTrackingPage() {
       return { discountStatus };
     } finally {
       setMutatingId(null);
+      setMutationAction(null);
     }
   };
 
@@ -423,9 +428,84 @@ export default function DiscountTrackingPage() {
                     toast.error("Discount status could not be updated");
                   }
                 }}
-                className="rounded-md bg-amber-500/20 px-3 py-1 text-xs font-semibold text-amber-100 hover:bg-amber-500/30"
+                className="rounded-md bg-amber-500/70 px-3 py-1 text-xs font-semibold text-amber-100 hover:bg-amber-500/50"
               >
                 Confirm
+              </button>
+
+              <button
+                onClick={() => toast.dismiss(t.id)}
+                className="rounded-md bg-white/5 px-3 py-1 text-xs font-semibold text-white hover:bg-white/10"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      ),
+      { duration: 8000 }
+    );
+  };
+
+  const deleteDiscount = async (entry: DiscountEntry) => {
+    setMutatingId(entry.id);
+    setMutationAction("delete");
+    try {
+      const response = await fetch("/api/discounts", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id: entry.id }),
+      });
+
+      const json = await response.json();
+
+      if (!response.ok || !json.success) {
+        throw new Error(json.error || "Discount could not be deleted");
+      }
+
+      setData((previous) => ({
+        pending: previous.pending.filter((item) => item.id !== entry.id),
+        sent: previous.sent.filter((item) => item.id !== entry.id),
+      }));
+
+      await loadData().catch((error) => {
+        console.error("Failed to reload discounts after delete", error);
+      });
+    } finally {
+      setMutatingId(null);
+      setMutationAction(null);
+    }
+  };
+
+  const handleDeleteDiscount = (entry: DiscountEntry) => {
+    toast.custom(
+      (t) => (
+        <div className="max-w-md w-full rounded-lg border border-white/10 bg-[#0f1724]/95 p-3 text-sm text-white">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div className="flex-1">
+              Permanently delete the discount for code{" "}
+              <span className="font-semibold text-amber-200">
+                {entry.referrerCode}
+              </span>
+              ? This action cannot be undone.
+            </div>
+            <div className="flex-shrink-0 flex gap-2">
+              <button
+                onClick={async () => {
+                  toast.dismiss(t.id);
+                  try {
+                    await deleteDiscount(entry);
+                    toast.success("Discount record deleted");
+                  } catch (error) {
+                    console.error(error);
+                    toast.error("Discount could not be deleted");
+                  }
+                }}
+                className="rounded-md bg-red-500/70 px-3 py-1 text-xs font-semibold text-red-100 hover:bg-red-500/50"
+              >
+                Delete
               </button>
 
               <button
@@ -737,7 +817,7 @@ export default function DiscountTrackingPage() {
                           Discount Rate %
                         </th>
                         <th className="px-5 py-3 font-semibold">
-                          Discount Amount (₺)
+                          Discount Amount (€)
                         </th>
                         <th className="px-5 py-3 font-semibold">Sent Date</th>
                         <th className="px-5 py-3 font-semibold">Status</th>
@@ -831,8 +911,8 @@ export default function DiscountTrackingPage() {
                                   <span
                                     className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide ${
                                       item.discountStatus === "sent"
-                                        ? "bg-emerald-500/20 text-emerald-200"
-                                        : "bg-amber-500/20 text-amber-100"
+                                        ? "bg-emerald-500/70 text-emerald-100"
+                                        : "bg-amber-500/70 text-amber-100"
                                     }`}
                                   >
                                     {item.discountStatus === "sent"
@@ -848,9 +928,10 @@ export default function DiscountTrackingPage() {
                                     <button
                                       onClick={() => handleMarkAsSent(item)}
                                       disabled={mutatingId === item.id}
-                                      className="rounded-md bg-emerald-500/20 px-3 py-1 text-xs font-semibold text-emerald-100 transition hover:bg-emerald-500/30 disabled:cursor-not-allowed disabled:opacity-60"
+                                      className="rounded-md bg-emerald-500/70 px-3 py-1 text-xs font-semibold text-emerald-100 transition hover:bg-emerald-500/50 disabled:cursor-not-allowed disabled:opacity-60"
                                     >
-                                      {mutatingId === item.id
+                                      {mutationAction === "status" &&
+                                      mutatingId === item.id
                                         ? "Updating..."
                                         : "Send"}
                                     </button>
@@ -858,13 +939,24 @@ export default function DiscountTrackingPage() {
                                     <button
                                       onClick={() => handleMarkAsPending(item)}
                                       disabled={mutatingId === item.id}
-                                      className="rounded-md bg-amber-500/20 px-3 py-1 text-xs font-semibold text-amber-100 transition hover:bg-amber-500/30 disabled:cursor-not-allowed disabled:opacity-60"
+                                      className="rounded-md bg-amber-500/70 px-3 py-1 text-xs font-semibold text-amber-100 transition hover:bg-amber-500/50 disabled:cursor-not-allowed disabled:opacity-60"
                                     >
-                                      {mutatingId === item.id
+                                      {mutationAction === "status" &&
+                                      mutatingId === item.id
                                         ? "Updating..."
                                         : "Revert"}
                                     </button>
                                   )}
+                                  <button
+                                    onClick={() => handleDeleteDiscount(item)}
+                                    disabled={mutatingId === item.id}
+                                    className="rounded-md bg-red-500/70 px-3 py-1 text-xs font-semibold text-red-100 transition hover:bg-red-500/50 disabled:cursor-not-allowed disabled:opacity-60"
+                                  >
+                                    {mutationAction === "delete" &&
+                                    mutatingId === item.id
+                                      ? "Deleting..."
+                                      : "Delete"}
+                                  </button>
                                 </div>
                               </td>
                             </tr>
@@ -971,8 +1063,8 @@ export default function DiscountTrackingPage() {
                             <span
                               className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide mb-2 ${
                                 item.discountStatus === "sent"
-                                  ? "bg-emerald-500/20 text-emerald-200"
-                                  : "bg-amber-500/20 text-amber-100"
+                                  ? "bg-emerald-500/70 text-emerald-100"
+                                  : "bg-amber-500/70 text-amber-100"
                               }`}
                             >
                               {item.discountStatus === "sent"
@@ -982,28 +1074,42 @@ export default function DiscountTrackingPage() {
                             <p className="text-xs text-white/50 mb-2">
                               Created: {formatDate(item.createdAt)}
                             </p>
-                            <div className="flex gap-2">
-                              {item.discountStatus === "pending" ? (
-                                <button
-                                  onClick={() => handleMarkAsSent(item)}
-                                  disabled={mutatingId === item.id}
-                                  className="flex-1 rounded-md bg-emerald-500/20 px-3 py-2 text-xs font-semibold text-emerald-100 transition hover:bg-emerald-500/30 disabled:cursor-not-allowed disabled:opacity-60"
-                                >
-                                  {mutatingId === item.id
-                                    ? "Updating..."
-                                    : "Send"}
-                                </button>
-                              ) : (
-                                <button
-                                  onClick={() => handleMarkAsPending(item)}
-                                  disabled={mutatingId === item.id}
-                                  className="flex-1 rounded-md bg-amber-500/20 px-3 py-2 text-xs font-semibold text-amber-100 transition hover:bg-amber-500/30 disabled:cursor-not-allowed disabled:opacity-60"
-                                >
-                                  {mutatingId === item.id
-                                    ? "Updating..."
-                                    : "Revert"}
-                                </button>
-                              )}
+                            <div className="flex flex-col gap-2">
+                              <div className="flex gap-2">
+                                {item.discountStatus === "pending" ? (
+                                  <button
+                                    onClick={() => handleMarkAsSent(item)}
+                                    disabled={mutatingId === item.id}
+                                    className="flex-1 rounded-md bg-emerald-500/20 px-3 py-2 text-xs font-semibold text-emerald-100 transition hover:bg-emerald-500/30 disabled:cursor-not-allowed disabled:opacity-60"
+                                  >
+                                    {mutationAction === "status" &&
+                                    mutatingId === item.id
+                                      ? "Updating..."
+                                      : "Send"}
+                                  </button>
+                                ) : (
+                                  <button
+                                    onClick={() => handleMarkAsPending(item)}
+                                    disabled={mutatingId === item.id}
+                                    className="flex-1 rounded-md bg-amber-500/20 px-3 py-2 text-xs font-semibold text-amber-100 transition hover:bg-amber-500/30 disabled:cursor-not-allowed disabled:opacity-60"
+                                  >
+                                    {mutationAction === "status" &&
+                                    mutatingId === item.id
+                                      ? "Updating..."
+                                      : "Revert"}
+                                  </button>
+                                )}
+                              </div>
+                              <button
+                                onClick={() => handleDeleteDiscount(item)}
+                                disabled={mutatingId === item.id}
+                                className="rounded-md bg-red-500/20 px-3 py-2 text-xs font-semibold text-red-100 transition hover:bg-red-500/30 disabled:cursor-not-allowed disabled:opacity-60"
+                              >
+                                {mutationAction === "delete" &&
+                                mutatingId === item.id
+                                  ? "Deleting..."
+                                  : "Delete"}
+                              </button>
                             </div>
                           </div>
                         </div>

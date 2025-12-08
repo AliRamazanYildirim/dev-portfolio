@@ -253,3 +253,40 @@ export async function PATCH(request: NextRequest) {
     );
   }
 }
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const { id } = await request.json();
+
+    if (!id) {
+      return NextResponse.json(
+        { success: false, error: "Discount transaction id is required" },
+        { status: 400 }
+      );
+    }
+
+    await connectToMongo();
+
+    const deleted = await ReferralTransactionModel.findByIdAndDelete(id).lean();
+
+    if (!deleted) {
+      return NextResponse.json(
+        { success: false, error: "Discount transaction not found" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({
+      success: true,
+      data: {
+        id: String(deleted._id),
+      },
+    });
+  } catch (error) {
+    console.error("Failed to delete discount record:", error);
+    return NextResponse.json(
+      { success: false, error: "Failed to delete discount record" },
+      { status: 500 }
+    );
+  }
+}
