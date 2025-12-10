@@ -4,7 +4,7 @@ export interface UsePaginationProps {
   totalItems: number;
   itemsPerPage: number;
   initialPage?: number;
-  maxPageNumbers?: number; // Ellipsis için maksimum gösterilecek sayfa sayısı
+  maxPageNumbers?: number; // Maximale Anzahl der anzuzeigenden Seiten für Ellipsis
 }
 
 export interface UsePaginationReturn {
@@ -30,12 +30,12 @@ export const usePagination = ({
 }: UsePaginationProps): UsePaginationReturn => {
   const [currentPage, setCurrentPage] = useState(initialPage);
 
-  // Toplam sayfa sayısını hesapla
+  // Berechne die Gesamtseitenzahl
   const totalPages = useMemo(() => {
     return Math.max(1, Math.ceil(totalItems / itemsPerPage));
   }, [totalItems, itemsPerPage]);
 
-  // Sayfa değiştiğinde sınırları kontrol et
+  // Überprüfe die Grenzen, wenn sich die Seite ändert.
   const goToPage = useCallback(
     (page: number) => {
       const targetPage = Math.min(Math.max(1, page), totalPages);
@@ -44,17 +44,17 @@ export const usePagination = ({
     [totalPages]
   );
 
-  // Sonraki sayfa
+  // Nächste Seite
   const nextPage = useCallback(() => {
     goToPage(currentPage + 1);
   }, [currentPage, goToPage]);
 
-  // Önceki sayfa
+  // Vorherige Seite
   const prevPage = useCallback(() => {
     goToPage(currentPage - 1);
   }, [currentPage, goToPage]);
 
-  // Mevcut verinin başlangıç ve bitiş indekslerini hesapla
+  // Berechne die Start- und Endindizes der vorhandenen Daten
   const startIndex = useMemo(() => {
     return (currentPage - 1) * itemsPerPage;
   }, [currentPage, itemsPerPage]);
@@ -63,11 +63,11 @@ export const usePagination = ({
     return Math.min(startIndex + itemsPerPage, totalItems);
   }, [startIndex, itemsPerPage, totalItems]);
 
-  // Önceki/sonraki sayfa kontrolü
+  // Vorherige/nächste Seitenkontrolle
   const hasNextPage = currentPage < totalPages;
   const hasPrevPage = currentPage > 1;
 
-  // Ellipsis ile sayfa numaralarını hesapla (Projects sayfasından)
+  // Berechne die Seitenzahlen mit Ellipsis (von der Projects-Seite).
   const getPageNumbers = useCallback((): Array<number | "…"> => {
     if (totalPages <= maxPageNumbers) {
       return Array.from({ length: totalPages }, (_, i) => i + 1);
@@ -85,7 +85,7 @@ export const usePagination = ({
     return items;
   }, [currentPage, totalPages, maxPageNumbers]);
 
-  // Veriyi sayfalama
+  // Datenpaginierung
   const paginatedData = useCallback(
     <T>(data: T[]): T[] => {
       return data.slice(startIndex, endIndex);
@@ -93,7 +93,7 @@ export const usePagination = ({
     [startIndex, endIndex]
   );
 
-  // Mevcut aralığı al
+  // Aktuellen Bereich abrufen
   const getCurrentRange = useCallback(() => {
     return {
       start: totalItems === 0 ? 0 : startIndex + 1,
