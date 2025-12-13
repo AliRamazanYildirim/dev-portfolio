@@ -381,7 +381,7 @@ export default function CustomerDetails({
                             Original Price
                           </label>
                           <p className="text-2xl font-bold text-red-600 line-through">
-                            €{Number(customer.price).toLocaleString()}
+                             €{Number(customer.price).toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                           </p>
                         </div>
                         <div className="bg-white rounded-2xl p-4 shadow-lg">
@@ -389,7 +389,7 @@ export default function CustomerDetails({
                             Final Price
                           </label>
                           <p className="text-2xl font-bold text-emerald-600">
-                            €{Number(customer.finalPrice).toLocaleString()}
+                             €{Number(customer.finalPrice).toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                           </p>
                         </div>
                         <div className="bg-white rounded-2xl p-4 shadow-lg">
@@ -407,7 +407,7 @@ export default function CustomerDetails({
                           Price
                         </label>
                         <p className="text-2xl font-bold text-emerald-600">
-                          €{Number(customer.price).toLocaleString()}
+                           €{Number(customer.price).toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </p>
                       </div>
                     )}
