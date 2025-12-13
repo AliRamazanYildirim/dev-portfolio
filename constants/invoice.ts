@@ -6,12 +6,12 @@ export const INVOICE_CONSTANTS = {
     },
     COMPANY: {
         NAME: "Ali Ramazan Yildirim",
-        ADDRESS: "Mustafa Kemal Paşa Cad. No: 123",
-        CITY: "İstanbul, 34000",
-        COUNTRY: "Turkey",
-        EMAIL: "hello@aliramazan.dev",
-        PHONE: "+90 532 XXX XX XX",
-        IBAN: "DE89 3704 0044 0532 0130 00",
+        ADDRESS: "Hebelstrasße 1",
+        CITY: "Sasbach, 77880",
+        COUNTRY: "Deutschland",
+        EMAIL: "aliramazanyildirim@gmail.com",
+        PHONE: "+49 151 67145187",
+        IBAN: "DE86 5009 0500 0006 4023 17",
     },
     PROJECT: {
         DEFAULT_TITLE: "Web Development Project",
