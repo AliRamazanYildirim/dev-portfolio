@@ -277,7 +277,7 @@ export default function InvoiceModal({
                     Net Price:
                   </span>
                   <p className="text-slate-800 font-bold text-lg">
-                    €{customer.finalPrice || customer.price}
+                    €{(customer.finalPrice ?? customer.price ?? 0).toFixed(2)}
                   </p>
                 </div>
               </div>
