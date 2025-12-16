@@ -1,49 +1,40 @@
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { validateReferral } from "./service";
 
-// Überprüfe den Referenzcode und berechnen Sie den Rabatt
+// Route handler delegates to service for validation and discount calculation
 export async function POST(request: Request) {
   try {
     const { referralCode, basePrice } = await request.json();
 
-    if (!referralCode || !basePrice) {
+    if (!referralCode || basePrice === undefined || basePrice === null) {
       return NextResponse.json(
         { success: false, error: "Referral code and base price are required" },
         { status: 400 }
       );
     }
 
-    // Kunden mit Referenzcode finden (Prisma)
-    const referrer = await db.customer.findUnique({ where: { myReferralCode: referralCode } });
-    if (!referrer) return NextResponse.json({ success: false, error: "Invalid referral code" }, { status: 404 });
+    const numericBasePrice = Number(basePrice);
+    if (Number.isNaN(numericBasePrice)) {
+      return NextResponse.json(
+        { success: false, error: "Base price must be a number" },
+        { status: 400 }
+      );
+    }
 
-    // Referenzstufe basierend auf Rabatt berechnen  
-    // Erste 3 % + 3 % für jeden weiteren Referenz, maximal 9 %  
-    const currentReferralCount = referrer.referralCount || 0;
-    let discountRate = 3 + currentReferralCount * 3; // Erst %3, dann schrittweise
-    discountRate = Math.min(discountRate, 9); // Maximal %9 Rabatt
-
-    // Berechne den reduzierten Preis
-    const discountAmount = (basePrice * discountRate) / 100;
-    const finalPrice = basePrice - discountAmount;
-
-    return NextResponse.json({
-      success: true,
-      data: {
-        referrer: {
-          name: `${referrer.firstname} ${referrer.lastname}`,
-          referralCount: referrer.referralCount,
-        },
-        discount: {
-          rate: discountRate,
-          amount: discountAmount,
-          originalPrice: basePrice,
-          finalPrice: finalPrice,
-          referralLevel: Math.ceil(discountRate / 3), // Ihre %3 jede Ebene
-        },
-      },
+    const result = await validateReferral({
+      referralCode,
+      basePrice: numericBasePrice,
     });
+
+    return NextResponse.json({ success: true, data: result });
   } catch (error: any) {
+    if (error?.message === "Invalid referral code") {
+      return NextResponse.json(
+        { success: false, error: error.message },
+        { status: 404 }
+      );
+    }
+
     return NextResponse.json(
       { success: false, error: error?.message || String(error) },
       { status: 500 }
