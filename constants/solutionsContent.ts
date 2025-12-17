@@ -571,7 +571,7 @@ const solutionDetailsDe = {
         badge: "Empfohlen",
       },
       enterprise: {
-        price: "8.500",
+        price: "7.500",
         duration: "6-8 Wochen",
         description: "Individuelle Komponenten, Experimente und Integrationen für Wachstum.",
         features: [
@@ -648,7 +648,7 @@ const solutionDetailsDe = {
         badge: "Beliebt",
       },
       enterprise: {
-        price: "7.900",
+        price: "7.000",
         duration: "5-7 Wochen",
         description: "Langfristiger Partner für komplexe Architekturen und Multi-Brand-Setups.",
         features: [
@@ -1036,7 +1036,7 @@ const solutionDetailsTr = {
         badge: "Önerilen",
       },
       enterprise: {
-        price: "8.500",
+        price: "7.500",
         duration: "6-8 hafta",
         description: "Özel bileşenler, deneyler ve gelir odaklı entegrasyonlar.",
         features: [
@@ -1113,7 +1113,7 @@ const solutionDetailsTr = {
         badge: "Popüler",
       },
       enterprise: {
-        price: "7.900",
+        price: "7.000",
         duration: "5-7 hafta",
         description: "Kompleks mimariler ve marka portföyleri için devam eden ortaklık.",
         features: [
