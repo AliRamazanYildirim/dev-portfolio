@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { validateReferral } from "./service";
+import { getDiscountsEnabled } from "@/lib/discountSettings";
 
 // Route handler delegates to service for validation and discount calculation
 export async function POST(request: Request) {
@@ -10,6 +11,14 @@ export async function POST(request: Request) {
       return NextResponse.json(
         { success: false, error: "Referral code and base price are required" },
         { status: 400 }
+      );
+    }
+
+    const discountsEnabled = await getDiscountsEnabled();
+    if (!discountsEnabled) {
+      return NextResponse.json(
+        { success: false, error: "Discounts are disabled" },
+        { status: 409 }
       );
     }
 

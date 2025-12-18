@@ -27,6 +27,7 @@ export default function DiscountTrackingPage() {
   const { isAuthenticated, loading: authLoading } = useAdminAuth();
   const [data, setData] = useState<DiscountResponse>({ pending: [], sent: [] });
   const [loading, setLoading] = useState(false);
+  const [settingsLoading, setSettingsLoading] = useState(false);
   const [hydrated, setHydrated] = useState(false);
   const [statusFilter, setStatusFilter] = useState<"all" | "pending" | "sent">(
     "all"
@@ -38,6 +39,7 @@ export default function DiscountTrackingPage() {
   >(null);
   const [recordsPage, setRecordsPage] = useState(1);
   const [stagesPage, setStagesPage] = useState(1);
+  const [discountsEnabled, setDiscountsEnabled] = useState(true);
 
   const loadData = async () => {
     setLoading(true);
@@ -58,10 +60,28 @@ export default function DiscountTrackingPage() {
     }
   };
 
+  const loadSettings = async () => {
+    setSettingsLoading(true);
+    try {
+      const response = await fetch("/api/admin/settings/discounts");
+      const json = await response.json();
+      if (!json.success) {
+        throw new Error(json.error || "Failed to load discounts setting");
+      }
+      setDiscountsEnabled(Boolean(json.data?.enabled));
+    } catch (error) {
+      console.error(error);
+      toast.error("Discount setting could not be loaded");
+    } finally {
+      setSettingsLoading(false);
+    }
+  };
+
   useEffect(() => {
     setHydrated(true);
     if (!authLoading && isAuthenticated) {
       loadData();
+      loadSettings();
     }
   }, [authLoading, isAuthenticated]);
 
@@ -413,16 +433,79 @@ export default function DiscountTrackingPage() {
         <NoiseBackground mode="light" intensity={0.08}>
           <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-10">
             <header className="flex flex-col gap-6">
-              <div>
-                <h1 className="title text-3xl sm:text-4xl md:text-5xl text-black font-bold flex items-center gap-3">
-                  <FileText className="h-8 w-8 text-[#131313]" />
-                  Discount Tracking
-                </h1>
-                <p className="content text-[#131313]/70 mt-2 max-w-2xl">
-                  Track discounts from referral programs here. Records awaiting
-                  transmission and completed transmissions are listed in
-                  separate sections.
-                </p>
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <h1 className="title text-3xl sm:text-4xl md:text-5xl text-black font-bold flex items-center gap-3">
+                    <FileText className="h-8 w-8 text-[#131313]" />
+                    Discount Tracking
+                  </h1>
+                  <p className="content text-[#131313]/70 mt-2 max-w-2xl">
+                    Track discounts from referral programs here. Records
+                    awaiting transmission and completed transmissions are listed
+                    in separate sections.
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={async () => {
+                    const previous = discountsEnabled;
+                    const next = !previous;
+                    setDiscountsEnabled(next);
+                    setSettingsLoading(true);
+                    try {
+                      const response = await fetch(
+                        "/api/admin/settings/discounts",
+                        {
+                          method: "PUT",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({ enabled: next }),
+                        }
+                      );
+                      const json = await response.json();
+                      if (!response.ok || !json.success) {
+                        throw new Error(
+                          json.error || "Failed to update setting"
+                        );
+                      }
+                      setDiscountsEnabled(Boolean(json.data?.enabled));
+                      toast.success(
+                        json.data?.enabled
+                          ? "Discounts enabled"
+                          : "Discounts disabled"
+                      );
+                    } catch (error) {
+                      console.error(error);
+                      setDiscountsEnabled(previous);
+                      toast.error("Discount setting could not be updated");
+                    } finally {
+                      setSettingsLoading(false);
+                    }
+                  }}
+                  className="relative inline-flex items-center gap-3 self-end sm:self-auto rounded-full border border-black/10 bg-white px-4 py-2 shadow-sm transition hover:shadow-md focus:outline-none focus:ring-2 focus:ring-black/20"
+                  aria-pressed={discountsEnabled}
+                  disabled={settingsLoading}
+                >
+                  <span className="text-sm font-semibold text-[#0f172a]">
+                    Referral Discounts
+                  </span>
+                  <span
+                    className={`relative h-6 w-11 rounded-full transition ${
+                      discountsEnabled ? "bg-emerald-500" : "bg-slate-300"
+                    }`}
+                  >
+                    <span
+                      className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow transition ${
+                        discountsEnabled ? "translate-x-5" : "translate-x-0"
+                      }`}
+                    />
+                  </span>
+                  {settingsLoading && (
+                    <span className="ml-1 text-xs text-slate-500">
+                      Saving...
+                    </span>
+                  )}
+                </button>
               </div>
               <DiscountFilters
                 searchTerm={searchTerm}

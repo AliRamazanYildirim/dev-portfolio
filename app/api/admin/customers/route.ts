@@ -4,6 +4,7 @@ import ReferralTransactionModel from "@/models/ReferralTransaction";
 import { connectToMongo } from "@/lib/mongodb";
 import path from "path";
 import fs from "fs";
+import { getDiscountsEnabled } from "@/lib/discountSettings";
 import { fetchCustomers } from "./lib/query";
 import {
   calcDiscountedPrice,
@@ -41,6 +42,7 @@ export async function POST(req: Request) {
   try {
     await connectToMongo();
     const body = await req.json();
+    const discountsEnabled = await getDiscountsEnabled();
 
     // Wenn er mit einem Referenzcode gekommen ist: Finde die Person, die ihn empfohlen hat, aktualisiere den Rabatt und bereite die E-Mail vor.
     let referrerCode: string | null = null;
@@ -51,7 +53,7 @@ export async function POST(req: Request) {
     // NEUKUNDE ZAHLT DEN NORMALEN PREIS
     const finalPriceForNewCustomer = body.price || 0;
 
-    if (body.reference && body.price) {
+    if (discountsEnabled && body.reference && body.price) {
       const referrer = await CustomerModel.findOne({ myReferralCode: body.reference }).exec();
 
       if (referrer && referrer.price) {

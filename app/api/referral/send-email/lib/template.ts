@@ -1,31 +1,36 @@
 interface ReferralEmailPayload {
-    firstName: string;
-    lastName: string;
-    referralCode: string;
-    referralCount: number;
-    referrerPrice: number;
+  firstName: string;
+  lastName: string;
+  referralCode: string;
+  referralCount: number;
+  referrerPrice: number;
+  discountsEnabled?: boolean;
 }
 
-function buildDiscountSection(hasReachedMaximum: boolean) {
-    if (hasReachedMaximum) {
-        return `🏆 <strong style="color:#065f46;">MAXIMUM ERREICHT!</strong><br>Sie haben das Maximum von 3 Empfehlungen erreicht und sichern sich dauerhaft <strong>9% Rabatt</strong> auf alle zukünftigen Projekte! Ihr Code bleibt weiterhin aktiv – teilen Sie ihn gerne weiter.`;
-    }
+function buildDiscountSection(hasReachedMaximum: boolean, discountsEnabled: boolean) {
+  if (!discountsEnabled) {
+    return `ℹ️ <strong>Rabatte derzeit inaktiv.</strong><br>Ihr Empfehlungscode bleibt gespeichert. Sobald Rabatte wieder aktiviert sind, informieren wir Sie.`;
+  }
 
-    return `🚀 <strong>Ihre Vorteile in jeder Empfehlung:</strong><br><ul style="margin:12px 0 0 18px; padding:0; color:#334155; line-height:1.6;">
-        <li>Sie sparen schrittweise bis zu insgesamt 18% auf künftige Projekte.</li>
-        <li>Ihre Kontakte erhalten professionelle Unterstützung bei Webprojekten.</li>
-        <li>Jede Empfehlung bringt Sie dem Maximum näher.</li>
-      </ul>`;
+  if (hasReachedMaximum) {
+    return `🏆 <strong style="color:#065f46;">MAXIMUM ERREICHT!</strong><br>Sie haben das Maximum von 3 Empfehlungen erreicht und sichern sich dauerhaft <strong>9% Rabatt</strong> auf alle zukünftigen Projekte! Ihr Code bleibt weiterhin aktiv – teilen Sie ihn gerne weiter.`;
+  }
+
+  return `🚀 <strong>Ihre Vorteile in jeder Empfehlung:</strong><br><ul style="margin:12px 0 0 18px; padding:0; color:#334155; line-height:1.6;">
+    <li>Sie sparen schrittweise bis zu insgesamt 18% auf künftige Projekte.</li>
+    <li>Ihre Kontakte erhalten professionelle Unterstützung bei Webprojekten.</li>
+    <li>Jede Empfehlung bringt Sie dem Maximum näher.</li>
+    </ul>`;
 }
 
 export function buildReferralEmailTemplate(payload: ReferralEmailPayload) {
-    const { firstName, lastName, referralCode, referralCount, referrerPrice } = payload;
-    const hasReachedMaximum = referralCount >= 3;
-    const discountSection = buildDiscountSection(hasReachedMaximum);
+  const { firstName, lastName, referralCode, referralCount, referrerPrice, discountsEnabled = true } = payload;
+  const hasReachedMaximum = referralCount >= 3;
+  const discountSection = buildDiscountSection(hasReachedMaximum, discountsEnabled);
 
-    const subject = `🎉 Ihr Empfehlungscode: ${referralCode} – Ali Ramazan Yildirim`;
+  const subject = `🎉 Ihr Empfehlungscode: ${referralCode} – Ali Ramazan Yildirim`;
 
-    const html = `<!DOCTYPE html><html lang="de"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Empfehlungscode</title></head>
+  const html = `<!DOCTYPE html><html lang="de"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Empfehlungscode</title></head>
     <body style="margin: 0; padding: 40px 20px; background: transparent; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
     <div style="max-width:650px;margin:0 auto;background:#ffffff;border-radius:16px;box-shadow:0 20px 25px -5px rgba(0,0,0,0.1),0 10px 10px -5px rgba(0,0,0,0.04);overflow:hidden;border:1px solid rgba(148,163,184,0.2);">
       <div style="background:linear-gradient(135deg,#6366f1 0%,#8b5cf6 100%);padding:40px 30px;text-align:center;position:relative;">
@@ -88,5 +93,5 @@ export function buildReferralEmailTemplate(payload: ReferralEmailPayload) {
     </div>
     </body></html>`;
 
-    return { subject, html };
+  return { subject, html };
 }

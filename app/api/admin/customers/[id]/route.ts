@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import CustomerModel from "@/models/Customer";
 import ReferralTransactionModel from "@/models/ReferralTransaction";
 import { connectToMongo } from "@/lib/mongodb";
+import { getDiscountsEnabled } from "@/lib/discountSettings";
 
 // GET: Einzelnen Kunden abrufen
 export async function GET(
@@ -27,6 +28,7 @@ export async function PUT(
   try {
     const { id } = await context.params;
     await connectToMongo();
+    const discountsEnabled = await getDiscountsEnabled();
     const body = await req.json();
 
     // Abrufen der aktuellen Kundeninformationen
@@ -40,7 +42,7 @@ export async function PUT(
     let referrerDiscount = 0;
     let referrerCode = null;
 
-    if (body.reference && body.price && !existingCustomer.reference) {
+    if (discountsEnabled && body.reference && body.price && !existingCustomer.reference) {
       // Wenn diesem Kunden zum ersten Mal ein Referenzcode hinzugefügt wird
       const referrer = await CustomerModel.findOne({ myReferralCode: body.reference }).exec();
 

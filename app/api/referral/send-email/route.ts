@@ -3,6 +3,7 @@ import { connectToMongo } from "@/lib/mongodb";
 import { findCustomerById } from "./lib/customer";
 import { buildReferralEmailTemplate } from "./lib/template";
 import { sendReferralEmail } from "./lib/mailer";
+import { getDiscountsEnabled } from "@/lib/discountSettings";
 
 export async function POST(request: Request) {
   try {
@@ -12,6 +13,14 @@ export async function POST(request: Request) {
       return NextResponse.json(
         { success: false, error: "Customer ID is required" },
         { status: 400 }
+      );
+    }
+
+    const discountsEnabled = await getDiscountsEnabled();
+    if (!discountsEnabled) {
+      return NextResponse.json(
+        { success: false, error: "Discounts are disabled" },
+        { status: 409 }
       );
     }
 
