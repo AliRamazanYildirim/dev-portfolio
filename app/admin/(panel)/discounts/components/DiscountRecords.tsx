@@ -1,4 +1,14 @@
 import { useState } from "react";
+import {
+  Send,
+  CheckCircle,
+  CheckCircle2,
+  RotateCcw,
+  RefreshCw,
+  Trash2,
+  Loader2,
+  Clock,
+} from "lucide-react";
 import Pagination from "@/components/ui/Pagination";
 import { DiscountEntry, PaginationState } from "../types";
 import { currencyFormatter, formatDate } from "../utils";
@@ -177,15 +187,21 @@ export function DiscountRecords({
                         <div className="flex flex-col items-center gap-2">
                           {/* Invoice status */}
                           <span
-                            className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide ${
+                            className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide ${
                               item.discountStatus === "sent"
                                 ? "bg-emerald-500/70 text-emerald-100"
                                 : "bg-amber-500/70 text-amber-100"
                             }`}
                           >
-                            {item.discountStatus === "sent"
-                              ? "Sent"
-                              : "Pending"}
+                            {item.discountStatus === "sent" ? (
+                              <>
+                                <CheckCircle2 className="h-3 w-3" /> Sent
+                              </>
+                            ) : (
+                              <>
+                                <Clock className="h-3 w-3" /> Pending
+                              </>
+                            )}
                           </span>
                         </div>
                         <p className="mt-2 text-xs text-center text-white/50">
@@ -241,12 +257,19 @@ export function DiscountRecords({
                                   )
                                 }
                                 disabled={mutatingId === item.id}
-                                className="flex-1 rounded-md bg-indigo-500/70 px-3 py-1 text-xs font-semibold text-indigo-100 transition hover:bg-indigo-500/50 disabled:cursor-not-allowed disabled:opacity-60"
+                                className="flex-1 rounded-md bg-indigo-500/70 px-3 py-1 text-xs font-semibold text-indigo-100 transition hover:bg-indigo-500/50 disabled:cursor-not-allowed disabled:opacity-60 inline-flex items-center justify-center gap-1"
                               >
                                 {mutationAction === "email" &&
-                                mutatingId === item.id
-                                  ? "Sending..."
-                                  : "📧 Send"}
+                                mutatingId === item.id ? (
+                                  <>
+                                    <Loader2 className="h-3 w-3 animate-spin" />{" "}
+                                    Sending...
+                                  </>
+                                ) : (
+                                  <>
+                                    <Send className="h-3 w-3" /> Send
+                                  </>
+                                )}
                               </button>
                             </div>
                           )}
@@ -256,23 +279,37 @@ export function DiscountRecords({
                             <button
                               onClick={() => onMarkAsSent(item)}
                               disabled={mutatingId === item.id}
-                              className="rounded-md bg-emerald-500/70 px-3 py-1 text-xs font-semibold text-emerald-100 transition hover:bg-emerald-500/50 disabled:cursor-not-allowed disabled:opacity-60"
+                              className="rounded-md bg-emerald-500/70 px-3 py-1 text-xs font-semibold text-emerald-100 transition hover:bg-emerald-500/50 disabled:cursor-not-allowed disabled:opacity-60 inline-flex items-center justify-center gap-1"
                             >
                               {mutationAction === "status" &&
-                              mutatingId === item.id
-                                ? "Updating..."
-                                : "Mark Sent"}
+                              mutatingId === item.id ? (
+                                <>
+                                  <Loader2 className="h-3 w-3 animate-spin" />{" "}
+                                  Updating...
+                                </>
+                              ) : (
+                                <>
+                                  <CheckCircle className="h-3 w-3" /> Mark Sent
+                                </>
+                              )}
                             </button>
                           ) : (
                             <button
                               onClick={() => onMarkAsPending(item)}
                               disabled={mutatingId === item.id}
-                              className="rounded-md bg-amber-500/70 px-3 py-1 text-xs font-semibold text-amber-100 transition hover:bg-amber-500/50 disabled:cursor-not-allowed disabled:opacity-60"
+                              className="rounded-md bg-amber-500/70 px-3 py-1 text-xs font-semibold text-amber-100 transition hover:bg-amber-500/50 disabled:cursor-not-allowed disabled:opacity-60 inline-flex items-center justify-center gap-1"
                             >
                               {mutationAction === "status" &&
-                              mutatingId === item.id
-                                ? "Updating..."
-                                : "Revert"}
+                              mutatingId === item.id ? (
+                                <>
+                                  <Loader2 className="h-3 w-3 animate-spin" />{" "}
+                                  Updating...
+                                </>
+                              ) : (
+                                <>
+                                  <RotateCcw className="h-3 w-3" /> Revert
+                                </>
+                              )}
                             </button>
                           )}
                           {/* Reset Email Button - only show if email was sent */}
@@ -280,23 +317,37 @@ export function DiscountRecords({
                             <button
                               onClick={() => onResetEmail(item)}
                               disabled={mutatingId === item.id}
-                              className="rounded-md bg-orange-500/70 px-3 py-1 text-xs font-semibold text-orange-100 transition hover:bg-orange-500/50 disabled:cursor-not-allowed disabled:opacity-60"
+                              className="rounded-md bg-orange-500/70 px-3 py-1 text-xs font-semibold text-orange-100 transition hover:bg-orange-500/50 disabled:cursor-not-allowed disabled:opacity-60 inline-flex items-center justify-center gap-1"
                             >
                               {mutationAction === "reset" &&
-                              mutatingId === item.id
-                                ? "Resetting..."
-                                : "🔄 Reset"}
+                              mutatingId === item.id ? (
+                                <>
+                                  <Loader2 className="h-3 w-3 animate-spin" />{" "}
+                                  Resetting...
+                                </>
+                              ) : (
+                                <>
+                                  <RefreshCw className="h-3 w-3" /> Reset
+                                </>
+                              )}
                             </button>
                           )}
                           <button
                             onClick={() => onDelete(item)}
                             disabled={mutatingId === item.id}
-                            className="rounded-md bg-red-500/70 px-3 py-1 text-xs font-semibold text-red-100 transition hover:bg-red-500/50 disabled:cursor-not-allowed disabled:opacity-60"
+                            className="rounded-md bg-red-500/70 px-3 py-1 text-xs font-semibold text-red-100 transition hover:bg-red-500/50 disabled:cursor-not-allowed disabled:opacity-60 inline-flex items-center justify-center gap-1"
                           >
                             {mutationAction === "delete" &&
-                            mutatingId === item.id
-                              ? "Deleting..."
-                              : "Delete"}
+                            mutatingId === item.id ? (
+                              <>
+                                <Loader2 className="h-3 w-3 animate-spin" />{" "}
+                                Deleting...
+                              </>
+                            ) : (
+                              <>
+                                <Trash2 className="h-3 w-3" /> Delete
+                              </>
+                            )}
                           </button>
                         </div>
                       </td>
@@ -405,13 +456,21 @@ export function DiscountRecords({
                   <div className="border-t border-white/10 pt-3">
                     <div className="flex flex-wrap gap-2 mb-2">
                       <span
-                        className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide ${
+                        className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide ${
                           item.discountStatus === "sent"
                             ? "bg-emerald-500/70 text-emerald-100"
                             : "bg-amber-500/70 text-amber-100"
                         }`}
                       >
-                        {item.discountStatus === "sent" ? "Sent" : "Pending"}
+                        {item.discountStatus === "sent" ? (
+                          <>
+                            <CheckCircle2 className="h-3 w-3" /> Sent
+                          </>
+                        ) : (
+                          <>
+                            <Clock className="h-3 w-3" /> Pending
+                          </>
+                        )}
                       </span>
                     </div>
                     <p className="text-xs text-white/50 mb-2">
@@ -467,12 +526,19 @@ export function DiscountRecords({
                               )
                             }
                             disabled={mutatingId === item.id}
-                            className="flex-1 rounded-md bg-indigo-500/20 px-3 py-2 text-xs font-semibold text-indigo-100 transition hover:bg-indigo-500/30 disabled:cursor-not-allowed disabled:opacity-60"
+                            className="flex-1 rounded-md bg-indigo-500/20 px-3 py-2 text-xs font-semibold text-indigo-100 transition hover:bg-indigo-500/30 disabled:cursor-not-allowed disabled:opacity-60 inline-flex items-center justify-center gap-1"
                           >
                             {mutationAction === "email" &&
-                            mutatingId === item.id
-                              ? "Sending..."
-                              : "📧 Send Email"}
+                            mutatingId === item.id ? (
+                              <>
+                                <Loader2 className="h-3 w-3 animate-spin" />{" "}
+                                Sending...
+                              </>
+                            ) : (
+                              <>
+                                <Send className="h-3 w-3" /> Send Email
+                              </>
+                            )}
                           </button>
                         </div>
                       )}
@@ -481,23 +547,37 @@ export function DiscountRecords({
                           <button
                             onClick={() => onMarkAsSent(item)}
                             disabled={mutatingId === item.id}
-                            className="flex-1 rounded-md bg-emerald-500/20 px-3 py-2 text-xs font-semibold text-emerald-100 transition hover:bg-emerald-500/30 disabled:cursor-not-allowed disabled:opacity-60"
+                            className="flex-1 rounded-md bg-emerald-500/20 px-3 py-2 text-xs font-semibold text-emerald-100 transition hover:bg-emerald-500/30 disabled:cursor-not-allowed disabled:opacity-60 inline-flex items-center justify-center gap-1"
                           >
                             {mutationAction === "status" &&
-                            mutatingId === item.id
-                              ? "Updating..."
-                              : "Mark Sent"}
+                            mutatingId === item.id ? (
+                              <>
+                                <Loader2 className="h-3 w-3 animate-spin" />{" "}
+                                Updating...
+                              </>
+                            ) : (
+                              <>
+                                <CheckCircle className="h-3 w-3" /> Mark Sent
+                              </>
+                            )}
                           </button>
                         ) : (
                           <button
                             onClick={() => onMarkAsPending(item)}
                             disabled={mutatingId === item.id}
-                            className="flex-1 rounded-md bg-amber-500/20 px-3 py-2 text-xs font-semibold text-amber-100 transition hover:bg-amber-500/30 disabled:cursor-not-allowed disabled:opacity-60"
+                            className="flex-1 rounded-md bg-amber-500/20 px-3 py-2 text-xs font-semibold text-amber-100 transition hover:bg-amber-500/30 disabled:cursor-not-allowed disabled:opacity-60 inline-flex items-center justify-center gap-1"
                           >
                             {mutationAction === "status" &&
-                            mutatingId === item.id
-                              ? "Updating..."
-                              : "Revert"}
+                            mutatingId === item.id ? (
+                              <>
+                                <Loader2 className="h-3 w-3 animate-spin" />{" "}
+                                Updating...
+                              </>
+                            ) : (
+                              <>
+                                <RotateCcw className="h-3 w-3" /> Revert
+                              </>
+                            )}
                           </button>
                         )}
                       </div>
@@ -506,21 +586,37 @@ export function DiscountRecords({
                         <button
                           onClick={() => onResetEmail(item)}
                           disabled={mutatingId === item.id}
-                          className="rounded-md bg-orange-500/20 px-3 py-2 text-xs font-semibold text-orange-100 transition hover:bg-orange-500/30 disabled:cursor-not-allowed disabled:opacity-60"
+                          className="rounded-md bg-orange-500/20 px-3 py-2 text-xs font-semibold text-orange-100 transition hover:bg-orange-500/30 disabled:cursor-not-allowed disabled:opacity-60 inline-flex items-center justify-center gap-1"
                         >
-                          {mutationAction === "reset" && mutatingId === item.id
-                            ? "Resetting..."
-                            : "🔄 Reset Email"}
+                          {mutationAction === "reset" &&
+                          mutatingId === item.id ? (
+                            <>
+                              <Loader2 className="h-3 w-3 animate-spin" />{" "}
+                              Resetting...
+                            </>
+                          ) : (
+                            <>
+                              <RefreshCw className="h-3 w-3" /> Reset Email
+                            </>
+                          )}
                         </button>
                       )}
                       <button
                         onClick={() => onDelete(item)}
                         disabled={mutatingId === item.id}
-                        className="rounded-md bg-red-500/20 px-3 py-2 text-xs font-semibold text-red-100 transition hover:bg-red-500/30 disabled:cursor-not-allowed disabled:opacity-60"
+                        className="rounded-md bg-red-500/20 px-3 py-2 text-xs font-semibold text-red-100 transition hover:bg-red-500/30 disabled:cursor-not-allowed disabled:opacity-60 inline-flex items-center justify-center gap-1"
                       >
-                        {mutationAction === "delete" && mutatingId === item.id
-                          ? "Deleting..."
-                          : "Delete"}
+                        {mutationAction === "delete" &&
+                        mutatingId === item.id ? (
+                          <>
+                            <Loader2 className="h-3 w-3 animate-spin" />{" "}
+                            Deleting...
+                          </>
+                        ) : (
+                          <>
+                            <Trash2 className="h-3 w-3" /> Delete
+                          </>
+                        )}
                       </button>
                     </div>
                   </div>
