@@ -52,6 +52,15 @@ export function DiscountRecords({
     return entry.referralLevel >= 3 || entry.discountRate >= 9;
   };
 
+  const getStageLabel = (entry: DiscountEntry) => {
+    if (entry.isBonus) {
+      // Calculate bonus number: referralLevel - 3 (since stages are 1,2,3)
+      const bonusNumber = entry.referralLevel > 3 ? entry.referralLevel - 3 : 1;
+      return `Bonus ${bonusNumber}`;
+    }
+    return `Stage ${entry.referralLevel}`;
+  };
+
   return (
     <section className="space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
@@ -137,8 +146,8 @@ export function DiscountRecords({
                           <span className="font-semibold text-white">
                             %{item.discountRate.toFixed(0)}
                           </span>
-                          <span className="text-xs text-white/60">
-                            Stage {item.referralLevel}
+                          <span className={`text-xs ${item.isBonus ? 'text-emerald-400' : 'text-white/60'}`}>
+                            {getStageLabel(item)}
                           </span>
                         </div>
                       </td>
@@ -341,8 +350,8 @@ export function DiscountRecords({
                       <p className="font-semibold text-white">
                         %{item.discountRate.toFixed(0)}
                       </p>
-                      <p className="text-xs text-white/60">
-                        Stage {item.referralLevel}
+                      <p className={`text-xs ${item.isBonus ? 'text-emerald-400' : 'text-white/60'}`}>
+                        {getStageLabel(item)}
                       </p>
                     </div>
                   </div>
