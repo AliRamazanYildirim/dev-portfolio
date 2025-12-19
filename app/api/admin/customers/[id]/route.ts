@@ -42,8 +42,10 @@ export async function PUT(
     let referrerDiscount = 0;
     let referrerCode = null;
 
-    if (discountsEnabled && body.reference && body.price && !existingCustomer.reference) {
-      // Wenn diesem Kunden zum ersten Mal ein Referenzcode hinzugefügt wird
+    // Referral hesaplama her zaman yapılır
+    let emailSent = false;
+
+    if (body.reference && body.price && !existingCustomer.reference) {
       const referrer = await CustomerModel.findOne({ myReferralCode: body.reference }).exec();
 
       if (referrer && referrer.price && referrer.myReferralCode) {
@@ -51,16 +53,24 @@ export async function PUT(
 
         const currentReferralCount = referrer.referralCount || 0;
         referrerDiscount = 3 + currentReferralCount * 3;
-        referrerDiscount = Math.min(referrerDiscount, 15);
+        referrerDiscount = Math.min(referrerDiscount, 9);
 
         const referrerFinalPrice = referrer.price - (referrer.price * referrerDiscount) / 100;
 
-        await CustomerModel.findByIdAndUpdate(referrer._id, {
+        // Referrer'ın referralCount'u her zaman artar
+        const referrerUpdateData: Record<string, any> = {
           referralCount: currentReferralCount + 1,
-          discountRate: referrerDiscount,
-          finalPrice: referrerFinalPrice,
           updatedAt: new Date(),
-        }).exec();
+        };
+
+        // discountRate ve finalPrice sadece discountsEnabled ise güncellenir
+        if (discountsEnabled) {
+          referrerUpdateData.discountRate = referrerDiscount;
+          referrerUpdateData.finalPrice = referrerFinalPrice;
+          emailSent = true; // PUT'ta mail gönderme yok, sadece flag
+        }
+
+        await CustomerModel.findByIdAndUpdate(referrer._id, referrerUpdateData).exec();
 
         await ReferralTransactionModel.create({
           referrerCode,
@@ -72,6 +82,7 @@ export async function PUT(
           invoiceStatus: "pending",
           invoiceNumber: null,
           invoiceSentAt: null,
+          emailSent,
         });
       }
     }

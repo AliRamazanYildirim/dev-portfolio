@@ -117,6 +117,8 @@ export async function GET(request: NextRequest) {
         discountStatus: normalizedStatus,
         discountNumber: invoiceNumber,
         discountSentAt: invoiceSentAt,
+        emailSent: tx.emailSent ?? false,
+        isBonus: (tx as { isBonus?: boolean }).isBonus ?? false,
         createdAt,
         referrer: referrer
           ? {

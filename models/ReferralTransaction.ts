@@ -14,6 +14,8 @@ export interface IReferralTransaction {
     invoiceStatus: "pending" | "sent";
     invoiceNumber?: string | null;
     invoiceSentAt?: Date | null;
+    emailSent: boolean;
+    isBonus: boolean;
     createdAt: Date;
     updatedAt?: Date;
 }
@@ -30,6 +32,8 @@ const ReferralTransactionSchema = new Schema<IReferralTransaction>(
         invoiceStatus: { type: String, enum: ["pending", "sent"], default: "pending" },
         invoiceNumber: { type: String, default: null },
         invoiceSentAt: { type: Date, default: null },
+        emailSent: { type: Boolean, default: false },
+        isBonus: { type: Boolean, default: false },
     },
     { timestamps: true }
 );

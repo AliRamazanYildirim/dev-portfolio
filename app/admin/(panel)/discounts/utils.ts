@@ -5,6 +5,7 @@ import {
     STAGE_COUNT,
     StageSlot,
     StageStatus,
+    BonusEntry,
 } from "./types";
 
 export const currencyFormatter = new Intl.NumberFormat("de-DE", {
@@ -50,23 +51,39 @@ export function computeStageGroups(allInvoices: DiscountEntry[]): StageGroup[] {
                     amount: 0,
                     discountSentAt: null,
                 })),
+                bonuses: [],
                 totalDiscount: 0,
                 completedCount: 0,
                 pendingCount: 0,
+                bonusCount: 0,
             });
         }
 
         const group = map.get(code)!;
-        const index = Math.min(Math.max(entry.referralLevel ?? 1, 1), STAGE_COUNT) - 1;
+        const referralLevel = entry.referralLevel ?? 1;
         const amount = entry.discountAmount ?? Math.max(entry.originalPrice - entry.finalPrice, 0);
 
-        group.stages[index] = {
-            level: index + 1,
-            entry,
-            status: entry.discountStatus === "sent" ? "sent" : "pending",
-            amount,
-            discountSentAt: entry.discountSentAt,
-        };
+        // Check if this is a bonus entry (isBonus flag or referralLevel > 3)
+        if (entry.isBonus || referralLevel > STAGE_COUNT) {
+            const bonusEntry: BonusEntry = {
+                id: entry.id,
+                amount,
+                discountSentAt: entry.discountSentAt,
+                status: entry.discountStatus === "sent" ? "sent" : "pending",
+                customer: entry.customer,
+            };
+            group.bonuses.push(bonusEntry);
+        } else {
+            // Regular stage (1, 2, or 3)
+            const index = Math.min(Math.max(referralLevel, 1), STAGE_COUNT) - 1;
+            group.stages[index] = {
+                level: index + 1,
+                entry,
+                status: entry.discountStatus === "sent" ? "sent" : "pending",
+                amount,
+                discountSentAt: entry.discountSentAt,
+            };
+        }
 
         if (!group.referrer && entry.referrer) {
             group.referrer = entry.referrer;
@@ -91,19 +108,32 @@ export function computeStageGroups(allInvoices: DiscountEntry[]): StageGroup[] {
             return slot;
         });
 
-        const totalDiscount = stages.reduce(
+        // Sort bonuses by date (newest first)
+        const sortedBonuses = [...group.bonuses].sort((a, b) => {
+            const dateA = a.discountSentAt ? new Date(a.discountSentAt).getTime() : 0;
+            const dateB = b.discountSentAt ? new Date(b.discountSentAt).getTime() : 0;
+            return dateB - dateA;
+        });
+
+        const stagesDiscount = stages.reduce(
             (sum, stage) => sum + (stage.entry ? stage.amount : 0),
             0
         );
+        const bonusDiscount = sortedBonuses.reduce((sum, bonus) => sum + bonus.amount, 0);
+        const totalDiscount = stagesDiscount + bonusDiscount;
+
         const completedCount = stages.filter((stage) => stage.status === "sent").length;
         const pendingCount = stages.filter((stage) => stage.status === "pending").length;
+        const bonusCount = sortedBonuses.length;
 
         return {
             ...group,
             stages,
+            bonuses: sortedBonuses,
             totalDiscount,
             completedCount,
             pendingCount,
+            bonusCount,
         };
     });
 

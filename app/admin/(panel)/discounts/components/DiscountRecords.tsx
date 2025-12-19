@@ -1,16 +1,21 @@
+import { useState } from "react";
 import Pagination from "@/components/ui/Pagination";
 import { DiscountEntry, PaginationState } from "../types";
 import { currencyFormatter, formatDate } from "../utils";
+
+const DISCOUNT_RATES = [3, 6, 9] as const;
+const BONUS_RATE = "+3" as const;
 
 interface DiscountRecordsProps {
   filteredInvoices: DiscountEntry[];
   paginatedRecords: DiscountEntry[];
   pagination: PaginationState;
   mutatingId: string | null;
-  mutationAction: "status" | "delete" | null;
+  mutationAction: "status" | "delete" | "email" | null;
   onMarkAsSent: (entry: DiscountEntry) => void;
   onMarkAsPending: (entry: DiscountEntry) => void;
   onDelete: (entry: DiscountEntry) => void;
+  onSendEmail: (entry: DiscountEntry, rate: number | "+3") => void;
 }
 
 export function DiscountRecords({
@@ -22,7 +27,31 @@ export function DiscountRecords({
   onMarkAsSent,
   onMarkAsPending,
   onDelete,
+  onSendEmail,
 }: DiscountRecordsProps) {
+  const [selectedRates, setSelectedRates] = useState<
+    Record<string, number | "+3">
+  >({});
+
+  const getSelectedRate = (
+    itemId: string,
+    defaultRate: number,
+    hasReachedMax: boolean
+  ): number | "+3" => {
+    const selected = selectedRates[itemId];
+    if (selected !== undefined) return selected;
+    // If reached max (9%), default to bonus "+3"
+    return hasReachedMax ? BONUS_RATE : defaultRate;
+  };
+
+  const handleRateChange = (itemId: string, rate: number | "+3") => {
+    setSelectedRates((prev) => ({ ...prev, [itemId]: rate }));
+  };
+
+  const hasReachedMaxDiscount = (entry: DiscountEntry) => {
+    return entry.referralLevel >= 3 || entry.discountRate >= 9;
+  };
+
   return (
     <section className="space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
@@ -128,7 +157,8 @@ export function DiscountRecords({
                         {formatDate(item.discountSentAt)}
                       </td>
                       <td className="px-5 py-4 align-top">
-                        <div className="flex justify-center">
+                        <div className="flex flex-col items-center gap-2">
+                          {/* Invoice status */}
                           <span
                             className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide ${
                               item.discountStatus === "sent"
@@ -145,6 +175,66 @@ export function DiscountRecords({
                           Created: {formatDate(item.createdAt)}
                         </p>
                         <div className="mt-2 flex flex-col gap-2">
+                          {/* Email gönderim bölümü */}
+                          {!item.emailSent && (
+                            <div className="flex items-center gap-2">
+                              <select
+                                value={getSelectedRate(
+                                  item.id,
+                                  item.discountRate,
+                                  hasReachedMaxDiscount(item)
+                                )}
+                                onChange={(e) => {
+                                  const val = e.target.value;
+                                  handleRateChange(
+                                    item.id,
+                                    val === "+3" ? "+3" : Number(val)
+                                  );
+                                }}
+                                className="rounded-md bg-white/10 px-2 py-1 text-xs text-white border border-white/20 focus:outline-none focus:ring-1 focus:ring-indigo-400"
+                                disabled={mutatingId === item.id}
+                              >
+                                {DISCOUNT_RATES.map((rate) => (
+                                  <option
+                                    key={rate}
+                                    value={rate}
+                                    className="bg-slate-800"
+                                  >
+                                    {rate}%
+                                  </option>
+                                ))}
+                                {hasReachedMaxDiscount(item) && (
+                                  <option
+                                    value="+3"
+                                    className="bg-emerald-800 text-emerald-100"
+                                  >
+                                    +3% Bonus
+                                  </option>
+                                )}
+                              </select>
+                              <button
+                                onClick={() =>
+                                  onSendEmail(
+                                    item,
+                                    getSelectedRate(
+                                      item.id,
+                                      item.discountRate,
+                                      hasReachedMaxDiscount(item)
+                                    )
+                                  )
+                                }
+                                disabled={mutatingId === item.id}
+                                className="flex-1 rounded-md bg-indigo-500/70 px-3 py-1 text-xs font-semibold text-indigo-100 transition hover:bg-indigo-500/50 disabled:cursor-not-allowed disabled:opacity-60"
+                              >
+                                {mutationAction === "email" &&
+                                mutatingId === item.id
+                                  ? "Sending..."
+                                  : "📧 Send"}
+                              </button>
+                            </div>
+                          )}
+
+                          {/* Status toggle */}
                           {item.discountStatus === "pending" ? (
                             <button
                               onClick={() => onMarkAsSent(item)}
@@ -154,7 +244,7 @@ export function DiscountRecords({
                               {mutationAction === "status" &&
                               mutatingId === item.id
                                 ? "Updating..."
-                                : "Send"}
+                                : "Mark Sent"}
                             </button>
                           ) : (
                             <button
@@ -279,19 +369,79 @@ export function DiscountRecords({
                   </div>
 
                   <div className="border-t border-white/10 pt-3">
-                    <span
-                      className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide mb-2 ${
-                        item.discountStatus === "sent"
-                          ? "bg-emerald-500/70 text-emerald-100"
-                          : "bg-amber-500/70 text-amber-100"
-                      }`}
-                    >
-                      {item.discountStatus === "sent" ? "Sent" : "Pending"}
-                    </span>
+                    <div className="flex flex-wrap gap-2 mb-2">
+                      <span
+                        className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide ${
+                          item.discountStatus === "sent"
+                            ? "bg-emerald-500/70 text-emerald-100"
+                            : "bg-amber-500/70 text-amber-100"
+                        }`}
+                      >
+                        {item.discountStatus === "sent" ? "Sent" : "Pending"}
+                      </span>
+                    </div>
                     <p className="text-xs text-white/50 mb-2">
                       Created: {formatDate(item.createdAt)}
                     </p>
                     <div className="flex flex-col gap-2">
+                      {/* Email gönderim bölümü - Mobile */}
+                      {!item.emailSent && (
+                        <div className="flex items-center gap-2">
+                          <select
+                            value={getSelectedRate(
+                              item.id,
+                              item.discountRate,
+                              hasReachedMaxDiscount(item)
+                            )}
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              handleRateChange(
+                                item.id,
+                                val === "+3" ? "+3" : Number(val)
+                              );
+                            }}
+                            className="rounded-md bg-white/10 px-2 py-2 text-xs text-white border border-white/20 focus:outline-none focus:ring-1 focus:ring-indigo-400"
+                            disabled={mutatingId === item.id}
+                          >
+                            {DISCOUNT_RATES.map((rate) => (
+                              <option
+                                key={rate}
+                                value={rate}
+                                className="bg-slate-800"
+                              >
+                                {rate}%
+                              </option>
+                            ))}
+                            {hasReachedMaxDiscount(item) && (
+                              <option
+                                value="+3"
+                                className="bg-emerald-800 text-emerald-100"
+                              >
+                                +3% Bonus
+                              </option>
+                            )}
+                          </select>
+                          <button
+                            onClick={() =>
+                              onSendEmail(
+                                item,
+                                getSelectedRate(
+                                  item.id,
+                                  item.discountRate,
+                                  hasReachedMaxDiscount(item)
+                                )
+                              )
+                            }
+                            disabled={mutatingId === item.id}
+                            className="flex-1 rounded-md bg-indigo-500/20 px-3 py-2 text-xs font-semibold text-indigo-100 transition hover:bg-indigo-500/30 disabled:cursor-not-allowed disabled:opacity-60"
+                          >
+                            {mutationAction === "email" &&
+                            mutatingId === item.id
+                              ? "Sending..."
+                              : "📧 Send Email"}
+                          </button>
+                        </div>
+                      )}
                       <div className="flex gap-2">
                         {item.discountStatus === "pending" ? (
                           <button
@@ -302,7 +452,7 @@ export function DiscountRecords({
                             {mutationAction === "status" &&
                             mutatingId === item.id
                               ? "Updating..."
-                              : "Send"}
+                              : "Mark Sent"}
                           </button>
                         ) : (
                           <button

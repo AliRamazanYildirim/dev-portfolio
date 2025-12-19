@@ -10,6 +10,16 @@ interface ReferrerEmailPayload {
   discountsEnabled?: boolean;
 }
 
+interface BonusEmailPayload {
+  refFirst: string;
+  refLast: string;
+  myReferralCode: string;
+  referralCount: number;
+  previousFinalPrice: number;
+  newFinalPrice: number;
+  bonusAmount: number;
+}
+
 interface WelcomeEmailPayload {
   firstName: string;
   lastName: string;
@@ -142,6 +152,80 @@ export function buildReferrerEmailHTML(payload: ReferrerEmailPayload) {
   </body></html>`;
 
   const subject = `🎉 Danke für Ihre Empfehlung! ${discountRate}% Rabatt erhalten - ${myReferralCode}`;
+  return { html, subject };
+}
+
+export function buildBonusEmailHTML(payload: BonusEmailPayload) {
+  const {
+    refFirst,
+    refLast,
+    myReferralCode,
+    referralCount,
+    previousFinalPrice,
+    newFinalPrice,
+    bonusAmount,
+  } = payload;
+
+  const html = `<!DOCTYPE html><html lang="de"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width,initial-scale=1" /><title>Bonus Rabatt</title></head>
+  <body style="margin: 0; padding: 40px 20px; background: transparent; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+    <div style="max-width:650px;margin:0 auto;background:#ffffff;border-radius:16px;box-shadow:0 20px 25px -5px rgba(0,0,0,0.1),0 10px 10px -5px rgba(0,0,0,0.04);overflow:hidden;border:1px solid rgba(148,163,184,0.2);">
+      <div style="background:linear-gradient(135deg,#059669 0%,#10b981 100%);padding:38px 30px;text-align:center;">
+        <h1 style="color:#fff;margin:0;font-size:24px;font-weight:700;">🌟 Bonus-Rabatt erhalten!</h1>
+        <p style="color:rgba(255,255,255,0.9);margin:10px 0 0;font-size:14px;font-weight:500;">Ihr Code wurde erneut genutzt</p>
+      </div>
+      <div style="padding:38px 30px;">
+        <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 18px 0;">Hallo <span style="color:#059669;font-weight:600;">${refFirst} ${refLast}</span> 🎉</p>
+        <p style="color:#475569;font-size:14px;line-height:1.6;margin:0 0 24px 0;">Fantastisch! Sie haben bereits das <strong>Maximum von 9%</strong> erreicht – aber Ihre Empfehlungen bringen Ihnen weiterhin Vorteile! Für diese neue Empfehlung erhalten Sie einen <strong>zusätzlichen 3% Bonus-Rabatt</strong> auf Ihren aktuellen Preis.</p>
+        
+        <div style="background:linear-gradient(135deg,#ecfdf5,#d1fae5);border:1px solid #6ee7b7;border-radius:14px;padding:22px 22px;margin:0 0 26px 0;">
+          <h2 style="margin:0 0 14px 0;font-size:17px;color:#065f46;font-weight:700;">🎁 Bonus-Rabatt Details</h2>
+          <ul style="margin:0;padding:0 0 0 18px;color:#065f46;line-height:1.8;font-size:14px;">
+            <li>Empfehlungen gesamt: <strong>${referralCount}</strong></li>
+            <li>Bisheriger Preis: <strong>€${previousFinalPrice.toFixed(2)}</strong></li>
+            <li>Bonus-Rabatt: <strong>+3%</strong> = €${bonusAmount.toFixed(2)} Ersparnis</li>
+            <li style="color:#047857;font-weight:700;font-size:15px;margin-top:8px;">→ Neuer Preis: €${newFinalPrice.toFixed(2)}</li>
+          </ul>
+        </div>
+
+        <div style="background:linear-gradient(135deg,#fef3c7,#fde68a);border:1px solid #fcd34d;border-radius:14px;padding:22px 22px;margin:0 0 26px 0;">
+          <h2 style="margin:0 0 14px 0;font-size:17px;color:#92400e;font-weight:700;">💡 So funktioniert der Bonus</h2>
+          <ul style="margin:0;padding:0 0 0 18px;color:#92400e;line-height:1.6;font-size:13px;">
+            <li>Sie haben das Maximum von 9% bereits erreicht</li>
+            <li>Für jede weitere Empfehlung erhalten Sie <strong>+3% Bonus</strong></li>
+            <li>Der Bonus wird auf Ihren aktuellen Preis berechnet</li>
+            <li>Es gibt keine Obergrenze für Bonus-Rabatte!</li>
+          </ul>
+        </div>
+
+        <div style="background:linear-gradient(135deg,#eef2ff,#ede9fe);border:1px solid #c7d2fe;border-radius:14px;padding:22px 22px;margin:0 0 30px 0;text-align:center;">
+          <p style="margin:0 0 6px 0;font-size:12px;letter-spacing:0.5px;font-weight:600;color:#4f46e5;text-transform:uppercase;">Ihr Empfehlungscode</p>
+          <div style="font-size:26px;font-weight:700;letter-spacing:3px;color:#312e81;font-family:monospace;">${myReferralCode}</div>
+          <p style="margin:10px 0 0 0;font-size:11px;color:#6366f1;">Weiter teilen & unbegrenzt profitieren!</p>
+        </div>
+
+        <div style="text-align:center;margin-bottom:30px;">
+          <p style="margin:0 0 10px 0;color:#1e293b;font-weight:600;">IBAN für Auszahlung</p>
+          <p style="margin:0;color:#475569;font-size:13px;line-height:1.6;">Senden Sie Ihre IBAN an <a style="color:#059669;text-decoration:none;font-weight:600;" href="mailto:aliramazanyildirim@gmail.com">aliramazanyildirim@gmail.com</a> – Auszahlung innerhalb von 7 Werktagen.</p>
+        </div>
+
+        <div style="background:linear-gradient(135deg,#f8fafc,#f1f5f9);border:1px solid #e2e8f0;border-radius:14px;padding:18px 18px;text-align:center;margin-bottom:28px;">
+          <p style="margin:0 0 6px 0;color:#334155;font-size:13px;">📧 Kontakt: <a style="color:#059669;text-decoration:none;font-weight:600;" href="mailto:aliramazanyildirim@gmail.com">aliramazanyildirim@gmail.com</a></p>
+          <p style="margin:0;color:#334155;font-size:13px;">🌐 Portfolio: <a style="color:#059669;text-decoration:none;font-weight:600;" href="https://dev-portfolio-eight-khaki.vercel.app">Website besuchen</a></p>
+        </div>
+
+        <div style="text-align:center;margin-bottom:8px;">
+          <p style="color:#1e293b;font-weight:600;margin:0 0 4px 0;">Herzliche Grüße</p>
+          <p style="color:#1e293b;font-weight:700;margin:0 0 4px 0;font-size:16px;">Ali Ramazan Yildirim</p>
+          <p style="color:#059669;font-weight:600;margin:0;font-size:13px;">Fullstack Web Developer & UI/UX Designer</p>
+        </div>
+        <div style="border-top:1px solid #e2e8f0;padding-top:12px;text-align:center;">
+          <p style="color:#64748b;font-size:11px;line-height:1.5;margin:0;">Diese E-Mail wurde automatisch generiert. Bei Fragen antworten Sie bitte direkt auf diese Nachricht.</p>
+        </div>
+      </div>
+    </div>
+  </body></html>`;
+
+  const subject = `🌟 Bonus-Rabatt! +3% auf Ihren aktuellen Preis - ${myReferralCode}`;
   return { html, subject };
 }
 

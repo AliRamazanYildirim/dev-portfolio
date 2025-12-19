@@ -9,6 +9,8 @@ export interface DiscountEntry {
     referralLevel: number;
     discountStatus: "pending" | "sent";
     discountSentAt: string | null;
+    emailSent: boolean;
+    isBonus: boolean;
     createdAt: string;
     referrer: {
         id: string;
@@ -42,13 +44,23 @@ export interface StageSlot {
     discountSentAt: string | null;
 }
 
+export interface BonusEntry {
+    id: string;
+    amount: number;
+    discountSentAt: string | null;
+    status: "sent" | "pending";
+    customer: DiscountEntry["customer"];
+}
+
 export interface StageGroup {
     referrerCode: string;
     referrer: DiscountEntry["referrer"];
     stages: StageSlot[];
+    bonuses: BonusEntry[];
     totalDiscount: number;
     completedCount: number;
     pendingCount: number;
+    bonusCount: number;
 }
 
 export interface PaginationState {

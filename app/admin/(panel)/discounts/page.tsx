@@ -35,7 +35,7 @@ export default function DiscountTrackingPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [mutatingId, setMutatingId] = useState<string | null>(null);
   const [mutationAction, setMutationAction] = useState<
-    "status" | "delete" | null
+    "status" | "delete" | "email" | null
   >(null);
   const [recordsPage, setRecordsPage] = useState(1);
   const [stagesPage, setStagesPage] = useState(1);
@@ -393,6 +393,43 @@ export default function DiscountTrackingPage() {
     );
   };
 
+  const handleSendEmail = async (entry: DiscountEntry, rate: number | "+3") => {
+    setMutatingId(entry.id);
+    setMutationAction("email");
+    try {
+      const response = await fetch("/api/admin/discounts/send-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          transactionId: entry.id,
+          discountRate: rate,
+        }),
+      });
+
+      const json = await response.json();
+
+      if (!response.ok || !json.success) {
+        throw new Error(json.error || "Email could not be sent");
+      }
+
+      const rateDisplay = rate === "+3" ? "+3% bonus" : `${rate}%`;
+      toast.success(
+        `Discount email sent successfully (${rateDisplay} discount applied)`
+      );
+
+      // Reload data to reflect updated state
+      await loadData();
+    } catch (error) {
+      console.error(error);
+      toast.error(
+        error instanceof Error ? error.message : "Email could not be sent"
+      );
+    } finally {
+      setMutatingId(null);
+      setMutationAction(null);
+    }
+  };
+
   if (authLoading) {
     return (
       <div className="fixed inset-0 w-full h-full">
@@ -533,6 +570,7 @@ export default function DiscountTrackingPage() {
               onMarkAsSent={handleMarkAsSent}
               onMarkAsPending={handleMarkAsPending}
               onDelete={handleDeleteDiscount}
+              onSendEmail={handleSendEmail}
             />
 
             <StageGroupsSection

@@ -53,30 +53,40 @@ export async function POST(req: Request) {
     // NEUKUNDE ZAHLT DEN NORMALEN PREIS
     const finalPriceForNewCustomer = body.price || 0;
 
-    if (discountsEnabled && body.reference && body.price) {
-      const referrer = await CustomerModel.findOne({ myReferralCode: body.reference }).exec();
+    // Referral hesaplama her zaman yapılır, mail gönderimi discountsEnabled'a bağlı
+    let emailSent = false;
+    let referrer: any = null;
+    let newReferralCount = 0;
+    let currentDiscountAmount = 0;
+
+    if (body.reference && body.price) {
+      referrer = await CustomerModel.findOne({ myReferralCode: body.reference }).exec();
 
       if (referrer && referrer.price) {
         referrerCode = referrer.myReferralCode || null;
 
         const currentReferralCount = referrer.referralCount || 0;
-        const newReferralCount = currentReferralCount + 1;
+        newReferralCount = currentReferralCount + 1;
 
         const previousPrice = calcDiscountedPrice(referrer.price, currentReferralCount);
         const referrerFinalPrice = calcDiscountedPrice(referrer.price, newReferralCount);
-        const currentDiscountAmount = previousPrice - referrerFinalPrice;
+        currentDiscountAmount = previousPrice - referrerFinalPrice;
         referrerOriginalPrice = previousPrice;
         referrerDiscountedPrice = referrerFinalPrice;
         referrerDiscount = Math.min(newReferralCount * 3, 9);
 
-        try {
-          await CustomerModel.findByIdAndUpdate(referrer._id, {
-            referralCount: newReferralCount,
-            discountRate: referrerDiscount,
-            finalPrice: referrerFinalPrice,
-            updatedAt: new Date(),
-          }).exec();
+        // Referrer'ın referralCount'u her zaman artar
+        const referrerUpdateData: Record<string, any> = {
+          referralCount: newReferralCount,
+          updatedAt: new Date(),
+        };
 
+        // discountRate ve finalPrice sadece discountsEnabled ise güncellenir
+        if (discountsEnabled) {
+          referrerUpdateData.discountRate = referrerDiscount;
+          referrerUpdateData.finalPrice = referrerFinalPrice;
+
+          // Mail sadece discountsEnabled ise gönderilir
           if (referrer.email) {
             try {
               const { html, subject } = buildReferrerEmailHTML({
@@ -95,10 +105,15 @@ export async function POST(req: Request) {
                 subject,
                 html,
               });
+              emailSent = true;
             } catch (mailErr) {
               console.error("Failed sending referrer notification email:", mailErr);
             }
           }
+        }
+
+        try {
+          await CustomerModel.findByIdAndUpdate(referrer._id, referrerUpdateData).exec();
         } catch (updateErr) {
           console.error("Error updating referrer:", updateErr);
         }
@@ -132,9 +147,8 @@ export async function POST(req: Request) {
       const customer = await CustomerModel.create(customerData);
 
       // If referral transaction was inserted earlier referencing referrer.id, we should update newCustomerId now.
+      // Transaction her zaman oluşturulur (hesaplama yapıldıysa)
       if (referrerCode) {
-        // Find the latest referral transaction for this referrerCode with null/placeholder newCustomerId and update it.
-        // Simpler approach: create a referral transaction here instead of earlier; we'll create it now referencing customer.id
         await ReferralTransactionModel.create({
           referrerCode,
           newCustomerId: customer._id.toString(),
@@ -145,6 +159,7 @@ export async function POST(req: Request) {
           invoiceStatus: "pending",
           invoiceNumber: null,
           invoiceSentAt: null,
+          emailSent,
         });
       }
 
