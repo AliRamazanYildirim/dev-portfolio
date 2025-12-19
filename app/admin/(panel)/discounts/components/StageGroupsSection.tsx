@@ -21,7 +21,7 @@ export function StageGroupsSection({
         <h2 className="text-2xl font-semibold text-[#131313]">
           Discount Stages (3 Steps & Bonus)
         </h2>
-        <span className="rounded-full bg-amber-400/50 px-4 py-1 text-[#0f1724] text-sm font-semibold">
+        <span className="w-fit ml-auto sm:ml-0 rounded-full bg-amber-500/50 px-4 py-1 text-[#0f1724] text-sm font-semibold">
           {stageGroups.length} referrers being tracked
         </span>
       </div>
