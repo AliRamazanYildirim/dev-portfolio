@@ -20,6 +20,14 @@ interface BonusEmailPayload {
   bonusAmount: number;
 }
 
+interface CorrectionEmailPayload {
+  refFirst: string;
+  refLast: string;
+  myReferralCode: string;
+  originalDiscountRate: number;
+  originalAmount: number;
+}
+
 interface WelcomeEmailPayload {
   firstName: string;
   lastName: string;
@@ -226,6 +234,77 @@ export function buildBonusEmailHTML(payload: BonusEmailPayload) {
   </body></html>`;
 
   const subject = `🌟 Bonus-Rabatt! +3% auf Ihren aktuellen Preis - ${myReferralCode}`;
+  return { html, subject };
+}
+
+export function buildCorrectionEmailHTML(payload: CorrectionEmailPayload) {
+  const {
+    refFirst,
+    refLast,
+    myReferralCode,
+    originalDiscountRate,
+    originalAmount,
+  } = payload;
+
+  const html = `<!DOCTYPE html><html lang="de"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width,initial-scale=1" /><title>Korrektur - Rabattmitteilung</title></head>
+  <body style="margin: 0; padding: 40px 20px; background: transparent; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+    <div style="max-width:650px;margin:0 auto;background:#ffffff;border-radius:16px;box-shadow:0 20px 25px -5px rgba(0,0,0,0.1),0 10px 10px -5px rgba(0,0,0,0.04);overflow:hidden;border:1px solid rgba(148,163,184,0.2);">
+      <div style="background:linear-gradient(135deg,#dc2626 0%,#ef4444 100%);padding:38px 30px;text-align:center;">
+        <h1 style="color:#fff;margin:0;font-size:24px;font-weight:700;">⚠️ Korrektur - Wichtige Mitteilung</h1>
+        <p style="color:rgba(255,255,255,0.9);margin:10px 0 0;font-size:14px;font-weight:500;">Bitte beachten Sie diese Berichtigung</p>
+      </div>
+      <div style="padding:38px 30px;">
+        <p style="color:#1e293b;font-size:16px;line-height:1.6;margin:0 0 18px 0;">Hallo <span style="color:#dc2626;font-weight:600;">${refFirst} ${refLast}</span>,</p>
+        
+        <p style="color:#475569;font-size:14px;line-height:1.6;margin:0 0 24px 0;">wir möchten uns aufrichtig für ein Versehen entschuldigen. Die vorherige E-Mail bezüglich Ihres Empfehlungsrabatts wurde <strong>irrtümlich versendet</strong> und enthielt fehlerhafte Informationen.</p>
+        
+        <div style="background:linear-gradient(135deg,#fef2f2,#fee2e2);border:1px solid #fca5a5;border-radius:14px;padding:22px 22px;margin:0 0 26px 0;">
+          <h2 style="margin:0 0 14px 0;font-size:17px;color:#991b1b;font-weight:700;">❌ Fehlerhafte Angaben (bitte ignorieren)</h2>
+          <ul style="margin:0;padding:0 0 0 18px;color:#991b1b;line-height:1.8;font-size:14px;">
+            <li>Rabatt-Satz: <strong style="text-decoration:line-through;">${originalDiscountRate}%</strong></li>
+            <li>Rabatt-Betrag: <strong style="text-decoration:line-through;">€${originalAmount.toFixed(2)}</strong></li>
+          </ul>
+          <p style="margin:14px 0 0 0;color:#991b1b;font-size:13px;font-style:italic;">Diese Angaben sind ungültig und wurden aus unserem System entfernt.</p>
+        </div>
+
+        <div style="background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:1px solid #86efac;border-radius:14px;padding:22px 22px;margin:0 0 26px 0;">
+          <h2 style="margin:0 0 14px 0;font-size:17px;color:#166534;font-weight:700;">✅ Nächste Schritte</h2>
+          <ul style="margin:0;padding:0 0 0 18px;color:#166534;line-height:1.6;font-size:13px;">
+            <li>Bitte ignorieren Sie die vorherige E-Mail vollständig</li>
+            <li>Ihr Empfehlungscode <strong>${myReferralCode}</strong> bleibt weiterhin gültig</li>
+            <li>Sie erhalten in Kürze eine korrigierte Mitteilung mit den richtigen Rabattinformationen</li>
+            <li>Bei Fragen stehen wir Ihnen jederzeit zur Verfügung</li>
+          </ul>
+        </div>
+
+        <div style="background:linear-gradient(135deg,#fffbeb,#fef3c7);border:1px solid #fcd34d;border-radius:14px;padding:22px 22px;margin:0 0 26px 0;">
+          <h2 style="margin:0 0 14px 0;font-size:17px;color:#92400e;font-weight:700;">🙏 Entschuldigung</h2>
+          <p style="margin:0;color:#92400e;font-size:14px;line-height:1.6;">Wir bitten um Entschuldigung für eventuelle Unannehmlichkeiten. Solche Fehler sind selten und wir arbeiten daran, dass dies nicht wieder vorkommt. Vielen Dank für Ihr Verständnis!</p>
+        </div>
+
+        <div style="background:linear-gradient(135deg,#eef2ff,#ede9fe);border:1px solid #c7d2fe;border-radius:14px;padding:22px 22px;margin:0 0 30px 0;text-align:center;">
+          <p style="margin:0 0 6px 0;font-size:12px;letter-spacing:0.5px;font-weight:600;color:#4f46e5;text-transform:uppercase;">Ihr Empfehlungscode bleibt gültig</p>
+          <div style="font-size:26px;font-weight:700;letter-spacing:3px;color:#312e81;font-family:monospace;">${myReferralCode}</div>
+        </div>
+
+        <div style="background:linear-gradient(135deg,#f8fafc,#f1f5f9);border:1px solid #e2e8f0;border-radius:14px;padding:18px 18px;text-align:center;margin-bottom:28px;">
+          <p style="margin:0 0 6px 0;color:#334155;font-size:13px;">📧 Kontakt: <a style="color:#dc2626;text-decoration:none;font-weight:600;" href="mailto:aliramazanyildirim@gmail.com">aliramazanyildirim@gmail.com</a></p>
+          <p style="margin:0;color:#334155;font-size:13px;">🌐 Portfolio: <a style="color:#dc2626;text-decoration:none;font-weight:600;" href="https://dev-portfolio-eight-khaki.vercel.app">Website besuchen</a></p>
+        </div>
+
+        <div style="text-align:center;margin-bottom:8px;">
+          <p style="color:#1e293b;font-weight:600;margin:0 0 4px 0;">Mit freundlichen Grüßen</p>
+          <p style="color:#1e293b;font-weight:700;margin:0 0 4px 0;font-size:16px;">Ali Ramazan Yildirim</p>
+          <p style="color:#dc2626;font-weight:600;margin:0;font-size:13px;">Fullstack Web Developer & UI/UX Designer</p>
+        </div>
+        <div style="border-top:1px solid #e2e8f0;padding-top:12px;text-align:center;">
+          <p style="color:#64748b;font-size:11px;line-height:1.5;margin:0;">Diese E-Mail wurde automatisch generiert. Bei Fragen antworten Sie bitte direkt auf diese Nachricht.</p>
+        </div>
+      </div>
+    </div>
+  </body></html>`;
+
+  const subject = `⚠️ Korrektur: Bitte ignorieren Sie die vorherige Rabattmitteilung - ${myReferralCode}`;
   return { html, subject };
 }
 

@@ -11,11 +11,12 @@ interface DiscountRecordsProps {
   paginatedRecords: DiscountEntry[];
   pagination: PaginationState;
   mutatingId: string | null;
-  mutationAction: "status" | "delete" | "email" | null;
+  mutationAction: "status" | "delete" | "email" | "reset" | null;
   onMarkAsSent: (entry: DiscountEntry) => void;
   onMarkAsPending: (entry: DiscountEntry) => void;
   onDelete: (entry: DiscountEntry) => void;
   onSendEmail: (entry: DiscountEntry, rate: number | "+3") => void;
+  onResetEmail: (entry: DiscountEntry) => void;
 }
 
 export function DiscountRecords({
@@ -28,6 +29,7 @@ export function DiscountRecords({
   onMarkAsPending,
   onDelete,
   onSendEmail,
+  onResetEmail,
 }: DiscountRecordsProps) {
   const [selectedRates, setSelectedRates] = useState<
     Record<string, number | "+3">
@@ -146,7 +148,13 @@ export function DiscountRecords({
                           <span className="font-semibold text-white">
                             %{item.discountRate.toFixed(0)}
                           </span>
-                          <span className={`text-xs ${item.isBonus ? 'text-emerald-400' : 'text-white/60'}`}>
+                          <span
+                            className={`text-xs ${
+                              item.isBonus
+                                ? "text-emerald-400"
+                                : "text-white/60"
+                            }`}
+                          >
                             {getStageLabel(item)}
                           </span>
                         </div>
@@ -267,6 +275,19 @@ export function DiscountRecords({
                                 : "Revert"}
                             </button>
                           )}
+                          {/* Reset Email Button - only show if email was sent */}
+                          {item.emailSent && (
+                            <button
+                              onClick={() => onResetEmail(item)}
+                              disabled={mutatingId === item.id}
+                              className="rounded-md bg-orange-500/70 px-3 py-1 text-xs font-semibold text-orange-100 transition hover:bg-orange-500/50 disabled:cursor-not-allowed disabled:opacity-60"
+                            >
+                              {mutationAction === "reset" &&
+                              mutatingId === item.id
+                                ? "Resetting..."
+                                : "🔄 Reset"}
+                            </button>
+                          )}
                           <button
                             onClick={() => onDelete(item)}
                             disabled={mutatingId === item.id}
@@ -350,7 +371,11 @@ export function DiscountRecords({
                       <p className="font-semibold text-white">
                         %{item.discountRate.toFixed(0)}
                       </p>
-                      <p className={`text-xs ${item.isBonus ? 'text-emerald-400' : 'text-white/60'}`}>
+                      <p
+                        className={`text-xs ${
+                          item.isBonus ? "text-emerald-400" : "text-white/60"
+                        }`}
+                      >
                         {getStageLabel(item)}
                       </p>
                     </div>
@@ -476,6 +501,18 @@ export function DiscountRecords({
                           </button>
                         )}
                       </div>
+                      {/* Reset Email Button - Mobile */}
+                      {item.emailSent && (
+                        <button
+                          onClick={() => onResetEmail(item)}
+                          disabled={mutatingId === item.id}
+                          className="rounded-md bg-orange-500/20 px-3 py-2 text-xs font-semibold text-orange-100 transition hover:bg-orange-500/30 disabled:cursor-not-allowed disabled:opacity-60"
+                        >
+                          {mutationAction === "reset" && mutatingId === item.id
+                            ? "Resetting..."
+                            : "🔄 Reset Email"}
+                        </button>
+                      )}
                       <button
                         onClick={() => onDelete(item)}
                         disabled={mutatingId === item.id}

@@ -35,7 +35,7 @@ export default function DiscountTrackingPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [mutatingId, setMutatingId] = useState<string | null>(null);
   const [mutationAction, setMutationAction] = useState<
-    "status" | "delete" | "email" | null
+    "status" | "delete" | "email" | "reset" | null
   >(null);
   const [recordsPage, setRecordsPage] = useState(1);
   const [stagesPage, setStagesPage] = useState(1);
@@ -430,6 +430,82 @@ export default function DiscountTrackingPage() {
     }
   };
 
+  const handleResetEmail = (entry: DiscountEntry) => {
+    toast.custom(
+      (t) => (
+        <div className="max-w-md w-full rounded-lg border border-white/10 bg-[#0f1724]/95 p-3 text-sm text-white">
+          <div className="flex flex-col gap-3">
+            <div>
+              <p className="font-semibold text-orange-300">
+                🔄 Reset Email Status
+              </p>
+              <p className="mt-1 text-white/70">
+                This will reset the email status for{" "}
+                <span className="font-semibold text-amber-200">
+                  {entry.referrerCode}
+                </span>{" "}
+                and send a correction email to the customer.
+              </p>
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={async () => {
+                  toast.dismiss(t.id);
+                  setMutatingId(entry.id);
+                  setMutationAction("reset");
+                  try {
+                    const response = await fetch(
+                      "/api/admin/discounts/reset-email",
+                      {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                          transactionId: entry.id,
+                          sendCorrectionEmail: true,
+                        }),
+                      }
+                    );
+
+                    const json = await response.json();
+
+                    if (!response.ok || !json.success) {
+                      throw new Error(
+                        json.error || "Email status could not be reset"
+                      );
+                    }
+
+                    toast.success("Email status reset & correction email sent");
+                    await loadData();
+                  } catch (error) {
+                    console.error(error);
+                    toast.error(
+                      error instanceof Error
+                        ? error.message
+                        : "Failed to reset email status"
+                    );
+                  } finally {
+                    setMutatingId(null);
+                    setMutationAction(null);
+                  }
+                }}
+                className="flex-1 rounded-md bg-orange-500/70 px-3 py-1.5 text-xs font-semibold text-orange-100 hover:bg-orange-500/50"
+              >
+                Reset & Send Correction
+              </button>
+              <button
+                onClick={() => toast.dismiss(t.id)}
+                className="rounded-md bg-white/5 px-3 py-1.5 text-xs font-semibold text-white hover:bg-white/10"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      ),
+      { duration: 10000 }
+    );
+  };
+
   if (authLoading) {
     return (
       <div className="fixed inset-0 w-full h-full">
@@ -571,6 +647,7 @@ export default function DiscountTrackingPage() {
               onMarkAsPending={handleMarkAsPending}
               onDelete={handleDeleteDiscount}
               onSendEmail={handleSendEmail}
+              onResetEmail={handleResetEmail}
             />
 
             <StageGroupsSection
