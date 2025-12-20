@@ -31,8 +31,8 @@ export function DiscountFilters({
           className="w-full rounded-lg border border-[#131313]/10 bg-white px-10 py-2 text-sm text-[#131313] shadow focus:outline-none focus:ring focus:ring-[#0f1724]/20"
         />
       </div>
-      <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-        <div className="relative">
+      <div className="flex flex-row items-center gap-2">
+        <div className="relative flex-shrink-0">
           <Filter className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#131313]/50" />
           <select
             value={statusFilter}
@@ -50,7 +50,7 @@ export function DiscountFilters({
         </div>
         <button
           onClick={onReset}
-          className="flex items-center gap-2 rounded-lg border border-[#131313]/10 bg-white px-3 py-2 text-sm font-semibold text-[#131313] shadow hover:bg-[#131313]/10"
+          className="flex items-center gap-2 rounded-lg border border-[#131313]/10 bg-white px-3 py-2 text-sm font-semibold text-[#131313] shadow hover:bg-[#131313]/10 flex-shrink-0"
         >
           <X className="h-4 w-4" />
           Reset
@@ -58,7 +58,7 @@ export function DiscountFilters({
         <button
           onClick={onRefresh}
           disabled={loading}
-          className="flex items-center justify-center gap-2 bg-[#131313] text-white px-5 py-2 rounded-lg font-semibold shadow hover:bg-[#131313]/90 transition disabled:opacity-60 disabled:cursor-not-allowed"
+          className="flex items-center justify-center gap-2 bg-[#131313] text-white px-3 py-2 rounded-lg font-semibold shadow hover:bg-[#131313]/90 transition disabled:opacity-60 disabled:cursor-not-allowed flex-shrink-0"
         >
           <RefreshCcw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
           <span>Refresh</span>
