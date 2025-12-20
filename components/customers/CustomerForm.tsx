@@ -56,6 +56,14 @@ export default function CustomerForm({
     // Accept exactly 5 digits
     return /^\d{5}$/.test(p);
   }, [formData.postcode]);
+  const [priceTouched, setPriceTouched] = useState(false);
+  const priceValid = useMemo(() => {
+    const p = formData.price || "";
+    if (!p) return false;
+    const numPrice = parseFloat(p);
+    // Price must be a valid number and not negative
+    return !isNaN(numPrice) && numPrice >= 0;
+  }, [formData.price]);
   if (!show) return null;
 
   return (
@@ -226,11 +234,18 @@ export default function CustomerForm({
                 </label>
                 <input
                   type="number"
+                  min="0"
                   placeholder="Enter price..."
                   value={formData.price ?? ""}
                   onChange={(e) => onUpdateField("price", e.target.value)}
+                  onBlur={() => setPriceTouched(true)}
                   className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl text-[#131313] placeholder:text-[#131313]/60 focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content text-sm sm:text-base"
                 />
+                {priceTouched && !priceValid && (
+                  <p className="mt-2 text-xs text-red-600">
+                    Price must be a valid non-negative number.
+                  </p>
+                )}
               </div>
 
               <div className="lg:col-span-2">
@@ -313,9 +328,11 @@ export default function CustomerForm({
           </button>
           <button
             onClick={onSave}
-            disabled={!(emailValid && phoneValid && postcodeValid)}
+            disabled={
+              !(emailValid && phoneValid && postcodeValid && priceValid)
+            }
             className={`w-full sm:w-auto px-6 sm:px-8 py-3 rounded-xl font-medium shadow-lg transition-all duration-200 text-sm sm:text-base order-1 sm:order-2 ${
-              emailValid && phoneValid && postcodeValid
+              emailValid && phoneValid && postcodeValid && priceValid
                 ? "bg-[#131313] hover:bg-[#131313]/90 text-white hover:shadow-xl hover:scale-105"
                 : "bg-gray-200 text-gray cursor-not-allowed shadow-none"
             }`}
