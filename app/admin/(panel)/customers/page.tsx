@@ -9,7 +9,7 @@ import CustomerList from "@/components/customers/CustomerList";
 import CustomerDetails from "@/components/customers/CustomerDetails";
 import CustomerForm from "@/components/customers/CustomerForm";
 import toast from "react-hot-toast";
-import { RefreshCcw } from "lucide-react";
+import { RefreshCcw, Search, Filter } from "lucide-react";
 
 export default function CustomersAdminPage() {
   const { isAuthenticated, loading: authLoading } = useAdminAuth();
@@ -196,7 +196,7 @@ export default function CustomersAdminPage() {
                     Manage customers
                   </p>
                 </div>
-                <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-end gap-3 sm:gap-4">
+                <div className="flex flex-col sm:flex-row items-center justify-center landscape:justify-end lg:justify-end gap-3 sm:gap-4">
                   <button
                     onClick={() => {
                       setSidebarOpenState(false);
@@ -237,9 +237,10 @@ export default function CustomersAdminPage() {
                       e.preventDefault();
                       fetchCustomers({ q: searchQuery });
                     }}
-                    className="flex flex-col sm:flex-row w-full sm:w-auto gap-2"
+                    className="flex flex-col sm:flex-row w-full sm:w-auto gap-2 sm:items-center"
                   >
                     <div className="relative w-full sm:w-64">
+                      <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 sm:h-4 sm:w-4 text-black/50" />
                       <input
                         type="search"
                         placeholder="Search name, company, address or reference..."
@@ -276,7 +277,7 @@ export default function CustomersAdminPage() {
                             }
                           }, 250);
                         }}
-                        className="w-full bg-white/90 text-black px-3 py-1.5 rounded-md text-sm focus:outline-none"
+                        className="w-full bg-white/90 text-black pl-8 sm:pl-9 pr-3 py-1.5 rounded-md text-sm focus:outline-none"
                         onFocus={() => {
                           if (liveResults.length > 0) setShowDropdown(true);
                         }}
@@ -313,39 +314,72 @@ export default function CustomersAdminPage() {
                         </ul>
                       )}
                     </div>
-                    <button
-                      type="submit"
-                      className="w-full sm:w-auto bg-white text-[#131313] px-3 py-1 rounded-md text-sm font-semibold"
-                    >
-                      Search
-                    </button>
+                    <div className="flex flex-row gap-2 w-full landscape:w-auto landscape:justify-end sm:w-auto">
+                      <button
+                        type="submit"
+                        className="flex-1 landscape:flex-none sm:flex-none flex items-center justify-center gap-1.5 sm:gap-2 bg-white text-[#131313] px-3 py-1.5 rounded-md text-sm font-semibold"
+                      >
+                        <Search className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                        <span>Search</span>
+                      </button>
+                      {/* Portrait mobile only */}
+                      <div className="relative flex-1 landscape:hidden sm:hidden">
+                        <Filter className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-white/70" />
+                        <select
+                          value={filter}
+                          onChange={(e) => handleFilterChange(e.target.value)}
+                          className="w-full appearance-none cursor-pointer bg-[#131313] text-white font-semibold pl-8 pr-6 py-1.5 rounded-lg text-sm shadow-lg"
+                        >
+                          <option value="none">Filter</option>
+                          <option value="price_desc">Price: High → Low</option>
+                          <option value="price_asc">Price: Low → High</option>
+                          <option value="name_asc">Name: A → Z</option>
+                          <option value="name_desc">Name: Z → A</option>
+                          <option value="created_asc">
+                            Created: Old → New
+                          </option>
+                          <option value="created_desc">
+                            Created: New → Old
+                          </option>
+                          <option value="date_range">Created between...</option>
+                        </select>
+                      </div>
+                      {/* Landscape and desktop */}
+                      <div className="relative hidden landscape:flex-none sm:flex-none landscape:block sm:block">
+                        <Filter className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 sm:h-4 sm:w-4 text-white/70" />
+                        <select
+                          value={filter}
+                          onChange={(e) => handleFilterChange(e.target.value)}
+                          className="w-full appearance-none cursor-pointer bg-[#131313] text-white font-semibold pl-8 sm:pl-9 pr-6 py-1.5 rounded-lg text-sm shadow-lg"
+                        >
+                          <option value="none">Filter / Sort</option>
+                          <option value="price_desc">Price: High → Low</option>
+                          <option value="price_asc">Price: Low → High</option>
+                          <option value="name_asc">Name: A → Z</option>
+                          <option value="name_desc">Name: Z → A</option>
+                          <option value="created_asc">
+                            Created: Old → New
+                          </option>
+                          <option value="created_desc">
+                            Created: New → Old
+                          </option>
+                          <option value="date_range">Created between...</option>
+                        </select>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => fetchCustomers()}
+                        className="flex-1 landscape:flex-none sm:flex-none flex items-center justify-center gap-1.5 sm:gap-2 bg-white text-[#131313] px-3 py-1.5 rounded-lg font-semibold shadow hover:bg-white/90 transition disabled:opacity-60 disabled:cursor-not-allowed"
+                      >
+                        <RefreshCcw
+                          className={`h-3.5 w-3.5 sm:h-4 sm:w-4 text-[#131313] ${
+                            loading ? "animate-spin" : ""
+                          }`}
+                        />
+                        <span>Refresh</span>
+                      </button>
+                    </div>
                   </form>
-
-                  <select
-                    value={filter}
-                    onChange={(e) => handleFilterChange(e.target.value)}
-                    className="bg-[#131313] text-white font-semibold px-6 py-2 rounded-lg text-sm shadow-lg"
-                  >
-                    <option value="none">Filter / Sort</option>
-                    <option value="price_desc">Price: High → Low</option>
-                    <option value="price_asc">Price: Low → High</option>
-                    <option value="name_asc">Name: A → Z</option>
-                    <option value="name_desc">Name: Z → A</option>
-                    <option value="created_asc">Created: Old → New</option>
-                    <option value="created_desc">Created: New → Old</option>
-                    <option value="date_range">Created between...</option>
-                  </select>
-                  <button
-                    onClick={() => fetchCustomers()}
-                    className="flex items-center justify-center gap-2 bg-white text-[#131313] px-5 py-2 rounded-lg font-semibold shadow hover:bg-white/90 transition disabled:opacity-60 disabled:cursor-not-allowed w-full sm:w-auto"
-                  >
-                    <RefreshCcw
-                      className={`h-4 w-4 text-[#131313] ${
-                        loading ? "animate-spin" : ""
-                      }`}
-                    />
-                    <span>Refresh</span>
-                  </button>
                 </div>
 
                 {filter === "date_range" && (
