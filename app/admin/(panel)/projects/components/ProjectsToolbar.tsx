@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent } from "react";
-import { RefreshCcw } from "lucide-react";
+import { RefreshCcw, Search, Filter } from "lucide-react";
 import type { Project, ProjectSortOption } from "../types";
 
 interface ProjectsToolbarProps {
@@ -44,18 +44,19 @@ export function ProjectsToolbar({
           </h2>
           <p className="text-white/70 mt-2">{statsText}</p>
         </div>
-        <div className="w-full sm:w-auto flex flex-col sm:flex-row items-start sm:items-center gap-2">
+        <div className="w-full flex flex-col items-start gap-2">
           <form
             onSubmit={onSearchSubmit}
             className="flex flex-col w-full gap-2"
           >
             <div className="relative w-full">
+              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 sm:h-4 sm:w-4 text-black/50" />
               <input
                 type="search"
                 placeholder="Search project name..."
                 value={searchQuery}
                 onChange={(event) => onSearchChange(event.target.value)}
-                className="w-full bg-white/90 text-black px-3 py-1.5 rounded-md text-sm focus:outline-none"
+                className="w-full bg-white/90 text-black pl-8 sm:pl-9 pr-3 py-1.5 rounded-md text-sm focus:outline-none"
                 onFocus={() => {
                   if (liveResults.length > 0) onDropdownVisibilityChange(true);
                 }}
@@ -86,31 +87,53 @@ export function ProjectsToolbar({
             <div className="flex flex-row gap-2 w-full">
               <button
                 type="submit"
-                className="flex-1 sm:flex-none bg-white text-[#131313] px-3 py-1.5 rounded-md text-sm font-semibold"
+                className="flex-1 landscape:flex-none sm:!flex-1 flex items-center justify-center gap-1.5 sm:gap-2 bg-white text-[#131313] px-3 py-1.5 rounded-md text-sm font-semibold"
               >
-                Search
+                <Search className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                <span>Search</span>
               </button>
-              <select
-                value={filter}
-                onChange={(event) =>
-                  onFilterChange(event.target.value as ProjectSortOption)
-                }
-                className="flex-1 sm:flex-none bg-[#131313] text-white font-semibold px-3 py-1.5 rounded-lg text-sm shadow-lg"
-              >
-                <option value="none">Filter / Sort</option>
-                <option value="name_asc">Name: A → Z</option>
-                <option value="name_desc">Name: Z → A</option>
-                <option value="created_asc">Created: Old → New</option>
-                <option value="created_desc">Created: New → Old</option>
-              </select>
+              {/* Mobile only (portrait + landscape) */}
+              <div className="relative flex-1 landscape:flex-none sm:hidden landscape:!block">
+                <Filter className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-white/70" />
+                <select
+                  value={filter}
+                  onChange={(event) =>
+                    onFilterChange(event.target.value as ProjectSortOption)
+                  }
+                  className="w-full appearance-none cursor-pointer bg-[#131313] text-white font-semibold pl-8 pr-6 py-1.5 rounded-lg text-sm shadow-lg"
+                >
+                  <option value="none">Filter</option>
+                  <option value="name_asc">Name: A → Z</option>
+                  <option value="name_desc">Name: Z → A</option>
+                  <option value="created_asc">Created: Old → New</option>
+                  <option value="created_desc">Created: New → Old</option>
+                </select>
+              </div>
+              {/* Desktop only */}
+              <div className="relative flex-1 hidden sm:block landscape:!hidden">
+                <Filter className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-white/70" />
+                <select
+                  value={filter}
+                  onChange={(event) =>
+                    onFilterChange(event.target.value as ProjectSortOption)
+                  }
+                  className="w-full appearance-none cursor-pointer bg-[#131313] text-white font-semibold pl-9 pr-6 py-1.5 rounded-lg text-sm shadow-lg"
+                >
+                  <option value="none">Filter / Sort</option>
+                  <option value="name_asc">Name: A → Z</option>
+                  <option value="name_desc">Name: Z → A</option>
+                  <option value="created_asc">Created: Old → New</option>
+                  <option value="created_desc">Created: New → Old</option>
+                </select>
+              </div>
               <button
                 type="button"
                 onClick={onRefresh}
                 disabled={loading}
-                className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-white text-[#131313] px-3 py-1.5 rounded-lg font-semibold shadow hover:bg-white/90 transition disabled:opacity-60 disabled:cursor-not-allowed"
+                className="flex-1 landscape:flex-none sm:!flex-1 flex items-center justify-center gap-1.5 sm:gap-2 bg-white text-[#131313] px-3 py-1.5 rounded-lg font-semibold shadow hover:bg-white/90 transition disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 <RefreshCcw
-                  className={`h-4 w-4 text-[#131313] ${
+                  className={`h-3.5 w-3.5 sm:h-4 sm:w-4 text-[#131313] ${
                     loading ? "animate-spin" : ""
                   }`}
                 />

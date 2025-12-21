@@ -93,24 +93,26 @@ export function ProjectList({
                     <h3 className="text-xl sm:text-2xl lg:text-3xl font-semibold text-[#131313] break-words">
                       {project.title}
                     </h3>
-                    {project.category && (
-                      <span className="inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-bold bg-green-600 text-white self-start">
-                        {project.category}
-                      </span>
-                    )}
+                    <div className="flex flex-row flex-wrap items-center gap-2 sm:gap-3">
+                      {project.category && (
+                        <span className="inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-bold bg-green-600 text-white">
+                          {project.category}
+                        </span>
+                      )}
 
-                    {project.isFeatured && (
-                      <span className="inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-bold bg-[#c9184a] text-white self-start">
-                        <svg
-                          className="w-3 h-3 sm:w-4 sm:h-4 mr-1.5 sm:mr-2"
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                        >
-                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                        </svg>
-                        Featured
-                      </span>
-                    )}
+                      {project.isFeatured && (
+                        <span className="inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-bold bg-[#c9184a] text-white">
+                          <svg
+                            className="w-3 h-3 sm:w-4 sm:h-4 mr-1.5 sm:mr-2"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                          >
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                          </svg>
+                          Featured
+                        </span>
+                      )}
+                    </div>
                   </div>
 
                   <p className="text-base sm:text-lg text-[#131313]/80 mb-4 sm:mb-6 leading-relaxed">
