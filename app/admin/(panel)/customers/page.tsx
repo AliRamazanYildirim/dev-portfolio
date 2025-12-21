@@ -37,6 +37,7 @@ export default function CustomersAdminPage() {
   } = useCustomerForm();
 
   const [showForm, setShowForm] = useState(false);
+  const [showMobileDetails, setShowMobileDetails] = useState(false);
   const [filter, setFilter] = useState<
     | "none"
     | "price_desc"
@@ -425,14 +426,39 @@ export default function CustomersAdminPage() {
                         currentCustomers={currentCustomers}
                         allCustomers={customers}
                         selectedCustomer={selectedCustomer}
-                        setSelectedCustomer={setSelectedCustomer}
+                        setSelectedCustomer={(customer) => {
+                          setSelectedCustomer(customer);
+                          // Open modal on mobile when customer is selected
+                          if (window.innerWidth < 1024) {
+                            setShowMobileDetails(true);
+                          }
+                        }}
                         pagination={pagination}
                       />
-                      <CustomerDetails
-                        customer={selectedCustomer}
-                        onEdit={handleEditCustomer}
-                        onDelete={deleteCustomer}
-                      />
+                      {/* Desktop: Show inline */}
+                      <div className="hidden lg:block lg:col-span-8 xl:col-span-9">
+                        <CustomerDetails
+                          customer={selectedCustomer}
+                          onEdit={handleEditCustomer}
+                          onDelete={deleteCustomer}
+                        />
+                      </div>
+                      {/* Mobile: Show as modal */}
+                      {showMobileDetails && (
+                        <CustomerDetails
+                          customer={selectedCustomer}
+                          onEdit={(customer) => {
+                            setShowMobileDetails(false);
+                            handleEditCustomer(customer);
+                          }}
+                          onDelete={(id) => {
+                            setShowMobileDetails(false);
+                            deleteCustomer(id);
+                          }}
+                          isModal={true}
+                          onClose={() => setShowMobileDetails(false)}
+                        />
+                      )}
                     </>
                   ) : (
                     <div className="col-span-12 text-center py-16 sm:py-24">

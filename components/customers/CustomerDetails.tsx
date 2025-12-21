@@ -10,12 +10,16 @@ interface CustomerDetailsProps {
   customer: Customer | null;
   onEdit: (customer: Customer) => void;
   onDelete: (id: string) => void;
+  isModal?: boolean;
+  onClose?: () => void;
 }
 
 export default function CustomerDetails({
   customer,
   onEdit,
   onDelete,
+  isModal = false,
+  onClose,
 }: CustomerDetailsProps) {
   const { isGenerating, generateInvoice } = useInvoiceGenerator();
   const router = useRouter();
@@ -31,6 +35,7 @@ export default function CustomerDetails({
   }, [customer?.id]);
 
   if (!customer) {
+    if (isModal) return null;
     return (
       <div className="lg:col-span-8 xl:col-span-9">
         <div className="bg-gradient-to-br from-white/95 to-white/85 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/30 h-full flex items-center justify-center">
@@ -78,15 +83,17 @@ export default function CustomerDetails({
     setShowInvoiceModal(true);
   };
 
-  return (
-    <div className="lg:col-span-8 xl:col-span-9">
+  const content = (
+    <div className={isModal ? "" : "lg:col-span-8 xl:col-span-9"}>
       <div className="bg-gradient-to-br from-white/95 to-white/85 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/30 overflow-hidden flex flex-col">
         <NoiseBackground mode="light" intensity={0.1}>
-          <div className="bg-gradient-to-r from-slate-900 to-slate-800 p-6 text-white">
+          <div className="bg-gradient-to-r from-slate-900 to-slate-800 p-4 sm:p-6 text-white">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-2xl font-bold mb-1">Customer Details</h2>
-                <p className="text-white/70">
+                <h2 className="text-xl sm:text-2xl font-bold mb-1">
+                  Customer Details
+                </h2>
+                <p className="text-white/70 text-sm sm:text-base">
                   Complete information and actions
                 </p>
               </div>
@@ -381,7 +388,11 @@ export default function CustomerDetails({
                             Original Price
                           </label>
                           <p className="text-2xl font-bold text-red-600 line-through">
-                             €{Number(customer.price).toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            €
+                            {Number(customer.price).toLocaleString("de-DE", {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2,
+                            })}
                           </p>
                         </div>
                         <div className="bg-white rounded-2xl p-4 shadow-lg">
@@ -389,7 +400,14 @@ export default function CustomerDetails({
                             Final Price
                           </label>
                           <p className="text-2xl font-bold text-emerald-600">
-                             €{Number(customer.finalPrice).toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            €
+                            {Number(customer.finalPrice).toLocaleString(
+                              "de-DE",
+                              {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                              }
+                            )}
                           </p>
                         </div>
                         <div className="bg-white rounded-2xl p-4 shadow-lg">
@@ -407,7 +425,11 @@ export default function CustomerDetails({
                           Price
                         </label>
                         <p className="text-2xl font-bold text-emerald-600">
-                           €{Number(customer.price).toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          €
+                          {Number(customer.price).toLocaleString("de-DE", {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          })}
                         </p>
                       </div>
                     )}
@@ -604,4 +626,38 @@ export default function CustomerDetails({
       />
     </div>
   );
+
+  // Modal wrapper for mobile
+  if (isModal) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/50 backdrop-blur-sm overflow-y-auto">
+        <div className="relative w-full max-w-2xl my-auto">
+          {/* Close button */}
+          <button
+            onClick={onClose}
+            className="absolute -top-2 -right-2 sm:top-2 sm:right-2 z-20 w-8 h-8 flex items-center justify-center bg-white hover:bg-gray-100 rounded-full shadow-lg transition-all"
+          >
+            <svg
+              className="w-5 h-5 text-slate-700"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+          <div className="max-h-[90vh] overflow-y-auto rounded-3xl">
+            {content}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return content;
 }
