@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   Send,
   CheckCircle,
@@ -211,40 +211,24 @@ export function DiscountRecords({
                           {/* Email gönderim bölümü */}
                           {!item.emailSent && (
                             <div className="flex items-center gap-2">
-                              <select
+                              <RateDropdown
+                                itemId={item.id}
                                 value={getSelectedRate(
                                   item.id,
                                   item.discountRate,
                                   hasReachedMaxDiscount(item)
                                 )}
-                                onChange={(e) => {
-                                  const val = e.target.value;
-                                  handleRateChange(
-                                    item.id,
-                                    val === "+3" ? "+3" : Number(val)
-                                  );
-                                }}
-                                className="rounded-md bg-white/10 px-2 py-1 text-xs text-white border border-white/20 focus:outline-none focus:ring-1 focus:ring-indigo-400"
+                                options={
+                                  hasReachedMaxDiscount(item)
+                                    ? ([...DISCOUNT_RATES, BONUS_RATE] as (
+                                        | number
+                                        | "+3"
+                                      )[])
+                                    : ([...DISCOUNT_RATES] as (number | "+3")[])
+                                }
                                 disabled={mutatingId === item.id}
-                              >
-                                {DISCOUNT_RATES.map((rate) => (
-                                  <option
-                                    key={rate}
-                                    value={rate}
-                                    className="bg-slate-800"
-                                  >
-                                    {rate}%
-                                  </option>
-                                ))}
-                                {hasReachedMaxDiscount(item) && (
-                                  <option
-                                    value="+3"
-                                    className="bg-emerald-800 text-emerald-100"
-                                  >
-                                    +3% Bonus
-                                  </option>
-                                )}
-                              </select>
+                                onChange={handleRateChange}
+                              />
                               <button
                                 onClick={() =>
                                   onSendEmail(
@@ -480,40 +464,24 @@ export function DiscountRecords({
                       {/* Email gönderim bölümü - Mobile */}
                       {!item.emailSent && (
                         <div className="flex items-center gap-2">
-                          <select
+                          <RateDropdown
+                            itemId={item.id}
                             value={getSelectedRate(
                               item.id,
                               item.discountRate,
                               hasReachedMaxDiscount(item)
                             )}
-                            onChange={(e) => {
-                              const val = e.target.value;
-                              handleRateChange(
-                                item.id,
-                                val === "+3" ? "+3" : Number(val)
-                              );
-                            }}
-                            className="rounded-md bg-white/10 px-2 py-2 text-xs text-white border border-white/20 focus:outline-none focus:ring-1 focus:ring-indigo-400"
+                            options={
+                              hasReachedMaxDiscount(item)
+                                ? ([...DISCOUNT_RATES, BONUS_RATE] as (
+                                    | number
+                                    | "+3"
+                                  )[])
+                                : ([...DISCOUNT_RATES] as (number | "+3")[])
+                            }
                             disabled={mutatingId === item.id}
-                          >
-                            {DISCOUNT_RATES.map((rate) => (
-                              <option
-                                key={rate}
-                                value={rate}
-                                className="bg-slate-800"
-                              >
-                                {rate}%
-                              </option>
-                            ))}
-                            {hasReachedMaxDiscount(item) && (
-                              <option
-                                value="+3"
-                                className="bg-emerald-800 text-emerald-100"
-                              >
-                                +3% Bonus
-                              </option>
-                            )}
-                          </select>
+                            onChange={handleRateChange}
+                          />
                           <button
                             onClick={() =>
                               onSendEmail(
@@ -641,5 +609,73 @@ export function DiscountRecords({
         className="mt-4"
       />
     </section>
+  );
+}
+
+function RateDropdown({
+  itemId,
+  value,
+  options,
+  disabled,
+  onChange,
+}: {
+  itemId: string;
+  value: number | "+3";
+  options: (number | "+3")[];
+  disabled?: boolean;
+  onChange: (id: string, val: number | "+3") => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const onOutside = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", onOutside);
+    return () => document.removeEventListener("mousedown", onOutside);
+  }, []);
+
+  return (
+    <div className="relative inline-block" ref={ref}>
+      <button
+        type="button"
+        onClick={() => setOpen((s) => !s)}
+        disabled={disabled}
+        className={`rounded-md bg-white/10 px-2 py-1 text-xs text-white border border-white/20 inline-flex items-center gap-2 ${
+          disabled ? "opacity-60 cursor-not-allowed" : ""
+        }`}
+      >
+        <span className="whitespace-nowrap">
+          %{typeof value === "number" ? value.toFixed(0) : value}
+        </span>
+      </button>
+
+      {open && (
+        <div className="absolute left-0 top-full  w-full bg-[#0f1724]/95 border border-white/10 rounded-md shadow-lg z-50 overflow-hidden">
+          {options.map((opt) => (
+            <button
+              key={String(opt)}
+              type="button"
+              onClick={() => {
+                onChange(itemId, opt);
+                setOpen(false);
+              }}
+              className={`w-full text-left px-3 py-1 text-xs transition ${
+                opt === value
+                  ? "bg-indigo-500/80 text-indigo-100"
+                  : opt === "+3"
+                  ? "text-emerald-200 hover:bg-emerald-800/30"
+                  : "text-white/80 hover:bg-white/5"
+              }`}
+            >
+              {opt === "+3" ? "+3% Bonus" : `${opt}%`}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }
