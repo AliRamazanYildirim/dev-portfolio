@@ -6,8 +6,14 @@ import toast from "react-hot-toast";
 
 import NoiseBackground from "@/components/NoiseBackground";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
+import { useDiscounts } from "./hooks/useDiscounts";
 
 import { DiscountFilters } from "./components/DiscountFilters";
+import {
+  confirmMarkPending,
+  confirmDelete,
+  confirmResetEmail,
+} from "./components/confirmToasts";
 import { DiscountRecords } from "./components/DiscountRecords";
 import { DiscountSummary } from "./components/DiscountSummary";
 import { StageGroupsSection } from "./components/StageGroupsSection";
@@ -25,65 +31,34 @@ import {
 
 export default function DiscountTrackingPage() {
   const { isAuthenticated, loading: authLoading } = useAdminAuth();
-  const [data, setData] = useState<DiscountResponse>({ pending: [], sent: [] });
-  const [loading, setLoading] = useState(false);
-  const [settingsLoading, setSettingsLoading] = useState(false);
-  const [hydrated, setHydrated] = useState(false);
   const [statusFilter, setStatusFilter] = useState<"all" | "pending" | "sent">(
     "all"
   );
   const [searchTerm, setSearchTerm] = useState("");
-  const [mutatingId, setMutatingId] = useState<string | null>(null);
-  const [mutationAction, setMutationAction] = useState<
-    "status" | "delete" | "email" | "reset" | null
-  >(null);
   const [recordsPage, setRecordsPage] = useState(1);
   const [stagesPage, setStagesPage] = useState(1);
-  const [discountsEnabled, setDiscountsEnabled] = useState(true);
 
-  const loadData = async () => {
-    setLoading(true);
-    try {
-      const response = await fetch("/api/discounts");
-      const json = await response.json();
-
-      if (!json.success) {
-        throw new Error(json.error || "Failed to load discounts");
-      }
-
-      setData(json.data);
-    } catch (error) {
-      console.error(error);
-      toast.error("Discounts could not be loaded");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const loadSettings = async () => {
-    setSettingsLoading(true);
-    try {
-      const response = await fetch("/api/admin/settings/discounts");
-      const json = await response.json();
-      if (!json.success) {
-        throw new Error(json.error || "Failed to load discounts setting");
-      }
-      setDiscountsEnabled(Boolean(json.data?.enabled));
-    } catch (error) {
-      console.error(error);
-      toast.error("Discount setting could not be loaded");
-    } finally {
-      setSettingsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    setHydrated(true);
-    if (!authLoading && isAuthenticated) {
-      loadData();
-      loadSettings();
-    }
-  }, [authLoading, isAuthenticated]);
+  // useDiscounts hook encapsulates data loading and mutation actions
+  const {
+    data,
+    loading,
+    settingsLoading,
+    discountsEnabled,
+    mutatingId,
+    mutationAction,
+    hydrated,
+    loadData,
+    loadSettings,
+    updateInvoice,
+    deleteDiscount,
+    sendEmail,
+    resetEmail,
+    markAsSent,
+    markAsPending,
+    toggleEnabled,
+    setData,
+    setDiscountsEnabled,
+  } = useDiscounts({ isAuthenticated, authLoading });
 
   const totalRecovered = useMemo(
     () => calculateTotalRecovered(data.sent),
@@ -131,9 +106,7 @@ export default function DiscountTrackingPage() {
       1,
       Math.ceil(filteredInvoices.length / RECORDS_PER_PAGE)
     );
-    if (recordsPage > totalPages) {
-      setRecordsPage(totalPages);
-    }
+    if (recordsPage > totalPages) setRecordsPage(totalPages);
   }, [filteredInvoices.length, recordsPage]);
 
   const paginatedRecords = useMemo(() => {
@@ -162,9 +135,7 @@ export default function DiscountTrackingPage() {
       1,
       Math.ceil(stageGroups.length / STAGE_GROUPS_PER_PAGE)
     );
-    if (stagesPage > totalPages) {
-      setStagesPage(totalPages);
-    }
+    if (stagesPage > totalPages) setStagesPage(totalPages);
   }, [stageGroups.length, stagesPage]);
 
   const paginatedStageGroups = useMemo(() => {
@@ -186,92 +157,13 @@ export default function DiscountTrackingPage() {
   const resetFilters = () => {
     setStatusFilter("all");
     setSearchTerm("");
-  };
-
-  const updateInvoice = async (
-    entry: DiscountEntry,
-    payload: Partial<Pick<DiscountEntry, "discountStatus" | "discountSentAt">>
-  ) => {
-    setMutatingId(entry.id);
-    setMutationAction("status");
-    try {
-      const requestBody: Record<string, unknown> = { id: entry.id };
-
-      if (payload.discountStatus) {
-        requestBody.discountStatus = payload.discountStatus;
-      }
-
-      if (Object.prototype.hasOwnProperty.call(payload, "discountSentAt")) {
-        requestBody.discountSentAt = payload.discountSentAt;
-      }
-
-      const response = await fetch("/api/discounts", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(requestBody),
-      });
-
-      const json = await response.json();
-
-      if (!response.ok || !json.success) {
-        throw new Error(json.error || "Discount could not be updated");
-      }
-
-      const { discountStatus, discountSentAt } = json.data as {
-        discountStatus: "pending" | "sent";
-        discountSentAt: string | null;
-      };
-
-      setData((previous) => {
-        const nextPending = previous.pending.filter(
-          (item) => item.id !== entry.id
-        );
-        const nextSent = previous.sent.filter((item) => item.id !== entry.id);
-
-        const updatedEntry: DiscountEntry = {
-          ...entry,
-          discountStatus,
-          discountSentAt,
-        };
-
-        if (discountStatus === "sent") {
-          const updatedList = [...nextSent, updatedEntry].sort(
-            (a, b) =>
-              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-          );
-
-          return {
-            pending: nextPending,
-            sent: updatedList,
-          };
-        }
-
-        const updatedList = [...nextPending, updatedEntry].sort(
-          (a, b) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        );
-
-        return {
-          pending: updatedList,
-          sent: nextSent,
-        };
-      });
-
-      await loadData().catch((error) => {
-        console.error("Failed to reload discounts after patch", error);
-      });
-
-      return { discountStatus };
-    } finally {
-      setMutatingId(null);
-      setMutationAction(null);
-    }
+    setRecordsPage(1);
+    setStagesPage(1);
   };
 
   const handleMarkAsSent = async (entry: DiscountEntry) => {
     try {
-      await updateInvoice(entry, { discountStatus: "sent" });
-      toast.success("Discount marked as sent");
+      await markAsSent(entry);
     } catch (error) {
       console.error(error);
       toast.error("Discount status could not be updated");
@@ -279,231 +171,48 @@ export default function DiscountTrackingPage() {
   };
 
   const handleMarkAsPending = (entry: DiscountEntry) => {
-    toast.custom(
-      (t) => (
-        <div className="max-w-md w-full rounded-lg border border-white/10 bg-[#0f1724]/95 p-3 text-sm text-white">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-            <div className="flex-1">
-              Are you sure you want to mark this discount as pending again?
-            </div>
-            <div className="flex-shrink-0 flex gap-2">
-              <button
-                onClick={async () => {
-                  toast.dismiss(t.id);
-                  try {
-                    await updateInvoice(entry, {
-                      discountStatus: "pending",
-                      discountSentAt: null,
-                    });
-                    toast.success("Discount marked as pending");
-                  } catch (error) {
-                    console.error(error);
-                    toast.error("Discount status could not be updated");
-                  }
-                }}
-                className="rounded-md bg-amber-500/70 px-3 py-1 text-xs font-semibold text-amber-100 hover:bg-amber-500/50"
-              >
-                Confirm
-              </button>
-
-              <button
-                onClick={() => toast.dismiss(t.id)}
-                className="rounded-md bg-white/5 px-3 py-1 text-xs font-semibold text-white hover:bg-white/10"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      ),
-      { duration: 8000 }
-    );
-  };
-
-  const deleteDiscount = async (entry: DiscountEntry) => {
-    setMutatingId(entry.id);
-    setMutationAction("delete");
-    try {
-      const response = await fetch("/api/discounts", {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: entry.id }),
-      });
-
-      const json = await response.json();
-
-      if (!response.ok || !json.success) {
-        throw new Error(json.error || "Discount could not be deleted");
+    confirmMarkPending(entry, async () => {
+      try {
+        await markAsPending(entry);
+      } catch (error) {
+        console.error(error);
+        toast.error("Discount status could not be updated");
       }
-
-      setData((previous) => ({
-        pending: previous.pending.filter((item) => item.id !== entry.id),
-        sent: previous.sent.filter((item) => item.id !== entry.id),
-      }));
-
-      await loadData().catch((error) => {
-        console.error("Failed to reload discounts after delete", error);
-      });
-    } finally {
-      setMutatingId(null);
-      setMutationAction(null);
-    }
+    });
   };
 
   const handleDeleteDiscount = (entry: DiscountEntry) => {
-    toast.custom(
-      (t) => (
-        <div className="max-w-md w-full rounded-lg border border-white/10 bg-[#0f1724]/95 p-3 text-sm text-white">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-            <div className="flex-1">
-              Permanently delete the discount for code{" "}
-              <span className="font-semibold text-amber-200">
-                {entry.referrerCode}
-              </span>
-              ? This action cannot be undone.
-            </div>
-            <div className="flex-shrink-0 flex gap-2">
-              <button
-                onClick={async () => {
-                  toast.dismiss(t.id);
-                  try {
-                    await deleteDiscount(entry);
-                    toast.success("Discount record deleted");
-                  } catch (error) {
-                    console.error(error);
-                    toast.error("Discount could not be deleted");
-                  }
-                }}
-                className="rounded-md bg-red-500/70 px-3 py-1 text-xs font-semibold text-red-100 hover:bg-red-500/50"
-              >
-                Delete
-              </button>
-
-              <button
-                onClick={() => toast.dismiss(t.id)}
-                className="rounded-md bg-white/5 px-3 py-1 text-xs font-semibold text-white hover:bg-white/10"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      ),
-      { duration: 8000 }
-    );
+    confirmDelete(entry, async () => {
+      try {
+        await deleteDiscount(entry);
+        toast.success("Discount record deleted");
+      } catch (error) {
+        console.error(error);
+        toast.error("Discount could not be deleted");
+      }
+    });
   };
 
   const handleSendEmail = async (entry: DiscountEntry, rate: number | "+3") => {
-    setMutatingId(entry.id);
-    setMutationAction("email");
     try {
-      const response = await fetch("/api/admin/discounts/send-email", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          transactionId: entry.id,
-          discountRate: rate,
-        }),
-      });
-
-      const json = await response.json();
-
-      if (!response.ok || !json.success) {
-        throw new Error(json.error || "Email could not be sent");
-      }
-
-      const rateDisplay = rate === "+3" ? "+3% bonus" : `${rate}%`;
-      toast.success(
-        `Discount email sent successfully (${rateDisplay} discount applied)`
-      );
-
-      // Reload data to reflect updated state
-      await loadData();
+      await sendEmail(entry, rate);
     } catch (error) {
       console.error(error);
       toast.error(
         error instanceof Error ? error.message : "Email could not be sent"
       );
-    } finally {
-      setMutatingId(null);
-      setMutationAction(null);
     }
   };
 
   const handleResetEmail = (entry: DiscountEntry) => {
-    toast.custom(
-      (t) => (
-        <div className="max-w-md w-full rounded-lg border border-white/10 bg-[#0f1724]/95 p-3 text-sm text-white">
-          <div className="flex flex-col gap-3">
-            <div>
-              <p className="font-semibold text-orange-300">
-                🔄 Reset Email Status
-              </p>
-              <p className="mt-1 text-white/70">
-                This will reset the email status for{" "}
-                <span className="font-semibold text-amber-200">
-                  {entry.referrerCode}
-                </span>{" "}
-                and send a correction email to the customer.
-              </p>
-            </div>
-            <div className="flex gap-2">
-              <button
-                onClick={async () => {
-                  toast.dismiss(t.id);
-                  setMutatingId(entry.id);
-                  setMutationAction("reset");
-                  try {
-                    const response = await fetch(
-                      "/api/admin/discounts/reset-email",
-                      {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                          transactionId: entry.id,
-                          sendCorrectionEmail: true,
-                        }),
-                      }
-                    );
-
-                    const json = await response.json();
-
-                    if (!response.ok || !json.success) {
-                      throw new Error(
-                        json.error || "Email status could not be reset"
-                      );
-                    }
-
-                    toast.success("Email status reset & correction email sent");
-                    await loadData();
-                  } catch (error) {
-                    console.error(error);
-                    toast.error(
-                      error instanceof Error
-                        ? error.message
-                        : "Failed to reset email status"
-                    );
-                  } finally {
-                    setMutatingId(null);
-                    setMutationAction(null);
-                  }
-                }}
-                className="flex-1 rounded-md bg-orange-500/70 px-3 py-1.5 text-xs font-semibold text-orange-100 hover:bg-orange-500/50"
-              >
-                Reset & Send Correction
-              </button>
-              <button
-                onClick={() => toast.dismiss(t.id)}
-                className="rounded-md bg-white/5 px-3 py-1.5 text-xs font-semibold text-white hover:bg-white/10"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      ),
-      { duration: 10000 }
-    );
+    confirmResetEmail(entry, async () => {
+      try {
+        await resetEmail(entry);
+      } catch (error) {
+        console.error(error);
+        toast.error("Failed to reset email status");
+      }
+    });
   };
 
   if (authLoading) {
@@ -565,35 +274,9 @@ export default function DiscountTrackingPage() {
                     const previous = discountsEnabled;
                     const next = !previous;
                     setDiscountsEnabled(next);
-                    setSettingsLoading(true);
-                    try {
-                      const response = await fetch(
-                        "/api/admin/settings/discounts",
-                        {
-                          method: "PUT",
-                          headers: { "Content-Type": "application/json" },
-                          body: JSON.stringify({ enabled: next }),
-                        }
-                      );
-                      const json = await response.json();
-                      if (!response.ok || !json.success) {
-                        throw new Error(
-                          json.error || "Failed to update setting"
-                        );
-                      }
-                      setDiscountsEnabled(Boolean(json.data?.enabled));
-                      toast.success(
-                        json.data?.enabled
-                          ? "Discounts enabled"
-                          : "Discounts disabled"
-                      );
-                    } catch (error) {
-                      console.error(error);
-                      setDiscountsEnabled(previous);
-                      toast.error("Discount setting could not be updated");
-                    } finally {
-                      setSettingsLoading(false);
-                    }
+                    await toggleEnabled(next, () =>
+                      setDiscountsEnabled(previous)
+                    );
                   }}
                   className="relative inline-flex items-center gap-3 self-end sm:self-auto rounded-full border border-black/10 bg-white px-4 py-2 shadow-sm transition hover:shadow-md focus:outline-none focus:ring-2 focus:ring-black/20"
                   aria-pressed={discountsEnabled}
