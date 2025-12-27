@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import { FileText } from "lucide-react";
-import toast from "react-hot-toast";
 
 import NoiseBackground from "@/components/NoiseBackground";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
@@ -14,20 +13,22 @@ import {
   confirmDelete,
   confirmResetEmail,
 } from "./components/confirmToasts";
+import { createDiscountActions } from "./actions/discountActions";
 import { DiscountRecords } from "./components/DiscountRecords";
 import { DiscountSummary } from "./components/DiscountSummary";
 import { StageGroupsSection } from "./components/StageGroupsSection";
+import { RECORDS_PER_PAGE, STAGE_GROUPS_PER_PAGE } from "./types";
+import { usePageBounds } from "./hooks/usePageBounds";
+import { useOptimisticToggle } from "./hooks/useOptimisticToggle";
+import FullScreenLoader from "./components/FullScreenLoader";
 import {
-  DiscountEntry,
-  DiscountResponse,
-  RECORDS_PER_PAGE,
-  STAGE_GROUPS_PER_PAGE,
-} from "./types";
-import {
-  buildPagination,
-  calculateTotalRecovered,
-  computeStageGroups,
-} from "./utils";
+  useTotalRecovered,
+  useAllInvoices,
+  useFilteredInvoices,
+  usePaginatedRecords,
+  useStageGroups,
+  usePaginatedStageGroups,
+} from "./hooks/useInvoicesMemo";
 
 export default function DiscountTrackingPage() {
   const { isAuthenticated, loading: authLoading } = useAdminAuth();
@@ -48,110 +49,53 @@ export default function DiscountTrackingPage() {
     mutationAction,
     hydrated,
     loadData,
-    loadSettings,
-    updateInvoice,
     deleteDiscount,
     sendEmail,
     resetEmail,
     markAsSent,
     markAsPending,
     toggleEnabled,
-    setData,
     setDiscountsEnabled,
   } = useDiscounts({ isAuthenticated, authLoading });
 
-  const totalRecovered = useMemo(
-    () => calculateTotalRecovered(data.sent),
-    [data.sent]
+  const totalRecovered = useTotalRecovered(data.sent);
+
+  const allInvoices = useAllInvoices(data);
+
+  const filteredInvoices = useFilteredInvoices(
+    allInvoices,
+    statusFilter,
+    searchTerm
   );
 
-  const allInvoices = useMemo(() => {
-    return [
-      ...data.pending.map((entry) => ({
-        ...entry,
-        discountStatus: "pending" as const,
-      })),
-      ...data.sent.map((entry) => ({
-        ...entry,
-        discountStatus: "sent" as const,
-      })),
-    ].sort(
-      (a, b) =>
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    );
-  }, [data.pending, data.sent]);
-
-  const filteredInvoices = useMemo(() => {
-    return allInvoices.filter((entry) => {
-      const matchesStatus =
-        statusFilter === "all" || entry.discountStatus === statusFilter;
-      if (!matchesStatus) return false;
-
-      if (!searchTerm.trim()) return true;
-      const term = searchTerm.trim().toLowerCase();
-      const customerName = entry.customer
-        ? `${entry.customer.firstname} ${entry.customer.lastname}`.toLowerCase()
-        : "";
-      const customerEmail = entry.customer?.email?.toLowerCase() ?? "";
-      return (
-        customerName.includes(term) ||
-        customerEmail.includes(term) ||
-        entry.referrerCode.toLowerCase().includes(term)
-      );
-    });
-  }, [allInvoices, searchTerm, statusFilter]);
-
-  useEffect(() => {
-    const totalPages = Math.max(
-      1,
-      Math.ceil(filteredInvoices.length / RECORDS_PER_PAGE)
-    );
-    if (recordsPage > totalPages) setRecordsPage(totalPages);
-  }, [filteredInvoices.length, recordsPage]);
-
-  const paginatedRecords = useMemo(() => {
-    const startIndex = (recordsPage - 1) * RECORDS_PER_PAGE;
-    return filteredInvoices.slice(startIndex, startIndex + RECORDS_PER_PAGE);
-  }, [filteredInvoices, recordsPage]);
-
-  const recordPagination = useMemo(
-    () =>
-      buildPagination(
-        filteredInvoices.length,
-        RECORDS_PER_PAGE,
-        recordsPage,
-        setRecordsPage
-      ),
-    [filteredInvoices.length, recordsPage]
+  usePageBounds(
+    filteredInvoices.length,
+    RECORDS_PER_PAGE,
+    recordsPage,
+    setRecordsPage
   );
 
-  const stageGroups = useMemo(
-    () => computeStageGroups(allInvoices),
-    [allInvoices]
+  const { paginatedRecords, recordPagination } = usePaginatedRecords(
+    filteredInvoices,
+    recordsPage,
+    RECORDS_PER_PAGE,
+    setRecordsPage
   );
 
-  useEffect(() => {
-    const totalPages = Math.max(
-      1,
-      Math.ceil(stageGroups.length / STAGE_GROUPS_PER_PAGE)
-    );
-    if (stagesPage > totalPages) setStagesPage(totalPages);
-  }, [stageGroups.length, stagesPage]);
+  const stageGroups = useStageGroups(allInvoices);
 
-  const paginatedStageGroups = useMemo(() => {
-    const startIndex = (stagesPage - 1) * STAGE_GROUPS_PER_PAGE;
-    return stageGroups.slice(startIndex, startIndex + STAGE_GROUPS_PER_PAGE);
-  }, [stageGroups, stagesPage]);
+  usePageBounds(
+    stageGroups.length,
+    STAGE_GROUPS_PER_PAGE,
+    stagesPage,
+    setStagesPage
+  );
 
-  const stagePagination = useMemo(
-    () =>
-      buildPagination(
-        stageGroups.length,
-        STAGE_GROUPS_PER_PAGE,
-        stagesPage,
-        setStagesPage
-      ),
-    [stageGroups.length, stagesPage]
+  const { paginatedStageGroups, stagePagination } = usePaginatedStageGroups(
+    stageGroups,
+    stagesPage,
+    STAGE_GROUPS_PER_PAGE,
+    setStagesPage
   );
 
   const resetFilters = () => {
@@ -161,93 +105,34 @@ export default function DiscountTrackingPage() {
     setStagesPage(1);
   };
 
-  const handleMarkAsSent = async (entry: DiscountEntry) => {
-    try {
-      await markAsSent(entry);
-    } catch (error) {
-      console.error(error);
-      toast.error("Discount status could not be updated");
-    }
-  };
+  // create modular action handlers (DI) — keeps page thin and testable
+  const {
+    handleMarkAsSent,
+    handleMarkAsPending,
+    handleDeleteDiscount,
+    handleSendEmail,
+    handleResetEmail,
+  } = createDiscountActions({
+    markAsSent,
+    markAsPending,
+    deleteDiscount,
+    sendEmail,
+    resetEmail,
+    confirmMarkPending,
+    confirmDelete,
+    confirmResetEmail,
+  });
 
-  const handleMarkAsPending = (entry: DiscountEntry) => {
-    confirmMarkPending(entry, async () => {
-      try {
-        await markAsPending(entry);
-      } catch (error) {
-        console.error(error);
-        toast.error("Discount status could not be updated");
-      }
-    });
-  };
+  const optimisticToggle = useOptimisticToggle();
 
-  const handleDeleteDiscount = (entry: DiscountEntry) => {
-    confirmDelete(entry, async () => {
-      try {
-        await deleteDiscount(entry);
-        toast.success("Discount record deleted");
-      } catch (error) {
-        console.error(error);
-        toast.error("Discount could not be deleted");
-      }
-    });
-  };
-
-  const handleSendEmail = async (entry: DiscountEntry, rate: number | "+3") => {
-    try {
-      await sendEmail(entry, rate);
-    } catch (error) {
-      console.error(error);
-      toast.error(
-        error instanceof Error ? error.message : "Email could not be sent"
-      );
-    }
-  };
-
-  const handleResetEmail = (entry: DiscountEntry) => {
-    confirmResetEmail(entry, async () => {
-      try {
-        await resetEmail(entry);
-      } catch (error) {
-        console.error(error);
-        toast.error("Failed to reset email status");
-      }
-    });
-  };
-
-  if (authLoading) {
-    return (
-      <div className="fixed inset-0 w-full h-full">
-        <NoiseBackground mode="dark" intensity={0.1}>
-          <div className="relative z-10 flex items-center justify-center min-h-screen w-full h-full">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-white mx-auto mb-4" />
-              <p className="text-white text-lg">Session is being verified...</p>
-            </div>
-          </div>
-        </NoiseBackground>
-      </div>
-    );
-  }
+  if (authLoading)
+    return <FullScreenLoader message="Session is being verified..." />;
 
   if (!isAuthenticated) {
     return null;
   }
 
-  if (!hydrated) {
-    return (
-      <div className="fixed inset-0 w-full h-full">
-        <NoiseBackground mode="dark" intensity={0.1}>
-          <div className="relative z-10 flex items-center justify-center min-h-screen w-full h-full">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-white mx-auto mb-4" />
-              <p className="text-white text-lg">Loading discounts...</p>
-            </div>
-          </div>
-        </NoiseBackground>
-      </div>
-    );
-  }
+  if (!hydrated) return <FullScreenLoader message="Loading discounts..." />;
 
   return (
     <main className="relative flex rounded-3xl justify-center items-start flex-col overflow-x-hidden mx-auto w-full">
@@ -272,11 +157,19 @@ export default function DiscountTrackingPage() {
                   type="button"
                   onClick={async () => {
                     const previous = discountsEnabled;
-                    const next = !previous;
-                    setDiscountsEnabled(next);
-                    await toggleEnabled(next, () =>
-                      setDiscountsEnabled(previous)
-                    );
+                    try {
+                      await optimisticToggle(
+                        previous,
+                        setDiscountsEnabled,
+                        async (next) => {
+                          await toggleEnabled(next, () =>
+                            setDiscountsEnabled(previous)
+                          );
+                        }
+                      );
+                    } catch (error) {
+                      /* error already handled in hook */
+                    }
                   }}
                   className="relative inline-flex items-center gap-3 self-end sm:self-auto rounded-full border border-black/10 bg-white px-4 py-2 shadow-sm transition hover:shadow-md focus:outline-none focus:ring-2 focus:ring-black/20"
                   aria-pressed={discountsEnabled}

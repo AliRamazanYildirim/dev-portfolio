@@ -44,7 +44,7 @@ export function RateDropdown({
       </button>
 
       {open && (
-        <div className="absolute left-0 top-full w-full bg-[#0f1724]/95 border border-white/10 rounded-md shadow-lg z-50 overflow-hidden">
+        <div className="absolute left-1/2 top-full w-[120%] -translate-x-1/2 bg-[#0f1724]/95 border border-white/10 rounded-md shadow-lg z-50 overflow-hidden">
           {options.map((opt) => (
             <button
               key={String(opt)}
