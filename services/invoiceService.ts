@@ -11,7 +11,8 @@ export class InvoiceService {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
-    const randomId = Math.random().toString(36).substr(2, 4).toUpperCase();
+    // `substr` is legacy/deprecated; use `slice` (or `substring`) instead
+    const randomId = Math.random().toString(36).slice(2, 6).toUpperCase();
 
     return `INV-${year}${month}${day}-${randomId}`;
   }
@@ -68,7 +69,7 @@ export class InvoiceService {
       title?: string;
       description?: string;
       duration?: string;
-    }
+    },
   ): InvoiceData {
     const pricing = this.calculatePricing(customer);
 
@@ -126,7 +127,7 @@ export class InvoiceService {
    */
   private static async downloadPdf(
     blob: Blob,
-    customer: Customer
+    customer: Customer,
   ): Promise<void> {
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement("a");

@@ -33,7 +33,7 @@ import {
 export default function DiscountTrackingPage() {
   const { isAuthenticated, loading: authLoading } = useAdminAuth();
   const [statusFilter, setStatusFilter] = useState<"all" | "pending" | "sent">(
-    "all"
+    "all",
   );
   const [searchTerm, setSearchTerm] = useState("");
   const [recordsPage, setRecordsPage] = useState(1);
@@ -65,21 +65,21 @@ export default function DiscountTrackingPage() {
   const filteredInvoices = useFilteredInvoices(
     allInvoices,
     statusFilter,
-    searchTerm
+    searchTerm,
   );
 
   usePageBounds(
     filteredInvoices.length,
     RECORDS_PER_PAGE,
     recordsPage,
-    setRecordsPage
+    setRecordsPage,
   );
 
   const { paginatedRecords, recordPagination } = usePaginatedRecords(
     filteredInvoices,
     recordsPage,
     RECORDS_PER_PAGE,
-    setRecordsPage
+    setRecordsPage,
   );
 
   const stageGroups = useStageGroups(allInvoices);
@@ -88,14 +88,14 @@ export default function DiscountTrackingPage() {
     stageGroups.length,
     STAGE_GROUPS_PER_PAGE,
     stagesPage,
-    setStagesPage
+    setStagesPage,
   );
 
   const { paginatedStageGroups, stagePagination } = usePaginatedStageGroups(
     stageGroups,
     stagesPage,
     STAGE_GROUPS_PER_PAGE,
-    setStagesPage
+    setStagesPage,
   );
 
   const resetFilters = () => {
@@ -163,9 +163,9 @@ export default function DiscountTrackingPage() {
                         setDiscountsEnabled,
                         async (next) => {
                           await toggleEnabled(next, () =>
-                            setDiscountsEnabled(previous)
+                            setDiscountsEnabled(previous),
                           );
-                        }
+                        },
                       );
                     } catch (error) {
                       /* error already handled in hook */

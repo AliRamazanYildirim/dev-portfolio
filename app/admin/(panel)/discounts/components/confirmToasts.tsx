@@ -5,7 +5,7 @@ import type { DiscountEntry } from "../types";
 
 export function confirmMarkPending(
   entry: DiscountEntry,
-  onConfirm: () => Promise<void>
+  onConfirm: () => Promise<void>,
 ) {
   toast.custom(
     (t) => (
@@ -39,13 +39,13 @@ export function confirmMarkPending(
         </div>
       </div>
     ),
-    { duration: 8000 }
+    { duration: 8000 },
   );
 }
 
 export function confirmDelete(
   entry: DiscountEntry,
-  onConfirm: () => Promise<void>
+  onConfirm: () => Promise<void>,
 ) {
   toast.custom(
     (t) => (
@@ -83,13 +83,13 @@ export function confirmDelete(
         </div>
       </div>
     ),
-    { duration: 8000 }
+    { duration: 8000 },
   );
 }
 
 export function confirmResetEmail(
   entry: DiscountEntry,
-  onConfirm: () => Promise<void>
+  onConfirm: () => Promise<void>,
 ) {
   toast.custom(
     (t) => (
@@ -131,6 +131,6 @@ export function confirmResetEmail(
         </div>
       </div>
     ),
-    { duration: 10000 }
+    { duration: 10000 },
   );
 }
