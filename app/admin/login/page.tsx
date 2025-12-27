@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import NoiseBackground from "@/components/NoiseBackground";
 import { useTranslation } from "@/hooks/useTranslation";
@@ -10,13 +9,7 @@ import LoginForm from "./components/LoginForm";
 import CheckingSessionScreen from "./components/CheckingSessionScreen";
 import BackToHomeButton from "./components/BackToHomeButton";
 
-interface LoginFormData {
-  email: string;
-  password: string;
-}
-
 export default function AdminLoginPage() {
-  const router = useRouter();
   const { dictionary } = useTranslation();
   const loginTexts = dictionary.admin.login;
 
