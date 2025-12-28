@@ -5,6 +5,7 @@ import NoiseBackground from "@/components/NoiseBackground";
 import useConfirmDelete from "./hooks/useConfirmDelete";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { usePagination } from "@/hooks/usePagination";
+import { useAdminSidebar } from "@/hooks/useAdminSidebar";
 import { INVOICE_CONSTANTS } from "@/constants/invoice";
 import { useProjects } from "./hooks/useProjects";
 import { useProjectForm } from "./hooks/useProjectForm";
@@ -42,6 +43,8 @@ export function ProjectDashboard() {
     onSaved: async () => await fetchProjects(),
   });
 
+  const { setOpen } = useAdminSidebar();
+
   const listTopRef = useRef<HTMLDivElement | null>(null);
 
   // `filteredProjects` is provided by `useProjectSearch` (centralized filtering + search)
@@ -68,6 +71,7 @@ export function ProjectDashboard() {
   }, [searchQuery, filter, goToPage]);
 
   useEffect(() => {
+    if (totalPages < 1) return;
     if (currentPage > totalPages) goToPage(totalPages);
   }, [filteredProjects.length, currentPage, totalPages, goToPage]);
 
@@ -79,21 +83,15 @@ export function ProjectDashboard() {
       listTopRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
-  const setSidebarOpenState = (open: boolean) => {
-    if (typeof window === "undefined") return;
-    if (window.innerWidth < 1024) return;
-    window.dispatchEvent(
-      new CustomEvent("admin-sidebar:set", { detail: { open } }),
-    );
-  };
+  // Sidebar state is handled by `useAdminSidebar` (see hooks/useAdminSidebar.ts)
 
   const resetForm = () => {
     projectForm.resetForm();
-    setSidebarOpenState(true);
+    setOpen(true);
   };
 
   const openForm = () => {
-    setSidebarOpenState(false);
+    setOpen(false);
     projectForm.openForm();
   };
 
@@ -108,7 +106,7 @@ export function ProjectDashboard() {
 
   const editProject = (project: Project) => {
     projectForm.openForEdit(project);
-    setSidebarOpenState(false);
+    setOpen(false);
   };
 
   if (authLoading) {
