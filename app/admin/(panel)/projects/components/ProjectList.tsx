@@ -141,7 +141,9 @@ export function ProjectList({
                         >
                           <Image
                             src={img.url}
-                            alt=""
+                            alt={`${project.title} — galeri görseli ${
+                              index + 1
+                            }`}
                             width={60}
                             height={40}
                             className="w-12 h-8 sm:w-15 sm:h-10 object-cover rounded-lg border border-[#131313]/20"
