@@ -14,7 +14,12 @@ import { ProjectsHero } from "./components/ProjectsHero";
 import { ProjectsToolbar } from "./components/ProjectsToolbar";
 import { ProjectList } from "./components/ProjectList";
 import { ProjectFormModal } from "./components/ProjectFormModal";
-import { formatCreatedDate, getDescriptionText } from "./lib/format";
+import {
+  formatCreatedDate,
+  getDescriptionText,
+  formatStatsText,
+  formatTotalLabel,
+} from "./lib/format";
 import type { Project, ProjectSortOption } from "./types";
 
 const ITEMS_PER_PAGE = 2;
@@ -138,20 +143,13 @@ export function ProjectDashboard() {
     getCurrentRange,
   };
 
-  const statsText =
-    filteredProjects.length === 0
-      ? projects.length === 0
-        ? "No projects yet"
-        : "No projects match your current search or filter"
-      : `Showing ${getCurrentRange().start} - ${getCurrentRange().end} of ${
-          getCurrentRange().total
-        }`;
+  const statsText = formatStatsText(
+    filteredProjects.length,
+    projects.length,
+    getCurrentRange(),
+  );
 
-  const totalLabel = `Projects (${
-    filteredProjects.length === projects.length
-      ? projects.length
-      : `${filteredProjects.length} / ${projects.length}`
-  })`;
+  const totalLabel = formatTotalLabel(filteredProjects.length, projects.length);
 
   return (
     <main className="relative flex justify-center items-center flex-col overflow-x-hidden mx-auto">

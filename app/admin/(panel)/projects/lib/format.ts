@@ -34,7 +34,10 @@ const parseDescription = (description?: ProjectDescription | string | null) => {
   }
 
   if (typeof description === "string") {
-    return { object: description, summary: description || FALLBACK_DESCRIPTION };
+    return {
+      object: description,
+      summary: description || FALLBACK_DESCRIPTION,
+    };
   }
 
   const summary =
@@ -44,7 +47,9 @@ const parseDescription = (description?: ProjectDescription | string | null) => {
 };
 
 export const mapApiProject = (project: ProjectApiResponse): Project => {
-  const { object: descriptionObj, summary } = parseDescription(project.description);
+  const { object: descriptionObj, summary } = parseDescription(
+    project.description,
+  );
 
   return {
     id: project.id || project._id || String(project._id ?? crypto.randomUUID()),
@@ -65,7 +70,7 @@ export const mapApiProject = (project: ProjectApiResponse): Project => {
 };
 
 export const getDescriptionText = (
-  description?: ProjectDescription | string | null
+  description?: ProjectDescription | string | null,
 ): string => {
   if (!description) return "";
   if (typeof description === "string") return description;
@@ -87,4 +92,26 @@ export const formatCreatedDate = (isoDate?: string) => {
   } catch (error) {
     return "Created: Unknown";
   }
+};
+
+export const formatStatsText = (
+  filteredCount: number,
+  totalCount: number,
+  range: { start: number; end: number; total: number },
+): string => {
+  if (filteredCount === 0) {
+    return totalCount === 0
+      ? "No projects yet"
+      : "No projects match your current search or filter";
+  }
+
+  return `Showing ${range.start} - ${range.end} of ${range.total}`;
+};
+
+export const formatTotalLabel = (
+  filteredCount: number,
+  totalCount: number,
+): string => {
+  if (filteredCount === totalCount) return `Projects (${totalCount})`;
+  return `Projects (${filteredCount} / ${totalCount})`;
 };
