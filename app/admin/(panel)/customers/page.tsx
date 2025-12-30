@@ -48,7 +48,7 @@ function FilterDropdown({
       <button
         type="button"
         onClick={() => setOpen((s) => !s)}
-        className="w-full sm:w-auto bg-[#131313] text-white font-semibold rounded-lg px-3 py-1.5 text-sm shadow flex items-center gap-2 min-w-[110px]"
+        className="w-full sm:w-auto bg-[#131313] text-white font-semibold rounded-lg px-3 py-1.5 text-sm shadow flex items-center gap-2 min-w-[110px] h-9"
       >
         <Filter className="w-4 h-4 text-white/70" />
         <span className="sm:hidden">Filter</span>
