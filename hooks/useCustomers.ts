@@ -53,6 +53,28 @@ export const useCustomers = () => {
     }
   };
 
+  const applyFilter = async (filterValue?: string) => {
+    if (!filterValue || filterValue === "none") {
+      return fetchCustomers();
+    }
+
+    const filterMap: { [key: string]: string } = {
+      price_desc: "price.desc",
+      price_asc: "price.asc",
+      name_asc: "name.asc",
+      name_desc: "name.desc",
+      created_asc: "created.asc",
+      created_desc: "created.desc",
+    };
+
+    if (filterMap[filterValue]) {
+      return fetchCustomers({ sort: filterMap[filterValue] });
+    }
+
+    // For other filter types (e.g. date_range), caller should call fetchCustomers with explicit params
+    return fetchCustomers();
+  };
+
   const saveCustomer = async (
     customerData: Partial<Customer>,
     editingCustomer?: Customer | null
@@ -105,6 +127,7 @@ export const useCustomers = () => {
     setSelectedCustomer,
     loading,
     fetchCustomers,
+    applyFilter,
     saveCustomer,
     deleteCustomer,
     pagination,

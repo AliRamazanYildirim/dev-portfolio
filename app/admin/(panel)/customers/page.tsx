@@ -13,6 +13,7 @@ import toast from "react-hot-toast";
 import { RefreshCcw, Search } from "lucide-react";
 import FilterDropdown from "./components/FilterDropdown";
 import { useCustomerSearch } from "./hooks/useCustomerSearch";
+import useCustomerActions from "./hooks/useCustomerActions";
 
 export default function CustomersAdminPage() {
   const { isAuthenticated, loading: authLoading } = useAdminAuth();
@@ -26,6 +27,7 @@ export default function CustomersAdminPage() {
     saveCustomer,
     deleteCustomer,
     pagination,
+    applyFilter,
   } = useCustomers();
 
   const {
@@ -65,37 +67,18 @@ export default function CustomersAdminPage() {
 
   const { setOpen: setSidebarOpen } = useAdminSidebar();
 
-  const handleSaveCustomer = async () => {
-    if (!validateForm(customers)) return;
-
-    try {
-      const saved = await saveCustomer(getCustomerData(), editingCustomer);
-      // If saved is truthy, refresh list from server and select the saved customer
-      if (saved) {
-        let newSel: any = null;
-        try {
-          const fresh = await fetchCustomers();
-          // find the freshly saved customer in the returned list
-          const savedId = (saved as any)._id
-            ? (saved as any)._id
-            : (saved as any).id;
-          newSel = fresh.find(
-            (c: any) => String(c.id || c._id) === String(savedId)
-          );
-          if (newSel) setSelectedCustomer(newSel);
-        } catch (e) {
-          // ignore fetch errors here
-        }
-
-        // Referral email / notification is handled inside `customerService.saveCustomer`.
-        setShowForm(false);
-        setSidebarOpen(true);
-        resetForm();
-      }
-    } catch (error: any) {
-      toast.error(error?.message || "Registration failed");
-    }
-  };
+  const { save } = useCustomerActions({
+    customers,
+    validateForm,
+    getCustomerData,
+    editingCustomer,
+    saveCustomer,
+    fetchCustomers,
+    setSelectedCustomer,
+    resetForm,
+    setShowForm,
+    setSidebarOpen,
+  });
 
   const handleEditCustomer = (customer: any) => {
     setEditForm(customer);
@@ -111,25 +94,6 @@ export default function CustomersAdminPage() {
     setSidebarOpen(true);
     setShowForm(false);
     resetForm();
-  };
-
-  const handleFilterChange = (filterValue: string) => {
-    setFilter(filterValue as any);
-
-    const filterMap: { [key: string]: string } = {
-      price_desc: "price.desc",
-      price_asc: "price.asc",
-      name_asc: "name.asc",
-      name_desc: "name.desc",
-      created_asc: "created.asc",
-      created_desc: "created.desc",
-    };
-
-    if (filterMap[filterValue]) {
-      fetchCustomers({ sort: filterMap[filterValue] });
-    } else if (filterValue === "none") {
-      fetchCustomers();
-    }
   };
 
   if (authLoading) {
@@ -279,7 +243,10 @@ export default function CustomersAdminPage() {
                       <div className="relative flex-1 flex-shrink-0">
                         <FilterDropdown
                           value={filter}
-                          onChange={(v) => handleFilterChange(v)}
+                          onChange={(v) => {
+                            setFilter(v as any);
+                            applyFilter(v);
+                          }}
                         />
                       </div>
                       <button
@@ -411,7 +378,7 @@ export default function CustomersAdminPage() {
             editingCustomer={editingCustomer}
             referralValidation={referralValidation}
             onUpdateField={updateField}
-            onSave={handleSaveCustomer}
+            onSave={save}
             onCancel={handleCancelForm}
           />
         </div>
