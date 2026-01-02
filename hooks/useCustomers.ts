@@ -54,10 +54,6 @@ export const useCustomers = () => {
   };
 
   const applyFilter = async (filterValue?: string) => {
-    if (!filterValue || filterValue === "none") {
-      return fetchCustomers();
-    }
-
     const filterMap: { [key: string]: string } = {
       price_desc: "price.desc",
       price_asc: "price.asc",
@@ -67,12 +63,21 @@ export const useCustomers = () => {
       created_desc: "created.desc",
     };
 
-    if (filterMap[filterValue]) {
-      return fetchCustomers({ sort: filterMap[filterValue] });
+    let result: Customer[];
+    if (!filterValue || filterValue === "none") {
+      result = await fetchCustomers();
+    } else if (filterMap[filterValue]) {
+      result = await fetchCustomers({ sort: filterMap[filterValue] });
+    } else {
+      result = await fetchCustomers();
     }
 
-    // For other filter types (e.g. date_range), caller should call fetchCustomers with explicit params
-    return fetchCustomers();
+    // Force select first item from sorted list
+    if (result.length > 0) {
+      setSelectedCustomer(result[0]);
+    }
+
+    return result;
   };
 
   const saveCustomer = async (
