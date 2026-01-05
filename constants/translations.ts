@@ -188,7 +188,7 @@ export const translations = {
             },
         },
         footer: {
-            copyright: "© 2025. Ali Ramazan Yildirim",
+            copyright: "© 2026. Ali Ramazan Yildirim",
             socialAriaPrefix: "Go to",
             scrollTopAria: "Scroll to top",
             privacyLink: "Privacy Policy",
@@ -416,7 +416,7 @@ export const translations = {
             },
         },
         footer: {
-            copyright: "© 2025. Ali Ramazan Yildirim",
+            copyright: "© 2026. Ali Ramazan Yildirim",
             socialAriaPrefix: "Besuche",
             scrollTopAria: "Nach oben scrollen",
             privacyLink: "Datenschutzerklärung",
@@ -642,7 +642,7 @@ export const translations = {
             },
         },
         footer: {
-            copyright: "© 2025. Ali Ramazan Yildirim",
+            copyright: "© 2026. Ali Ramazan Yildirim",
             socialAriaPrefix: "Git",
             scrollTopAria: "Yukarı kaydır",
             privacyLink: "Gizlilik Politikası",
