@@ -128,6 +128,7 @@ export async function GET(request: NextRequest) {
             email: referrer.email ?? "",
             companyname: referrer.companyname ?? "",
             referralCode: referrer.myReferralCode ?? tx.referrerCode,
+            referralCount: typeof referrer.referralCount === "number" ? referrer.referralCount : 0,
           }
           : null,
         customer: customer

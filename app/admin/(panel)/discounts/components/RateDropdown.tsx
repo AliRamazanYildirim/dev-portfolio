@@ -39,7 +39,7 @@ export function RateDropdown({
         }`}
       >
         <span className="whitespace-nowrap">
-          %{typeof value === "number" ? value.toFixed(0) : value}
+          {value === "+3" ? "+3% Bonus" : `%${(value as number).toFixed(0)}`}
         </span>
       </button>
 
@@ -53,7 +53,7 @@ export function RateDropdown({
                 onChange(itemId, opt);
                 setOpen(false);
               }}
-              className={`w-full text-left px-3 py-1 text-xs transition ${
+              className={`w-full text-left px-1 py-1 text-xs transition ${
                 opt === value
                   ? "bg-indigo-500/80 text-indigo-100"
                   : opt === "+3"

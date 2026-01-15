@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { RateDropdown } from "@/app/admin/(panel)/discounts/components/RateDropdown";
 import {
   Send,
@@ -11,7 +11,7 @@ import {
   Clock,
 } from "lucide-react";
 import Pagination from "@/components/ui/Pagination";
-import { DiscountEntry, PaginationState } from "../types";
+import { DiscountEntry, PaginationState, STAGE_COUNT } from "../types";
 import { currencyFormatter, formatDate } from "../utils";
 
 const DISCOUNT_RATES = [3, 6, 9] as const;
@@ -46,15 +46,49 @@ export function DiscountRecords({
     Record<string, number | "+3">
   >({});
 
+  // Compute set of transaction ids that should be displayed as bonus.
+  // For each referrer code, take the newest `bonusCount = max(0, referralCount - STAGE_COUNT)`
+  // transactions (sorted by createdAt desc) and mark those ids as bonus.
+  const bonusIdSet = useMemo(() => {
+    const groups = new Map<string, DiscountEntry[]>();
+    filteredInvoices.forEach((it) => {
+      const code = it.referrerCode || "";
+      const arr = groups.get(code) ?? [];
+      arr.push(it);
+      groups.set(code, arr);
+    });
+
+    const ids = new Set<string>();
+    groups.forEach((arr) => {
+      // sort descending by createdAt
+      const sorted = [...arr].sort((a, b) => {
+        try {
+          return (
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
+        } catch {
+          return 0;
+        }
+      });
+
+      const refCount = sorted[0]?.referrer?.referralCount ?? 0;
+      const bonusCount = Math.max(0, refCount - STAGE_COUNT);
+      for (let i = 0; i < bonusCount && i < sorted.length; i++) {
+        ids.add(sorted[i].id);
+      }
+    });
+
+    return ids;
+  }, [filteredInvoices]);
+
   const getSelectedRate = (
     itemId: string,
     defaultRate: number,
-    hasReachedMax: boolean
+    isBonusAvailable: boolean
   ): number | "+3" => {
     const selected = selectedRates[itemId];
     if (selected !== undefined) return selected;
-    // If reached max (9%), default to bonus "+3"
-    return hasReachedMax ? BONUS_RATE : defaultRate;
+    return isBonusAvailable ? BONUS_RATE : defaultRate;
   };
 
   const handleRateChange = (itemId: string, rate: number | "+3") => {
@@ -65,10 +99,12 @@ export function DiscountRecords({
     return entry.referralLevel >= 3 || entry.discountRate >= 9;
   };
 
-  const getStageLabel = (entry: DiscountEntry) => {
-    if (entry.isBonus) {
-      // Calculate bonus number: referralLevel - 3 (since stages are 1,2,3)
-      const bonusNumber = entry.referralLevel > 3 ? entry.referralLevel - 3 : 1;
+  const getStageLabel = (entry: DiscountEntry, isBonusDisplay = false) => {
+    if (entry.isBonus || isBonusDisplay) {
+      const bonusNumber =
+        entry.referralLevel > STAGE_COUNT
+          ? entry.referralLevel - STAGE_COUNT
+          : 1;
       return `Bonus ${bonusNumber}`;
     }
     return `Stage ${entry.referralLevel}`;
@@ -117,6 +153,9 @@ export function DiscountRecords({
                     item.discountAmount ??
                     Math.max(item.originalPrice - item.finalPrice, 0);
 
+                  const isBonusDisplay =
+                    item.isBonus || bonusIdSet.has(item.id);
+
                   return (
                     <tr
                       key={item.id}
@@ -157,16 +196,18 @@ export function DiscountRecords({
                       <td className="px-5 py-4 align-top text-white/80">
                         <div className="flex flex-col">
                           <span className="font-semibold text-white">
-                            %{item.discountRate.toFixed(0)}
+                            {isBonusDisplay
+                              ? "+3% Bonus"
+                              : `%${item.discountRate.toFixed(0)}`}
                           </span>
                           <span
                             className={`text-xs ${
-                              item.isBonus
+                              isBonusDisplay
                                 ? "text-emerald-400"
                                 : "text-white/60"
                             }`}
                           >
-                            {getStageLabel(item)}
+                            {getStageLabel(item, isBonusDisplay)}
                           </span>
                         </div>
                       </td>
@@ -217,10 +258,10 @@ export function DiscountRecords({
                                 value={getSelectedRate(
                                   item.id,
                                   item.discountRate,
-                                  hasReachedMaxDiscount(item)
+                                  isBonusDisplay
                                 )}
                                 options={
-                                  hasReachedMaxDiscount(item)
+                                  isBonusDisplay
                                     ? ([...DISCOUNT_RATES, BONUS_RATE] as (
                                         | number
                                         | "+3"
@@ -237,7 +278,7 @@ export function DiscountRecords({
                                     getSelectedRate(
                                       item.id,
                                       item.discountRate,
-                                      hasReachedMaxDiscount(item)
+                                      isBonusDisplay
                                     )
                                   )
                                 }
@@ -357,6 +398,7 @@ export function DiscountRecords({
               const discountAmount =
                 item.discountAmount ??
                 Math.max(item.originalPrice - item.finalPrice, 0);
+              const isBonusDisplay = item.isBonus || bonusIdSet.has(item.id);
               return (
                 <div
                   key={item.id}
@@ -405,14 +447,16 @@ export function DiscountRecords({
                         Discount Rate
                       </p>
                       <p className="font-semibold text-white">
-                        %{item.discountRate.toFixed(0)}
+                        {isBonusDisplay
+                          ? "+3% Bonus"
+                          : `%${item.discountRate.toFixed(0)}`}
                       </p>
                       <p
                         className={`text-xs ${
-                          item.isBonus ? "text-emerald-400" : "text-white/60"
+                          isBonusDisplay ? "text-emerald-400" : "text-white/60"
                         }`}
                       >
-                        {getStageLabel(item)}
+                        {getStageLabel(item, isBonusDisplay)}
                       </p>
                     </div>
                   </div>
@@ -462,7 +506,7 @@ export function DiscountRecords({
                       Created: {formatDate(item.createdAt)}
                     </p>
                     <div className="flex flex-col gap-2">
-                      {/* Email gönderim bölümü - Mobile */}
+                      {/* E-Mail-Sendeabschnitt - Mobil*/}
                       {!item.emailSent && (
                         <div className="flex items-center gap-2">
                           <RateDropdown
@@ -470,10 +514,10 @@ export function DiscountRecords({
                             value={getSelectedRate(
                               item.id,
                               item.discountRate,
-                              hasReachedMaxDiscount(item)
+                              isBonusDisplay
                             )}
                             options={
-                              hasReachedMaxDiscount(item)
+                              isBonusDisplay
                                 ? ([...DISCOUNT_RATES, BONUS_RATE] as (
                                     | number
                                     | "+3"
@@ -490,7 +534,7 @@ export function DiscountRecords({
                                 getSelectedRate(
                                   item.id,
                                   item.discountRate,
-                                  hasReachedMaxDiscount(item)
+                                  isBonusDisplay
                                 )
                               )
                             }

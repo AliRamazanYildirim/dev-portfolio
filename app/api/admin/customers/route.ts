@@ -86,30 +86,11 @@ export async function POST(req: Request) {
           referrerUpdateData.discountRate = referrerDiscount;
           referrerUpdateData.finalPrice = referrerFinalPrice;
 
-          // Mail sadece discountsEnabled ise gönderilir
-          if (referrer.email) {
-            try {
-              const { html, subject } = buildReferrerEmailHTML({
-                refFirst: referrer.firstname ?? "",
-                refLast: referrer.lastname ?? "",
-                myReferralCode: referrer.myReferralCode ?? "",
-                newCount: newReferralCount,
-                discountRate: referrerDiscount,
-                referrerPrice: referrer.price,
-                referrerFinalPrice,
-                currentDiscountAmount,
-              });
-
-              await sendAdminEmail({
-                to: referrer.email,
-                subject,
-                html,
-              });
-              emailSent = true;
-            } catch (mailErr) {
-              console.error("Failed sending referrer notification email:", mailErr);
-            }
-          }
+          // Mail gönderimi artık otomatik yapılmayacak.
+          // Referrer'ın e‑postası yalnızca admin panelinden manuel olarak gönderilmelidir.
+          // Bu nedenle `emailSent` burada false bırakılıyor; email gönderimi için
+          // admin panelindeki 'Send' veya ayrıca implement edilecek manuel yol kullanılmalıdır.
+          emailSent = false;
         }
 
         try {

@@ -19,6 +19,7 @@ export interface DiscountEntry {
         email: string;
         companyname: string;
         referralCode: string;
+        referralCount: number;
     } | null;
     customer: {
         id: string;
