@@ -70,7 +70,8 @@ export async function PUT(
         if (discountsEnabled) {
           referrerUpdateData.discountRate = referrerDiscount;
           referrerUpdateData.finalPrice = referrerFinalPrice;
-          emailSent = true; // PUT'ta mail gönderme yok, sadece flag
+          // Do not mark emailSent here — sending is manual via admin panel.
+          emailSent = false;
         }
 
         await CustomerModel.findByIdAndUpdate(referrer._id, referrerUpdateData).exec();
