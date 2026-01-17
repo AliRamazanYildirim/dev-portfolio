@@ -3,6 +3,7 @@ import CustomerModel from "@/models/Customer";
 import ReferralTransactionModel from "@/models/ReferralTransaction";
 import { connectToMongo } from "@/lib/mongodb";
 import { getDiscountsEnabled } from "@/lib/discountSettings";
+import { calcDiscountedPrice } from "@/app/api/admin/customers/lib/referral";
 
 // GET: Einzelnen Kunden abrufen
 export async function GET(
@@ -55,7 +56,9 @@ export async function PUT(
         referrerDiscount = 3 + currentReferralCount * 3;
         referrerDiscount = Math.min(referrerDiscount, 9);
 
-        const referrerFinalPrice = referrer.price - (referrer.price * referrerDiscount) / 100;
+        // Use the iterative cents-rounded discount calculation so stored finalPrice
+        // reflects successive 3% steps (including bonuses beyond 9%).
+        const referrerFinalPrice = calcDiscountedPrice(referrer.price, currentReferralCount + 1);
 
         // Referrer'ın referralCount'u her zaman artar
         const referrerUpdateData: Record<string, any> = {

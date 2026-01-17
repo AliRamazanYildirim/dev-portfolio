@@ -87,21 +87,38 @@ export async function POST(request: Request) {
         let emailHtml: string;
         let emailSubject: string;
 
+        // We'll capture bonus-specific computed values so we can persist them
+        // reliably into the transaction record below (defensive: avoid missing fields).
+        let bonusOriginalPrice: number | null = null;
+        let bonusFinalPrice: number | null = null;
+        let bonusAmount: number | null = null;
+
         if (isBonusRate) {
-            // Bonus: Apply +3% to current finalPrice
-            const currentFinalPrice = referrer.finalPrice || calcDiscountedPrice(referrerPrice, referralCount);
-            const bonusAmount = currentFinalPrice * 0.03;
-            finalNewPrice = currentFinalPrice - bonusAmount;
+            // Bonus: apply a 3% step on the referrer's current final price (iterative cents-rounded).
+            // This ensures each bonus reduces the stored finalPrice further instead of staying at the 9% cap.
+            const currentFinal = typeof referrer.finalPrice === "number" && !Number.isNaN(referrer.finalPrice)
+                ? Number(referrer.finalPrice)
+                : calcDiscountedPrice(referrerPrice, referralCount);
+
+            const discountCents = Math.round(currentFinal * 0.03 * 100);
+            const nextPrice = Math.round((currentFinal - discountCents / 100) * 100) / 100;
+            const computedBonusAmount = Math.max(Math.round((currentFinal - nextPrice) * 100) / 100, 0);
+            finalNewPrice = nextPrice;
             actualDiscountRate = "+3";
+
+            // store computed bonus values to persist in transaction update later
+            bonusOriginalPrice = currentFinal;
+            bonusFinalPrice = nextPrice;
+            bonusAmount = computedBonusAmount;
 
             const bonusEmail = buildBonusEmailHTML({
                 refFirst: referrer.firstname ?? "",
                 refLast: referrer.lastname ?? "",
                 myReferralCode: referrer.myReferralCode ?? "",
                 referralCount,
-                previousFinalPrice: currentFinalPrice,
+                previousFinalPrice: currentFinal,
                 newFinalPrice: finalNewPrice,
-                bonusAmount,
+                bonusAmount: computedBonusAmount,
             });
             emailHtml = bonusEmail.html;
             emailSubject = bonusEmail.subject;
@@ -130,9 +147,9 @@ export async function POST(request: Request) {
             emailSubject = standardEmail.subject;
         }
 
-        // Referrer'ın discountRate ve finalPrice'ını güncelle
+        // Referrer'ın finalPrice'ını güncelle (persist the new discounted price).
         await CustomerModel.findByIdAndUpdate(referrer._id, {
-            discountRate: isBonusRate ? 9 : discountRate, // Store 9 for bonus (max reached)
+            discountRate: isBonusRate ? 9 : discountRate,
             finalPrice: finalNewPrice,
             updatedAt: new Date(),
         }).exec();
@@ -144,11 +161,28 @@ export async function POST(request: Request) {
         });
 
         // Transaction'ı emailSent=true ve isBonus olarak güncelle
-        await ReferralTransactionModel.findByIdAndUpdate(transactionId, {
+        const newReferralLevel = isBonusRate
+            ? (typeof transaction.referralLevel === "number"
+                ? transaction.referralLevel + 1
+                : referralCount + 1)
+            : transaction.referralLevel;
+
+        const txUpdate: Record<string, unknown> = {
             emailSent: true,
-            discountRate: isBonusRate ? 3 : discountRate, // Store 3 for bonus (+3%)
+            discountRate: isBonusRate ? 3 : discountRate,
             isBonus: isBonusRate,
-        }).exec();
+            referralLevel: newReferralLevel,
+        };
+
+        // If we computed bonus pricing above, ensure those fields are persisted
+        // (defensive: sometimes earlier partial updates or race conditions left them empty).
+        if (isBonusRate && bonusOriginalPrice !== null && bonusFinalPrice !== null && bonusAmount !== null) {
+            txUpdate.originalPrice = bonusOriginalPrice;
+            txUpdate.finalPrice = bonusFinalPrice;
+            txUpdate.discountAmount = bonusAmount;
+        }
+
+        await ReferralTransactionModel.findByIdAndUpdate(transactionId, txUpdate).exec();
 
         return NextResponse.json({
             success: true,

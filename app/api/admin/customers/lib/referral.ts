@@ -1,15 +1,16 @@
 import CustomerModel from "@/models/Customer";
 
 export function calcDiscountedPrice(originalPrice: number, referralCount: number) {
-    if (referralCount === 0) {
-        return originalPrice;
+    if (!referralCount || referralCount <= 0) {
+        return Math.round(originalPrice * 100) / 100;
     }
 
-    let currentPrice = originalPrice;
-    for (let i = 1; i <= Math.min(referralCount, 3); i += 1) {
-        const discountPercentage = i * 3;
-        const discountAmount = currentPrice * (discountPercentage / 100);
-        currentPrice -= discountAmount;
+    // Apply repeated 3% steps on the running subtotal, rounding cents each step.
+    let currentPrice = Math.round(originalPrice * 100) / 100;
+    for (let i = 0; i < referralCount; i += 1) {
+        const discountCents = Math.round(currentPrice * 0.03 * 100);
+        const discount = discountCents / 100;
+        currentPrice = Math.round((currentPrice - discount) * 100) / 100;
     }
 
     return currentPrice;
