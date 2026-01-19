@@ -104,7 +104,9 @@ export async function GET(request: NextRequest) {
         const tx = selected[i];
         const rawLevel = typeof tx.referralLevel === "number" ? tx.referralLevel : Number(tx.referralLevel) || 0;
         const increment = i + 1; // oldest selected -> +1
-        bonusLevelById.set(String(tx._id), rawLevel + increment);
+        // Clamp computed bonus level to not exceed the referrer's referralCount
+        const computed = Math.min(rawLevel + increment, refCount);
+        bonusLevelById.set(String(tx._id), computed);
       }
     });
     const displayBonusIdSet = new Set<string>(Array.from(bonusLevelById.keys()));

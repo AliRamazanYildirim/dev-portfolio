@@ -161,11 +161,17 @@ export async function POST(request: Request) {
         });
 
         // Transaction'ı emailSent=true ve isBonus olarak güncelle
-        const newReferralLevel = isBonusRate
-            ? (typeof transaction.referralLevel === "number"
+        // Compute new referral level for the transaction. For bonus rates we
+        // increment the stored transaction level, but never allow it to exceed
+        // the referrer's current referralCount (defensive clamp). This prevents
+        // accidental oversized levels (e.g. 7 when referrer has 6 referrals).
+        let newReferralLevel: number | undefined = transaction.referralLevel;
+        if (isBonusRate) {
+            const baseLevel = typeof transaction.referralLevel === "number"
                 ? transaction.referralLevel + 1
-                : referralCount + 1)
-            : transaction.referralLevel;
+                : referralCount + 1;
+            newReferralLevel = Math.min(baseLevel, referralCount);
+        }
 
         const txUpdate: Record<string, unknown> = {
             emailSent: true,
