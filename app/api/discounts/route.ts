@@ -370,6 +370,33 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
+    // If this transaction belonged to a referrer, recompute that referrer's
+    // referralCount, discountRate and finalPrice based on remaining transactions.
+    try {
+      const code = deleted.referrerCode;
+      if (code) {
+        const remaining = await ReferralTransactionModel.countDocuments({ referrerCode: code }).exec();
+        const referrer = await CustomerModel.findOne({ myReferralCode: code }).exec();
+        if (referrer) {
+          const newCount = Math.max(0, remaining);
+          const newRate = Math.min(newCount * 3, 9);
+          const newFinal = typeof referrer.price === 'number'
+            ? calcDiscountedPrice(Number(referrer.price), newCount)
+            : referrer.finalPrice;
+
+          await CustomerModel.findByIdAndUpdate(referrer._id, {
+            referralCount: newCount,
+            discountRate: newRate,
+            finalPrice: newFinal,
+            updatedAt: new Date(),
+          }).exec();
+        }
+      }
+    } catch (err) {
+      console.error("Failed to recompute referrer after tx delete:", err);
+      // Do not fail the delete if recompute fails; return deletion result but log error.
+    }
+
     return NextResponse.json({
       success: true,
       data: {
