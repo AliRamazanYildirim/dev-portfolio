@@ -397,6 +397,25 @@ export async function DELETE(request: NextRequest) {
       // Do not fail the delete if recompute fails; return deletion result but log error.
     }
 
+    // If this transaction was used by a customer (newCustomerId), and that
+    // customer's stored `reference` matches the deleted referrer code, clear it.
+    try {
+      const usedCustomerId = deleted.newCustomerId;
+      const usedCode = deleted.referrerCode;
+      if (usedCustomerId && usedCode) {
+        const usedCustomer = await CustomerModel.findById(usedCustomerId).exec();
+        if (usedCustomer && (usedCustomer as any).reference === usedCode) {
+          await CustomerModel.findByIdAndUpdate(usedCustomerId, {
+            reference: null,
+            updatedAt: new Date(),
+          }).exec();
+        }
+      }
+    } catch (err) {
+      console.error("Failed to clear customer's used referral after tx delete:", err);
+      // don't fail the delete operation for this; just log the issue
+    }
+
     return NextResponse.json({
       success: true,
       data: {
