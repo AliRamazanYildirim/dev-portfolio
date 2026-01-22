@@ -1,4 +1,3 @@
-import { PrismaClient } from "@prisma/client";
 import AdminModel from "@/models/Admin";
 import ProjectModel from "@/models/Project";
 import ProjectImageModel from "@/models/ProjectImage";
@@ -16,14 +15,6 @@ function normalizeDoc<T = any>(doc: any): T | null {
   if (obj && obj._id && !obj.id) obj.id = String(obj._id);
   return obj as T;
 }
-
-const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined;
-};
-
-// Expose the original Prisma client for raw queries and any models not yet migrated
-export const prisma = globalForPrisma.prisma ?? new PrismaClient();
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 
 // Compatibility `db` object mapping common Prisma-like methods to Mongoose models
 export const db = {
@@ -139,10 +130,7 @@ export const db = {
       return normalizeDoc(await ReferralTransactionModel.create(params.data));
     },
   },
-  // passthrough prisma methods
-  $queryRaw: async (...args: any[]) => (prisma as any).$queryRaw(...(args as unknown as any[])),
-  $executeRaw: async (...args: any[]) => (prisma as any).$executeRaw(...(args as unknown as any[])),
-  $disconnect: async () => prisma.$disconnect(),
+  // Note: Prisma passthrough methods removed — project uses Mongoose now
 };
 
 export default db;
