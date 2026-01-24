@@ -11,7 +11,7 @@ import { ShimmerButton } from "@/registry/magicui/shimmer-button";
 import {
   heroTranslations,
   type HeroDictionary,
-} from "@/constants/translations-hero";
+} from "@/constants/translationsHero";
 import { useTranslation } from "@/hooks/useTranslation";
 
 export default function Hero() {

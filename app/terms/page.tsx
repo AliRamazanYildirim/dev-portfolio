@@ -5,7 +5,7 @@ import { useTranslation } from "@/hooks/useTranslation";
 import {
   termsTranslations,
   type TermsDictionary,
-} from "@/constants/translations-terms";
+} from "@/constants/translationsTerms";
 
 type TermsSection = TermsDictionary["sections"][number];
 

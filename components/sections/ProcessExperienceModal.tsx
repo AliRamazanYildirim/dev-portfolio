@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import type { HeroProcessModalContent } from "@/constants/translations-hero";
+import type { HeroProcessModalContent } from "@/constants/translationsHero";
 
 interface ProcessExperienceModalProps {
   open: boolean;

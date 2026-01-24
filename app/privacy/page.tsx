@@ -5,7 +5,7 @@ import { useTranslation } from "@/hooks/useTranslation";
 import {
   privacyTranslations,
   type PrivacyDictionary,
-} from "@/constants/translations-privacy";
+} from "@/constants/translationsPrivacy";
 
 type PrivacySection = PrivacyDictionary["sections"][number];
 
