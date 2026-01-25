@@ -1,10 +1,30 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Customer } from "@/services/customerService";
 import { INVOICE_CONSTANTS } from "@/constants/invoice";
 import { InvoiceService } from "@/services/invoiceService";
 import toast from "react-hot-toast";
+
+// 3-stage discount calculation (3-6-9% + 3% bonus each additional referral)
+function calcDiscountedPrice(
+  originalPrice: number,
+  referralCount: number,
+): number {
+  if (!referralCount || referralCount <= 0) {
+    return Math.round(originalPrice * 100) / 100;
+  }
+
+  // Apply repeated 3% steps on the running subtotal, rounding cents each step.
+  let currentPrice = Math.round(originalPrice * 100) / 100;
+  for (let i = 0; i < referralCount; i += 1) {
+    const discountCents = Math.round(currentPrice * 0.03 * 100);
+    const discount = discountCents / 100;
+    currentPrice = Math.round((currentPrice - discount) * 100) / 100;
+  }
+
+  return currentPrice;
+}
 
 interface InvoiceModalProps {
   show: boolean;
@@ -30,7 +50,7 @@ export default function InvoiceModal({
     if (typeof window === "undefined") return;
     if (window.innerWidth < 1024) return;
     window.dispatchEvent(
-      new CustomEvent("admin-sidebar:set", { detail: { open } })
+      new CustomEvent("admin-sidebar:set", { detail: { open } }),
     );
   };
 
@@ -177,7 +197,7 @@ export default function InvoiceModal({
             style: {
               maxWidth: "500px",
             },
-          }
+          },
         );
       }, 1000);
 
@@ -274,10 +294,40 @@ export default function InvoiceModal({
                 </div>
                 <div>
                   <span className="block text-sm font-semibold text-slate-600 mb-1">
-                    Net Price:
+                    Original Price:
+                  </span>
+                  <p className="text-slate-600 font-medium">
+                    €{(customer.price ?? 0).toFixed(2)}
+                  </p>
+                </div>
+                {(customer.referralCount ?? 0) > 0 && (
+                  <div>
+                    <span className="block text-sm font-semibold text-slate-600 mb-1">
+                      Discount ({customer.referralCount} referral
+                      {(customer.referralCount ?? 0) > 1 ? "s" : ""} × 3%):
+                    </span>
+                    <p className="text-green-600 font-medium">
+                      -€
+                      {(
+                        (customer.price ?? 0) -
+                        calcDiscountedPrice(
+                          customer.price ?? 0,
+                          customer.referralCount ?? 0,
+                        )
+                      ).toFixed(2)}
+                    </p>
+                  </div>
+                )}
+                <div>
+                  <span className="block text-sm font-semibold text-slate-600 mb-1">
+                    Net Amount (after discount):
                   </span>
                   <p className="text-slate-800 font-bold text-lg">
-                    €{(customer.finalPrice ?? customer.price ?? 0).toFixed(2)}
+                    €
+                    {calcDiscountedPrice(
+                      customer.price ?? 0,
+                      customer.referralCount ?? 0,
+                    ).toFixed(2)}
                   </p>
                 </div>
               </div>
@@ -421,7 +471,7 @@ export default function InvoiceModal({
                             setFormData((prev) => ({
                               ...prev,
                               deliverables: prev.deliverables.filter(
-                                (d) => d !== deliverable
+                                (d) => d !== deliverable,
                               ),
                             }));
                           }
@@ -432,7 +482,7 @@ export default function InvoiceModal({
                         {deliverable}
                       </span>
                     </label>
-                  )
+                  ),
                 )}
               </div>
 

@@ -1,6 +1,7 @@
 import { Customer } from "./customerService";
 import { InvoiceData } from "@/lib/invoice-utils";
 import { INVOICE_CONSTANTS } from "@/constants/invoice";
+import { calcDiscountedPrice } from "@/app/api/admin/customers/lib/referral";
 
 export class InvoiceService {
   /**
@@ -28,18 +29,27 @@ export class InvoiceService {
 
   /**
    * Calculates pricing information according to German tax system (19% MwSt)
+   * Uses 3-stage discount system (3-6-9%) + 3% bonus per additional referral
    * Prices are treated as NET (VAT exclusive)
    */
   private static calculatePricing(customer: Customer) {
-    const originalNetPrice = Number(customer.price || 1000); // Net price (VAT exclusive)
-    const discountRate = Number(customer.discountRate || 0);
+    const originalNetPrice = Number(customer.price || 1000); // Original net price (VAT exclusive)
+    const referralCount = Number(customer.referralCount || 0);
 
-    // Calculate referral discount from net price
-    const referralDiscount =
-      discountRate > 0 ? (originalNetPrice * discountRate) / 100 : 0;
+    // Calculate discounted price using 3-stage system:
+    // - 1st referral: 3% discount
+    // - 2nd referral: additional 3% (cumulative 6%)
+    // - 3rd referral: additional 3% (cumulative 9%)
+    // - 4th+ referrals: additional 3% bonus each (cumulative 12%, 15%, etc.)
+    const netAmountAfterDiscount = calcDiscountedPrice(originalNetPrice, referralCount);
 
-    // Net amount after discount (still VAT exclusive)
-    const netAmountAfterDiscount = originalNetPrice - referralDiscount;
+    // Calculate total discount amount
+    const referralDiscount = originalNetPrice - netAmountAfterDiscount;
+
+    // Calculate effective discount percentage
+    const effectiveDiscountPercent = originalNetPrice > 0
+      ? (referralDiscount / originalNetPrice) * 100
+      : 0;
 
     // Calculate 19% MwSt on net amount after discount
     const mwst = netAmountAfterDiscount * INVOICE_CONSTANTS.VAT_RATE; // 19% MwSt
@@ -49,8 +59,8 @@ export class InvoiceService {
 
     return {
       subtotal: originalNetPrice, // Original net price before discount (VAT exclusive)
-      referralDiscount, // Discount amount
-      referralDiscountPercent: discountRate, // Discount percentage
+      referralDiscount, // Total discount amount
+      referralDiscountPercent: Math.round(effectiveDiscountPercent * 100) / 100, // Effective discount percentage
       netAmount: netAmountAfterDiscount, // Net amount after discount (VAT exclusive)
       vat: mwst, // 19% MwSt amount
       vatPercent: INVOICE_CONSTANTS.VAT_RATE * 100, // 19.00%

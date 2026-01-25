@@ -390,12 +390,15 @@ export async function POST(request: NextRequest) {
     doc.setFont("helvetica", "bold");
     doc.text("PRICING", pageWidth - 190, yPos + 17);
 
-    // Pricing content - Extended for German tax breakdown
+    // Pricing content - Extended for German tax breakdown with discount
+    const hasDiscount = (invoiceData.pricing?.referralDiscount || 0) > 0;
+    const pricingBoxHeight = hasDiscount ? 115 : 100;
+
     doc.setFillColor(255, 255, 255);
-    doc.rect(pageWidth - 200, yPos + 25, 160, 100, "F"); // Increased height from 80 to 100
+    doc.rect(pageWidth - 200, yPos + 25, 160, pricingBoxHeight, "F");
     doc.setDrawColor(200, 200, 200);
     doc.setLineWidth(0.5); // İnce çerçeve
-    doc.rect(pageWidth - 200, yPos + 25, 160, 100, "S");
+    doc.rect(pageWidth - 200, yPos + 25, 160, pricingBoxHeight, "S");
 
     doc.setTextColor(74, 85, 104);
     doc.setFontSize(10);
@@ -413,6 +416,21 @@ export async function POST(request: NextRequest) {
       { align: "right" }
     );
     pricingY += 15;
+
+    // 2. Referral Discount (if applicable)
+    if (hasDiscount) {
+      doc.setTextColor(34, 139, 34); // Green color for discount
+      const discountPercent = invoiceData.pricing?.referralDiscountPercent || 0;
+      doc.text(`Discount (${discountPercent.toFixed(2)}%):`, pageWidth - 190, pricingY);
+      doc.text(
+        `-€${(invoiceData.pricing?.referralDiscount || 0).toFixed(2)}`,
+        pageWidth - 50,
+        pricingY,
+        { align: "right" }
+      );
+      pricingY += 15;
+      doc.setTextColor(74, 85, 104); // Reset to gray
+    }
 
     // 3. Net Amount (after discount, before MwSt)
     doc.setFont("helvetica", "bold");
@@ -439,23 +457,24 @@ export async function POST(request: NextRequest) {
       { align: "right" }
     );
 
-    // Total section
+    // Total section - dynamic position based on discount
+    const totalBoxY = yPos + pricingBoxHeight;
     doc.setFillColor(26, 54, 93);
-    doc.rect(pageWidth - 200, yPos + 100, 160, 25, "F"); // Adjusted position
+    doc.rect(pageWidth - 200, totalBoxY, 160, 25, "F");
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(12);
     doc.setFont("helvetica", "bold");
-    doc.text("TOTAL", pageWidth - 190, yPos + 117); // Adjusted position
+    doc.text("TOTAL", pageWidth - 190, totalBoxY + 17);
     doc.setFontSize(14);
     doc.text(
       `€${(invoiceData.pricing?.total || 0).toFixed(2)}`,
       pageWidth - 50,
-      yPos + 117,
+      totalBoxY + 17,
       { align: "right" }
     );
 
-    // Payment Information - Adjusted spacing
-    yPos += 130; // Increased from 110 to account for larger pricing box
+    // Payment Information - Adjusted spacing based on discount
+    yPos += (hasDiscount ? 145 : 130); // Extra space when discount is shown
     doc.setFillColor(26, 54, 93);
     doc.rect(40, yPos, pageWidth - 80, 25, "F");
     doc.setTextColor(255, 255, 255);
