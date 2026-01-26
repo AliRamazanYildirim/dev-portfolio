@@ -21,7 +21,7 @@ interface LanguageContextValue {
 
 const LanguageContext = createContext<LanguageContextValue | null>(null);
 
-const DEFAULT_LANGUAGE: SupportedLanguage = "en";
+const DEFAULT_LANGUAGE: SupportedLanguage = "de";
 const STORAGE_KEY = "preferred-language";
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
