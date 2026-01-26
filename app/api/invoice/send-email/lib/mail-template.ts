@@ -1,21 +1,21 @@
-import { InvoiceData } from "@/lib/invoice-utils";
+import { InvoiceData } from "@/lib/invoiceUtils";
 
 interface TemplateParams {
-    customerName: string;
-    displayProjectTitle: string;
-    invoiceData: InvoiceData;
-    issueDateFormatted: string;
-    dueDateFormatted: string;
+  customerName: string;
+  displayProjectTitle: string;
+  invoiceData: InvoiceData;
+  issueDateFormatted: string;
+  dueDateFormatted: string;
 }
 
 export function buildInvoiceHtml({
-    customerName,
-    displayProjectTitle,
-    invoiceData,
-    issueDateFormatted,
-    dueDateFormatted,
+  customerName,
+  displayProjectTitle,
+  invoiceData,
+  issueDateFormatted,
+  dueDateFormatted,
 }: TemplateParams): string {
-    return `
+  return `
     <!DOCTYPE html>
     <html lang="de">
     <head>
@@ -74,8 +74,8 @@ export function buildInvoiceHtml({
                 <div>
                   <p style="color: #64748b; font-size: 14px; margin: 0 0 5px 0; font-weight: 500;">Gesamtbetrag</p>
                   <p style="color: #059669; font-size: 24px; font-weight: 700; margin: 0;">€${(
-            invoiceData.pricing?.total || 0
-        ).toFixed(2)}</p>
+      invoiceData.pricing?.total || 0
+    ).toFixed(2)}</p>
                 </div>
               </div>
             </div>

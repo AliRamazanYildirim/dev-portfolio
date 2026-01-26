@@ -1,4 +1,4 @@
-import { InvoiceData } from "@/lib/invoice-utils";
+import { InvoiceData } from "@/lib/invoiceUtils";
 
 interface InvoiceDateResult {
     issueDateFormatted: string;

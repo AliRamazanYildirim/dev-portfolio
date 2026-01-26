@@ -1,5 +1,5 @@
 import { Customer } from "./customerService";
-import { InvoiceData } from "@/lib/invoice-utils";
+import { InvoiceData } from "@/lib/invoiceUtils";
 import { INVOICE_CONSTANTS } from "@/constants/invoice";
 import { calcDiscountedPrice } from "@/app/api/admin/customers/lib/referral";
 

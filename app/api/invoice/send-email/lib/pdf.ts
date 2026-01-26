@@ -1,4 +1,4 @@
-import { InvoiceData } from "@/lib/invoice-utils";
+import { InvoiceData } from "@/lib/invoiceUtils";
 
 export async function fetchInvoicePdf(invoiceData: InvoiceData): Promise<Buffer> {
     const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";

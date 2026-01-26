@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import jsPDF from "jspdf";
-import { InvoiceData } from "@/lib/invoice-utils";
+import { InvoiceData } from "@/lib/invoiceUtils";
 import fs from "fs";
 import path from "path";
 import { INVOICE_CONSTANTS } from "@/constants/invoice";

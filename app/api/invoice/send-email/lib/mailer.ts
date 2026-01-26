@@ -1,5 +1,5 @@
 import nodemailer, { Transporter } from "nodemailer";
-import { InvoiceData } from "@/lib/invoice-utils";
+import { InvoiceData } from "@/lib/invoiceUtils";
 import { buildInvoiceHtml } from "./mail-template";
 
 interface MailOptionsParams {
