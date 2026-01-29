@@ -3,7 +3,10 @@ import CustomerModel from "@/models/Customer";
 import ReferralTransactionModel from "@/models/ReferralTransaction";
 import { connectToMongo } from "@/lib/mongodb";
 import { getDiscountsEnabled } from "@/lib/discountSettings";
-import { calcDiscountedPrice } from "@/app/api/admin/customers/lib/referral";
+import {
+  calcDiscountedPrice,
+  calcTotalEarnings,
+} from "@/app/api/admin/customers/lib/referral";
 
 // GET: Einzelnen Kunden abrufen
 export async function GET(
@@ -16,6 +19,19 @@ export async function GET(
 
   if (!data) {
     return NextResponse.json({ success: false, error: "Customer not found" }, { status: 404 });
+  }
+
+  const computedTotalEarnings = calcTotalEarnings(
+    (data as any).price,
+    (data as any).referralCount
+  );
+  const storedTotal = typeof (data as any).totalEarnings === "number" ? (data as any).totalEarnings : 0;
+  if (Math.abs(storedTotal - computedTotalEarnings) > 0.009) {
+    await CustomerModel.findByIdAndUpdate(id, {
+      totalEarnings: computedTotalEarnings,
+      updatedAt: new Date(),
+    }).exec();
+    (data as any).totalEarnings = computedTotalEarnings;
   }
 
   return NextResponse.json({ success: true, data });
@@ -66,6 +82,11 @@ export async function PUT(
           updatedAt: new Date(),
         };
 
+        referrerUpdateData.totalEarnings = calcTotalEarnings(
+          referrer.price,
+          currentReferralCount + 1
+        );
+
         // discountRate ve finalPrice sadece discountsEnabled ise güncellenir
         if (discountsEnabled) {
           referrerUpdateData.discountRate = referrerDiscount;
@@ -92,10 +113,25 @@ export async function PUT(
     }
 
     // Bereite die Aktualisierungsdaten vor - KEIN RABATT AUF AKTUALISIERTES
+    const hasPriceUpdate = Object.prototype.hasOwnProperty.call(body, "price");
+    const hasReferralCountUpdate = Object.prototype.hasOwnProperty.call(
+      body,
+      "referralCount"
+    );
+    const nextPrice = hasPriceUpdate ? body.price : existingCustomer.price;
+    const nextReferralCount = hasReferralCountUpdate
+      ? body.referralCount
+      : existingCustomer.referralCount;
+    const nextTotalEarnings = calcTotalEarnings(
+      nextPrice,
+      nextReferralCount
+    );
+
     const updateData = {
       ...body,
       finalPrice: body.price, // Der aktualisierte Kunde zahlt den normalen Preis.
       discountRate: existingCustomer.discountRate, // Den aktuellen Rabattprozentsatz beibehalten
+      totalEarnings: nextTotalEarnings,
       updatedAt: new Date(),
     };
 

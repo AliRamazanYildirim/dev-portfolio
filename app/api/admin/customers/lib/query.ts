@@ -1,5 +1,6 @@
 import CustomerModel from "@/models/Customer";
 import { connectToMongo } from "@/lib/mongodb";
+import { calcTotalEarnings } from "./referral";
 
 interface CustomerQueryOptions {
     sort?: string | null;
@@ -81,7 +82,34 @@ export async function fetchCustomers(options: CustomerQueryOptions) {
     }
 
     const raw = await cursor.lean().exec();
-    return Array.isArray(raw)
-        ? raw.map((doc: any) => ({ ...doc, id: doc._id ? String(doc._id) : doc.id }))
-        : raw;
+    if (!Array.isArray(raw)) {
+        return raw;
+    }
+
+    const updates: Promise<unknown>[] = [];
+    const now = new Date();
+    const mapped = raw.map((doc: any) => {
+        const computedTotal = calcTotalEarnings(doc.price, doc.referralCount);
+        const storedTotal = typeof doc.totalEarnings === "number" ? doc.totalEarnings : 0;
+        if (doc._id && Math.abs(storedTotal - computedTotal) > 0.009) {
+            updates.push(
+                CustomerModel.updateOne(
+                    { _id: doc._id },
+                    { totalEarnings: computedTotal, updatedAt: now }
+                ).exec()
+            );
+        }
+
+        return {
+            ...doc,
+            totalEarnings: computedTotal,
+            id: doc._id ? String(doc._id) : doc.id,
+        };
+    });
+
+    if (updates.length > 0) {
+        await Promise.allSettled(updates);
+    }
+
+    return mapped;
 }

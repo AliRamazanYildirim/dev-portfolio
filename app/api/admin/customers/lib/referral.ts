@@ -16,6 +16,20 @@ export function calcDiscountedPrice(originalPrice: number, referralCount: number
     return currentPrice;
 }
 
+export function calcTotalEarnings(
+    originalPrice: number | null | undefined,
+    referralCount: number | null | undefined
+) {
+    if (typeof originalPrice !== "number" || Number.isNaN(originalPrice) || originalPrice <= 0) {
+        return 0;
+    }
+
+    const count = Math.max(0, Number(referralCount || 0));
+    const finalPrice = calcDiscountedPrice(originalPrice, count);
+    const total = originalPrice - finalPrice;
+    return Math.max(Math.round(total * 100) / 100, 0);
+}
+
 export function generateReferralCode() {
     const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     let result = "";

@@ -2,7 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectToMongo } from "@/lib/mongodb";
 import ReferralTransactionModel from "@/models/ReferralTransaction";
 import CustomerModel from "@/models/Customer";
-import { calcDiscountedPrice } from "@/app/api/admin/customers/lib/referral";
+import {
+  calcDiscountedPrice,
+  calcTotalEarnings,
+} from "@/app/api/admin/customers/lib/referral";
 
 export async function GET(request: NextRequest) {
   try {
@@ -383,11 +386,13 @@ export async function DELETE(request: NextRequest) {
           const newFinal = typeof referrer.price === 'number'
             ? calcDiscountedPrice(Number(referrer.price), newCount)
             : referrer.finalPrice;
+          const totalEarnings = calcTotalEarnings(referrer.price, newCount);
 
           await CustomerModel.findByIdAndUpdate(referrer._id, {
             referralCount: newCount,
             discountRate: newRate,
             finalPrice: newFinal,
+            totalEarnings,
             updatedAt: new Date(),
           }).exec();
         }

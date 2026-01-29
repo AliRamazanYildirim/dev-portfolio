@@ -8,6 +8,7 @@ import { getDiscountsEnabled } from "@/lib/discountSettings";
 import { fetchCustomers } from "./lib/query";
 import {
   calcDiscountedPrice,
+  calcTotalEarnings,
   generateUniqueReferralCode,
 } from "./lib/referral";
 import {
@@ -80,6 +81,11 @@ export async function POST(req: Request) {
           referralCount: newReferralCount,
           updatedAt: new Date(),
         };
+
+        referrerUpdateData.totalEarnings = calcTotalEarnings(
+          referrer.price,
+          newReferralCount
+        );
 
         // discountRate ve finalPrice sadece discountsEnabled ise güncellenir
         if (discountsEnabled) {

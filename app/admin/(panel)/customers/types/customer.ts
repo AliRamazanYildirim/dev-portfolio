@@ -16,6 +16,7 @@ export type Customer = {
     discountRate?: number | null;
     myReferralCode?: string;
     referralCount?: number;
+    totalEarnings?: number;
     created_at?: string | null;
 };
 

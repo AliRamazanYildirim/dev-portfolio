@@ -372,7 +372,7 @@ export default function CustomerDetails({
               </div>
 
               {/* Pricing Information */}
-              {customer.price && (
+              {customer.price != null && (
                 <div className="bg-gradient-to-r from-emerald-50 to-emerald-100 rounded-3xl p-6 border border-emerald-200/50">
                   <div className="flex items-center gap-4 mb-6">
                     <div className="w-3 h-3 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full"></div>
@@ -433,6 +433,21 @@ export default function CustomerDetails({
                         </p>
                       </div>
                     )}
+                    <div className="bg-white rounded-2xl p-4 shadow-lg">
+                      <label className="text-sm font-semibold text-slate-600 uppercase tracking-wide">
+                        Total Discount Earned
+                      </label>
+                      <p className="text-2xl font-bold text-orange-500">
+                        €
+                        {Number(customer.totalEarnings ?? 0).toLocaleString(
+                          "de-DE",
+                          {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          }
+                        )}
+                      </p>
+                    </div>
                   </div>
                 </div>
               )}
