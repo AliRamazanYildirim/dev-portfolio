@@ -256,24 +256,30 @@ const HeroFooter = ({
 
 const SocialLinksBar = ({ ariaPrefix }: { ariaPrefix: string }) => (
   <div className="mt-10 flex flex-wrap items-center gap-6 text-[#260a03]">
-    {footerItems.map((item) => (
-      <Link
-        key={item.path}
-        href={item.path}
-        target={item.path.startsWith("/") ? undefined : "_blank"}
-        rel={item.path.startsWith("/") ? undefined : "noopener noreferrer"}
-        aria-label={`${ariaPrefix} ${item.title}`}
-        className="group flex items-center gap-3 text-sm md:text-base font-medium transition hover:text-[#c58d12]"
-      >
-        <Image
-          src={item.icon}
-          alt={`${item.title} icon`}
-          width={30}
-          height={30}
-          className="w-7 h-7 md:w-8 md:h-8 transition group-hover:scale-105"
-        />
-        <span>{item.title}</span>
-      </Link>
-    ))}
+    {footerItems.map((item) => {
+      const isExternal = item.path.startsWith("http");
+      const isPdf = item.path.endsWith(".pdf");
+
+      return (
+        <Link
+          key={item.path}
+          href={item.path}
+          target={isExternal || isPdf ? "_blank" : undefined}
+          rel={isExternal || isPdf ? "noopener noreferrer" : undefined}
+          prefetch={isPdf ? false : undefined}
+          aria-label={`${ariaPrefix} ${item.title}`}
+          className="group flex items-center gap-3 text-sm md:text-base font-medium transition hover:text-[#c58d12]"
+        >
+          <Image
+            src={item.icon}
+            alt={`${item.title} icon`}
+            width={30}
+            height={30}
+            className="w-7 h-7 md:w-8 md:h-8 transition group-hover:scale-105"
+          />
+          <span>{item.title}</span>
+        </Link>
+      );
+    })}
   </div>
 );
