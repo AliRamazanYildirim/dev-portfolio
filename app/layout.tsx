@@ -19,8 +19,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning={true}>
-      <body className="overflow-x-hidden">
+    <html
+      lang="en"
+      suppressHydrationWarning={true}
+      className="h-full w-full overflow-x-hidden"
+    >
+      <body className="min-h-screen w-full overflow-x-hidden">
         <LanguageProvider>
           <AppShell>{children}</AppShell>
         </LanguageProvider>

@@ -35,8 +35,8 @@ export default function Hero() {
       id="hero"
       className="px-7 pb-12 md:pb-32 min-h-screen flex flex-col"
     >
-      <div className="container mx-auto flex-1 flex flex-col justify-center">
-        <div className="flex flex-col lg:flex-row items-start gap-12 lg:gap-16 xl:gap-20">
+      <div className="mx-auto w-full flex-1 flex flex-col justify-center xl:container">
+        <div className="flex flex-col lg:flex-row items-stretch lg:items-start gap-12 lg:gap-16 xl:gap-20">
           <HeroContent
             hero={heroDictionary}
             onOpenProcess={handleOpenProcess}
@@ -155,11 +155,11 @@ const HeroContent = ({
       )}
 
       {(ctas?.primary || ctas?.secondary) && (
-        <div className="flex flex-col sm:flex-row gap-3 pt-4">
+        <div className="flex flex-row gap-3 pt-4">
           {ctas?.primary && (
             <Link
               href={ctas.primary.href}
-              className="inline-flex items-center justify-center rounded-full bg-black px-8 py-3 text-sm md:text-base font-semibold text-white transition hover:bg-[#1a1a1a]"
+              className="inline-flex min-w-0 flex-1 items-center justify-center rounded-full bg-black px-5 sm:px-8 py-3 text-sm md:text-base font-semibold text-white transition hover:bg-[#1a1a1a]"
             >
               {ctas.primary.label}
             </Link>
@@ -169,9 +169,9 @@ const HeroContent = ({
               onClick={onOpenProcess}
               shimmerColor="#c58d12"
               shimmerDuration="6s"
-              className="w-full sm:w-auto flex items-center justify-center rounded-full border border-[#c58d12] px-8 py-3 shadow-lg hover:bg-[#fff7e6] transition bg-white"
+              className="min-w-0 flex-1 h-auto min-h-12 px-5 sm:px-8 py-3 flex items-center justify-center rounded-full border border-[#c58d12] shadow-lg hover:bg-[#fff7e6] transition bg-white"
             >
-              <span className="text-center text-sm md:text-base leading-none font-semibold tracking-tight text-black">
+              <span className="text-center text-sm sm:text-base leading-snug font-semibold tracking-tight text-black text-balance">
                 {ctas.secondary.label}
               </span>
             </ShimmerButton>
