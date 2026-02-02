@@ -354,7 +354,7 @@ export const Nav = ({ className }: { className?: string }) => {
                             <button
                               type="button"
                               onClick={() => handleLanguageChange(lang.code)}
-                              className={`w-full px-4 py-2 text-center text-sm transition hover:bg-gray-100 ${
+                              className={`w-full px-4 py-2 text-center text-sm transition ${
                                 language === lang.code
                                   ? "font-semibold text-[#c9184a]"
                                   : "text-gray-700"

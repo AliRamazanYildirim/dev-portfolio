@@ -1,51 +1,6 @@
 @config "../tailwind.config.ts";
 @import "tailwindcss";
 
-body {
-  @apply text-foreground overflow-auto font-sans;
-}
-
-.title {
-  @apply font-inter text-title tracking-tight font-black leading-none;
-}
-
-.heading {
-  @apply font-inter text-heading tracking-tight font-extrabold;
-}
-
-.content {
-  @apply font-satoshi text-content font-medium;
-}
-
-.content2 {
-  @apply font-satoshi text-content2 font-semibold;
-}
-
-.content3 {
-  @apply font-satoshi text-content3 font-medium tracking-normal leading-normal;
-}
-
-.button {
-  @apply font-satoshi text-button font-medium;
-}
-
-.coffee::before,
-.gym::before,
-.compass::before {
-  width: 30px;
-  height: 30px;
-}
-
-.MyGradient {
-  mask-image: linear-gradient(
-    to right,
-    rgba(0, 0, 0, 0),
-    rgba(0, 0, 0, 1) 20%,
-    rgba(0, 0, 0, 1) 80%,
-    rgba(0, 0, 0, 0)
-  );
-}
-
 /* * {
   border: 1px solid red;
 } */
@@ -54,6 +9,39 @@ body {
 @layer base {
   h1 { @apply text-3xl md:text-5xl font-bold; }
   section h1, article h1, nav h1, aside h1 { @apply text-3xl md:text-5xl; }
+  .title {
+    @apply font-inter text-title tracking-tight font-black leading-none;
+  }
+  .heading {
+    @apply font-inter text-heading tracking-tight font-extrabold;
+  }
+  .content {
+    @apply font-satoshi text-content font-medium;
+  }
+  .content2 {
+    @apply font-satoshi text-content2 font-semibold;
+  }
+  .content3 {
+    @apply font-satoshi text-content3 font-medium tracking-normal leading-normal;
+  }
+  .button {
+    @apply font-satoshi font-medium;
+  }
+  .coffee::before,
+  .gym::before,
+  .compass::before {
+    width: 30px;
+    height: 30px;
+  }
+  .MyGradient {
+    mask-image: linear-gradient(
+      to right,
+      rgba(0, 0, 0, 0),
+      rgba(0, 0, 0, 1) 20%,
+      rgba(0, 0, 0, 1) 80%,
+      rgba(0, 0, 0, 0)
+    );
+  }
   .theme {
     --animate-shimmer-slide: shimmer-slide var(--speed) ease-in-out infinite alternate;
     --animate-spin-around: spin-around calc(var(--speed) * 2) infinite linear;
@@ -118,7 +106,7 @@ body {
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground overflow-auto font-sans;
   }
 }
 

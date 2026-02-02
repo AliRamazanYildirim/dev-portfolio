@@ -255,7 +255,7 @@ const HeroFooter = ({
 );
 
 const SocialLinksBar = ({ ariaPrefix }: { ariaPrefix: string }) => (
-  <div className="mt-10 flex flex-wrap items-center gap-6 text-[#260a03]">
+  <div className="mt-10 flex flex-nowrap items-center gap-1 md:gap-5 lg:gap-10 overflow-x-auto md:overflow-visible text-[#260a03]">
     {footerItems.map((item) => {
       const isExternal = item.path.startsWith("http");
       const isPdf = item.path.endsWith(".pdf");
@@ -268,14 +268,14 @@ const SocialLinksBar = ({ ariaPrefix }: { ariaPrefix: string }) => (
           rel={isExternal || isPdf ? "noopener noreferrer" : undefined}
           prefetch={isPdf ? false : undefined}
           aria-label={`${ariaPrefix} ${item.title}`}
-          className="group flex items-center gap-3 text-sm md:text-base font-medium transition hover:text-[#c58d12]"
+          className="group flex items-center gap-0.5 lg:gap-4 text-sm md:text-base lg:text-2xl font-medium transition hover:text-[#c58d12] shrink-0 whitespace-nowrap"
         >
           <Image
             src={item.icon}
             alt={`${item.title} icon`}
             width={30}
             height={30}
-            className="w-7 h-7 md:w-8 md:h-8 transition group-hover:scale-105"
+            className="w-7 h-7 md:w-8 md:h-8 lg:w-12 lg:h-12 transition group-hover:scale-105"
           />
           <span>{item.title}</span>
         </Link>

@@ -23,7 +23,7 @@ function Footer({ className }: { className?: string }) {
       <footer
         className={`flex flex-col md:flex-row justify-between items-center py-8 px-5 button md:text-lgButton md:px-20 ${className}`}
       >
-        <div className="flex gap-6 justify-center items-center md:justify-start">
+        <div className="mt-1 flex flex-nowrap items-center gap-1 md:gap-5 lg:gap-10 overflow-x-auto md:overflow-visible text-[#260a03]">
           {footerItems.map((item) => {
             const isExternal = item.path.startsWith("http");
             const isPdf = item.path.endsWith(".pdf");
@@ -36,7 +36,7 @@ function Footer({ className }: { className?: string }) {
                 rel={isExternal || isPdf ? "noopener noreferrer" : undefined}
                 prefetch={isPdf ? false : undefined}
                 aria-label={`${footerDictionary.socialAriaPrefix} ${item.title}`}
-                className="flex items-center gap-2 text-gray hover:text-black hover:scale-105 transition"
+                className="group flex items-center gap-1 lg:gap-4 text-sm md:text-base lg:text-2xl font-medium transition hover:text-[#c58d12] shrink-0 whitespace-nowrap"
               >
                 <Image
                   src={item.icon}
@@ -44,10 +44,9 @@ function Footer({ className }: { className?: string }) {
                   width={32}
                   height={32}
                   priority={item.title === "LinkedIn"}
+                  className="w-7 h-7 md:w-8 md:h-8 lg:w-12 lg:h-12 transition group-hover:scale-105"
                 />
-                <span className="hidden md:inline text-[#260a03]">
-                  {item.title}
-                </span>
+                <span>{item.title}</span>
               </Link>
             );
           })}
