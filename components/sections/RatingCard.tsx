@@ -52,7 +52,7 @@ const RatingCard: React.FC<RatingCardProps> = ({
         className="relative h-full rounded-2xl p-6 md:p-8 transition-all duration-300 shadow-lg hover:shadow-2xl overflow-hidden group-hover:shadow-xl"
       >
         {/* Background gradient effect on hover */}
-        <div className="absolute inset-0 bg-gradient-to-br from-black/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        <div className="absolute inset-0 bg-linear-to-br from-black/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
         {/* Content */}
         <div className="relative z-10 flex flex-col h-full gap-4">
@@ -79,9 +79,9 @@ const RatingCard: React.FC<RatingCardProps> = ({
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ delay: index * 0.15 + 0.3 }}
-                className="flex-shrink-0"
+                className="shrink-0"
               >
-                <div className="bg-gradient-to-br from-emerald-200 to-emerald-400 border border-emerald-600/40 rounded-full p-2 backdrop-blur-sm">
+                <div className="bg-linear-to-br from-emerald-200 to-emerald-400 border border-emerald-600/40 rounded-full p-2 backdrop-blur-sm">
                   <svg
                     width="20"
                     height="20"
@@ -101,7 +101,7 @@ const RatingCard: React.FC<RatingCardProps> = ({
           </div>
 
           {/* Review Text */}
-          <p className="font-satoshi text-sm md:text-base text-black/80 leading-relaxed flex-grow">
+          <p className="font-satoshi text-sm md:text-base text-black/80 leading-relaxed grow">
             "{rating.reviewText}"
           </p>
 
@@ -142,11 +142,11 @@ const RatingCard: React.FC<RatingCardProps> = ({
               </span>
             </div>
             <div className="w-full h-1.5 bg-black/10 rounded-full overflow-hidden">
-              <motion.div
+                <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: `${rating.positivePercentage}%` }}
                 transition={{ delay: index * 0.15 + 0.2, duration: 0.8 }}
-                className="h-full bg-gradient-to-r from-green-500 to-emerald-400 rounded-full"
+                className="h-full bg-linear-to-r from-green-500 to-emerald-400 rounded-full"
               />
             </div>
           </div>
