@@ -23,7 +23,7 @@ const PremiumSeparator: React.FC<PremiumSeparatorProps> = ({
       <div className="relative flex items-center justify-center gap-4">
         {/* Animated background glow */}
         <motion.div
-          className="absolute inset-0 bg-gradient-to-r from-transparent via-amber-500/20 to-transparent rounded-full blur-2xl"
+          className="absolute inset-0 bg-linear-to-r from-transparent via-amber-500/20 to-transparent rounded-full blur-2xl"
           animate={{
             opacity: [0.3, 0.6, 0.3],
           }}
@@ -36,7 +36,7 @@ const PremiumSeparator: React.FC<PremiumSeparatorProps> = ({
 
         {/* Left accent line with animation */}
         <motion.div
-          className="flex-1 h-0.5 bg-gradient-to-r from-transparent via-amber-400 to-transparent"
+          className="flex-1 h-0.5 bg-linear-to-r from-transparent via-amber-400 to-transparent"
           initial={{ scaleX: 0 }}
           whileInView={{ scaleX: 1 }}
           transition={{ delay: delay + 0.2, duration: 0.8 }}
@@ -45,7 +45,7 @@ const PremiumSeparator: React.FC<PremiumSeparatorProps> = ({
 
         {/* Center premium dot with glow */}
         <motion.div
-          className="relative w-3 h-3 rounded-full bg-gradient-to-br from-yellow-300 via-amber-500 to-orange-600 shadow-lg shadow-amber-500/70"
+          className="relative w-3 h-3 rounded-full bg-linear-to-br from-yellow-300 via-amber-500 to-orange-600 shadow-lg shadow-amber-500/70"
           initial={{ scale: 0, rotate: 0 }}
           whileInView={{ scale: 1, rotate: 360 }}
           transition={{ delay: delay + 0.4, duration: 1 }}
@@ -53,7 +53,7 @@ const PremiumSeparator: React.FC<PremiumSeparatorProps> = ({
         >
           {/* Inner bright spot */}
           <motion.div
-            className="absolute inset-0.5 rounded-full bg-gradient-to-br from-white to-transparent opacity-80"
+            className="absolute inset-0.5 rounded-full bg-linear-to-br from-white to-transparent opacity-80"
             animate={{
               opacity: [0.6, 1, 0.6],
             }}
@@ -65,7 +65,7 @@ const PremiumSeparator: React.FC<PremiumSeparatorProps> = ({
 
           {/* Outer glow ring */}
           <motion.div
-            className="absolute -inset-1 rounded-full bg-gradient-to-r from-yellow-400/0 via-amber-500/40 to-orange-600/0"
+            className="absolute -inset-1 rounded-full bg-linear-to-r from-yellow-400/0 via-amber-500/40 to-orange-600/0"
             animate={{
               scale: [1, 1.5, 1],
               opacity: [0.8, 0, 0.8],
@@ -79,7 +79,7 @@ const PremiumSeparator: React.FC<PremiumSeparatorProps> = ({
 
         {/* Right accent line with animation */}
         <motion.div
-          className="flex-1 h-0.5 bg-gradient-to-r from-transparent via-amber-400 to-transparent"
+          className="flex-1 h-0.5 bg-linear-to-r from-transparent via-amber-400 to-transparent"
           initial={{ scaleX: 0 }}
           whileInView={{ scaleX: 1 }}
           transition={{ delay: delay + 0.2, duration: 0.8 }}

@@ -41,7 +41,7 @@ const MarqueeItem: React.FC<MarqueeItemProps> = ({ images, from, to }) => {
             initial={{ x: `${from}` }}
             animate={{ x: `${to}` }}
             transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-            className="flex flex-shrink-0"
+            className="flex shrink-0"
           >
             {images.map((item, index) => renderItem(item, index))}
           </motion.div>
