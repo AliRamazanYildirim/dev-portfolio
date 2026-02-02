@@ -94,6 +94,17 @@ export const Nav = ({ className }: { className?: string }) => {
     exit: { opacity: 0, y: -20 },
   };
 
+  const maskStyle = (icon: string) => ({
+    maskImage: `url(${icon})`,
+    maskRepeat: "no-repeat",
+    maskPosition: "center",
+    maskSize: "contain",
+    WebkitMaskImage: `url(${icon})`,
+    WebkitMaskRepeat: "no-repeat",
+    WebkitMaskPosition: "center",
+    WebkitMaskSize: "contain",
+  });
+
   type NavItemProps = {
     item: NavItemType;
     index: number;
@@ -141,7 +152,7 @@ export const Nav = ({ className }: { className?: string }) => {
               isProjectsOrDetail || isAdminPage
                 ? "text-white hover:text-white"
                 : "text-gray hover:" + hoverTextColor
-            } ${hoveredIndex === index ? "font-bold" : ""}`}
+            }`}
           >
             <span>{item.title}</span>
             <svg
@@ -191,15 +202,14 @@ export const Nav = ({ className }: { className?: string }) => {
                     <Link
                       key={idx}
                       href={solution.href}
-                      className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 transition group/item"
+                      className="flex items-start gap-3 p-3 rounded-lg transition group/item"
                     >
                       <div className="flex-shrink-0 mt-1 w-10 h-10 rounded-full flex items-center justify-center">
-                        <Image
-                          src={solution.icon}
-                          alt={solution.alt || solution.title}
-                          width={20}
-                          height={20}
-                          className="w-8 h-8 opacity-100"
+                        <span
+                          role="img"
+                          aria-label={solution.alt || solution.title}
+                          className="block w-8 h-8 bg-current text-gray-900 group-hover/item:text-[#c58d12] transition-colors"
+                          style={maskStyle(solution.icon)}
                         />
                       </div>
                       <div className="flex-1">
@@ -489,19 +499,18 @@ export const Nav = ({ className }: { className?: string }) => {
                                     <Link
                                       key={subIdx}
                                       href={solution.href}
-                                      className="flex items-start gap-2 p-2 rounded-md hover:bg-gray-100 transition group/item"
+                                      className="flex items-start gap-2 p-2 rounded-md transition group/item"
                                       onClick={() => {
                                         setMenuOpen(false);
                                         setSolutionsOpen(false);
                                       }}
                                     >
                                       <div className="flex-shrink-0 mt-0.5 w-7 h-7 rounded-full bg-[#c58d12]/40 flex items-center justify-center">
-                                        <Image
-                                          src={solution.icon}
-                                          alt={solution.alt || solution.title}
-                                          width={16}
-                                          height={16}
-                                          className="w-4 h-4"
+                                        <span
+                                          role="img"
+                                          aria-label={solution.alt || solution.title}
+                                          className="block w-4 h-4 bg-current text-gray-900 group-hover/item:text-[#c58d12] transition-colors"
+                                          style={maskStyle(solution.icon)}
                                         />
                                       </div>
                                       <div className="flex-1">
