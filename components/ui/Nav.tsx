@@ -204,7 +204,7 @@ export const Nav = ({ className }: { className?: string }) => {
                       href={solution.href}
                       className="flex items-start gap-3 p-3 rounded-lg transition group/item"
                     >
-                      <div className="flex-shrink-0 mt-1 w-10 h-10 rounded-full flex items-center justify-center">
+                      <div className="shrink-0 mt-1 w-10 h-10 rounded-full flex items-center justify-center">
                         <span
                           role="img"
                           aria-label={solution.alt || solution.title}
@@ -505,10 +505,12 @@ export const Nav = ({ className }: { className?: string }) => {
                                         setSolutionsOpen(false);
                                       }}
                                     >
-                                      <div className="flex-shrink-0 mt-0.5 w-7 h-7 rounded-full bg-[#c58d12]/40 flex items-center justify-center">
+                                      <div className="shrink-0 mt-0.5 w-7 h-7 rounded-full bg-[#c58d12]/40 flex items-center justify-center">
                                         <span
                                           role="img"
-                                          aria-label={solution.alt || solution.title}
+                                          aria-label={
+                                            solution.alt || solution.title
+                                          }
                                           className="block w-4 h-4 bg-current text-gray-900 group-hover/item:text-[#c58d12] transition-colors"
                                           style={maskStyle(solution.icon)}
                                         />
@@ -522,7 +524,7 @@ export const Nav = ({ className }: { className?: string }) => {
                                         </p>
                                       </div>
                                     </Link>
-                                  )
+                                  ),
                                 )}
                               </motion.div>
                             )}
@@ -549,7 +551,7 @@ export const Nav = ({ className }: { className?: string }) => {
                             {item.title}
                           </Link>
                         </li>
-                      )
+                      ),
                     )}
 
                     <li className="w-full border-t border-gray/20 pt-4">

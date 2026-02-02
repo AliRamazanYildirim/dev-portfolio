@@ -227,7 +227,7 @@ const GoogleRatings: React.FC = () => {
         <motion.div
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className="inline-flex rounded-xl overflow-hidden bg-gradient-to-r from-yellow-500 via-amber-500 to-orange-600 shadow-lg hover:shadow-xl hover:shadow-amber-500/50 transition-all duration-300"
+          className="inline-flex rounded-xl overflow-hidden bg-linear-to-r from-yellow-500 via-amber-500 to-orange-600 shadow-lg hover:shadow-xl hover:shadow-amber-500/50 transition-all duration-300"
         >
           <a
             href={ratingsContent.ratings[0]?.googleProfileUrl || "#"}

@@ -126,13 +126,13 @@ const HeroContent = ({
           {headline.highlight && (
             <SplitText
               text={headline.highlight}
-              className="flex-wrap gap-y-2 text-xl sm:text-2xl md:text-[36px] lg:text-[46px] font-semibold uppercase tracking-tight text-[#c58d12] leading-tight sm:leading-snug md:leading-snug"
+              className="flex-wrap gap-y-2 text-xl sm:text-2xl md:text-title lg:text-[46px] font-semibold uppercase tracking-tight text-[#c58d12] leading-tight sm:leading-snug md:leading-snug"
             />
           )}
           {headline.trailing && (
             <SplitText
               text={headline.trailing}
-              className="flex-wrap gap-y-2 text-xl sm:text-2xl md:text-[36px] lg:text-[42px] font-light uppercase tracking-tight leading-tight sm:leading-snug md:leading-snug"
+              className="flex-wrap gap-y-2 text-xl sm:text-2xl md:text-title lg:text-[42px] font-light uppercase tracking-tight leading-tight sm:leading-snug md:leading-snug"
             />
           )}
         </div>

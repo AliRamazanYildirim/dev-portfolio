@@ -106,7 +106,7 @@ const ProjectsUI = () => {
               <Link href={`/projects/${project.slug}`} key={project.slug}>
                 <div className="relative group">
                   {/* IMAGE FRAME (overlay + gradient burada) */}
-                  <div className="relative w-full max-w-[900px] aspect-[3/2] rounded-md overflow-hidden">
+                  <div className="relative w-full max-w-225 aspect-3/2 rounded-md overflow-hidden">
                     <Image
                       src={project.mainImage}
                       alt={project.title}
@@ -116,7 +116,7 @@ const ProjectsUI = () => {
                     />
 
                     {/* (opsiyonel) Gradient für die Lesbarkeit */}
-                    <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/70 to-transparent z-10" />
+                    <div className="absolute inset-x-0 bottom-0 h-24 bg-linear-to-t from-black/70 to-transparent z-10" />
 
                     {/* ✅ Die Überschrift ist definitiv ganz unten. */}
                     <div className="absolute bottom-0 left-0 right-0 px-4 pb-1 z-20">
@@ -183,7 +183,7 @@ const ProjectsUI = () => {
             }}
           >
             {/* Shimmer Effect Background */}
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 -skew-x-12 animate-pulse" />
+            <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 -skew-x-12 animate-pulse" />
 
             {/* Content */}
             <span className="relative z-10 text-black font-bold flex items-center gap-2 group-hover:gap-3 transition-all duration-300">
