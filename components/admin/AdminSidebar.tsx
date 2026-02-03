@@ -62,7 +62,7 @@ export function AdminSidebar({ isOpen, onClose, onToggle }: AdminSidebarProps) {
         onClose();
       }
     },
-    [router, onClose]
+    [router, onClose],
   );
 
   const handleLogout = useCallback(async () => {
@@ -90,9 +90,9 @@ export function AdminSidebar({ isOpen, onClose, onToggle }: AdminSidebarProps) {
   return (
     <aside
       className={cn(
-        "fixed inset-y-0 left-0 z-40 transform overflow-hidden transition-all duration-300 ease-out lg:static lg:flex-shrink-0 lg:translate-x-0",
+        "fixed inset-y-0 left-0 z-40 transform overflow-hidden transition-all duration-300 ease-out lg:static lg:shrink-0 lg:translate-x-0",
         isOpen ? "w-64 translate-x-0" : "w-64 -translate-x-full",
-        collapsed ? "lg:w-20" : "lg:w-72"
+        collapsed ? "lg:w-20" : "lg:w-72",
       )}
     >
       <NoiseBackground
@@ -112,7 +112,7 @@ export function AdminSidebar({ isOpen, onClose, onToggle }: AdminSidebarProps) {
         <div
           className={cn(
             "flex flex-col items-center px-5 pt-16 pb-8 text-center transition-all",
-            collapsed ? "gap-3" : "gap-4"
+            collapsed ? "gap-3" : "gap-4",
           )}
         >
           <button
@@ -143,7 +143,7 @@ export function AdminSidebar({ isOpen, onClose, onToggle }: AdminSidebarProps) {
         <nav
           className={cn(
             "flex-1 space-y-1 px-3 transition-all",
-            collapsed ? "px-1" : "px-3"
+            collapsed ? "px-1" : "px-3",
           )}
         >
           {navigation.map((item) => {
@@ -157,15 +157,15 @@ export function AdminSidebar({ isOpen, onClose, onToggle }: AdminSidebarProps) {
                 className={cn(
                   "group flex w-full items-center rounded-xl text-sm font-medium transition",
                   active
-                    ? "bg-gradient-to-r from-[#04724d] via-[#04471c] to-[#b8dbd9] text-white shadow-lg"
+                    ? "bg-linear-to-r from-[#04724d] via-[#04471c] to-[#b8dbd9] text-white shadow-lg"
                     : "text-[#131313]/80 hover:bg-black/15 hover:text-[#131313]",
-                  collapsed ? "justify-center px-0 py-3" : "gap-3 px-4 py-3"
+                  collapsed ? "justify-center px-0 py-3" : "gap-3 px-4 py-3",
                 )}
               >
                 <Icon
                   className={cn(
                     "h-5 w-5",
-                    active ? "text-white" : "text-[#131313]/70"
+                    active ? "text-white" : "text-[#131313]/70",
                   )}
                 />
                 {!collapsed && <span>{item.label}</span>}
@@ -177,7 +177,7 @@ export function AdminSidebar({ isOpen, onClose, onToggle }: AdminSidebarProps) {
         <div
           className={cn(
             "px-5 pb-8 pt-4 transition-all",
-            collapsed ? "px-2" : "px-5"
+            collapsed ? "px-2" : "px-5",
           )}
         >
           <button
@@ -185,7 +185,7 @@ export function AdminSidebar({ isOpen, onClose, onToggle }: AdminSidebarProps) {
             onClick={handleLogout}
             className={cn(
               "flex w-full items-center justify-center rounded-xl bg-[#131313] text-sm font-semibold text-white transition hover:bg-[#131313]/90",
-              collapsed ? "gap-0 px-0 py-3" : "gap-2 px-4 py-3"
+              collapsed ? "gap-0 px-0 py-3" : "gap-2 px-4 py-3",
             )}
           >
             <LogOut className="h-4 w-4" />

@@ -215,7 +215,7 @@ export default function CustomersAdminPage() {
                                 setSearchQuery(
                                   `${c.firstname || ""} ${
                                     c.lastname || ""
-                                  }`.trim()
+                                  }`.trim(),
                                 );
                                 setSelectedCustomer(c);
                                 setShowDropdown(false);
@@ -240,7 +240,7 @@ export default function CustomersAdminPage() {
                         <Search className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                         <span>Search</span>
                       </button>
-                      <div className="relative flex-1 flex-shrink-0">
+                      <div className="relative flex-1 shrink-0">
                         <FilterDropdown
                           value={filter}
                           onChange={(v) => {

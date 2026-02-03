@@ -38,10 +38,10 @@ export default function CustomerDetails({
     if (isModal) return null;
     return (
       <div className="lg:col-span-8 xl:col-span-9">
-        <div className="bg-gradient-to-br from-white/95 to-white/85 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/30 h-full flex items-center justify-center">
+        <div className="bg-linear-to-br from-white/95 to-white/85 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/30 h-full flex items-center justify-center">
           <NoiseBackground mode="light" intensity={0.1}>
             <div className="text-center p-8">
-              <div className="w-24 h-24 bg-gradient-to-r from-slate-400 to-slate-500 rounded-full flex items-center justify-center mx-auto mb-6">
+              <div className="w-24 h-24 bg-linear-to-r from-slate-400 to-slate-500 rounded-full flex items-center justify-center mx-auto mb-6">
                 <svg
                   className="w-12 h-12 text-white"
                   fill="none"
@@ -85,9 +85,9 @@ export default function CustomerDetails({
 
   const content = (
     <div className={isModal ? "" : "lg:col-span-8 xl:col-span-9"}>
-      <div className="bg-gradient-to-br from-white/95 to-white/85 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/30 overflow-hidden flex flex-col">
+      <div className="bg-linear-to-br from-white/95 to-white/85 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/30 overflow-hidden flex flex-col">
         <NoiseBackground mode="light" intensity={0.1}>
-          <div className="bg-gradient-to-r from-slate-900 to-slate-800 p-4 sm:p-6 text-white">
+          <div className="bg-linear-to-r from-slate-900 to-slate-800 p-4 sm:p-6 text-white">
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-xl sm:text-2xl font-bold mb-1">
@@ -98,7 +98,7 @@ export default function CustomerDetails({
                 </p>
               </div>
               <div className="flex items-center gap-3">
-                <div className="w-16 h-16 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center font-bold text-white text-2xl shadow-lg">
+                <div className="w-16 h-16 rounded-full bg-linear-to-r from-blue-500 to-purple-500 flex items-center justify-center font-bold text-white text-2xl shadow-lg">
                   {customer.firstname.charAt(0)}
                   {customer.lastname.charAt(0)}
                 </div>
@@ -109,9 +109,9 @@ export default function CustomerDetails({
           <div className="flex-1 overflow-y-auto custom-scrollbar p-6">
             <div className="space-y-8">
               {/* Personal Information */}
-              <div className="bg-gradient-to-r from-slate-50 to-slate-100 rounded-3xl p-6 border border-slate-200/50">
+              <div className="bg-linear-to-r from-slate-50 to-slate-100 rounded-3xl p-6 border border-slate-200/50">
                 <div className="flex items-center gap-4 mb-6">
-                  <div className="w-3 h-3 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full"></div>
+                  <div className="w-3 h-3 bg-linear-to-r from-blue-500 to-purple-500 rounded-full"></div>
                   <h3 className="text-2xl font-bold text-slate-800">
                     Personal Information
                   </h3>
@@ -155,9 +155,9 @@ export default function CustomerDetails({
               </div>
 
               {/* Project Progress Panel (admin only editable) */}
-              <div className="bg-gradient-to-r from-white/95 to-white/90 rounded-3xl p-6 border border-slate-200/40">
+              <div className="bg-linear-to-r from-white/95 to-white/90 rounded-3xl p-6 border border-slate-200/40">
                 <div className="flex items-center gap-4 mb-4">
-                  <div className="w-3 h-3 bg-gradient-to-r from-indigo-500 to-violet-500 rounded-full"></div>
+                  <div className="w-3 h-3 bg-linear-to-r from-indigo-500 to-violet-500 rounded-full"></div>
                   <h3 className="text-2xl font-bold text-slate-800">
                     Project Progress
                   </h3>
@@ -192,8 +192,8 @@ export default function CustomerDetails({
                       projectStatus === "gestart"
                         ? 0
                         : projectStatus === "in-vorbereitung"
-                        ? 1
-                        : 2;
+                          ? 1
+                          : 2;
                     const stepOrder =
                       key === "gestart" ? 0 : key === "in-vorbereitung" ? 1 : 2;
                     const done = stepOrder < doneOrder;
@@ -222,7 +222,7 @@ export default function CustomerDetails({
                               const session = await fetch("/api/admin/session");
                               if (!session.ok) {
                                 toast.error(
-                                  "Admin login required to change status"
+                                  "Admin login required to change status",
                                 );
                                 setUpdatingStatus(false);
                                 return;
@@ -231,7 +231,7 @@ export default function CustomerDetails({
                               // save to server and get result
                               const saved = await customerService.saveCustomer(
                                 { projectStatus: key },
-                                customer
+                                customer,
                               );
                               if (!saved) throw new Error("Save failed");
 
@@ -262,7 +262,7 @@ export default function CustomerDetails({
                                       process.env.NEXT_PUBLIC_SITE_URL ||
                                       undefined,
                                   }),
-                                }
+                                },
                               );
 
                               const mailJson = await mailRes
@@ -274,12 +274,12 @@ export default function CustomerDetails({
                                 toast(
                                   mailJson?.error ||
                                     "Status updated but could not notify customer",
-                                  { icon: "⚠️" }
+                                  { icon: "⚠️" },
                                 );
                               } else {
                                 setProjectStatus(key);
                                 toast.success(
-                                  "Status updated and customer notified"
+                                  "Status updated and customer notified",
                                 );
                               }
                             } catch (err) {
@@ -289,7 +289,7 @@ export default function CustomerDetails({
                               // avoid showing a second generic toast. Show generic only for other errors.
                               if (
                                 !/duplicate|e11000|email|already registered/i.test(
-                                  msg
+                                  msg,
                                 )
                               ) {
                                 toast.error("Could not update status");
@@ -302,8 +302,8 @@ export default function CustomerDetails({
                             active
                               ? `${step.color} text-white scale-100 ring-4 ring-white/20`
                               : done
-                              ? "bg-white text-slate-900 border border-slate-200"
-                              : "bg-white text-slate-500 border border-slate-200"
+                                ? "bg-white text-slate-900 border border-slate-200"
+                                : "bg-white text-slate-500 border border-slate-200"
                           }`}
                         >
                           <div className="flex items-center justify-center w-full h-full">
@@ -355,8 +355,8 @@ export default function CustomerDetails({
                             color: active
                               ? undefined
                               : done
-                              ? "#0f172a"
-                              : "#64748b",
+                                ? "#0f172a"
+                                : "#64748b",
                           }}
                         >
                           {step.label}
@@ -373,9 +373,9 @@ export default function CustomerDetails({
 
               {/* Pricing Information */}
               {customer.price != null && (
-                <div className="bg-gradient-to-r from-emerald-50 to-emerald-100 rounded-3xl p-6 border border-emerald-200/50">
+                <div className="bg-linear-to-r from-emerald-50 to-emerald-100 rounded-3xl p-6 border border-emerald-200/50">
                   <div className="flex items-center gap-4 mb-6">
-                    <div className="w-3 h-3 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full"></div>
+                    <div className="w-3 h-3 bg-linear-to-r from-emerald-500 to-teal-500 rounded-full"></div>
                     <h3 className="text-2xl font-bold text-emerald-800">
                       Pricing Information
                     </h3>
@@ -406,7 +406,7 @@ export default function CustomerDetails({
                               {
                                 minimumFractionDigits: 2,
                                 maximumFractionDigits: 2,
-                              }
+                              },
                             )}
                           </p>
                         </div>
@@ -444,7 +444,7 @@ export default function CustomerDetails({
                           {
                             minimumFractionDigits: 2,
                             maximumFractionDigits: 2,
-                          }
+                          },
                         )}
                       </p>
                     </div>
@@ -453,9 +453,9 @@ export default function CustomerDetails({
               )}
 
               {/* Location & References */}
-              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-3xl p-6 border border-blue-200/50">
+              <div className="bg-linear-to-r from-blue-50 to-indigo-50 rounded-3xl p-6 border border-blue-200/50">
                 <div className="flex items-center gap-4 mb-6">
-                  <div className="w-3 h-3 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full"></div>
+                  <div className="w-3 h-3 bg-linear-to-r from-blue-500 to-indigo-500 rounded-full"></div>
                   <h3 className="text-2xl font-bold text-blue-800">
                     Location & References
                   </h3>
@@ -511,9 +511,9 @@ export default function CustomerDetails({
               </div>
 
               {/* Actions */}
-              <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-3xl p-6 border border-purple-200/50">
+              <div className="bg-linear-to-r from-purple-50 to-pink-50 rounded-3xl p-6 border border-purple-200/50">
                 <div className="flex items-center gap-4 mb-6">
-                  <div className="w-3 h-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full"></div>
+                  <div className="w-3 h-3 bg-linear-to-r from-purple-500 to-pink-500 rounded-full"></div>
                   <h3 className="text-2xl font-bold text-purple-800">
                     Actions
                   </h3>
@@ -522,7 +522,7 @@ export default function CustomerDetails({
                   <button
                     onClick={handleGenerateInvoice}
                     disabled={false}
-                    className="w-full relative group/btn overflow-hidden inline-flex items-center justify-center px-6 py-4 bg-gradient-to-r from-violet-600 via-purple-700 to-purple-800 text-white rounded-2xl font-bold shadow-lg hover:shadow-violet-500/40 hover:shadow-2xl transition-all duration-300 hover:scale-105"
+                    className="w-full relative group/btn overflow-hidden inline-flex items-center justify-center px-6 py-4 bg-linear-to-r from-violet-600 via-purple-700 to-purple-800 text-white rounded-2xl font-bold shadow-lg hover:shadow-violet-500/40 hover:shadow-2xl transition-all duration-300 hover:scale-105"
                   >
                     <svg
                       className="w-5 h-5 mr-2"
@@ -541,7 +541,7 @@ export default function CustomerDetails({
                   </button>
                   <button
                     onClick={handleCopyReferral}
-                    className="w-full relative group/btn overflow-hidden inline-flex items-center justify-center px-6 py-4 bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 text-white rounded-2xl font-bold shadow-lg hover:shadow-blue-500/40 hover:shadow-2xl transition-all duration-300 hover:scale-105"
+                    className="w-full relative group/btn overflow-hidden inline-flex items-center justify-center px-6 py-4 bg-linear-to-r from-blue-600 via-blue-700 to-indigo-700 text-white rounded-2xl font-bold shadow-lg hover:shadow-blue-500/40 hover:shadow-2xl transition-all duration-300 hover:scale-105"
                   >
                     <svg
                       className="w-5 h-5 mr-2"
@@ -561,7 +561,7 @@ export default function CustomerDetails({
                   {/* 'Send Email' button removed; server now sends referrer notification on create */}
                   <button
                     onClick={() => onEdit(customer)}
-                    className="w-full relative group/btn overflow-hidden inline-flex items-center justify-center px-6 py-4 bg-gradient-to-r from-amber-600 via-orange-600 to-orange-700 text-white rounded-2xl font-bold shadow-lg hover:shadow-amber-500/40 hover:shadow-2xl transition-all duration-300 hover:scale-105"
+                    className="w-full relative group/btn overflow-hidden inline-flex items-center justify-center px-6 py-4 bg-linear-to-r from-amber-600 via-orange-600 to-orange-700 text-white rounded-2xl font-bold shadow-lg hover:shadow-amber-500/40 hover:shadow-2xl transition-all duration-300 hover:scale-105"
                   >
                     <svg
                       className="w-5 h-5 mr-2"
@@ -606,10 +606,10 @@ export default function CustomerDetails({
                             </div>
                           </div>
                         ),
-                        { duration: Infinity }
+                        { duration: Infinity },
                       );
                     }}
-                    className="w-full relative group/btn overflow-hidden inline-flex items-center justify-center px-6 py-4 bg-gradient-to-r from-red-600 via-red-700 to-rose-700 text-white rounded-2xl font-bold shadow-lg hover:shadow-red-500/40 hover:shadow-2xl transition-all duration-300 hover:scale-105"
+                    className="w-full relative group/btn overflow-hidden inline-flex items-center justify-center px-6 py-4 bg-linear-to-r from-red-600 via-red-700 to-rose-700 text-white rounded-2xl font-bold shadow-lg hover:shadow-red-500/40 hover:shadow-2xl transition-all duration-300 hover:scale-105"
                   >
                     <svg
                       className="w-5 h-5 mr-2"

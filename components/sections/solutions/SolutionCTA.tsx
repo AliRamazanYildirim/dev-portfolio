@@ -25,22 +25,22 @@ export default function SolutionCTA({ title, subtitle, button }: SolutionCTAProp
               transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
               className="relative flex h-24 w-24 items-center justify-center rounded-full border-2 border-dashed border-[#c58d12]/40"
             >
-              <motion.div
+                <motion.div
                 animate={{ rotate: [0, -360] }}
                 transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-                className="h-16 w-16 rounded-full border border-[#c58d12]/60 bg-gradient-to-br from-[#c58d12]/30 to-[#d4a24a]/20 shadow-[0_0_30px_rgba(197,141,18,0.4)]"
+                className="h-16 w-16 rounded-full border border-[#c58d12]/60 bg-linear-to-br from-[#c58d12]/30 to-[#d4a24a]/20 shadow-[0_0_30px_rgba(197,141,18,0.4)]"
               />
             </motion.div>
           </div>
 
-          <motion.h2
+            <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2 }}
             className="mb-6 text-3xl font-bold leading-tight text-white md:text-5xl lg:text-6xl"
           >
-            <span className="bg-gradient-to-r from-white via-[#d4a24a] to-white bg-clip-text text-transparent">{title}</span>
+            <span className="bg-linear-to-r from-white via-[#d4a24a] to-white bg-clip-text text-transparent">{title}</span>
           </motion.h2>
 
           <motion.p
@@ -55,9 +55,9 @@ export default function SolutionCTA({ title, subtitle, button }: SolutionCTAProp
 
           <motion.div initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.4 }}>
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} transition={{ type: "spring", stiffness: 380, damping: 18 }}>
-              <Link
+                <Link
                 href="/#contact"
-                className="inline-flex items-center gap-3 rounded-xl border border-[#d4a24a]/30 bg-gradient-to-r from-[#c58d12] to-[#d4a24a] px-10 py-5 text-lg font-bold text-black shadow-[0_0_50px_rgba(197,141,18,0.4)] transition-all duration-300 hover:border-[#d4a24a]/80 hover:from-[#d4a24a] hover:to-[#c58d12] hover:shadow-[0_0_80px_rgba(197,141,18,0.6)]"
+                className="inline-flex items-center gap-3 rounded-xl border border-[#d4a24a]/30 bg-linear-to-r from-[#c58d12] to-[#d4a24a] px-10 py-5 text-lg font-bold text-black shadow-[0_0_50px_rgba(197,141,18,0.4)] transition-all duration-300 hover:border-[#d4a24a]/80 hover:from-[#d4a24a] hover:to-[#c58d12] hover:shadow-[0_0_80px_rgba(197,141,18,0.6)]"
               >
                 <span>{button}</span>
                 <motion.svg

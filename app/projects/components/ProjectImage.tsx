@@ -15,7 +15,7 @@ export default function ProjectImage({
   className = "",
 }: Props) {
   return (
-    <div className="relative w-full max-w-[900px] aspect-[3/2] rounded-md overflow-hidden">
+    <div className="relative w-full max-w-225 aspect-3/2 rounded-md overflow-hidden">
       <Image
         src={src}
         alt={alt}

@@ -9,7 +9,7 @@ interface Props {
 export default function ProjectMedia({ src, alt }: Props) {
   return (
     <div className="flex justify-center mb-16">
-      <div className="relative w-full max-w-[900px] aspect-[3/2] rounded-md overflow-hidden">
+      <div className="relative w-full max-w-225 aspect-3/2 rounded-md overflow-hidden">
         <Image
           src={src}
           alt={alt}

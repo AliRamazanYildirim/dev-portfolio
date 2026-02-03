@@ -58,7 +58,7 @@ export function StageCard({ stage }: StageCardProps) {
             </p>
           </div>
           <span
-            className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold flex-shrink-0 ${statusMeta.badgeClass}`}
+            className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold shrink-0 ${statusMeta.badgeClass}`}
           >
             <StatusIcon className="h-3 w-3" />
             <span className="hidden sm:inline">{statusMeta.label}</span>

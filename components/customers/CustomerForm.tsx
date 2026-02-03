@@ -69,7 +69,7 @@ export default function CustomerForm({
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-lg flex items-center justify-center p-2 sm:p-4 z-50">
       <div className="relative backdrop-blur-xl bg-white/95 border border-white/20 rounded-2xl sm:rounded-3xl shadow-2xl w-full max-w-sm sm:max-w-2xl lg:max-w-4xl max-h-[95vh] sm:max-h-[90vh] overflow-hidden">
-        <div className="bg-gradient-to-r from-[#131313] to-[#131313]/90 px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+        <div className="bg-linear-to-r from-[#131313] to-[#131313]/90 px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="heading text-lg sm:text-xl lg:text-2xl text-white">
@@ -261,8 +261,8 @@ export default function CustomerForm({
                     referralValidation?.isValid
                       ? "bg-emerald-50 border-emerald-300 focus:ring-emerald-500"
                       : referralValidation?.error
-                      ? "bg-red-50 border-red-300 focus:ring-red-500"
-                      : "bg-white/80 border-[#131313]/20 focus:ring-[#131313]"
+                        ? "bg-red-50 border-red-300 focus:ring-red-500"
+                        : "bg-white/80 border-[#131313]/20 focus:ring-[#131313]"
                   }`}
                 />
                 {referralValidation && (

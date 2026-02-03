@@ -47,7 +47,7 @@ export function HeaderControls({
         <button
           type="button"
           onClick={() => setIsOpen(!isOpen)}
-          className="w-full sm:w-auto bg-[#131313] text-white px-4 pr-10 py-2 rounded-lg text-sm shadow cursor-pointer flex items-center justify-between min-w-[140px]"
+          className="w-full sm:w-auto bg-[#131313] text-white px-4 pr-10 py-2 rounded-lg text-sm shadow cursor-pointer flex items-center justify-between min-w-35"
         >
           <span>{selectedOption?.label}</span>
           <ChevronDown

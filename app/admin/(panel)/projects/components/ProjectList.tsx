@@ -90,7 +90,7 @@ export function ProjectList({
               <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 lg:gap-6">
                 <div className="flex-1">
                   <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 mb-4 mt-6 sm:mt-0">
-                    <h3 className="text-xl sm:text-2xl lg:text-3xl font-semibold text-[#131313] break-words">
+                    <h3 className="text-xl sm:text-2xl lg:text-3xl font-semibold text-[#131313] wrap-break-word">
                       {project.title}
                     </h3>
                     <div className="flex flex-row flex-wrap items-center gap-2 sm:gap-3">
@@ -137,7 +137,7 @@ export function ProjectList({
                       {project.gallery.slice(0, 3).map((img, index) => (
                         <div
                           key={`${img.url}-${index}`}
-                          className="relative flex-shrink-0"
+                          className="relative shrink-0"
                         >
                           <Image
                             src={img.url}
@@ -151,7 +151,7 @@ export function ProjectList({
                         </div>
                       ))}
                       {project.gallery.length > 3 && (
-                        <div className="w-12 h-8 sm:w-15 sm:h-10 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <div className="w-12 h-8 sm:w-15 sm:h-10 rounded-lg flex items-center justify-center shrink-0">
                           <span className="text-xs font-bold text-black">
                             +{project.gallery.length - 3}
                           </span>
@@ -164,7 +164,7 @@ export function ProjectList({
                 <div className="flex flex-row gap-2 sm:gap-3 lg:ml-6 w-full lg:w-auto lg:justify-end lg:items-end lg:self-end mt-4 lg:mt-0">
                   <button
                     onClick={() => onEditProject(project)}
-                    className="inline-flex items-center justify-center flex-1 sm:flex-none px-3 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-lg sm:rounded-xl font-medium shadow-sm transition-all duration-200 hover:shadow-md hover:scale-105 text-xs sm:text-base"
+                    className="inline-flex items-center justify-center flex-1 sm:flex-none px-3 sm:px-6 py-2 sm:py-3 bg-linear-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-lg sm:rounded-xl font-medium shadow-sm transition-all duration-200 hover:shadow-md hover:scale-105 text-xs sm:text-base"
                   >
                     <svg
                       className="w-3.5 h-3.5 sm:w-5 sm:h-5 mr-1 sm:mr-2"
@@ -183,7 +183,7 @@ export function ProjectList({
                   </button>
                   <button
                     onClick={() => onDeleteProject(project.id)}
-                    className="inline-flex items-center justify-center flex-1 sm:flex-none px-3 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-lg sm:rounded-xl font-medium shadow-sm transition-all duration-200 hover:shadow-md hover:scale-105 text-xs sm:text-base"
+                    className="inline-flex items-center justify-center flex-1 sm:flex-none px-3 sm:px-6 py-2 sm:py-3 bg-linear-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-lg sm:rounded-xl font-medium shadow-sm transition-all duration-200 hover:shadow-md hover:scale-105 text-xs sm:text-base"
                   >
                     <svg
                       className="w-3.5 h-3.5 sm:w-5 sm:h-5 mr-1 sm:mr-2"

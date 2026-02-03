@@ -20,7 +20,7 @@ export default function ProjectGallery({ gallery, title, heading }: Props) {
         {sorted.map((image, idx) => (
           <div
             key={image.id ?? `${image.url}-${idx}`}
-            className="relative w-full aspect-[3/2] rounded-md overflow-hidden"
+            className="relative w-full aspect-3/2 rounded-md overflow-hidden"
           >
             <Image
               src={image.url}

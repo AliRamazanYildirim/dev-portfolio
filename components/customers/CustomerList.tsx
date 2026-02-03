@@ -20,9 +20,9 @@ export default function CustomerList({
 }: CustomerListProps) {
   return (
     <div className="lg:col-span-4 xl:col-span-3">
-      <div className="bg-gradient-to-br from-white/95 to-white/85 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/30 overflow-hidden flex flex-col">
+      <div className="bg-linear-to-br from-white/95 to-white/85 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/30 overflow-hidden flex flex-col">
         <NoiseBackground mode="light" intensity={0.1}>
-          <div className="bg-gradient-to-r from-slate-900 to-slate-800 p-6 text-white">
+          <div className="bg-linear-to-r from-slate-900 to-slate-800 p-6 text-white">
             <h3 className="text-xl font-bold mb-2">Customer List</h3>
             <p className="text-white/70 text-sm">
               {allCustomers.length} customers total
@@ -37,16 +37,16 @@ export default function CustomerList({
                   onClick={() => setSelectedCustomer(customer)}
                   className={`group cursor-pointer relative p-5 rounded-2xl transition-all duration-300 hover:scale-[1.02] ${
                     selectedCustomer?.id === customer.id
-                      ? "bg-gradient-to-l from-blue-500/20 to-purple-500/20 border-2 border-blue-500/30 shadow-lg"
-                      : "bg-gradient-to-l from-orange-500/20 to-purple-500/20 border border-white/30 hover:border-blue-300/50"
+                      ? "bg-linear-to-l from-blue-500/20 to-purple-500/20 border-2 border-blue-500/30 shadow-lg"
+                      : "bg-linear-to-l from-orange-500/20 to-purple-500/20 border border-white/30 hover:border-blue-300/50"
                   }`}
                 >
                   <div className="flex items-center gap-3">
                     <div
                       className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-white text-lg transition-all duration-300 ${
                         selectedCustomer?.id === customer.id
-                          ? "bg-gradient-to-r from-blue-500 to-purple-500 shadow-lg"
-                          : "bg-gradient-to-r from-slate-400 to-slate-500"
+                          ? "bg-linear-to-r from-blue-500 to-purple-500 shadow-lg"
+                          : "bg-linear-to-r from-slate-400 to-slate-500"
                       }`}
                     >
                       {customer.firstname.charAt(0)}
@@ -87,7 +87,7 @@ export default function CustomerList({
           </div>
 
           {/* Pagination - Zentrale Komponente */}
-          <div className="flex-shrink-0 p-1 border-t border-slate-200/50 bg-transparent">
+          <div className="shrink-0 p-1 border-t border-slate-200/50 bg-transparent">
             <Pagination
               currentPage={pagination.currentPage}
               totalPages={pagination.totalPages}

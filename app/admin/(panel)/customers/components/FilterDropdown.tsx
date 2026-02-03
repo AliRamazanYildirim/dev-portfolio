@@ -38,7 +38,7 @@ export default function FilterDropdown({
       <button
         type="button"
         onClick={() => setOpen((s) => !s)}
-        className="w-full sm:w-auto bg-[#131313] text-white font-semibold rounded-lg px-3 py-1.5 text-sm shadow flex items-center gap-2 min-w-[110px] h-9"
+        className="w-full sm:w-auto bg-[#131313] text-white font-semibold rounded-lg px-3 py-1.5 text-sm shadow flex items-center gap-2 min-w-27.5 h-9"
       >
         <Filter className="w-4 h-4 text-white/70" />
         <span className="sm:hidden">Filter</span>
@@ -51,7 +51,7 @@ export default function FilterDropdown({
       </button>
 
       {open && (
-        <div className="absolute left-0 top-full mt-1 min-w-[220px] w-56 sm:w-64 bg-[#131313] rounded-lg shadow-lg border border-white/10 overflow-hidden z-50">
+        <div className="absolute left-0 top-full mt-1 min-w-55 w-56 sm:w-64 bg-[#131313] rounded-lg shadow-lg border border-white/10 overflow-hidden z-50">
           {options.map((opt) => (
             <button
               key={opt.value}

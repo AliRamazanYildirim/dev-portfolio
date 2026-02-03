@@ -62,15 +62,15 @@ const Pagination: React.FC<PaginationProps> = ({
     },
     admin: {
       container:
-        "backdrop-blur-lg bg-gradient-to-br from-[#eeede9]/95 to-[#eeede9]/90 border border-[#131313]/15 rounded-2xl shadow-2xl",
+        "backdrop-blur-lg bg-linear-to-br from-[#eeede9]/95 to-[#eeede9]/90 border border-[#131313]/15 rounded-2xl shadow-2xl",
       button: {
         base: "rounded-xl flex items-center justify-center border transition-all duration-300 hover:scale-105",
         disabled:
           "border-[#131313]/20 text-[#131313]/40 cursor-not-allowed hover:scale-100",
         enabled:
-          "border-[#131313]/30 text-[#131313] hover:bg-gradient-to-br hover:from-[#131313]/10 hover:to-[#131313]/5 hover:border-[#131313]/60 hover:shadow-lg",
+          "border-[#131313]/30 text-[#131313] hover:bg-linear-to-br hover:from-[#131313]/10 hover:to-[#131313]/5 hover:border-[#131313]/60 hover:shadow-lg",
         active:
-          "bg-gradient-to-br from-[#131313] to-[#131313]/90 text-white border-[#131313] shadow-xl hover:from-[#131313]/90 hover:to-[#131313]/80",
+          "bg-linear-to-br from-[#131313] to-[#131313]/90 text-white border-[#131313] shadow-xl hover:from-[#131313]/90 hover:to-[#131313]/80",
       },
       info: "text-gray font-medium",
       ellipsis: "text-[#131313]/60 font-medium",

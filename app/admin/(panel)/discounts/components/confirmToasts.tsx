@@ -14,7 +14,7 @@ export function confirmMarkPending(
           <div className="flex-1">
             Are you sure you want to mark this discount as pending again?
           </div>
-          <div className="flex-shrink-0 flex gap-2">
+          <div className="shrink-0 flex gap-2">
             <button
               onClick={async () => {
                 toast.dismiss(t.id);
@@ -58,7 +58,7 @@ export function confirmDelete(
             </span>
             ? This action cannot be undone.
           </div>
-          <div className="flex-shrink-0 flex gap-2">
+          <div className="shrink-0 flex gap-2">
             <button
               onClick={async () => {
                 toast.dismiss(t.id);

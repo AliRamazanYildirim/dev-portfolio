@@ -227,7 +227,7 @@ export default function InvoiceModal({
     <div className="fixed inset-0 bg-black/80 backdrop-blur-lg flex items-center justify-center p-2 sm:p-4 z-50">
       <div className="relative backdrop-blur-xl bg-white/95 border border-white/20 rounded-2xl sm:rounded-3xl shadow-2xl w-full max-w-sm sm:max-w-2xl lg:max-w-5xl max-h-[95vh] sm:max-h-[90vh] overflow-hidden">
         {/* Header */}
-        <div className="bg-gradient-to-r from-slate-900 to-slate-800 px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+        <div className="bg-linear-to-r from-slate-900 to-slate-800 px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-lg sm:text-xl lg:text-2xl text-white font-bold">
@@ -263,7 +263,7 @@ export default function InvoiceModal({
         <div className="px-4 sm:px-6 lg:px-8 py-6 overflow-y-auto max-h-[calc(95vh-300px)] sm:max-h-[calc(90vh-280px)]">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Customer Information */}
-            <div className="bg-gradient-to-r from-slate-50 to-gray-50 rounded-2xl p-4 border border-slate-200/50">
+            <div className="bg-linear-to-r from-slate-50 to-gray-50 rounded-2xl p-4 border border-slate-200/50">
               <h3 className="text-lg font-bold text-slate-900 mb-4">
                 Customer Information
               </h3>
@@ -334,7 +334,7 @@ export default function InvoiceModal({
             </div>
 
             {/* Project Information */}
-            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-4 border border-blue-200/50">
+            <div className="bg-linear-to-r from-blue-50 to-indigo-50 rounded-2xl p-4 border border-blue-200/50">
               <h3 className="text-lg font-bold text-blue-900 mb-4">
                 Project Information
               </h3>
@@ -378,7 +378,7 @@ export default function InvoiceModal({
             </div>
 
             {/* Category Selection */}
-            <div className="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-2xl p-4 border border-emerald-200/50">
+            <div className="bg-linear-to-r from-emerald-50 to-teal-50 rounded-2xl p-4 border border-emerald-200/50">
               <h3 className="text-lg font-bold text-emerald-900 mb-4">
                 Category Selection
               </h3>
@@ -410,7 +410,7 @@ export default function InvoiceModal({
             </div>
 
             {/* Duration Selection */}
-            <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl p-4 border border-amber-200/50">
+            <div className="bg-linear-to-r from-amber-50 to-orange-50 rounded-2xl p-4 border border-amber-200/50">
               <h3 className="text-lg font-bold text-amber-900 mb-4">
                 Project Duration
               </h3>
@@ -442,7 +442,7 @@ export default function InvoiceModal({
             </div>
 
             {/* Deliverables Selection */}
-            <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl p-4 border border-purple-200/50">
+            <div className="bg-linear-to-r from-purple-50 to-pink-50 rounded-2xl p-4 border border-purple-200/50">
               <h3 className="text-lg font-bold text-purple-900 mb-4">
                 Deliverables Selection
               </h3>
@@ -509,7 +509,7 @@ export default function InvoiceModal({
           <button
             onClick={handleSubmit}
             disabled={sending || formData.deliverables.length === 0}
-            className="w-full sm:w-auto px-6 sm:px-8 py-3 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl font-bold shadow-lg transition-all duration-200 hover:shadow-xl hover:scale-105 text-sm sm:text-base order-1 sm:order-2"
+            className="w-full sm:w-auto px-6 sm:px-8 py-3 bg-linear-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl font-bold shadow-lg transition-all duration-200 hover:shadow-xl hover:scale-105 text-sm sm:text-base order-1 sm:order-2"
           >
             {sending ? "Sending Invoice..." : "Generate & Send Invoice"}
           </button>
