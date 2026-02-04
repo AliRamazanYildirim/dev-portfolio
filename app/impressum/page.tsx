@@ -108,20 +108,23 @@ export default function ImpressumPage() {
                   itemType="https://schema.org/Person"
                   itemProp="author"
                 >
-                  <p
-                    className="font-semibold text-[#180a04]"
-                    itemProp="name"
-                  >
+                  <p className="font-semibold text-[#180a04]" itemProp="name">
                     {sections.provider.content.name}
                   </p>
-                  <p itemProp="jobTitle">{sections.provider.content.profession}</p>
-                  <p itemProp="streetAddress">{sections.provider.content.street}</p>
+                  <p itemProp="jobTitle">
+                    {sections.provider.content.profession}
+                  </p>
+                  <p itemProp="streetAddress">
+                    {sections.provider.content.street}
+                  </p>
                   <p>
                     <span itemProp="postalCode addressLocality">
                       {sections.provider.content.city}
                     </span>
                   </p>
-                  <p itemProp="addressCountry">{sections.provider.content.country}</p>
+                  <p itemProp="addressCountry">
+                    {sections.provider.content.country}
+                  </p>
                 </address>
               </div>
             </section>
@@ -200,12 +203,17 @@ export default function ImpressumPage() {
                   </dd>
                 </div>
                 <div>
-                  <dt className="font-medium">{sections.tax.taxNumber.label}</dt>
+                  <dt className="font-medium">
+                    {sections.tax.taxNumber.label}
+                  </dt>
                   <dd className="mt-1">
                     <span className="font-semibold text-[#180a04]">
                       {sections.tax.taxNumber.value}
                     </span>
-                    <span className="text-neutral-600"> ({sections.tax.taxNumber.office})</span>
+                    <span className="text-neutral-600">
+                      {" "}
+                      ({sections.tax.taxNumber.office})
+                    </span>
                   </dd>
                 </div>
               </dl>
@@ -221,11 +229,17 @@ export default function ImpressumPage() {
               </h2>
               <dl className="mt-4 space-y-4 text-base md:text-lg text-[#3a2018]">
                 <div>
-                  <dt className="font-medium">{sections.registration.activity.label}</dt>
-                  <dd className="mt-1">{sections.registration.activity.value}</dd>
+                  <dt className="font-medium">
+                    {sections.registration.activity.label}
+                  </dt>
+                  <dd className="mt-1">
+                    {sections.registration.activity.value}
+                  </dd>
                 </div>
                 <div>
-                  <dt className="font-medium">{sections.registration.authority.label}</dt>
+                  <dt className="font-medium">
+                    {sections.registration.authority.label}
+                  </dt>
                   <dd className="mt-1 text-neutral-600">
                     {sections.registration.authority.value}
                   </dd>
@@ -243,15 +257,21 @@ export default function ImpressumPage() {
               </h2>
               <dl className="mt-4 space-y-3 text-base md:text-lg text-[#3a2018]">
                 <div className="flex flex-col sm:flex-row sm:gap-2">
-                  <dt className="font-medium">{sections.insurance.provider.label}:</dt>
+                  <dt className="font-medium">
+                    {sections.insurance.provider.label}:
+                  </dt>
                   <dd>{sections.insurance.provider.value}</dd>
                 </div>
                 <div className="flex flex-col sm:flex-row sm:gap-2">
-                  <dt className="font-medium">{sections.insurance.address.label}:</dt>
+                  <dt className="font-medium">
+                    {sections.insurance.address.label}:
+                  </dt>
                   <dd>{sections.insurance.address.value}</dd>
                 </div>
                 <div className="flex flex-col sm:flex-row sm:gap-2">
-                  <dt className="font-medium">{sections.insurance.coverage.label}:</dt>
+                  <dt className="font-medium">
+                    {sections.insurance.coverage.label}:
+                  </dt>
                   <dd>{sections.insurance.coverage.value}</dd>
                 </div>
               </dl>
@@ -265,9 +285,13 @@ export default function ImpressumPage() {
               >
                 {sections.responsible.heading}
               </h2>
-              <p className="mt-2 text-sm text-neutral-600">{sections.responsible.note}</p>
+              <p className="mt-2 text-sm text-neutral-600">
+                {sections.responsible.note}
+              </p>
               <address className="mt-3 not-italic text-base md:text-lg text-[#3a2018]">
-                <p className="font-semibold text-[#180a04]">{sections.responsible.name}</p>
+                <p className="font-semibold text-[#180a04]">
+                  {sections.responsible.name}
+                </p>
                 <p>{sections.responsible.address}</p>
               </address>
             </section>
@@ -280,16 +304,16 @@ export default function ImpressumPage() {
               >
                 {sections.dispute.heading}
               </h2>
-              
+
               {/* ODR Platform Card */}
-              <div className="mt-6 relative overflow-hidden rounded-2xl border border-neutral-200 bg-gradient-to-br from-white to-neutral-50 p-6 md:p-8">
-                <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-blue-500/5 to-transparent rounded-bl-full" />
-                <div className="absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-tr from-[#c58d12]/5 to-transparent rounded-tr-full" />
-                
+              <div className="mt-6 relative overflow-hidden rounded-2xl border border-neutral-200 bg-linear-to-br from-white to-neutral-50 p-6 md:p-8">
+                <div className="absolute top-0 right-0 w-40 h-40 bg-linear-to-br from-blue-500/5 to-transparent rounded-bl-full" />
+                <div className="absolute bottom-0 left-0 w-32 h-32 bg-linear-to-tr from-[#c58d12]/5 to-transparent rounded-tr-full" />
+
                 <div className="relative z-10">
                   {/* Header with EU Icon */}
                   <div className="flex items-start gap-4 mb-5">
-                    <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500/10 to-blue-600/5 shrink-0">
+                    <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-linear-to-br from-blue-500/10 to-blue-600/5 shrink-0">
                       <svg
                         className="w-7 h-7 text-blue-600"
                         fill="none"
@@ -309,8 +333,8 @@ export default function ImpressumPage() {
                         {language === "de"
                           ? "Online-Streitbeilegung (OS)"
                           : language === "tr"
-                          ? "Çevrimiçi Uyuşmazlık Çözümü (ODR)"
-                          : "Online Dispute Resolution (ODR)"}
+                            ? "Çevrimiçi Uyuşmazlık Çözümü (ODR)"
+                            : "Online Dispute Resolution (ODR)"}
                       </h3>
                       <p className="text-sm text-neutral-600 mt-1">
                         {sections.dispute.intro}
@@ -319,11 +343,11 @@ export default function ImpressumPage() {
                   </div>
 
                   {/* ODR Link Button */}
-                  <a
+                    <a
                     href={sections.dispute.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group inline-flex items-center gap-3 px-5 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/25 hover:-translate-y-0.5"
+                    className="group inline-flex items-center gap-3 px-5 py-3 bg-linear-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/25 hover:-translate-y-0.5"
                   >
                     <svg
                       className="w-5 h-5"
@@ -338,7 +362,9 @@ export default function ImpressumPage() {
                         d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
                       />
                     </svg>
-                    <span className="font-medium">ec.europa.eu/consumers/odr</span>
+                    <span className="font-medium">
+                      ec.europa.eu/consumers/odr
+                    </span>
                     <svg
                       className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1"
                       fill="none"
@@ -346,14 +372,28 @@ export default function ImpressumPage() {
                       stroke="currentColor"
                       strokeWidth={2}
                     >
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
+                      />
                     </svg>
                   </a>
 
                   {/* Email Note */}
                   <p className="mt-4 text-sm text-neutral-500 flex items-center gap-2">
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={1.5}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"
+                      />
                     </svg>
                     {sections.dispute.note}
                   </p>
@@ -361,8 +401,8 @@ export default function ImpressumPage() {
               </div>
 
               {/* Participation Notice */}
-              <div className="mt-5 relative overflow-hidden rounded-2xl border-l-4 border-l-amber-500 border border-amber-200/50 bg-gradient-to-r from-amber-50 to-orange-50/50 p-5 md:p-6">
-                <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-amber-400/10 to-transparent rounded-bl-full" />
+              <div className="mt-5 relative overflow-hidden rounded-2xl border-l-4 border-l-amber-500 border border-amber-200/50 bg-linear-to-r from-amber-50 to-orange-50/50 p-5 md:p-6">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-linear-to-br from-amber-400/10 to-transparent rounded-bl-full" />
                 <div className="relative z-10 flex gap-4">
                   <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-amber-100 shrink-0">
                     <svg
@@ -384,8 +424,8 @@ export default function ImpressumPage() {
                       {language === "de"
                         ? "Hinweis zur Verbraucherschlichtung"
                         : language === "tr"
-                        ? "Tüketici Tahkimi Bildirimi"
-                        : "Consumer Arbitration Notice"}
+                          ? "Tüketici Tahkimi Bildirimi"
+                          : "Consumer Arbitration Notice"}
                     </h4>
                     <p className="text-sm md:text-base text-amber-800/90 leading-relaxed">
                       {sections.dispute.participation}
@@ -454,23 +494,26 @@ export default function ImpressumPage() {
             </section>
 
             {/* Related Links */}
-            <nav className="mt-16 pt-10 border-t border-neutral-200" aria-label="Related legal pages">
+            <nav
+              className="mt-16 pt-10 border-t border-neutral-200"
+              aria-label="Related legal pages"
+            >
               <h2 className="text-xl font-semibold text-[#180a04] mb-6">
                 {language === "de"
                   ? "Weitere rechtliche Informationen"
                   : language === "tr"
-                  ? "Diğer yasal bilgiler"
-                  : "More legal information"}
+                    ? "Diğer yasal bilgiler"
+                    : "More legal information"}
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 {/* Privacy Policy Card */}
                 <Link
                   href="/privacy"
-                  className="group relative overflow-hidden rounded-2xl border border-neutral-200 bg-gradient-to-br from-white to-neutral-50 p-6 transition-all duration-300 hover:shadow-xl hover:shadow-[#c58d12]/10 hover:border-[#c58d12]/30 hover:-translate-y-1"
+                  className="group relative overflow-hidden rounded-2xl border border-neutral-200 bg-linear-to-br from-white to-neutral-50 p-6 transition-all duration-300 hover:shadow-xl hover:shadow-[#c58d12]/10 hover:border-[#c58d12]/30 hover:-translate-y-1"
                 >
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#c58d12]/5 to-transparent rounded-bl-full transition-all duration-300 group-hover:w-40 group-hover:h-40" />
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-linear-to-br from-[#c58d12]/5 to-transparent rounded-bl-full transition-all duration-300 group-hover:w-40 group-hover:h-40" />
                   <div className="relative z-10">
-                    <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br from-[#c58d12]/10 to-[#c58d12]/5 mb-4 transition-all duration-300 group-hover:scale-110 group-hover:from-[#c58d12]/20 group-hover:to-[#c58d12]/10">
+                    <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-linear-to-br from-[#c58d12]/10 to-[#c58d12]/5 mb-4 transition-all duration-300 group-hover:scale-110 group-hover:from-[#c58d12]/20 group-hover:to-[#c58d12]/10">
                       <svg
                         className="w-6 h-6 text-[#c58d12]"
                         fill="none"
@@ -489,22 +532,22 @@ export default function ImpressumPage() {
                       {language === "de"
                         ? "Datenschutzerklärung"
                         : language === "tr"
-                        ? "Gizlilik Politikası"
-                        : "Privacy Policy"}
+                          ? "Gizlilik Politikası"
+                          : "Privacy Policy"}
                     </h3>
                     <p className="text-sm text-neutral-600 mb-4">
                       {language === "de"
                         ? "Erfahren Sie, wie wir Ihre Daten schützen und verarbeiten."
                         : language === "tr"
-                        ? "Verilerinizi nasıl koruduğumuzu ve işlediğimizi öğrenin."
-                        : "Learn how we protect and process your data."}
+                          ? "Verilerinizi nasıl koruduğumuzu ve işlediğimizi öğrenin."
+                          : "Learn how we protect and process your data."}
                     </p>
                     <span className="inline-flex items-center gap-2 text-sm font-medium text-[#c58d12] transition-all duration-300 group-hover:gap-3">
                       {language === "de"
                         ? "Mehr erfahren"
                         : language === "tr"
-                        ? "Daha fazla"
-                        : "Learn more"}
+                          ? "Daha fazla"
+                          : "Learn more"}
                       <svg
                         className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1"
                         fill="none"
@@ -512,7 +555,11 @@ export default function ImpressumPage() {
                         stroke="currentColor"
                         strokeWidth={2}
                       >
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
+                        />
                       </svg>
                     </span>
                   </div>
@@ -521,11 +568,11 @@ export default function ImpressumPage() {
                 {/* Terms & Conditions Card */}
                 <Link
                   href="/terms"
-                  className="group relative overflow-hidden rounded-2xl border border-neutral-200 bg-gradient-to-br from-white to-neutral-50 p-6 transition-all duration-300 hover:shadow-xl hover:shadow-[#c58d12]/10 hover:border-[#c58d12]/30 hover:-translate-y-1"
+                  className="group relative overflow-hidden rounded-2xl border border-neutral-200 bg-linear-to-br from-white to-neutral-50 p-6 transition-all duration-300 hover:shadow-xl hover:shadow-[#c58d12]/10 hover:border-[#c58d12]/30 hover:-translate-y-1"
                 >
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#c58d12]/5 to-transparent rounded-bl-full transition-all duration-300 group-hover:w-40 group-hover:h-40" />
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-linear-to-br from-[#c58d12]/5 to-transparent rounded-bl-full transition-all duration-300 group-hover:w-40 group-hover:h-40" />
                   <div className="relative z-10">
-                    <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br from-[#c58d12]/10 to-[#c58d12]/5 mb-4 transition-all duration-300 group-hover:scale-110 group-hover:from-[#c58d12]/20 group-hover:to-[#c58d12]/10">
+                    <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-linear-to-br from-[#c58d12]/10 to-[#c58d12]/5 mb-4 transition-all duration-300 group-hover:scale-110 group-hover:from-[#c58d12]/20 group-hover:to-[#c58d12]/10">
                       <svg
                         className="w-6 h-6 text-[#c58d12]"
                         fill="none"
@@ -544,22 +591,22 @@ export default function ImpressumPage() {
                       {language === "de"
                         ? "Allgemeine Geschäftsbedingungen"
                         : language === "tr"
-                        ? "Hizmet Şartları"
-                        : "Terms & Conditions"}
+                          ? "Hizmet Şartları"
+                          : "Terms & Conditions"}
                     </h3>
                     <p className="text-sm text-neutral-600 mb-4">
                       {language === "de"
                         ? "Unsere Geschäftsbedingungen und Servicerichtlinien."
                         : language === "tr"
-                        ? "Ticari koşullarımız ve hizmet politikalarımız."
-                        : "Our business terms and service policies."}
+                          ? "Ticari koşullarımız ve hizmet politikalarımız."
+                          : "Our business terms and service policies."}
                     </p>
                     <span className="inline-flex items-center gap-2 text-sm font-medium text-[#c58d12] transition-all duration-300 group-hover:gap-3">
                       {language === "de"
                         ? "Mehr erfahren"
                         : language === "tr"
-                        ? "Daha fazla"
-                        : "Learn more"}
+                          ? "Daha fazla"
+                          : "Learn more"}
                       <svg
                         className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1"
                         fill="none"
@@ -567,7 +614,11 @@ export default function ImpressumPage() {
                         stroke="currentColor"
                         strokeWidth={2}
                       >
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
+                        />
                       </svg>
                     </span>
                   </div>
