@@ -195,6 +195,8 @@ export const translations = {
             privacyAria: "Open the privacy policy page",
             termsLink: "Terms & Conditions",
             termsAria: "Open the terms and conditions page",
+            imprintLink: "Legal Notice",
+            imprintAria: "Open the legal notice page",
         },
         littleAbout: {
             heading: "A Little About Me -",
@@ -423,6 +425,8 @@ export const translations = {
             privacyAria: "Zur Datenschutzerklärung wechseln",
             termsLink: "AGB",
             termsAria: "Zu den Allgemeinen Geschäftsbedingungen wechseln",
+            imprintLink: "Impressum",
+            imprintAria: "Zum Impressum wechseln",
         },
         littleAbout: {
             heading: "Ein bisschen über mich -",
@@ -649,6 +653,8 @@ export const translations = {
             privacyAria: "Gizlilik politikası sayfasını aç",
             termsLink: "Hizmet Şartları",
             termsAria: "Hizmet şartları sayfasını aç",
+            imprintLink: "Yasal Bildirim",
+            imprintAria: "Yasal bildirim sayfasını aç",
         },
         littleAbout: {
             heading: "Biraz Benim Hakkımda  -",

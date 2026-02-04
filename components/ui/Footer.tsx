@@ -55,6 +55,14 @@ function Footer({ className }: { className?: string }) {
         <div className="mt-6 md:mt-0 flex flex-col items-center md:items-end gap-3 text-[#260a03]">
           <div className="flex flex-col md:flex-row items-center gap-3 md:gap-4">
             <Link
+              href="/impressum"
+              aria-label={footerDictionary.imprintAria}
+              className="inline-block rounded px-2 py-1.5 text-sm md:text-base hover:underline hover:text-gray transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-[#260a03]/30"
+            >
+              {footerDictionary.imprintLink}
+            </Link>
+            <span className="hidden md:inline text-gray">•</span>
+            <Link
               href="/privacy"
               aria-label={footerDictionary.privacyAria}
               className="inline-block rounded px-2 py-1.5 text-sm md:text-base hover:underline hover:text-gray transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-[#260a03]/30"
