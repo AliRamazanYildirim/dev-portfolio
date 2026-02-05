@@ -26,6 +26,8 @@ export const Nav = ({ className }: { className?: string }) => {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const submenuCloseTimer = React.useRef<number | null>(null);
   const submenuInside = React.useRef(false);
+  const langMenuCloseTimer = React.useRef<number | null>(null);
+  const langMenuInside = React.useRef(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [languageMenuOpen, setLanguageMenuOpen] = useState(false);
   const [solutionsOpen, setSolutionsOpen] = useState(false);
@@ -312,14 +314,28 @@ export const Nav = ({ className }: { className?: string }) => {
                   ))}
                 </div>
 
-                <div className="hidden lg:block relative">
+                <div
+                  className="hidden lg:block relative"
+                  onMouseEnter={() => {
+                    if (langMenuCloseTimer.current) {
+                      window.clearTimeout(langMenuCloseTimer.current);
+                      langMenuCloseTimer.current = null;
+                    }
+                    setLanguageMenuOpen(true);
+                  }}
+                  onMouseLeave={() => {
+                    langMenuCloseTimer.current = window.setTimeout(() => {
+                      if (!langMenuInside.current) setLanguageMenuOpen(false);
+                      langMenuCloseTimer.current = null;
+                    }, 100);
+                  }}
+                >
                   <button
                     className={`button lg:text-lgButton flex items-center gap-2 transition ${
                       isProjectsPage || isAdminPage
                         ? "text-white hover:text-white"
                         : "text-gray hover:text-black"
                     }`}
-                    onClick={toggleLanguageMenu}
                     aria-haspopup="true"
                     aria-expanded={languageMenuOpen}
                     aria-label={navDictionary.aria.language}
@@ -358,6 +374,20 @@ export const Nav = ({ className }: { className?: string }) => {
                         exit={{ opacity: 0, y: -6 }}
                         transition={{ duration: 0.15 }}
                         className="absolute right-0 top-full mt-2 w-40 rounded-md border border-none bg-[#dcdbd8]/20 py-2 shadow-lg backdrop-blur z-50 flex flex-col items-center"
+                        onMouseEnter={() => {
+                          langMenuInside.current = true;
+                          if (langMenuCloseTimer.current) {
+                            window.clearTimeout(langMenuCloseTimer.current);
+                            langMenuCloseTimer.current = null;
+                          }
+                        }}
+                        onMouseLeave={() => {
+                          langMenuInside.current = false;
+                          langMenuCloseTimer.current = window.setTimeout(() => {
+                            setLanguageMenuOpen(false);
+                            langMenuCloseTimer.current = null;
+                          }, 100);
+                        }}
                       >
                         {languages.map((lang) => (
                           <li key={lang.code}>
