@@ -7,7 +7,7 @@ import Link from "next/link";
 import SplitText from "@/TextAnimations/SplitText";
 import { footerItems } from "@/data";
 import ProcessExperienceModal from "@/components/sections/ProcessExperienceModal";
-import { ShimmerButton } from "@/registry/magicui/shimmer-button";
+import { ShimmerButton } from "@/components/registry/magicui/Shimmer-Button";
 import {
   heroTranslations,
   type HeroDictionary,
