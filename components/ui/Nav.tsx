@@ -91,9 +91,9 @@ export const Nav = ({ className }: { className?: string }) => {
   const noiseMode = isProjectsPage || isAdminPage ? "dark" : "light";
 
   const mobileMenuVariants = {
-    hidden: { opacity: 0, y: -20 },
-    visible: { opacity: 1, y: 0 },
-    exit: { opacity: 0, y: -20 },
+    hidden: { opacity: 0, y: 16, scale: 0.98 },
+    visible: { opacity: 1, y: 0, scale: 1 },
+    exit: { opacity: 0, y: 16, scale: 0.98 },
   };
 
   const maskStyle = (icon: string) => ({
@@ -417,7 +417,11 @@ export const Nav = ({ className }: { className?: string }) => {
                 </div>
 
                 <button
-                  className="lg:hidden text-gray focus:outline-none"
+                  className={`lg:hidden inline-flex items-center justify-center rounded-full border px-3 py-2 shadow-sm backdrop-blur-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9184a]/40 ${
+                    isProjectsPage || isAdminPage
+                      ? "border-white/30 bg-white/10 text-white hover:border-white/50"
+                      : "border-gray-200/80 bg-white/70 text-gray hover:border-gray-300"
+                  }`}
                   onClick={toggleMenu}
                   aria-label={navDictionary.aria.toggle}
                   aria-expanded={menuOpen}
@@ -450,7 +454,7 @@ export const Nav = ({ className }: { className?: string }) => {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.3 }}
-                  className="fixed inset-0 bg-black bg-opacity-50 z-40"
+                  className="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-40"
                   onClick={toggleMenu}
                 />
                 <motion.div
@@ -458,161 +462,172 @@ export const Nav = ({ className }: { className?: string }) => {
                   animate="visible"
                   exit="exit"
                   variants={mobileMenuVariants}
-                  transition={{ duration: 0.3, ease: "easeInOut" }}
-                  className="lg:hidden fixed top-0 left-0 w-full bg-white shadow-md z-50"
+                  transition={{ duration: 0.25, ease: "easeOut" }}
+                  className="lg:hidden fixed inset-0 z-50 flex items-start justify-center px-4 py-6 sm:py-10 landscape:py-4 overflow-y-auto"
+                  onClick={toggleMenu}
                 >
-                  <button
-                    className="absolute top-4 right-4 text-gray focus:outline-none"
-                    onClick={toggleMenu}
-                    aria-label={navDictionary.aria.close}
-                    type="button"
+                  <div
+                    className="relative w-full max-w-md landscape:max-w-3xl rounded-[28px] border border-white/70 bg-linear-to-b from-[#f7f5f0]/95 via-white/95 to-[#f0ece4]/95 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.35)] backdrop-blur-lg overflow-hidden"
+                    role="dialog"
+                    aria-modal="true"
+                    onClick={(event) => event.stopPropagation()}
                   >
-                    <svg
-                      className="w-6 h-6"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
+                    <div className="absolute inset-x-0 top-3 flex justify-center">
+                      <span className="h-1.5 w-10 rounded-full bg-black/10" />
+                    </div>
+                    <button
+                      className="absolute top-3 right-3 inline-flex items-center justify-center rounded-full border border-black/10 bg-white/80 p-2 text-gray shadow-sm transition hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9184a]/40"
+                      onClick={toggleMenu}
+                      aria-label={navDictionary.aria.close}
+                      type="button"
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M6 18L18 6M6 6l12 12"
-                      />
-                    </svg>
-                  </button>
-                  <ul className="flex flex-col items-center w-full gap-4 py-6 px-6">
-                    {navItems.map((item: any, idx: number) =>
-                      item.submenu ? (
-                        <li
-                          key={item.title}
-                          className="w-full flex flex-col items-center"
-                        >
-                          <button
-                            type="button"
-                            className={`button lg:text-lgButton ${
-                              isProjectsPage
-                                ? "text-gray hover:text-[#c9184a]"
-                                : "text-gray hover:text-black"
-                            } transition flex items-center justify-center gap-2 mx-auto`}
-                            onClick={() => setSolutionsOpen(!solutionsOpen)}
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M6 18L18 6M6 6l12 12"
+                        />
+                      </svg>
+                    </button>
+                    <ul className="flex flex-col items-center w-full max-w-105 gap-4 mt-3 px-6 pt-10 pb-8 mx-auto landscape:grid landscape:grid-cols-2 landscape:gap-3 landscape:place-items-center landscape:pt-8 landscape:pb-6 landscape:max-w-none landscape:mt-2">
+                      {navItems.map((item: any) =>
+                        item.submenu ? (
+                          <li
+                            key={item.title}
+                            className="w-full flex flex-col items-center landscape:col-span-2"
                           >
-                            <span>{item.title}</span>
-                            <svg
-                              className={`w-4 h-4 transition-transform ${
-                                solutionsOpen ? "rotate-180" : ""
+                            <button
+                              type="button"
+                              className={`button lg:text-lgButton transition flex items-center justify-center gap-2 mx-auto w-full max-w-85 rounded-full border border-white/80 bg-white/70 px-5 py-3 text-center shadow-sm backdrop-blur-sm hover:border-[#c9184a]/30 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9184a]/40 landscape:py-2.5 landscape:max-w-105 ${
+                                isProjectsPage
+                                  ? "text-gray hover:text-[#c9184a]"
+                                  : "text-gray hover:text-black"
                               }`}
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
+                              onClick={() => setSolutionsOpen(!solutionsOpen)}
                             >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M19 9l-7 7-7-7"
-                              />
-                            </svg>
-                          </button>
-                          <AnimatePresence>
-                            {solutionsOpen && (
-                              <motion.div
-                                initial={{ opacity: 0, height: 0 }}
-                                animate={{ opacity: 1, height: "auto" }}
-                                exit={{ opacity: 0, height: 0 }}
-                                transition={{ duration: 0.2 }}
-                                className="mt-3 space-y-2 overflow-hidden"
+                              <span>{item.title}</span>
+                              <svg
+                                className={`w-4 h-4 transition-transform ${
+                                  solutionsOpen ? "rotate-180" : ""
+                                }`}
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
                               >
-                                {item.submenu.map(
-                                  (solution: any, subIdx: number) => (
-                                    <Link
-                                      key={subIdx}
-                                      href={solution.href}
-                                      className="flex items-start gap-2 p-2 rounded-md transition group/item"
-                                      onClick={() => {
-                                        setMenuOpen(false);
-                                        setSolutionsOpen(false);
-                                      }}
-                                    >
-                                      <div className="shrink-0 mt-0.5 w-7 h-7 rounded-full bg-[#c58d12]/40 flex items-center justify-center">
-                                        <span
-                                          role="img"
-                                          aria-label={
-                                            solution.alt || solution.title
-                                          }
-                                          className="block w-4 h-4 bg-current text-gray-900 group-hover/item:text-[#c58d12] transition-colors"
-                                          style={maskStyle(solution.icon)}
-                                        />
-                                      </div>
-                                      <div className="flex-1">
-                                        <h4 className="text-xs font-semibold text-gray-900 group-hover/item:text-[#c58d12] transition">
-                                          {solution.title}
-                                        </h4>
-                                        <p className="text-xs text-gray-600 mt-0.5">
-                                          {solution.description}
-                                        </p>
-                                      </div>
-                                    </Link>
-                                  ),
-                                )}
-                              </motion.div>
-                            )}
-                          </AnimatePresence>
-                        </li>
-                      ) : (
-                        <li
-                          key={item.path}
-                          className="w-full flex justify-center"
-                        >
-                          <Link
-                            href={item.path || "#"}
-                            target={item.external ? "_blank" : undefined}
-                            rel={
-                              item.external ? "noopener noreferrer" : undefined
-                            }
-                            className={`button lg:text-lgButton ${
-                              isProjectsPage
-                                ? "text-gray hover:text-[#c9184a]"
-                                : "text-gray hover:text-black"
-                            } transition`}
-                            onClick={() => setMenuOpen(false)}
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth="2"
+                                  d="M19 9l-7 7-7-7"
+                                />
+                              </svg>
+                            </button>
+                            <AnimatePresence>
+                              {solutionsOpen && (
+                                <motion.div
+                                  initial={{ opacity: 0, height: 0 }}
+                                  animate={{ opacity: 1, height: "auto" }}
+                                  exit={{ opacity: 0, height: 0 }}
+                                  transition={{ duration: 0.2 }}
+                                  className="mt-3 grid gap-2 w-full max-w-105 rounded-2xl border border-white/80 bg-white/70 p-3 shadow-lg backdrop-blur-md overflow-hidden sm:grid-cols-2 landscape:mt-2 landscape:max-w-160"
+                                >
+                                  {item.submenu.map(
+                                    (solution: any, subIdx: number) => (
+                                      <Link
+                                        key={subIdx}
+                                        href={solution.href}
+                                        className="flex items-start gap-3 rounded-xl border border-transparent bg-white/70 p-3 transition group/item hover:border-[#c58d12]/40 hover:bg-white"
+                                        onClick={() => {
+                                          setMenuOpen(false);
+                                          setSolutionsOpen(false);
+                                        }}
+                                      >
+                                        <div className="shrink-0 mt-0.5 w-8 h-8 rounded-full bg-[#f1e8d1] flex items-center justify-center">
+                                          <span
+                                            role="img"
+                                            aria-label={
+                                              solution.alt || solution.title
+                                            }
+                                            className="block w-4 h-4 bg-current text-gray-900 group-hover/item:text-[#c58d12] transition-colors"
+                                            style={maskStyle(solution.icon)}
+                                          />
+                                        </div>
+                                        <div className="flex-1">
+                                          <h4 className="text-xs font-semibold text-gray-900 group-hover/item:text-[#c58d12] transition">
+                                            {solution.title}
+                                          </h4>
+                                          <p className="text-xs text-gray-600 mt-0.5">
+                                            {solution.description}
+                                          </p>
+                                        </div>
+                                      </Link>
+                                    ),
+                                  )}
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
+                          </li>
+                        ) : (
+                          <li
+                            key={item.path}
+                            className="w-full flex justify-center"
                           >
-                            {item.title}
-                          </Link>
-                        </li>
-                      ),
-                    )}
+                            <Link
+                              href={item.path || "#"}
+                              target={item.external ? "_blank" : undefined}
+                              rel={
+                                item.external ? "noopener noreferrer" : undefined
+                              }
+                              className={`button lg:text-lgButton transition w-full max-w-85 rounded-full border border-white/80 bg-white/70 px-5 py-3 text-center shadow-sm backdrop-blur-sm hover:border-[#c9184a]/30 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9184a]/40 landscape:py-2.5 landscape:max-w-75 ${
+                                isProjectsPage
+                                  ? "text-gray hover:text-[#c9184a]"
+                                  : "text-gray hover:text-black"
+                              }`}
+                              onClick={() => setMenuOpen(false)}
+                            >
+                              {item.title}
+                            </Link>
+                          </li>
+                        ),
+                      )}
 
-                    <li className="w-full border-t border-gray/20 pt-4">
-                      <div className="text-sm text-gray uppercase tracking-wide mb-2">
-                        {languageLabel}
-                      </div>
-                      <div className="flex flex-col gap-2">
-                        {languages.map((lang) => (
-                          <button
-                            key={lang.code}
-                            type="button"
-                            onClick={() => handleLanguageChange(lang.code)}
-                            className={`w-full rounded-md border px-4 py-2 text-sm transition ${
-                              language === lang.code
-                                ? "border-[#c9184a] text-[#c9184a] bg-[#c9184a]/10"
-                                : "border-gray-200 text-gray hover:border-gray-400"
-                            } flex items-center gap-2 justify-center`}
-                          >
-                            <Image
-                              src={lang.flag}
-                              alt={`${lang.label} flag`}
-                              width={18}
-                              height={12}
-                              className="h-3 w-4 rounded-sm object-cover"
-                            />
-                            {lang.label}
-                          </button>
-                        ))}
-                      </div>
-                    </li>
-                  </ul>
+                      <li className="w-full border-t border-black/10 pt-5 landscape:col-span-2 landscape:pt-4">
+                        <div className="text-[11px] font-semibold text-gray/70 uppercase tracking-[0.35em] text-center">
+                          {languageLabel}
+                        </div>
+                        <div className="mt-3 flex flex-col items-center gap-2 landscape:mt-2 landscape:flex-row landscape:flex-wrap landscape:justify-center">
+                          {languages.map((lang) => (
+                            <button
+                              key={lang.code}
+                              type="button"
+                              onClick={() => handleLanguageChange(lang.code)}
+                              className={`w-56 max-w-[80vw] rounded-full border px-4 py-2.5 text-sm transition shadow-sm backdrop-blur-sm landscape:w-40 landscape:py-2 ${
+                                language === lang.code
+                                  ? "border-[#c9184a] text-[#c9184a] bg-[#c9184a]/10"
+                                  : "border-white/80 bg-white/70 text-gray-700 hover:border-gray-300"
+                              } flex items-center gap-2 justify-center`}
+                            >
+                              <Image
+                                src={lang.flag}
+                                alt={`${lang.label} flag`}
+                                width={18}
+                                height={12}
+                                className="h-3 w-4 rounded-sm object-cover"
+                              />
+                              {lang.label}
+                            </button>
+                          ))}
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
                 </motion.div>
               </>
             )}
