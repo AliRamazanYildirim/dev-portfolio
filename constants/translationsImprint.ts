@@ -41,12 +41,12 @@ export const imprintTranslations = {
                 heading: "Tax Information",
                 vatId: {
                     label: "VAT ID (USt-IdNr.)",
-                    value: "DE347891234",
+                    value: "DEXXXXXXXX",
                     note: "VAT identification number according to § 27a UStG",
                 },
                 taxNumber: {
                     label: "Tax Number",
-                    value: "14/123/45678",
+                    value: "XX/XXX/XXXXX",
                     office: "Tax Office Achern",
                 },
             },
@@ -161,12 +161,12 @@ export const imprintTranslations = {
                 heading: "Steuerliche Angaben",
                 vatId: {
                     label: "Umsatzsteuer-ID (USt-IdNr.)",
-                    value: "DE347891234",
+                    value: "DEXXXXXXXX",
                     note: "Umsatzsteuer-Identifikationsnummer gemäß § 27a UStG",
                 },
                 taxNumber: {
                     label: "Steuernummer",
-                    value: "14/123/45678",
+                    value: "XX/XXX/XXXXX",
                     office: "Finanzamt Achern",
                 },
             },
@@ -281,12 +281,12 @@ export const imprintTranslations = {
                 heading: "Vergi Bilgileri",
                 vatId: {
                     label: "KDV Kimlik No (USt-IdNr.)",
-                    value: "DE347891234",
+                    value: "DEXXXXXXXX",
                     note: "§ 27a UStG kapsamında KDV kimlik numarası",
                 },
                 taxNumber: {
                     label: "Vergi Numarası",
-                    value: "14/123/45678",
+                    value: "XX/XXX/XXXXX",
                     office: "Achern Vergi Dairesi",
                 },
             },
