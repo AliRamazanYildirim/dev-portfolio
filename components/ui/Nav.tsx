@@ -140,12 +140,12 @@ export const Nav = ({ className }: { className?: string }) => {
             setHoveredIndex(index);
           }}
           onMouseLeave={() => {
-            // Start a short timeout before closing to allow pointer to move into dropdown
+            // Reset submenuInside and schedule close
+            submenuInside.current = false;
             submenuCloseTimer.current = window.setTimeout(() => {
-              // Only close if pointer not inside dropdown
-              if (!submenuInside.current) setHoveredIndex(null);
+              setHoveredIndex(null);
               submenuCloseTimer.current = null;
-            }, 100);
+            }, 150);
           }}
         >
           <button
@@ -174,13 +174,21 @@ export const Nav = ({ className }: { className?: string }) => {
             </svg>
           </button>
 
-          <AnimatePresence>
+          <AnimatePresence
+            onExitComplete={() => {
+              // Reset state when dropdown fully closes
+              submenuInside.current = false;
+            }}
+          >
             {hoveredIndex === index && (
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.15 }}
+                style={{
+                  pointerEvents: hoveredIndex === index ? "auto" : "none",
+                }}
                 className="absolute left-0 top-full mt-3 w-80 rounded-lg border border-gray-200 bg-white shadow-xl z-50 overflow-hidden"
                 onMouseEnter={() => {
                   // Pointer entered dropdown: cancel close and mark inside
@@ -196,7 +204,7 @@ export const Nav = ({ className }: { className?: string }) => {
                   submenuCloseTimer.current = window.setTimeout(() => {
                     setHoveredIndex(null);
                     submenuCloseTimer.current = null;
-                  }, 100);
+                  }, 150);
                 }}
               >
                 <div className="p-4 space-y-1">
@@ -325,10 +333,11 @@ export const Nav = ({ className }: { className?: string }) => {
                       setLanguageMenuOpen(true);
                     }}
                     onMouseLeave={() => {
+                      langMenuInside.current = false;
                       langMenuCloseTimer.current = window.setTimeout(() => {
-                        if (!langMenuInside.current) setLanguageMenuOpen(false);
+                        setLanguageMenuOpen(false);
                         langMenuCloseTimer.current = null;
-                      }, 100);
+                      }, 150);
                     }}
                   >
                     <button
@@ -369,13 +378,20 @@ export const Nav = ({ className }: { className?: string }) => {
                         />
                       </svg>
                     </button>
-                    <AnimatePresence>
+                    <AnimatePresence
+                      onExitComplete={() => {
+                        langMenuInside.current = false;
+                      }}
+                    >
                       {languageMenuOpen && (
                         <motion.ul
                           initial={{ opacity: 0, y: -6 }}
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0, y: -6 }}
                           transition={{ duration: 0.15 }}
+                          style={{
+                            pointerEvents: languageMenuOpen ? "auto" : "none",
+                          }}
                           className="absolute right-0 top-full mt-2 w-40 rounded-md border border-none bg-[#dcdbd8]/20 py-2 shadow-lg backdrop-blur z-50 flex flex-col items-center"
                           onMouseEnter={() => {
                             langMenuInside.current = true;
@@ -391,7 +407,7 @@ export const Nav = ({ className }: { className?: string }) => {
                                 setLanguageMenuOpen(false);
                                 langMenuCloseTimer.current = null;
                               },
-                              100,
+                              150,
                             );
                           }}
                         >
