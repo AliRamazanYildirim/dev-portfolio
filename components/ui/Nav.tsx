@@ -419,7 +419,7 @@ export const Nav = ({ className }: { className?: string }) => {
                                 className={`w-full px-4 py-2 text-center text-sm transition ${
                                   language === lang.code
                                     ? "font-semibold text-[#c9184a]"
-                                    : "text-gray-700"
+                                    : "text-black"
                                 } flex items-center gap-2 justify-center`}
                               >
                                 <Image
