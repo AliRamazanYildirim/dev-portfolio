@@ -13,12 +13,12 @@ const LittleAboutMe = () => {
 
   return (
     <section id="about-section" className="px-7 pt-12 md:pt-10 text-white">
-      <div className="container pb-12 mx-auto grid grid-cols-1 gap-4 md:grid-cols-2 md:pb-36 md:gap-0 items-start ">
+      <div className="container pb-12 mx-auto grid grid-cols-1 gap-4 lg:grid-cols-2 lg:pb-36 lg:gap-0 items-start landscape:max-lg:grid-cols-1 landscape:max-lg:gap-4">
         <div>
           <Header text={littleAbout.heading} />
           <Paragraph text={littleAbout.paragraphOne} />
         </div>
-        <div className="flex flex-col h-full md:pt-48">
+        <div className="flex flex-col h-full lg:pt-48">
           <Paragraph2 text={littleAbout.paragraphTwo} />
           <MoreAboutMe cta={littleAbout.cta} />
         </div>
@@ -29,7 +29,7 @@ const LittleAboutMe = () => {
 };
 
 const Header = ({ text }: { text: string }) => (
-  <h2 className="heading mb-5 md:text-lgHeading md:mb-16">
+  <h2 className="heading mb-5 lg:text-lgHeading lg:mb-16">
     <SplitText text={text} />
   </h2>
 );
@@ -41,7 +41,7 @@ const fadeInVariants = {
 
 const Paragraph = ({ text }: { text: string }) => (
   <motion.p
-    className="content md:pl-10 md:text-lgContent md:order-1"
+    className="content lg:pl-10 lg:text-lgContent lg:order-1"
     variants={fadeInVariants}
     initial="hidden"
     whileInView="visible"
@@ -54,7 +54,7 @@ const Paragraph = ({ text }: { text: string }) => (
 
 const Paragraph2 = ({ text }: { text: string }) => (
   <motion.p
-    className="content md:text-lgContent md:order-1 max-w-2xl lg:ml-auto"
+    className="content lg:text-lgContent lg:order-1 max-w-2xl lg:ml-auto"
     variants={fadeInVariants}
     initial="hidden"
     whileInView="visible"
@@ -91,7 +91,7 @@ const Icon: React.FC<IconProps> = ({
 
 const MoreAboutMe = ({ cta }: { cta: string }) => (
   <motion.div
-    className="flex pt-5 items-center text-gray group md:order-0 max-w-lg md:pl-24 md:pb-10"
+    className="flex pt-5 items-center text-gray group lg:order-0 max-w-lg lg:pl-24 lg:pb-10"
     variants={fadeInVariants}
     initial="hidden"
     whileInView="visible"
@@ -99,7 +99,7 @@ const MoreAboutMe = ({ cta }: { cta: string }) => (
     transition={{ duration: 2, ease: "easeOut" }}
   >
     <Link href="/about" passHref>
-      <span className="button text-white font-bold mr-2 md:text-lgButton hover:underline transition">
+      <span className="button text-white font-bold mr-2 lg:text-lgButton hover:underline transition">
         {cta}
       </span>
     </Link>
