@@ -24,7 +24,7 @@ const AboutPage = () => {
           <div className="container mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-12 items-center">
               <motion.div
-                className="md:col-span-8 pb-5 md:pb-40"
+                className="md:col-span-8 pb-5 md:pb-20"
                 initial={{ x: -50, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ duration: 0.8, ease: "easeOut" }}
@@ -83,14 +83,14 @@ const Header = ({
   lines: TranslationDictionary["aboutPage"]["headline"];
 }) => {
   const lineClasses = [
-    "block text-4xl md:text-8xl xl:text-[6.5rem]",
-    "block text-4xl md:text-8xl xl:text-[6.5rem]",
-    "block pl-12 md:pl-32 text-4xl md:text-8xl xl:text-[6.5rem]",
-    "block pl-12 md:pl-10 text-4xl md:text-8xl xl:text-[6.5rem]",
+    "block text-4xl sm:text-5xl lg:text-8xl xl:text-[6.5rem]",
+    "block text-4xl sm:text-5xl lg:text-8xl xl:text-[6.5rem]",
+    "block pl-12 md:pl-32 text-4xl sm:text-5xl lg:text-8xl xl:text-[6.5rem]",
+    "block pl-12 md:pl-10 text-4xl sm:text-5xl lg:text-8xl xl:text-[6.5rem]",
   ];
 
   return (
-    <header className="title pb-5 md:pb-20">
+    <header className="title pb-5 md:pb-5">
       {lines.map((line, index) => (
         <h1
           key={`${line}-${index}`}
@@ -104,7 +104,9 @@ const Header = ({
 };
 
 const Paragraph = ({ text }: { text: string }) => (
-  <p className="content md:text-lgContent text-gray italic">{text}</p>
+  <p className="content sm:text-lg lg:text-lgContent text-gray italic">
+    {text}
+  </p>
 );
 
 const Portrait = () => (
@@ -119,7 +121,7 @@ const Portrait = () => (
 );
 
 const Header2 = ({ text }: { text: string }) => (
-  <h2 className="heading md:text-lgHeading md:pb-10">
+  <h2 className="heading sm:text-4xl lg:text-lgHeading md:pb-10">
     <SplitText text={text} />
   </h2>
 );
@@ -136,12 +138,14 @@ const Interest = ({
         alt={data.alt}
         width={16}
         height={16}
-        className="md:w-8 md:h-8"
+        className="sm:w-6 sm:h-6 lg:w-8 lg:h-8"
       />
-      <h3 className="content2 text-gray md:text-lgContent2">{data.title}</h3>
+      <h3 className="content2 text-gray sm:text-xl lg:text-lgContent2">
+        {data.title}
+      </h3>
     </div>
 
-    <p className="content3 md:text-lgContent3">{data.description}</p>
+    <p className="content3 sm:text-lg lg:text-lgContent3">{data.description}</p>
   </div>
 );
 

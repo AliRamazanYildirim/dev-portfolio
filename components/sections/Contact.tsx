@@ -16,7 +16,7 @@ const Contact = () => {
 
   return (
     <NoiseBackground mode="light" intensity={0.1}>
-      <section id="contact" className="px-7 py-10 md:py-20">
+      <section id="contact" className="px-7 py-10 md:py-5">
         <div className="container mx-auto">
           <Header
             lineOne={contactDictionary.headingLineOne}
@@ -33,7 +33,7 @@ const Contact = () => {
 };
 
 const Header = ({ lineOne, lineTwo }: { lineOne: string; lineTwo: string }) => (
-  <h2 className="heading md:text-lgHeading mb-10 md:mb-20">
+  <h2 className="heading sm:text-4xl lg:text-lgHeading mb-10 md:mb-20">
     <SplitText text={lineOne} />
     <SplitText text={lineTwo} />
   </h2>
@@ -54,7 +54,7 @@ const ContactForm = ({
   const [error, setError] = useState("");
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -151,7 +151,7 @@ const ContactForm = ({
                 type="text"
                 name="name"
                 placeholder={contactDictionary.placeholders.name}
-                className="content w-full bg-transparent border-none text-lg placeholder-[#260a03] focus:outline-none focus:ring-0 md:text-lgContent"
+                className="content w-full bg-transparent border-none text-lg placeholder-[#260a03] focus:outline-none focus:ring-0 sm:text-xl lg:text-lgContent"
                 value={formData.name ?? ""}
                 onChange={handleChange}
                 required
@@ -163,7 +163,7 @@ const ContactForm = ({
                 type="email"
                 name="email"
                 placeholder={contactDictionary.placeholders.email}
-                className="content w-full bg-transparent border-none text-lg placeholder-[#260a03] focus:outline-none focus:ring-0 md:text-lgContent"
+                className="content w-full bg-transparent border-none text-lg placeholder-[#260a03] focus:outline-none focus:ring-0 sm:text-xl lg:text-lgContent"
                 value={formData.email ?? ""}
                 onChange={handleChange}
                 required
@@ -175,7 +175,7 @@ const ContactForm = ({
               <textarea
                 name="message"
                 placeholder={contactDictionary.placeholders.message}
-                className="content w-full bg-transparent border-none text-lg placeholder-[#260a03] focus:outline-none focus:ring-0 md:text-lgContent"
+                className="content w-full bg-transparent border-none text-lg placeholder-[#260a03] focus:outline-none focus:ring-0 sm:text-xl lg:text-lgContent"
                 value={formData.message ?? ""}
                 onChange={handleChange}
                 required
