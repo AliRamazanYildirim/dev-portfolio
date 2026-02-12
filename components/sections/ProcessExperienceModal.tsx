@@ -30,6 +30,8 @@ export default function ProcessExperienceModal({
   const steps = content?.steps ?? [];
   const [activeIndex, setActiveIndex] = useState(0);
   const [isMobileCarousel, setIsMobileCarousel] = useState(false);
+  const [isLandscapeMobileViewport, setIsLandscapeMobileViewport] =
+    useState(false);
 
   useEffect(() => {
     if (!open) {
@@ -64,14 +66,23 @@ export default function ProcessExperienceModal({
   }, [steps.length]);
 
   useEffect(() => {
-    const mediaQuery = window.matchMedia("(max-width: 767px)");
-    const handleChange = () => setIsMobileCarousel(mediaQuery.matches);
+    const mobileWidthQuery = window.matchMedia("(max-width: 767px)");
+    const landscapeMobileQuery = window.matchMedia(
+      "(hover: none) and (pointer: coarse) and (orientation: landscape) and (max-height: 500px)"
+    );
+    const handleChange = () => {
+      const isLandscapeMobile = landscapeMobileQuery.matches;
+      setIsLandscapeMobileViewport(isLandscapeMobile);
+      setIsMobileCarousel(mobileWidthQuery.matches || isLandscapeMobile);
+    };
 
     handleChange();
-    mediaQuery.addEventListener("change", handleChange);
+    mobileWidthQuery.addEventListener("change", handleChange);
+    landscapeMobileQuery.addEventListener("change", handleChange);
 
     return () => {
-      mediaQuery.removeEventListener("change", handleChange);
+      mobileWidthQuery.removeEventListener("change", handleChange);
+      landscapeMobileQuery.removeEventListener("change", handleChange);
     };
   }, []);
 
@@ -113,7 +124,9 @@ export default function ProcessExperienceModal({
     <AnimatePresence>
       {open && (
         <motion.div
-          className="fixed inset-0 z-999 flex items-start justify-center overflow-y-auto bg-[#090604]/80 backdrop-blur-md md:items-center"
+          className={`fixed inset-0 z-999 flex items-start justify-center overflow-y-auto bg-[#090604]/80 backdrop-blur-md ${
+            isLandscapeMobileViewport ? "py-3" : "md:items-center"
+          }`}
           role="dialog"
           aria-modal="true"
           aria-labelledby="process-modal-title"
@@ -125,7 +138,11 @@ export default function ProcessExperienceModal({
           onClick={onClose}
         >
           <motion.div
-            className="relative w-[min(980px,calc(100vw-3rem))] overflow-hidden rounded-3xl border border-white/10 bg-linear-to-br from-[#1a1006] via-[#24160a] to-[#321c0b] text-white shadow-2xl md:h-[90vh]"
+            className={`relative w-[min(980px,calc(100vw-3rem))] rounded-3xl border border-white/10 bg-linear-to-br from-[#1a1006] via-[#24160a] to-[#321c0b] text-white shadow-2xl ${
+              isLandscapeMobileViewport
+                ? "max-h-[94dvh] overflow-y-auto"
+                : "overflow-hidden md:h-[90vh]"
+            }`}
             variants={containerVariants}
             transition={{ duration: 0.35, ease: "easeOut" }}
             onClick={(event) => event.stopPropagation()}
@@ -136,7 +153,11 @@ export default function ProcessExperienceModal({
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.1),transparent_55%)]" />
             </div>
 
-            <div className="relative z-10 flex h-full flex-col">
+            <div
+              className={`relative z-10 flex flex-col ${
+                isLandscapeMobileViewport ? "h-auto" : "h-full"
+              }`}
+            >
               <header className="border-b border-white/10 px-4 py-4 md:px-8 md:pb-6 md:pt-8">
                 <div className="flex items-start justify-between gap-6">
                   <div className="space-y-3">
@@ -166,7 +187,7 @@ export default function ProcessExperienceModal({
                 <div className="absolute right-8 top-0 bottom-0 w-px bg-linear-to-b from-transparent via-white/20 to-transparent" />
 
                 <div className="relative z-10 flex h-full flex-col gap-3">
-                  <div className="hidden space-y-4 md:block">
+                  <div className={`${isMobileCarousel ? "hidden" : "block"} space-y-4`}>
                     <div className="flex items-center justify-between gap-3">
                       <span className="text-xs uppercase tracking-[0.45em] text-[#f6c268]">
                         {activeStep.stage}
@@ -194,7 +215,11 @@ export default function ProcessExperienceModal({
                     </h3>
                   </div>
 
-                  <div className="relative hidden flex-1 overflow-hidden md:block">
+                  <div
+                    className={`relative flex-1 overflow-hidden ${
+                      isMobileCarousel ? "hidden" : "block"
+                    }`}
+                  >
                     <AnimatePresence mode="wait">
                       <motion.div
                         key={activeStep.title}
@@ -268,7 +293,7 @@ export default function ProcessExperienceModal({
                     </AnimatePresence>
                   </div>
 
-                  <div className="md:hidden">
+                  <div className={isMobileCarousel ? "block" : "hidden"}>
                     <div className="-mx-4 px-4">
                       <div className="overflow-hidden">
                         <motion.div
