@@ -8,8 +8,15 @@ export const metadata: Metadata = {
   title: "Ali Ramazan Portfolio",
   description: "Ali Ramazan's Portfolio",
   icons: {
-    icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
-    shortcut: "/ali-ramazan-yildirim-white.svg",
+    icon: [
+      { url: "/ali-ramazan-yildirim-white-favicon.svg", type: "image/svg+xml" },
+    ],
+    shortcut: [
+      { url: "/ali-ramazan-yildirim-white-favicon.svg", type: "image/svg+xml" },
+    ],
+    apple: [
+      { url: "/ali-ramazan-yildirim-white-favicon.svg", type: "image/svg+xml" },
+    ],
   },
 };
 
