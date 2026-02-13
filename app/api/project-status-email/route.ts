@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
 import { buildMailPayload, createProjectStatusTransporter } from "./lib/mailer";
-import { ensureAuthenticated, buildBaseUrl } from "./lib/request";
+import { buildBaseUrl } from "./lib/request";
 import { buildLogoAttachment } from "./lib/logo";
 import type { ProjectStatusPayload } from "./lib/types";
+
+// Auth is enforced by middleware.ts — no manual token check needed here.
 
 export async function POST(req: Request) {
   try {
@@ -12,14 +14,6 @@ export async function POST(req: Request) {
       return NextResponse.json(
         { success: false, error: "Missing client information" },
         { status: 400 }
-      );
-    }
-
-    const decoded = ensureAuthenticated(req);
-    if (!decoded) {
-      return NextResponse.json(
-        { success: false, error: "Not authenticated" },
-        { status: 401 }
       );
     }
 
