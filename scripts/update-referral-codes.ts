@@ -1,4 +1,4 @@
-import { db } from "../lib/db";
+import { customerRepository } from "../lib/repositories";
 
 // Mevcut müşterilere referans kodları oluştur
 const generateReferralCode = () => {
@@ -15,7 +15,7 @@ async function updateReferralCodes() {
     console.log("Mevcut müşteriler alınıyor...");
 
     // Referans kodu olmayan müşterileri getir (Prisma)
-    const customers = await db.customer.findMany({ where: { myReferralCode: null }, select: { id: true, firstname: true, lastname: true } });
+    const customers = await customerRepository.findMany({ where: { myReferralCode: null }, select: { id: true, firstname: true, lastname: true } });
     if (!customers || customers.length === 0) {
       console.log("Referans kodu olmayan müşteri bulunamadı.");
       return;
@@ -31,7 +31,7 @@ async function updateReferralCodes() {
       // Benzersizlik kontrolü
       let attempts = 0;
       while (attempts < 10) {
-        const existing = await db.customer.findUnique({ where: { myReferralCode } });
+        const existing = await customerRepository.findUnique({ where: { myReferralCode } });
         if (!existing) break;
 
         myReferralCode = generateReferralCode();
@@ -47,7 +47,7 @@ async function updateReferralCodes() {
 
       // Müşteriyi güncelle
       try {
-        await db.customer.update({ where: { id: customer.id }, data: { myReferralCode, referralCount: 0, totalEarnings: 0, updatedAt: new Date() } });
+        await customerRepository.update({ where: { id: customer.id }, data: { myReferralCode, referralCount: 0, totalEarnings: 0, updatedAt: new Date() } });
         console.log(`✓ ${customer.firstname} ${customer.lastname} - Kod: ${myReferralCode}`);
       } catch (e) {
         console.error(`${customer.firstname} ${customer.lastname} güncellenemedi:`, e);

@@ -1,4 +1,4 @@
-import db from "@/lib/db";
+import { customerRepository } from "@/lib/repositories";
 
 interface ValidateReferralInput {
     referralCode: string;
@@ -42,7 +42,7 @@ function computeDiscount(basePrice: number, referralCount: number): DiscountResu
 }
 
 async function findReferrerByCode(referralCode: string) {
-    return db.customer.findUnique({ where: { myReferralCode: referralCode } });
+    return customerRepository.findUnique({ where: { myReferralCode: referralCode } });
 }
 
 export async function validateReferral(

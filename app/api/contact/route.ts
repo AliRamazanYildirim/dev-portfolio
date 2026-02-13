@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-// rate-limiter RPC çağrısı artık doğrudan Prisma ile yapılacak
-import { db } from "@/lib/db";
+import { contactRepository } from "@/lib/repositories";
 import { randomUUID } from "crypto";
 import { getIpFromHeaders } from "@/lib/ip";
 import { checkRateLimitKey } from "@/lib/mongoRateLimiter";
@@ -71,7 +70,7 @@ export async function POST(request: NextRequest) {
     }
 
     const id = randomUUID();
-    const inserted = await db.contactMessage.create({ data: { id, name, email, message, createdAt: new Date() } });
+    const inserted = await contactRepository.create({ data: { id, name, email, message, createdAt: new Date() } });
     const res = NextResponse.json({ success: true, data: inserted, message: "Message sent successfully" }, { status: 201 });
     attachRLHeaders(res, rl.meta);
     return res;
@@ -101,7 +100,7 @@ export async function GET(request: NextRequest) {
 
     const where: any = {};
     if (unreadOnly) where.read = false;
-    const query = await db.contactMessage.findMany({ where, orderBy: { createdAt: 'desc' }, take: limit || undefined });
+    const query = await contactRepository.findMany({ where, orderBy: { createdAt: 'desc' }, take: limit || undefined });
     const res = NextResponse.json({ success: true, data: query ?? [], count: query?.length ?? 0 });
     attachRLHeaders(res, rl.meta);
     return res;

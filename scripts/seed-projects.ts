@@ -1,4 +1,3 @@
-import { db } from '../lib/db'
 import ProjectModel from '@/models/Project'
 import ProjectImageModel from '@/models/ProjectImage'
 import { connectToMongo } from '@/lib/mongodb'
