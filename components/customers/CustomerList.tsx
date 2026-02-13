@@ -1,4 +1,4 @@
-import { Customer } from "@/services/customerService";
+import type { Customer } from "@/types/customer";
 import NoiseBackground from "@/components/NoiseBackground";
 import Pagination from "@/components/ui/Pagination";
 import { UsePaginationReturn } from "@/hooks/usePagination";

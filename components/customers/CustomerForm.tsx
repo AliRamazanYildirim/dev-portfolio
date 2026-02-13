@@ -1,4 +1,4 @@
-import { Customer } from "@/services/customerService";
+import type { Customer } from "@/types/customer";
 import { useMemo, useState } from "react";
 
 interface CustomerFormProps {

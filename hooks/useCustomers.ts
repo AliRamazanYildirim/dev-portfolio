@@ -1,10 +1,8 @@
 import { useState, useEffect } from "react";
-import {
-  customerService,
-  Customer,
-  FetchCustomersOptions,
-} from "@/services/customerService";
+import { customerService } from "@/services/customerService";
+import type { Customer, FetchCustomersOptions } from "@/types/customer";
 import { usePagination } from "./usePagination";
+import toast from "react-hot-toast";
 
 export const useCustomers = () => {
   const [customers, setCustomers] = useState<Customer[]>([]);
@@ -84,11 +82,27 @@ export const useCustomers = () => {
     customerData: Partial<Customer>,
     editingCustomer?: Customer | null
   ) => {
-    const saved = await customerService.saveCustomer(
-      customerData,
-      editingCustomer
-    );
-    // Refresh list only when server returned a saved customer
+    const promise = customerService.saveCustomer(customerData, editingCustomer);
+
+    const saved = await toast.promise(promise, {
+      loading: editingCustomer ? "Updating..." : "Saving...",
+      success: editingCustomer
+        ? "The customer has been updated!"
+        : "The customer has been saved!",
+      error: (e) => {
+        const msg = e instanceof Error ? e.message : "The process has failed.";
+        const lower = msg.toLowerCase();
+        if (
+          lower.includes("duplicate") ||
+          lower.includes("e11000") ||
+          lower.includes("email_1")
+        ) {
+          return "A customer with this email already exists.";
+        }
+        return msg;
+      },
+    });
+
     if (saved) {
       await fetchCustomers();
     }
@@ -96,7 +110,11 @@ export const useCustomers = () => {
   };
 
   const deleteCustomer = async (id: string) => {
-    await customerService.deleteCustomer(id);
+    await toast.promise(customerService.deleteCustomer(id), {
+      loading: "Will be deleted...",
+      success: "Customer has been deleted!",
+      error: (e) => (e instanceof Error ? e.message : "Deletion failed"),
+    });
     fetchCustomers();
   };
 

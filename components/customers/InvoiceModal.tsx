@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { Customer } from "@/services/customerService";
+import type { Customer } from "@/types/customer";
 import { INVOICE_CONSTANTS } from "@/constants/invoice";
 import { InvoiceService } from "@/services/invoiceService";
 import toast from "react-hot-toast";

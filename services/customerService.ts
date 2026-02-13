@@ -1,32 +1,6 @@
-import toast from "react-hot-toast";
+import type { Customer, FetchCustomersOptions } from "@/types/customer";
 
-export interface Customer {
-  id: string;
-  firstname: string;
-  lastname: string;
-  companyname: string;
-  email: string;
-  phone: string;
-  address: string;
-  projectStatus?: 'gestart' | 'in-vorbereitung' | 'abgeschlossen';
-  city?: string;
-  postcode?: string;
-  reference: string;
-  price?: number | null;
-  finalPrice?: number | null;
-  discountRate?: number | null;
-  myReferralCode?: string;
-  referralCount?: number;
-  totalEarnings?: number;
-  created_at?: string | null;
-}
-
-export interface FetchCustomersOptions {
-  sort?: string;
-  from?: string;
-  to?: string;
-  q?: string;
-}
+export type { Customer, FetchCustomersOptions };
 
 export const customerService = {
   async fetchCustomers(opts?: FetchCustomersOptions): Promise<Customer[]> {
@@ -87,54 +61,20 @@ export const customerService = {
         } as Customer;
       }
 
-      // Server versendet Referrer-Mail jetzt direkt via Nodemailer.
-      if (!editingCustomer && json.referrerEmail) {
-        toast.success("Referrer wurde per E-Mail benachrichtigt.");
-      }
-
-      return editingCustomer
-        ? "The customer has been updated!"
-        : "The customer has been saved!";
+      return savedCustomer;
     })();
 
-    await toast.promise(promise, {
-      loading: editingCustomer ? "Updating..." : "Saving...",
-      success: (msg) => (typeof msg === "string" ? msg : "Successful"),
-      error: (e) => {
-        const msg = e instanceof Error ? e.message : "The process has failed.";
-        const lower = String(msg).toLowerCase();
-        if (
-          lower.includes("duplicate") ||
-          lower.includes("e11000") ||
-          lower.includes("duplicate key") ||
-          lower.includes("email_1")
-        ) {
-          return "A customer with this email already exists.";
-        }
-        return msg;
-      },
-    });
-
-    return savedCustomer;
+    return await promise;
   },
 
   async deleteCustomer(id: string): Promise<void> {
-    const promise = (async () => {
-      const res = await fetch(`/api/admin/customers/${id}`, {
-        method: "DELETE",
-      });
-      const json = await res.json();
-      if (!res.ok || !json.success) {
-        throw new Error(json?.error || `HTTP ${res.status}`);
-      }
-      return "Customer has been deleted!";
-    })();
-
-    await toast.promise(promise, {
-      loading: "Will be deleted...",
-      success: (msg) => (typeof msg === "string" ? msg : "Deleted"),
-      error: (e) => (e instanceof Error ? e.message : "Deletion failed"),
+    const res = await fetch(`/api/admin/customers/${id}`, {
+      method: "DELETE",
     });
+    const json = await res.json();
+    if (!res.ok || !json.success) {
+      throw new Error(json?.error || `HTTP ${res.status}`);
+    }
   },
 
   async validateReferralCode(code: string, basePrice: string) {
@@ -153,20 +93,15 @@ export const customerService = {
       const result = await response.json();
 
       if (result.success) {
-        toast.success(
-          `Valid reference code! ${result.data.discount.rate}% discount will be applied`
-        );
         return {
           isValid: true,
           referrerName: result.data.referrer.name,
           discount: result.data.discount,
         };
       } else {
-        toast.error("Invalid reference code");
         return { isValid: false, error: result.error };
       }
-    } catch (error) {
-      toast.error("Reference code could not be verified");
+    } catch {
       return {
         isValid: false,
         error: "An error occurred while checking the reference code.",
@@ -185,12 +120,9 @@ export const customerService = {
     });
 
     const result = await response.json();
-    if (result.success && result.data) {
-      toast.success(`Referral code sent! Code: ${result.data.referralCode}`);
-      return;
+    if (!result.success || !result.data) {
+      throw new Error(result.error || "Email could not be sent");
     }
-    toast.error(
-      "Email could not be sent: " + (result.error || "Unknown error")
-    );
+    return result.data;
   },
 };

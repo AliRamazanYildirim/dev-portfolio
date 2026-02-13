@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { customerService, Customer } from "@/services/customerService";
+import { customerService } from "@/services/customerService";
+import type { Customer } from "@/types/customer";
 import toast from "react-hot-toast";
 
 export const useCustomerForm = (onFieldChange?: (field: string, value: string) => void) => {
@@ -43,8 +44,16 @@ export const useCustomerForm = (onFieldChange?: (field: string, value: string) =
   };
 
   const validateReferralCode = async (code: string, price: string) => {
-    const result = await customerService.validateReferralCode(code, price);
-    setReferralValidation(result);
+    try {
+      const result = await customerService.validateReferralCode(code, price);
+      setReferralValidation(result);
+      if (result?.isValid) {
+        toast.success(`Referral code applied! ${result.discount ?? 0}% discount`);
+      }
+    } catch {
+      toast.error("Error validating referral code");
+      setReferralValidation(null);
+    }
   };
 
   const validateForm = (customers: Customer[]) => {

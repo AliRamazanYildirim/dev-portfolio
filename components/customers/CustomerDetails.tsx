@@ -1,4 +1,5 @@
-import { Customer, customerService } from "@/services/customerService";
+import type { Customer } from "@/types/customer";
+import { customerService } from "@/services/customerService";
 import NoiseBackground from "@/components/NoiseBackground";
 import { useInvoiceGenerator } from "@/hooks/useInvoiceGenerator";
 import { useRouter } from "next/navigation";

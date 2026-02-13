@@ -1,4 +1,4 @@
-import { Customer } from "./customerService";
+import type { Customer } from "@/types/customer";
 import { InvoiceData } from "@/lib/invoiceUtils";
 import { INVOICE_CONSTANTS } from "@/constants/invoice";
 import { calcDiscountedPrice } from "@/app/api/admin/customers/lib/referral";

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Customer } from "@/services/customerService";
+import type { Customer } from "@/types/customer";
 import { InvoiceService } from "@/services/invoiceService";
 import toast from "react-hot-toast";
 
