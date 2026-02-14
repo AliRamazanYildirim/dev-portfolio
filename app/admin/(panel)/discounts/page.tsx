@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { FileText } from "lucide-react";
 
-import NoiseBackground from "@/components/NoiseBackground";
-import { useAdminAuth } from "@/hooks/useAdminAuth";
+import NoiseBackground from "@/components/ui/NoiseBackground";
+import { useAdminAuth } from "../hooks/useAdminAuth";
 import { useDiscounts } from "./hooks/useDiscounts";
 
 import { DiscountFilters } from "./components/DiscountFilters";

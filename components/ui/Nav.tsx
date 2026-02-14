@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import NoiseBackground from "../NoiseBackground";
+import NoiseBackground from "./NoiseBackground";
 import Image from "next/image";
 import { useTranslation } from "@/hooks/useTranslation";
 import type { SupportedLanguage } from "@/contexts/LanguageContext";

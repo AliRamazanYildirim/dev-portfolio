@@ -4,7 +4,7 @@ import { useCallback } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
-import NoiseBackground from "@/components/NoiseBackground";
+import NoiseBackground from "@/components/ui/NoiseBackground";
 import {
   LayoutDashboard,
   LineChart,

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useParams } from "next/navigation";
-import NoiseBackground from "@/components/NoiseBackground";
+import NoiseBackground from "@/components/ui/NoiseBackground";
 import { useTranslation } from "@/hooks/useTranslation";
 import { getLocalizedText, type Locales } from "../lib/getLocalizedText";
 import { useProject } from "./hooks/useProject";
@@ -90,7 +90,7 @@ const ProjectPage = () => {
             projectTexts={projectTexts}
             description={getLocalizedText(
               (project as ProjectDetail).description as any,
-              language as Locales
+              language as Locales,
             )}
           />
 

@@ -3,7 +3,7 @@
 import React from "react";
 import MarqueeItem from "@/components/ui/MarqueeItem";
 import PremiumSeparator from "@/components/ui/PremiumSeparator";
-import SplitText from "@/TextAnimations/SplitText";
+import SplitText from "@/components/animations/SplitText";
 import { useTranslation } from "@/hooks/useTranslation";
 
 const PartnersMarquee: React.FC = () => {

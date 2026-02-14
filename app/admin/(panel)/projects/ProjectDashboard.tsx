@@ -1,11 +1,11 @@
 "use client";
 
 import { FormEvent, useEffect, useRef } from "react";
-import NoiseBackground from "@/components/NoiseBackground";
+import NoiseBackground from "@/components/ui/NoiseBackground";
 import useConfirmDelete from "./hooks/useConfirmDelete";
-import { useAdminAuth } from "@/hooks/useAdminAuth";
+import { useAdminAuth } from "../hooks/useAdminAuth";
 import { usePagination } from "@/hooks/usePagination";
-import { useAdminSidebar } from "@/hooks/useAdminSidebar";
+import { useAdminSidebar } from "../hooks/useAdminSidebar";
 import { INVOICE_CONSTANTS } from "@/constants/invoice";
 import { useProjects } from "./hooks/useProjects";
 import { useProjectForm } from "./hooks/useProjectForm";

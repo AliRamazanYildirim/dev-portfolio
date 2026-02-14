@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import NoiseBackground from "../NoiseBackground";
-import SplitText from "@/TextAnimations/SplitText";
+import NoiseBackground from "../ui/NoiseBackground";
+import SplitText from "@/components/animations/SplitText";
 import toast from "react-hot-toast";
 import ContactInfo from "./ContactInfo";
 import { useTranslation } from "@/hooks/useTranslation";

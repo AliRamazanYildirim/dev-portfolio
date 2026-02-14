@@ -1,6 +1,6 @@
 "use client";
 
-import NoiseBackground from "@/components/NoiseBackground";
+import NoiseBackground from "@/components/ui/NoiseBackground";
 import { useTranslation } from "@/hooks/useTranslation";
 import {
   privacyTranslations,
@@ -10,7 +10,7 @@ import {
 type PrivacySection = PrivacyDictionary["sections"][number];
 
 function hasParagraphs(
-  section: PrivacySection
+  section: PrivacySection,
 ): section is PrivacySection & { paragraphs: ReadonlyArray<string> } {
   return (
     "paragraphs" in section &&
@@ -19,7 +19,7 @@ function hasParagraphs(
 }
 
 function hasBullets(
-  section: PrivacySection
+  section: PrivacySection,
 ): section is PrivacySection & { bullets: ReadonlyArray<string> } {
   return (
     "bullets" in section &&

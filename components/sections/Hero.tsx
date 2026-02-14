@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import SplitText from "@/TextAnimations/SplitText";
+import SplitText from "@/components/animations/SplitText";
 import { footerItems } from "@/data";
 import ProcessExperienceModal from "@/components/sections/ProcessExperienceModal";
 import { ShimmerButton } from "@/components/registry/magicui/Shimmer-Button";

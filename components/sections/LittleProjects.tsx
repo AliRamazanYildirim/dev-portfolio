@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import SplitText from "@/TextAnimations/SplitText";
+import SplitText from "@/components/animations/SplitText";
 import { ProjectsAPI } from "@/lib/api";
 import { projects as seedProjects } from "@/data/projects";
 import { useTranslation } from "@/hooks/useTranslation";

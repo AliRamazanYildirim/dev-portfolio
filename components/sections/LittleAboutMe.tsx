@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import Marquee from "@/components/ui/Marquee";
-import SplitText from "@/TextAnimations/SplitText";
+import SplitText from "@/components/animations/SplitText";
 import { useTranslation } from "@/hooks/useTranslation";
 
 const LittleAboutMe = () => {

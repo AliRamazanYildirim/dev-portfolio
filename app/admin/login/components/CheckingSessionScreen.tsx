@@ -1,6 +1,6 @@
 "use client";
 
-import NoiseBackground from "@/components/NoiseBackground";
+import NoiseBackground from "@/components/ui/NoiseBackground";
 
 export default function CheckingSessionScreen({
   message = "Checking session...",

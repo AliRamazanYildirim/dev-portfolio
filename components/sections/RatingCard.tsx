@@ -3,7 +3,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import RatingStars from "./RatingStars";
-import NoiseBackground from "@/components/NoiseBackground";
+import NoiseBackground from "@/components/ui/NoiseBackground";
 import type { GoogleRating } from "@/constants/googleRatings";
 
 interface RatingCardProps {
@@ -142,7 +142,7 @@ const RatingCard: React.FC<RatingCardProps> = ({
               </span>
             </div>
             <div className="w-full h-1.5 bg-black/10 rounded-full overflow-hidden">
-                <motion.div
+              <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: `${rating.positivePercentage}%` }}
                 transition={{ delay: index * 0.15 + 0.2, duration: 0.8 }}

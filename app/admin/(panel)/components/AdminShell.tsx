@@ -2,9 +2,9 @@
 
 import { ReactNode, useCallback, useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
-import NoiseBackground from "@/components/NoiseBackground";
+import NoiseBackground from "@/components/ui/NoiseBackground";
 import { cn } from "@/lib/utils";
-import AdminSidebar from "@/components/admin/AdminSidebar";
+import AdminSidebar from "./AdminSidebar";
 
 interface AdminShellProps {
   children: ReactNode;
@@ -38,7 +38,7 @@ export default function AdminShell({ children }: AdminShellProps) {
   const closeSidebar = useCallback(() => setIsSidebarOpen(false), []);
   const toggleSidebar = useCallback(
     () => setIsSidebarOpen((prev) => !prev),
-    []
+    [],
   );
 
   return (
@@ -65,7 +65,7 @@ export default function AdminShell({ children }: AdminShellProps) {
               <div
                 className={cn(
                   "relative z-10 w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-10",
-                  "mx-auto"
+                  "mx-auto",
                 )}
               >
                 <div className="mb-6 flex justify-start lg:hidden">

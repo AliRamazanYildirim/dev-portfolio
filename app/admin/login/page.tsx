@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import NoiseBackground from "@/components/NoiseBackground";
+import NoiseBackground from "@/components/ui/NoiseBackground";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useAdminSessionRedirect } from "./hooks/useAdminSessionRedirect";
 import { useAdminLoginForm } from "./hooks/useAdminLoginForm";

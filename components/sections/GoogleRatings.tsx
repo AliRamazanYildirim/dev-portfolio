@@ -2,10 +2,10 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import SplitText from "@/TextAnimations/SplitText";
+import SplitText from "@/components/animations/SplitText";
 import ReviewsCarousel from "./ReviewsCarousel";
 import WaveSeparator from "@/components/ui/WaveSeparator";
-import NoiseBackground from "@/components/NoiseBackground";
+import NoiseBackground from "@/components/ui/NoiseBackground";
 import { useTranslation } from "@/hooks/useTranslation";
 import {
   enGoogleRatings,
@@ -57,7 +57,7 @@ const GoogleRatings: React.FC = () => {
   // Calculate average positive percentage
   const avgPositive = Math.round(
     ratingsContent.ratings.reduce((sum, r) => sum + r.positivePercentage, 0) /
-      ratingsContent.ratings.length
+      ratingsContent.ratings.length,
   );
 
   return (

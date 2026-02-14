@@ -3,8 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 
-import NoiseBackground from "@/components/NoiseBackground";
-import { useAdminAuth } from "@/hooks/useAdminAuth";
+import NoiseBackground from "@/components/ui/NoiseBackground";
+import { useAdminAuth } from "../../hooks/useAdminAuth";
 
 import { HeaderControls } from "./components/HeaderControls";
 import { StatsSummary } from "./components/StatsSummary";
@@ -46,7 +46,7 @@ export default function CustomersStatisticsPage() {
   };
   const stats: StatsSnapshot = useMemo(
     () => computeStats(customers, rangeDays),
-    [customers, rangeDays]
+    [customers, rangeDays],
   );
 
   if (authLoading) {

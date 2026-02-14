@@ -4,7 +4,7 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { footerItems } from "@/data";
-import NoiseBackground from "../NoiseBackground";
+import NoiseBackground from "./NoiseBackground";
 import { useTranslation } from "@/hooks/useTranslation";
 
 function Footer({ className }: { className?: string }) {

@@ -3,8 +3,8 @@
 import React from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import NoiseBackground from "@/components/NoiseBackground";
-import SplitText from "@/TextAnimations/SplitText";
+import NoiseBackground from "@/components/ui/NoiseBackground";
+import SplitText from "@/components/animations/SplitText";
 import { useTranslation } from "@/hooks/useTranslation";
 import type { TranslationDictionary } from "@/constants/translations";
 

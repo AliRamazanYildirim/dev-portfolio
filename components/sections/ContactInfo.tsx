@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import NoiseBackground from "../NoiseBackground";
+import NoiseBackground from "../ui/NoiseBackground";
 
 interface ContactInfoProps {
   phoneNumber?: string;

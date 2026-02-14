@@ -5,7 +5,7 @@ import LittleAboutMe from "@/components/sections/LittleAboutMe";
 import LittleProjects from "@/components/sections/LittleProjects";
 import PartnersMarquee from "@/components/sections/PartnersMarquee";
 import GoogleRatings from "@/components/sections/GoogleRatings";
-import NoiseBackground from "@/components/NoiseBackground";
+import NoiseBackground from "@/components/ui/NoiseBackground";
 
 export default function Home() {
   return (

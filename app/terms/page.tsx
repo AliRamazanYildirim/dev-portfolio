@@ -1,6 +1,6 @@
 "use client";
 
-import NoiseBackground from "@/components/NoiseBackground";
+import NoiseBackground from "@/components/ui/NoiseBackground";
 import { useTranslation } from "@/hooks/useTranslation";
 import {
   termsTranslations,
@@ -10,7 +10,7 @@ import {
 type TermsSection = TermsDictionary["sections"][number];
 
 function hasParagraphs(
-  section: TermsSection
+  section: TermsSection,
 ): section is TermsSection & { paragraphs: ReadonlyArray<string> } {
   return (
     "paragraphs" in section &&
@@ -19,7 +19,7 @@ function hasParagraphs(
 }
 
 function hasBullets(
-  section: TermsSection
+  section: TermsSection,
 ): section is TermsSection & { bullets: ReadonlyArray<string> } {
   return (
     "bullets" in section &&

@@ -1,14 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import NoiseBackground from "@/components/NoiseBackground";
-import { useAdminAuth } from "@/hooks/useAdminAuth";
-import { useCustomers } from "@/hooks/useCustomers";
-import { useCustomerForm } from "@/hooks/useCustomerForm";
-import useAdminSidebar from "@/hooks/useAdminSidebar";
-import CustomerList from "@/components/customers/CustomerList";
-import CustomerDetails from "@/components/customers/CustomerDetails";
-import CustomerForm from "@/components/customers/CustomerForm";
+import NoiseBackground from "@/components/ui/NoiseBackground";
+import { useAdminAuth } from "../hooks/useAdminAuth";
+import { useCustomers } from "./hooks/useCustomers";
+import { useCustomerForm } from "./hooks/useCustomerForm";
+import useAdminSidebar from "../hooks/useAdminSidebar";
+import CustomerList from "./components/CustomerList";
+import CustomerDetails from "./components/CustomerDetails";
+import CustomerForm from "./components/CustomerForm";
 import toast from "react-hot-toast";
 import { RefreshCcw, Search } from "lucide-react";
 import FilterDropdown from "./components/FilterDropdown";

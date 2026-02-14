@@ -1,7 +1,7 @@
 "use client";
 
 import { Metadata } from "next";
-import NoiseBackground from "@/components/NoiseBackground";
+import NoiseBackground from "@/components/ui/NoiseBackground";
 import { useTranslation } from "@/hooks/useTranslation";
 import { imprintTranslations } from "@/constants/translationsImprint";
 import Link from "next/link";
@@ -343,7 +343,7 @@ export default function ImpressumPage() {
                   </div>
 
                   {/* ODR Link Button */}
-                    <a
+                  <a
                     href={sections.dispute.link}
                     target="_blank"
                     rel="noopener noreferrer"

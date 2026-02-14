@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import NoiseBackground from "@/components/NoiseBackground";
+import NoiseBackground from "@/components/ui/NoiseBackground";
 import Pagination from "@/components/ui/Pagination";
 import type { Project } from "../types";
 
