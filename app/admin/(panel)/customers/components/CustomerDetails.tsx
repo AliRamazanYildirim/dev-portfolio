@@ -33,7 +33,7 @@ export default function CustomerDetails({
   // Keep local projectStatus in sync when a different customer is selected
   useEffect(() => {
     setProjectStatus(customer?.projectStatus ?? "gestart");
-  }, [customer?.id]);
+  }, [customer?.id, customer?.projectStatus]);
 
   if (!customer) {
     if (isModal) return null;

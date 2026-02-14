@@ -11,13 +11,9 @@ interface AdminShellProps {
 }
 
 export default function AdminShell({ children }: AdminShellProps) {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-
-  useEffect(() => {
-    if (typeof window !== "undefined" && window.innerWidth < 1024) {
-      setIsSidebarOpen(false);
-    }
-  }, []);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(
+    () => typeof window === "undefined" || window.innerWidth >= 1024,
+  );
 
   useEffect(() => {
     if (typeof window === "undefined") return;

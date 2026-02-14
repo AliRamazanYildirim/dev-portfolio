@@ -20,6 +20,7 @@ export function useProjects() {
   }, []);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- async data fetch on mount
     void fetchProjects();
   }, [fetchProjects]);
 

@@ -52,6 +52,7 @@ const NoiseBackground = forwardRef<HTMLDivElement, NoiseBackgroundProps>(
       }
       ctx.putImageData(imageData, 0, 0);
       const dataUrl = canvas.toDataURL("image/png");
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- canvas noise generation must run in effect
       setNoiseDataUrl(dataUrl);
     }, [mode, intensity]);
 
@@ -70,7 +71,7 @@ const NoiseBackground = forwardRef<HTMLDivElement, NoiseBackgroundProps>(
         {children}
       </div>
     );
-  }
+  },
 );
 
 NoiseBackground.displayName = "NoiseBackground";

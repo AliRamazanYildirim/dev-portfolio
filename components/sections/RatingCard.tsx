@@ -102,7 +102,7 @@ const RatingCard: React.FC<RatingCardProps> = ({
 
           {/* Review Text */}
           <p className="font-satoshi text-sm md:text-base text-black/80 leading-relaxed grow">
-            "{rating.reviewText}"
+            &ldquo;{rating.reviewText}&rdquo;
           </p>
 
           {/* Footer - Verification date and verified label */}

@@ -1,6 +1,30 @@
 import React from "react";
 import { useTranslation } from "@/hooks/useTranslation";
 
+const ChevronLeftIcon = () => (
+  <svg
+    className="h-4 w-4"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+  >
+    <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+  </svg>
+);
+
+const ChevronRightIcon = () => (
+  <svg
+    className="h-4 w-4"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+  >
+    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+  </svg>
+);
+
 export interface PaginationProps {
   currentPage: number;
   totalPages: number;
@@ -107,31 +131,6 @@ const Pagination: React.FC<PaginationProps> = ({
   if (totalPages <= 1) {
     return null;
   }
-
-  // SVG ikonları
-  const ChevronLeftIcon = () => (
-    <svg
-      className="h-4 w-4"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-    >
-      <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-    </svg>
-  );
-
-  const ChevronRightIcon = () => (
-    <svg
-      className="h-4 w-4"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-    >
-      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-    </svg>
-  );
 
   return (
     <nav className={`mt-6 select-none ${className}`} aria-label="Pagination">

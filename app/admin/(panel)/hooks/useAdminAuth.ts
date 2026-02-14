@@ -95,6 +95,7 @@ export function useAdminAuth() {
 
     // Session beim Component-Mount prüfen - Check session on component mount
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- async data fetch on mount
         checkSession();
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 

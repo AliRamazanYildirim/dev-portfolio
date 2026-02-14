@@ -68,6 +68,7 @@ export const Nav = ({ className }: { className?: string }) => {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- reset menus on route change
     setLanguageMenuOpen(false);
     setMenuOpen(false);
     setSolutionsOpen(false);

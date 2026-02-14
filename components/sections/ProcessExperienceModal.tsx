@@ -57,18 +57,20 @@ export default function ProcessExperienceModal({
 
   useEffect(() => {
     if (open) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- reset index when modal opens
       setActiveIndex(0);
     }
   }, [open, steps.length]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- clamp index to valid range
     setActiveIndex((index) => Math.min(index, Math.max(steps.length - 1, 0)));
   }, [steps.length]);
 
   useEffect(() => {
     const mobileWidthQuery = window.matchMedia("(max-width: 767px)");
     const landscapeMobileQuery = window.matchMedia(
-      "(hover: none) and (pointer: coarse) and (orientation: landscape) and (max-height: 500px)"
+      "(hover: none) and (pointer: coarse) and (orientation: landscape) and (max-height: 500px)",
     );
     const handleChange = () => {
       const isLandscapeMobile = landscapeMobileQuery.matches;
@@ -187,7 +189,9 @@ export default function ProcessExperienceModal({
                 <div className="absolute right-8 top-0 bottom-0 w-px bg-linear-to-b from-transparent via-white/20 to-transparent" />
 
                 <div className="relative z-10 flex h-full flex-col gap-3">
-                  <div className={`${isMobileCarousel ? "hidden" : "block"} space-y-4`}>
+                  <div
+                    className={`${isMobileCarousel ? "hidden" : "block"} space-y-4`}
+                  >
                     <div className="flex items-center justify-between gap-3">
                       <span className="text-xs uppercase tracking-[0.45em] text-[#f6c268]">
                         {activeStep.stage}

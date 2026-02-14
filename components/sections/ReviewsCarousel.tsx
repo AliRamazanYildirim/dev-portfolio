@@ -23,6 +23,7 @@ const ReviewsCarousel: React.FC<ReviewsCarouselProps> = ({
 
   // Client-side mount
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- hydration detection
     setIsClient(true);
   }, []);
 
@@ -58,7 +59,7 @@ const ReviewsCarousel: React.FC<ReviewsCarouselProps> = ({
   // Visible reviews belirle
   const visibleReviews = sortedReviews.slice(
     currentSlide * itemsPerPage,
-    (currentSlide + 1) * itemsPerPage
+    (currentSlide + 1) * itemsPerPage,
   );
 
   // Auto-rotate logic
@@ -102,8 +103,8 @@ const ReviewsCarousel: React.FC<ReviewsCarouselProps> = ({
           itemsPerPage === 3
             ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
             : itemsPerPage === 2
-            ? "grid-cols-1 md:grid-cols-2"
-            : "grid-cols-1"
+              ? "grid-cols-1 md:grid-cols-2"
+              : "grid-cols-1"
         }`}
       >
         <AnimatePresence>
@@ -136,11 +137,11 @@ const ReviewsCarousel: React.FC<ReviewsCarouselProps> = ({
           aria-label="Previous slide"
         >
           {/* Gradient Background - Golden Tones */}
-              <div className="absolute inset-0 bg-linear-to-r from-yellow-500 via-amber-500 to-orange-600 opacity-100 group-hover:opacity-110 transition-opacity duration-300" />
+          <div className="absolute inset-0 bg-linear-to-r from-yellow-500 via-amber-500 to-orange-600 opacity-100 group-hover:opacity-110 transition-opacity duration-300" />
 
           {/* Glow effect */}
           <motion.div
-                className="absolute inset-0 bg-linear-to-r from-yellow-500 via-amber-500 to-orange-600 blur-xl opacity-0 group-hover:opacity-50 transition-opacity duration-300"
+            className="absolute inset-0 bg-linear-to-r from-yellow-500 via-amber-500 to-orange-600 blur-xl opacity-0 group-hover:opacity-50 transition-opacity duration-300"
             animate={{
               boxShadow: [
                 "0 0 20px rgba(234, 179, 8, 0.5)",
@@ -177,7 +178,7 @@ const ReviewsCarousel: React.FC<ReviewsCarouselProps> = ({
               onClick={() => handleDotClick(i)}
               className={`rounded-full transition-all duration-300 backdrop-blur-sm ${
                 i === currentSlide
-                     ? "bg-linear-to-r from-yellow-500 to-amber-500 w-10 h-3 md:w-12 md:h-3 shadow-lg shadow-amber-500/50"
+                  ? "bg-linear-to-r from-yellow-500 to-amber-500 w-10 h-3 md:w-12 md:h-3 shadow-lg shadow-amber-500/50"
                   : "bg-white/20 w-2.5 h-2.5 md:w-3 md:h-3 hover:bg-white/40 hover:w-4 md:hover:w-5"
               }`}
               aria-label={`Go to slide ${i + 1}`}
@@ -195,11 +196,11 @@ const ReviewsCarousel: React.FC<ReviewsCarouselProps> = ({
           aria-label="Next slide"
         >
           {/* Gradient Background - Golden Tones */}
-              <div className="absolute inset-0 bg-linear-to-r from-orange-600 via-amber-500 to-yellow-500 opacity-100 group-hover:opacity-110 transition-opacity duration-300" />
+          <div className="absolute inset-0 bg-linear-to-r from-orange-600 via-amber-500 to-yellow-500 opacity-100 group-hover:opacity-110 transition-opacity duration-300" />
 
           {/* Glow effect */}
           <motion.div
-                className="absolute inset-0 bg-linear-to-r from-orange-600 via-amber-500 to-yellow-500 blur-xl opacity-0 group-hover:opacity-50 transition-opacity duration-300"
+            className="absolute inset-0 bg-linear-to-r from-orange-600 via-amber-500 to-yellow-500 blur-xl opacity-0 group-hover:opacity-50 transition-opacity duration-300"
             animate={{
               boxShadow: [
                 "0 0 20px rgba(251, 146, 60, 0.5)",

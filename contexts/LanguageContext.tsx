@@ -25,15 +25,15 @@ const DEFAULT_LANGUAGE: SupportedLanguage = "de";
 const STORAGE_KEY = "preferred-language";
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [language, setLanguage] = useState<SupportedLanguage>(DEFAULT_LANGUAGE);
-
-  useEffect(() => {
-    const stored =
-      typeof window !== "undefined" ? localStorage.getItem(STORAGE_KEY) : null;
-    if (stored && (stored === "en" || stored === "de" || stored === "tr")) {
-      setLanguage(stored);
+  const [language, setLanguage] = useState<SupportedLanguage>(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored && (stored === "en" || stored === "de" || stored === "tr")) {
+        return stored;
+      }
     }
-  }, []);
+    return DEFAULT_LANGUAGE;
+  });
 
   useEffect(() => {
     if (typeof window !== "undefined") {
