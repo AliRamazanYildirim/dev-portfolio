@@ -5,8 +5,40 @@ import { Toaster } from "react-hot-toast";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 
 export const metadata: Metadata = {
-  title: "Ali Ramazan Portfolio",
-  description: "Ali Ramazan's Portfolio",
+  metadataBase: new URL("https://arytechsolutions.com"),
+  title: {
+    default: "ARY Tech Solutions – Webentwicklung & Digitale Lösungen",
+    template: "%s | ARY Tech Solutions",
+  },
+  description:
+    "Professionelle Webentwicklung, SEO-Optimierung und digitale Lösungen von ARY Tech Solutions. Moderne Websites mit Next.js, React und TypeScript.",
+  openGraph: {
+    type: "website",
+    locale: "de_DE",
+    url: "https://arytechsolutions.com",
+    siteName: "ARY Tech Solutions",
+    title: "ARY Tech Solutions – Webentwicklung & Digitale Lösungen",
+    description:
+      "Professionelle Webentwicklung, SEO-Optimierung und digitale Lösungen von ARY Tech Solutions.",
+    images: [
+      {
+        url: "/ali-ramazan-yildirim-white.png",
+        width: 1200,
+        height: 630,
+        alt: "ARY Tech Solutions",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "ARY Tech Solutions – Webentwicklung & Digitale Lösungen",
+    description:
+      "Professionelle Webentwicklung, SEO-Optimierung und digitale Lösungen.",
+    images: ["/ali-ramazan-yildirim-white.png"],
+  },
+  alternates: {
+    canonical: "https://arytechsolutions.com",
+  },
   icons: {
     icon: [
       { url: "/ali-ramazan-yildirim-white-favicon.svg", type: "image/svg+xml" },
