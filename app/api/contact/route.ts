@@ -1,111 +1,102 @@
-import { NextRequest, NextResponse } from "next/server";
-import { contactRepository } from "@/lib/repositories";
-import { randomUUID } from "crypto";
-import { getIpFromHeaders } from "@/lib/ip";
-import { checkRateLimitKey } from "@/lib/mongoRateLimiter";
+import { NextRequest } from "next/server";
+import { ContactService } from "./service";
+import { validateCreateContactRequest } from "./validation";
+import {
+  attachRateLimitHeaders,
+  errorResponse,
+  rateLimitedResponse,
+  successResponse,
+} from "./utils";
 
-export const runtime = "nodejs"; // Supabase/crypto için Node runtime
+export const runtime = "nodejs"; // Node runtime notwendig für crypto
 
-// ---- Grenzen (je nach Bedarf anpassen) ----
-const RL_POST = { limit: 3, window: 60 }; // 3 POST pro Minute
-const RL_GET = { limit: 60, window: 60 }; // 60 GET pro Minute
-// ---------------------------------------------
-
-type RLMeta = {
-  limit: number;
-  remaining: number;
-  reset: number; // epoch seconds
-};
-
-async function checkRateLimit(
-  req: NextRequest,
-  scope: "GET" | "POST"
-): Promise<{ allowed: true; meta: RLMeta } | { allowed: false; meta: RLMeta }> {
-  const ip = getIpFromHeaders(req.headers);
-  const key = `ip:${ip}:/api/contact:${scope}`;
-  const { limit, window } = scope === "POST" ? RL_POST : RL_GET;
-
-  try {
-    const data = await checkRateLimitKey(key, window, limit)
-    return data.allowed ? { allowed: true, meta: data.meta } : { allowed: false, meta: data.meta }
-  } catch (err: any) {
-    console.error("rate_limit error:", err?.message || err);
-    throw new Error(`rate_limit error: ${err?.message || String(err)}`);
-  }
-}
-
-function attachRLHeaders(res: NextResponse, meta: RLMeta) {
-  res.headers.set("X-RateLimit-Limit", String(meta.limit));
-  res.headers.set("X-RateLimit-Remaining", String(meta.remaining));
-  res.headers.set("X-RateLimit-Reset", String(meta.reset));
-}
-
-/** POST /api/contact — Nachricht speichern */
+/**
+ * POST /api/contact — Nachricht speichern
+ * Handler nur für HTTP Request/Response - Business Logic in Service Layer
+ */
 export async function POST(request: NextRequest) {
   try {
-    const rl = await checkRateLimit(request, "POST");
-    if (!rl.allowed) {
-      const retryAfter = Math.max(0, rl.meta.reset - Math.floor(Date.now() / 1000));
-      const blocked = NextResponse.json(
-        { success: false, error: "Too many requests! Please try again later." },
-        { status: 429, headers: { "Retry-After": String(retryAfter) } }
-      );
-      attachRLHeaders(blocked, rl.meta);
-      return blocked;
-    }
-
-    const { name, email, message } = await request.json();
-
-    if (!name || !email || !message) {
-      return NextResponse.json(
-        { success: false, error: "Name, email and message are required" },
-        { status: 400 }
-      );
-    }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      return NextResponse.json(
-        { success: false, error: "Invalid email format" },
-        { status: 400 }
+    // 1. Rate Limit Prüfung
+    const rateLimitResult = await ContactService.checkRateLimit(request, "POST");
+    if (!rateLimitResult.allowed) {
+      return attachRateLimitHeaders(
+        rateLimitedResponse(rateLimitResult.meta),
+        rateLimitResult.meta
       );
     }
 
-    const id = randomUUID();
-    const inserted = await contactRepository.create({ data: { id, name, email, message, createdAt: new Date() } });
-    const res = NextResponse.json({ success: true, data: inserted, message: "Message sent successfully" }, { status: 201 });
-    attachRLHeaders(res, rl.meta);
-    return res;
-  } catch (e) {
-    console.error(e);
-    return NextResponse.json({ success: false, error: "Rate limiter failed" }, { status: 500 });
+    // 2. Request Body parsen
+    let body: unknown;
+    try {
+      body = await request.json();
+    } catch {
+      return errorResponse("Invalid JSON in request body", 400);
+    }
+
+    // 3. Input validieren
+    const validation = validateCreateContactRequest(body);
+    if (!validation.valid) {
+      const response = errorResponse(validation.error || "Validation failed", 400);
+      return attachRateLimitHeaders(response, rateLimitResult.meta);
+    }
+
+    // 4. Business Logic in Service delegieren
+    const result = await ContactService.createContact(body as any);
+    if (!result.success) {
+      const response = errorResponse(result.error, 500);
+      return attachRateLimitHeaders(response, rateLimitResult.meta);
+    }
+
+    // 5. Erfolgreiche Response mit Rate Limit Headers
+    const response = successResponse(
+      result.data,
+      "Message sent successfully",
+      201
+    );
+    return attachRateLimitHeaders(response, rateLimitResult.meta);
+  } catch (error) {
+    console.error("[POST /api/contact]", error);
+    return errorResponse("Internal server error", 500);
   }
 }
 
-/** GET /api/contact — Nachrichten auflisten (Admin)*/
+/**
+ * GET /api/contact — Nachrichten auflisten (Admin)
+ * Handler nur für HTTP Request/Response - Business Logic in Service Layer
+ */
 export async function GET(request: NextRequest) {
   try {
-    const rl = await checkRateLimit(request, "GET");
-    if (!rl.allowed) {
-      const retryAfter = Math.max(0, rl.meta.reset - Math.floor(Date.now() / 1000));
-      const blocked = NextResponse.json(
-        { success: false, error: "Too many requests! Please try again later." },
-        { status: 429, headers: { "Retry-After": String(retryAfter) } }
+    // 1. Rate Limit Prüfung
+    const rateLimitResult = await ContactService.checkRateLimit(request, "GET");
+    if (!rateLimitResult.allowed) {
+      return attachRateLimitHeaders(
+        rateLimitedResponse(rateLimitResult.meta),
+        rateLimitResult.meta
       );
-      attachRLHeaders(blocked, rl.meta);
-      return blocked;
     }
 
+    // 2. Query Parameter parsen
     const params = request.nextUrl.searchParams;
     const unreadOnly = params.get("unread") === "true";
     const limit = Number(params.get("limit") ?? 0);
 
-    const where: any = {};
-    if (unreadOnly) where.read = false;
-    const query = await contactRepository.findMany({ where, orderBy: { createdAt: 'desc' }, take: limit || undefined });
-    const res = NextResponse.json({ success: true, data: query ?? [], count: query?.length ?? 0 });
-    attachRLHeaders(res, rl.meta);
-    return res;
-  } catch (e) {
-    console.error(e);
-    return NextResponse.json({ success: false, error: "Rate limiter failed" }, { status: 500 });
+    // 3. Business Logic in Service delegieren
+    const result = await ContactService.getContacts({
+      unreadOnly,
+      limit: limit > 0 ? limit : undefined,
+    });
+
+    if (!result.success) {
+      const response = errorResponse(result.error, 500);
+      return attachRateLimitHeaders(response, rateLimitResult.meta);
+    }
+
+    // 4. Erfolgreiche Response mit Rate Limit Headers und Count
+    const response = successResponse(result.data);
+    response.headers.set("X-Total-Count", String(result.count));
+    return attachRateLimitHeaders(response, rateLimitResult.meta);
+  } catch (error) {
+    console.error("[GET /api/contact]", error);
+    return errorResponse("Internal server error", 500);
   }
 }
