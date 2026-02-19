@@ -14,6 +14,7 @@ import {
     buildCorrectionEmailHTML,
 } from "@/app/api/admin/customers/lib/email-templates";
 import { sendAdminEmail } from "@/app/api/admin/customers/lib/mailer";
+import { ValidationError, NotFoundError, ConflictError } from "@/lib/errors";
 
 const VALID_RATES = [3, 6, 9] as const;
 type ValidRate = (typeof VALID_RATES)[number];
@@ -29,11 +30,11 @@ export class DiscountEmailService {
      */
     static async sendEmail(transactionId: string, discountRate: unknown) {
         if (!transactionId) {
-            return { success: false, error: "Transaction ID is required", status: 400 };
+            throw new ValidationError("Transaction ID is required");
         }
 
         if (!isValidRate(discountRate)) {
-            return { success: false, error: "Discount rate must be 3, 6, 9, or '+3' (bonus)", status: 400 };
+            throw new ValidationError("Discount rate must be 3, 6, 9, or '+3' (bonus)");
         }
 
         const isBonusRate = discountRate === "+3";
@@ -42,11 +43,11 @@ export class DiscountEmailService {
 
         const transaction = await referralRepository.findById(transactionId) as any;
         if (!transaction) {
-            return { success: false, error: "Transaction not found", status: 404 };
+            throw new NotFoundError("Transaction not found");
         }
 
         if (transaction.emailSent) {
-            return { success: false, error: "Email already sent for this transaction", status: 409 };
+            throw new ConflictError("Email already sent for this transaction");
         }
 
         const referrer = await customerRepository.findOneExec({
@@ -54,22 +55,18 @@ export class DiscountEmailService {
         }) as any;
 
         if (!referrer) {
-            return { success: false, error: "Referrer not found", status: 404 };
+            throw new NotFoundError("Referrer not found");
         }
 
         if (!referrer.email) {
-            return { success: false, error: "Referrer has no email address", status: 400 };
+            throw new ValidationError("Referrer has no email address");
         }
 
         const referrerPrice = referrer.price || 0;
         const referralCount = referrer.referralCount || 0;
 
         if (isBonusRate && referralCount < 3) {
-            return {
-                success: false,
-                error: "Bonus rate (+3%) is only available for customers who reached 9% (3+ referrals)",
-                status: 400,
-            };
+            throw new ValidationError("Bonus rate (+3%) is only available for customers who reached 9% (3+ referrals)");
         }
 
         let finalNewPrice: number;
@@ -181,14 +178,11 @@ export class DiscountEmailService {
         });
 
         return {
-            success: true,
-            data: {
-                transactionId,
-                emailSent: true,
-                discountRate: actualDiscountRate,
-                referrerEmail: referrer.email,
-                isBonus: isBonusRate,
-            },
+            transactionId,
+            emailSent: true,
+            discountRate: actualDiscountRate,
+            referrerEmail: referrer.email,
+            isBonus: isBonusRate,
         };
     }
 
@@ -197,22 +191,18 @@ export class DiscountEmailService {
      */
     static async resetEmail(transactionId: string, sendCorrectionEmail = true) {
         if (!transactionId) {
-            return { success: false, error: "Transaction ID is required", status: 400 };
+            throw new ValidationError("Transaction ID is required");
         }
 
         await connectToMongo();
 
         const transaction = await referralRepository.findById(transactionId) as any;
         if (!transaction) {
-            return { success: false, error: "Transaction not found", status: 404 };
+            throw new NotFoundError("Transaction not found");
         }
 
         if (!transaction.emailSent) {
-            return {
-                success: false,
-                error: "Email was not sent for this transaction, nothing to reset",
-                status: 400,
-            };
+            throw new ValidationError("Email was not sent for this transaction, nothing to reset");
         }
 
         const referrer = await customerRepository.findOneExec({
@@ -220,7 +210,7 @@ export class DiscountEmailService {
         }) as any;
 
         if (!referrer) {
-            return { success: false, error: "Referrer not found", status: 404 };
+            throw new NotFoundError("Referrer not found");
         }
 
         const originalDiscountRate = transaction.discountRate;
@@ -250,13 +240,10 @@ export class DiscountEmailService {
         });
 
         return {
-            success: true,
-            data: {
-                transactionId,
-                emailSent: false,
-                correctionEmailSent: sendCorrectionEmail && !!referrer.email,
-                referrerEmail: referrer.email,
-            },
+            transactionId,
+            emailSent: false,
+            correctionEmailSent: sendCorrectionEmail && !!referrer.email,
+            referrerEmail: referrer.email,
         };
     }
 }

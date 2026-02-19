@@ -1,29 +1,18 @@
-import SettingsModel from "@/models/Settings";
-import { connectToMongo } from "./mongodb";
+import { settingsRepository } from "@/lib/repositories/settingsRepository";
 
 const DISCOUNTS_KEY = "discountsEnabled";
 
 export async function getDiscountsEnabled(): Promise<boolean> {
-  await connectToMongo();
-  const existing = await SettingsModel.findOne({ key: DISCOUNTS_KEY })
-    .lean()
-    .exec();
+  const existing = await settingsRepository.findByKey(DISCOUNTS_KEY);
 
   if (existing && typeof existing.booleanValue === "boolean") {
     return existing.booleanValue;
   }
 
-  const created = await SettingsModel.create({ key: DISCOUNTS_KEY, booleanValue: true });
+  const created = await settingsRepository.create({ key: DISCOUNTS_KEY, booleanValue: true });
   return created.booleanValue ?? true;
 }
 
 export async function setDiscountsEnabled(enabled: boolean): Promise<boolean> {
-  await connectToMongo();
-  await SettingsModel.updateOne(
-    { key: DISCOUNTS_KEY },
-    { $set: { booleanValue: enabled } },
-    { upsert: true }
-  ).exec();
-
-  return enabled;
+  return settingsRepository.upsertBoolean(DISCOUNTS_KEY, enabled);
 }

@@ -1,16 +1,16 @@
-import AdminModel from "@/models/Admin";
+import AdminModel, { type IAdmin } from "@/models/Admin";
 import { connectToMongo } from "@/lib/mongodb";
 import { normalizeDoc } from "./normalize";
 
 export const adminRepository = {
-    findUnique: async (opts: any) => {
+    findUnique: async (opts: { where: { id?: string; email?: string } }) => {
         await connectToMongo();
         if (opts.where?.id)
-            return normalizeDoc(
+            return normalizeDoc<IAdmin>(
                 await AdminModel.findById(opts.where.id).lean().exec(),
             );
         if (opts.where?.email)
-            return normalizeDoc(
+            return normalizeDoc<IAdmin>(
                 await AdminModel.findOne({ email: opts.where.email }).lean().exec(),
             );
         return null;
@@ -28,34 +28,38 @@ export const adminRepository = {
         return AdminModel.findById(id).exec();
     },
 
-    findFirst: async (opts: any) => {
+    findFirst: async (opts: { where: { id?: string; email?: string } }) => {
         return adminRepository.findUnique(opts);
     },
 
-    create: async (params: any) => {
+    create: async (params: { data: Partial<IAdmin> & Record<string, unknown> }) => {
         await connectToMongo();
-        return normalizeDoc(await AdminModel.create(params.data));
+        return normalizeDoc<IAdmin>(await AdminModel.create(params.data));
     },
 
-    delete: async (opts: any) => {
+    delete: async (opts: { where: { email: string } }) => {
         await connectToMongo();
-        return normalizeDoc(
+        return normalizeDoc<IAdmin>(
             await AdminModel.findOneAndDelete({ email: opts.where.email }).exec(),
         );
     },
 
-    update: async (opts: any) => {
+    update: async (opts: { where: Record<string, unknown>; data: Record<string, unknown> }) => {
         await connectToMongo();
-        return normalizeDoc(
+        return normalizeDoc<IAdmin>(
             await AdminModel.findOneAndUpdate(opts.where, opts.data, {
                 new: true,
             }).exec(),
         );
     },
 
-    upsert: async (opts: any) => {
+    upsert: async (opts: {
+        where: Record<string, unknown>;
+        update?: Record<string, unknown>;
+        create?: Record<string, unknown>;
+    }) => {
         await connectToMongo();
-        return normalizeDoc(
+        return normalizeDoc<IAdmin>(
             await AdminModel.findOneAndUpdate(
                 opts.where,
                 opts.update || opts.create,

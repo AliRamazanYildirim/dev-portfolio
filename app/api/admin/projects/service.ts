@@ -9,6 +9,7 @@ import {
     projectRepository,
     projectImageRepository,
 } from "@/lib/repositories";
+import { ValidationError, NotFoundError, AppError } from "@/lib/errors";
 
 interface UpdateProjectInput {
     slug: string;
@@ -46,19 +47,19 @@ export class AdminProjectsService {
         } = input;
 
         if (!title || !slug) {
-            return { success: false as const, error: "Title and slug are required", status: 400 };
+            throw new ValidationError("Title and slug are required");
         }
 
         const existingProject = await projectRepository.findUnique({ where: { id } });
         if (!existingProject) {
-            return { success: false as const, error: `Project not found with ID: ${id}`, status: 404 };
+            throw new NotFoundError(`Project not found with ID: ${id}`);
         }
 
         // Slug-Eindeutigkeit prüfen bei Änderung
         if (slug !== (existingProject as any).slug) {
             const slugExists = await projectRepository.findUnique({ where: { slug } });
             if (slugExists && String((slugExists as any)._id ?? (slugExists as any).id) !== id) {
-                return { success: false as const, error: "A project with this slug already exists", status: 400 };
+                throw new ValidationError("A project with this slug already exists");
             }
         }
 
@@ -103,7 +104,7 @@ export class AdminProjectsService {
         });
 
         if (!updatedProject) {
-            return { success: false as const, error: "Failed to update project", status: 500 };
+            throw new AppError("Failed to update project", 500);
         }
 
         const galleryRes = await projectImageRepository.findMany({
@@ -112,7 +113,6 @@ export class AdminProjectsService {
         });
 
         return {
-            success: true as const,
             data: { ...updatedProject, gallery: galleryRes },
             message: "Project updated successfully",
             ...(galleryUpdateError && { galleryWarning: galleryUpdateError }),
@@ -125,7 +125,7 @@ export class AdminProjectsService {
     static async delete(id: string) {
         const existing = await projectRepository.findUnique({ where: { id } });
         if (!existing) {
-            return { success: false as const, error: `Project not found with ID: ${id}`, status: 404 };
+            throw new NotFoundError(`Project not found with ID: ${id}`);
         }
 
         // Zuerst Galerie-Bilder löschen
@@ -135,11 +135,10 @@ export class AdminProjectsService {
         // Dann das Projekt löschen
         const deleteResult = await projectRepository.delete({ where: { id } });
         if (!deleteResult) {
-            return { success: false as const, error: "Failed to delete project", status: 500 };
+            throw new AppError("Failed to delete project", 500);
         }
 
         return {
-            success: true as const,
             message: "Project deleted successfully",
             deletedImages: deletedCount,
         };

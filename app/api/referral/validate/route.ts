@@ -1,6 +1,7 @@
-import { NextResponse } from "next/server";
 import { validateReferral } from "./service";
 import { getDiscountsEnabled } from "@/lib/discountSettings";
+import { successResponse, handleError } from "@/lib/api-response";
+import { ValidationError, ConflictError } from "@/lib/errors";
 
 // Route handler delegates to service for validation and discount calculation
 export async function POST(request: Request) {
@@ -8,26 +9,17 @@ export async function POST(request: Request) {
     const { referralCode, basePrice } = await request.json();
 
     if (!referralCode || basePrice === undefined || basePrice === null) {
-      return NextResponse.json(
-        { success: false, error: "Referral code and base price are required" },
-        { status: 400 }
-      );
+      throw new ValidationError("Referral code and base price are required");
     }
 
     const discountsEnabled = await getDiscountsEnabled();
     if (!discountsEnabled) {
-      return NextResponse.json(
-        { success: false, error: "Discounts are disabled" },
-        { status: 409 }
-      );
+      throw new ConflictError("Discounts are disabled");
     }
 
     const numericBasePrice = Number(basePrice);
     if (Number.isNaN(numericBasePrice)) {
-      return NextResponse.json(
-        { success: false, error: "Base price must be a number" },
-        { status: 400 }
-      );
+      throw new ValidationError("Base price must be a number");
     }
 
     const result = await validateReferral({
@@ -35,18 +27,8 @@ export async function POST(request: Request) {
       basePrice: numericBasePrice,
     });
 
-    return NextResponse.json({ success: true, data: result });
-  } catch (error: any) {
-    if (error?.message === "Invalid referral code") {
-      return NextResponse.json(
-        { success: false, error: error.message },
-        { status: 404 }
-      );
-    }
-
-    return NextResponse.json(
-      { success: false, error: error?.message || String(error) },
-      { status: 500 }
-    );
+    return successResponse(result);
+  } catch (error) {
+    return handleError(error);
   }
 }

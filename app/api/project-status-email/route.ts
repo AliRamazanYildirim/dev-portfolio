@@ -1,4 +1,5 @@
-import { NextResponse } from "next/server";
+import { successResponse, handleError } from "@/lib/api-response";
+import { ValidationError } from "@/lib/errors";
 import { buildMailPayload, createProjectStatusTransporter } from "./lib/mailer";
 import { buildBaseUrl } from "./lib/request";
 import { buildLogoAttachment } from "./lib/logo";
@@ -11,10 +12,7 @@ export async function POST(req: Request) {
     const body: ProjectStatusPayload = await req.json();
 
     if (!body?.clientEmail || !body?.clientName) {
-      return NextResponse.json(
-        { success: false, error: "Missing client information" },
-        { status: 400 }
-      );
+      throw new ValidationError("Missing client information");
     }
 
     const { transporter, from } = createProjectStatusTransporter();
@@ -31,12 +29,8 @@ export async function POST(req: Request) {
 
     await transporter.sendMail(mailOptions);
 
-    return NextResponse.json({ success: true });
+    return successResponse({ sent: true });
   } catch (error) {
-    console.error("project-status-email error", error);
-    return NextResponse.json(
-      { success: false, error: String(error) },
-      { status: 500 }
-    );
+    return handleError(error);
   }
 }

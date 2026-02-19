@@ -4,25 +4,8 @@ import {
     calcDiscountedPrice,
     calcTotalEarnings,
 } from "@/app/api/admin/customers/lib/referral";
+import { toIsoString, toSafeNumber as safeNumber } from "@/lib/validation";
 import type { DiscountGroups, DiscountStatus, PatchDiscountInput } from "./types";
-
-function toIsoString(value: unknown): string | null {
-    if (!value) return null;
-    if (value instanceof Date) {
-        return Number.isNaN(value.getTime()) ? null : value.toISOString();
-    }
-    const parsed = new Date(value as string);
-    return Number.isNaN(parsed.getTime()) ? null : parsed.toISOString();
-}
-
-function safeNumber(value: unknown): number | null {
-    if (typeof value === "number" && !Number.isNaN(value)) return value;
-    if (typeof value === "string" && value.trim() !== "") {
-        const parsed = Number(value);
-        if (!Number.isNaN(parsed)) return parsed;
-    }
-    return null;
-}
 
 export class DiscountsService {
     static async listDiscounts(status?: DiscountStatus): Promise<DiscountGroups> {
@@ -328,7 +311,7 @@ export class DiscountsService {
                 if (usedCustomer && usedCustomer.reference === usedCode) {
                     await customerRepository.update({
                         where: { id: usedCustomerId },
-                        data: { reference: null, updatedAt: new Date() },
+                        data: { reference: null, updatedAt: new Date() } as any,
                     });
                 }
             }

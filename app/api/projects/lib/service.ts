@@ -11,7 +11,9 @@ import type { CreateProjectInput, ProjectQueryParams } from "./types";
 
 export class ProjectsService {
     /**
-     * Alle veröffentlichten Projekte mit Gallery + Tags laden
+     * Alle veröffentlichten Projekte mit Gallery + Tags laden.
+     * N+1-Fix: Gallery und Tags werden einmal gebündelt geladen
+     * und per Map zugeordnet.
      */
     static async list(params: ProjectQueryParams) {
         const where: Record<string, unknown> = { published: true };
@@ -20,30 +22,65 @@ export class ProjectsService {
         const projects = await projectRepository.findMany({
             where,
             orderBy: { createdAt: "desc" },
-        }) as any[];
+        }) as unknown as Record<string, unknown>[];
 
-        return Promise.all(
-            (projects ?? []).map(async (p: any) => {
-                const gallery = await projectImageRepository.findMany({
-                    where: { projectId: p._id ?? p.id },
-                    orderBy: { order: "asc" },
-                });
-                const tags = await projectTagRepository.findMany({
-                    where: { projects: p._id ?? p.id },
-                }).catch(() => []);
+        if (!projects || projects.length === 0) return [];
 
-                let description = p.description;
-                if (typeof description === "object" && description !== null) {
-                    description = {
-                        en: (description as Record<string, string>).en || "",
-                        de: (description as Record<string, string>).de || "",
-                        tr: (description as Record<string, string>).tr || "",
-                    };
-                }
+        // Alle Projekt-IDs sammeln
+        const projectIds = projects.map((p) => String(p._id ?? p.id));
 
-                return { ...p, description, gallery, tags };
+        // Gebündelter Laden: Gallery + Tags für alle Projekte in 2 Queries statt 2×N
+        const [allGallery, allTags] = await Promise.all([
+            projectImageRepository.findMany({
+                where: { projectId: { $in: projectIds } },
+                orderBy: { order: "asc" },
             }),
-        );
+            projectTagRepository.findMany({
+                where: { projects: { $in: projectIds } },
+            }).catch(() => []),
+        ]);
+
+        // Maps aufbauen für O(1)-Zuordnung
+        const galleryMap = new Map<string, typeof allGallery>();
+        for (const img of ((allGallery || []) as unknown as Record<string, unknown>[])) {
+            const pid = String(img.projectId);
+            const arr = galleryMap.get(pid) || [];
+            arr.push(img as never);
+            galleryMap.set(pid, arr);
+        }
+
+        const tagMap = new Map<string, typeof allTags>();
+        for (const tag of ((allTags || []) as unknown as Record<string, unknown>[])) {
+            const pids = tag.projects;
+            if (Array.isArray(pids)) {
+                for (const pid of pids) {
+                    const key = String(pid);
+                    const arr = tagMap.get(key) || [];
+                    arr.push(tag as never);
+                    tagMap.set(key, arr);
+                }
+            }
+        }
+
+        return projects.map((p) => {
+            const pid = String(p._id ?? p.id);
+
+            let description = p.description;
+            if (typeof description === "object" && description !== null) {
+                description = {
+                    en: (description as Record<string, string>).en || "",
+                    de: (description as Record<string, string>).de || "",
+                    tr: (description as Record<string, string>).tr || "",
+                };
+            }
+
+            return {
+                ...p,
+                description,
+                gallery: galleryMap.get(pid) || [],
+                tags: tagMap.get(pid) || [],
+            };
+        });
     }
 
     /**
@@ -73,9 +110,9 @@ export class ProjectsService {
                 previousSlug: input.previousSlug,
                 nextSlug: input.nextSlug,
             },
-        }) as any;
+        }) as unknown as Record<string, unknown>;
 
-        const projectId = project._id ?? project.id;
+        const projectId = String(project._id ?? project.id);
 
         // Gallery einfügen
         const galleryData = (input.gallery ?? []).map((url, index) => ({
@@ -111,23 +148,23 @@ export class ProjectsService {
      * Einzelnes Projekt anhand des Slugs mit Gallery + Navigation laden
      */
     static async getBySlug(slug: string) {
-        const project = await projectRepository.findUnique({ where: { slug } }) as any;
+        const project = await projectRepository.findUnique({ where: { slug } }) as Record<string, unknown> | null;
         if (!project || !project.published) return null;
 
         // previous/next berechnen
         const allProjects = await projectRepository.findMany({
             where: { published: true },
             orderBy: { createdAt: "asc" },
-        }) as any[];
+        }) as unknown as Record<string, unknown>[];
 
         let prev: string | null = null;
         let next: string | null = null;
 
         if (allProjects && allProjects.length > 0) {
-            const index = allProjects.findIndex((p: any) => p.slug === slug);
+            const index = allProjects.findIndex((p) => p.slug === slug);
             if (index !== -1) {
-                prev = index > 0 ? allProjects[index - 1].slug : null;
-                next = index < allProjects.length - 1 ? allProjects[index + 1].slug : null;
+                prev = index > 0 ? allProjects[index - 1].slug as string : null;
+                next = index < allProjects.length - 1 ? allProjects[index + 1].slug as string : null;
             }
         }
 
@@ -147,7 +184,7 @@ export class ProjectsService {
         }
 
         const gallery = await projectImageRepository.findMany({
-            where: { projectId: project._id ?? project.id },
+            where: { projectId: String(project._id ?? project.id) },
             orderBy: { order: "asc" },
         });
 
@@ -161,28 +198,30 @@ export class ProjectsService {
     }
 
     /**
-     * Navigation (previousSlug / nextSlug) für alle veröffentlichten Projekte aktualisieren
+     * Navigation (previousSlug / nextSlug) für alle veröffentlichten Projekte aktualisieren.
+     * Performance-Fix: Nutzt bulkWrite statt N sequenzieller Updates.
      */
     static async updateNavigation() {
         const projects = await projectRepository.findMany({
             where: { published: true },
             orderBy: { createdAt: "asc" },
-        }) as any[];
+        }) as unknown as Record<string, unknown>[];
 
         if (!projects || projects.length === 0) return;
 
-        for (let i = 0; i < projects.length; i++) {
-            const current = projects[i];
+        const operations = projects.map((current, i) => {
             const previous = i > 0 ? projects[i - 1] : null;
             const next = i < projects.length - 1 ? projects[i + 1] : null;
 
-            await projectRepository.update({
-                where: { id: current._id ?? current.id },
+            return {
+                id: String(current._id ?? current.id),
                 data: {
-                    previousSlug: previous?.slug || null,
-                    nextSlug: next?.slug || null,
+                    previousSlug: (previous as Record<string, unknown>)?.slug || null,
+                    nextSlug: (next as Record<string, unknown>)?.slug || null,
                 },
-            });
-        }
+            };
+        });
+
+        await projectRepository.bulkUpdate(operations);
     }
 }

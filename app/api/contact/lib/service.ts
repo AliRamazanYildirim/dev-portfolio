@@ -46,7 +46,7 @@ export class ContactService {
 
             return {
                 success: true,
-                data: created as ContactMessage,
+                data: created as unknown as ContactMessage,
             };
         } catch (error) {
             console.error("ContactService.createContact error:", error);
@@ -75,13 +75,13 @@ export class ContactService {
 
             const messages = await contactRepository.findMany({
                 where,
-                orderBy: { createdAt: "desc" },
+                orderBy: { createdAt: -1 as const },
                 take: query.limit || undefined,
             });
 
             return {
                 success: true,
-                data: (messages ?? []) as ContactMessage[],
+                data: (messages ?? []) as unknown as ContactMessage[],
                 count: messages?.length ?? 0,
             };
         } catch (error) {

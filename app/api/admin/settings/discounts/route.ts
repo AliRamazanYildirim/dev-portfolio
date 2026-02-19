@@ -1,15 +1,13 @@
-import { NextResponse } from "next/server";
 import { getDiscountsEnabled, setDiscountsEnabled } from "@/lib/discountSettings";
+import { successResponse, handleError } from "@/lib/api-response";
+import { ValidationError } from "@/lib/errors";
 
 export async function GET() {
     try {
         const enabled = await getDiscountsEnabled();
-        return NextResponse.json({ success: true, data: { enabled } });
-    } catch (error: any) {
-        return NextResponse.json(
-            { success: false, error: error?.message || "Failed to load discounts setting" },
-            { status: 500 }
-        );
+        return successResponse({ enabled });
+    } catch (error) {
+        return handleError(error);
     }
 }
 
@@ -19,18 +17,12 @@ export async function PUT(request: Request) {
         const { enabled } = body as { enabled?: unknown };
 
         if (typeof enabled !== "boolean") {
-            return NextResponse.json(
-                { success: false, error: "'enabled' must be a boolean" },
-                { status: 400 }
-            );
+            throw new ValidationError("'enabled' must be a boolean");
         }
 
         const saved = await setDiscountsEnabled(enabled);
-        return NextResponse.json({ success: true, data: { enabled: saved } });
-    } catch (error: any) {
-        return NextResponse.json(
-            { success: false, error: error?.message || "Failed to update discounts setting" },
-            { status: 500 }
-        );
+        return successResponse({ enabled: saved });
+    } catch (error) {
+        return handleError(error);
     }
 }

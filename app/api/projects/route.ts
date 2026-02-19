@@ -1,6 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { ProjectsService } from "./lib/service";
 import { validateCreateProjectBody } from "./lib/validation";
+import { successResponse, handleError } from "@/lib/api-response";
+import { ValidationError } from "@/lib/errors";
 
 export const runtime = "nodejs";
 
@@ -17,17 +19,9 @@ export async function GET(request: NextRequest) {
         : undefined,
     });
 
-    return NextResponse.json({
-      success: true,
-      data: data || [],
-      count: data.length,
-    });
+    return successResponse({ data: data || [], count: data.length });
   } catch (error) {
-    console.error("[GET /api/projects]", error);
-    return NextResponse.json(
-      { success: false, error: "Failed to fetch projects" },
-      { status: 500 },
-    );
+    return handleError(error);
   }
 }
 
@@ -41,35 +35,21 @@ export async function POST(request: NextRequest) {
     // 1. Input validieren
     const validation = validateCreateProjectBody(body);
     if (!validation.valid) {
-      return NextResponse.json(
-        { success: false, error: validation.error },
-        { status: 400 },
-      );
+      throw new ValidationError(validation.error);
     }
 
     // 2. Service aufrufen
     const result = await ProjectsService.create(validation.value);
 
     if (!result.success) {
-      return NextResponse.json(
-        { success: false, error: result.error },
-        { status: 400 },
-      );
+      throw new ValidationError(result.error || "Failed to create project");
     }
 
-    return NextResponse.json(
-      { success: true, data: result.data, message: "Project created successfully" },
-      { status: 201 },
+    return successResponse(
+      { data: result.data, message: "Project created successfully" },
+      201,
     );
-  } catch (error: any) {
-    console.error("[POST /api/projects]", error);
-    return NextResponse.json(
-      {
-        success: false,
-        error: "Failed to create project",
-        details: error?.message || error,
-      },
-      { status: 500 },
-    );
+  } catch (error) {
+    return handleError(error);
   }
 }

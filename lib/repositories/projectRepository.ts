@@ -1,57 +1,80 @@
-import ProjectModel from "@/models/Project";
-import ProjectImageModel from "@/models/ProjectImage";
-import ProjectTagModel from "@/models/ProjectTag";
+import ProjectModel, { type IProject } from "@/models/Project";
+import ProjectImageModel, { type IProjectImage } from "@/models/ProjectImage";
+import ProjectTagModel, { type IProjectTag } from "@/models/ProjectTag";
 import { connectToMongo } from "@/lib/mongodb";
 import { normalizeDoc } from "./normalize";
 
+interface FindManyOpts {
+    where?: Record<string, unknown>;
+    orderBy?: Record<string, "asc" | "desc" | 1 | -1>;
+}
+
 export const projectRepository = {
-    findMany: async (opts: any) => {
+    findMany: async (opts: FindManyOpts) => {
         await connectToMongo();
         const where = opts?.where || {};
         const orderBy = opts?.orderBy || { createdAt: "asc" };
         const query = ProjectModel.find(where).sort({
             createdAt: orderBy.createdAt === "asc" ? 1 : -1,
         });
-        return normalizeDoc(await query.lean().exec()) as any;
+        return normalizeDoc<IProject[]>(await query.lean().exec());
     },
 
-    findUnique: async (opts: any) => {
+    findUnique: async (opts: { where: { id?: string; slug?: string } }) => {
         await connectToMongo();
         if (opts.where?.id)
-            return normalizeDoc(
+            return normalizeDoc<IProject>(
                 await ProjectModel.findById(opts.where.id).lean().exec(),
             );
         if (opts.where?.slug)
-            return normalizeDoc(
+            return normalizeDoc<IProject>(
                 await ProjectModel.findOne({ slug: opts.where.slug }).lean().exec(),
             );
         return null;
     },
 
-    create: async (params: any) => {
+    create: async (params: { data: Partial<IProject> & Record<string, unknown> }) => {
         await connectToMongo();
-        return normalizeDoc(await ProjectModel.create(params.data));
+        return normalizeDoc<IProject>(await ProjectModel.create(params.data));
     },
 
-    update: async (opts: any) => {
+    update: async (opts: { where: { id: string }; data: Record<string, unknown> }) => {
         await connectToMongo();
-        return normalizeDoc(
+        return normalizeDoc<IProject>(
             await ProjectModel.findByIdAndUpdate(opts.where.id, opts.data, {
                 new: true,
             }).exec(),
         );
     },
 
-    delete: async (opts: any) => {
+    delete: async (opts: { where: { id: string } }) => {
         await connectToMongo();
-        return normalizeDoc(
+        return normalizeDoc<IProject>(
             await ProjectModel.findByIdAndDelete(opts.where.id).exec(),
         );
+    },
+
+    /**
+     * Bulk-Update: Aktualisiert mehrere Projekte in einem einzigen DB-Call
+     * per bulkWrite (Performance-Fix für updateNavigation).
+     */
+    bulkUpdate: async (
+        operations: Array<{ id: string; data: Record<string, unknown> }>,
+    ) => {
+        await connectToMongo();
+        if (operations.length === 0) return;
+        const bulkOps = operations.map((op) => ({
+            updateOne: {
+                filter: { _id: op.id },
+                update: { $set: op.data },
+            },
+        }));
+        return ProjectModel.bulkWrite(bulkOps);
     },
 };
 
 export const projectImageRepository = {
-    findMany: async (opts: any) => {
+    findMany: async (opts: FindManyOpts) => {
         await connectToMongo();
         const where = opts?.where || {};
         const orderBy = opts?.orderBy || {};
@@ -59,30 +82,28 @@ export const projectImageRepository = {
         if (orderBy.order === "asc") sort.order = 1;
         else if (orderBy.order === "desc") sort.order = -1;
         else sort.order = 1;
-        return normalizeDoc(
+        return normalizeDoc<IProjectImage[]>(
             await ProjectImageModel.find(where).sort(sort).lean().exec(),
         );
     },
 
-    createMany: async (params: any) => {
+    createMany: async (params: { data: Array<Partial<IProjectImage> & Record<string, unknown>> }) => {
         await connectToMongo();
-        return normalizeDoc(
+        return normalizeDoc<IProjectImage[]>(
             await ProjectImageModel.insertMany(params.data || []),
         );
     },
 
-    deleteMany: async (opts: any) => {
+    deleteMany: async (opts: { where: Record<string, unknown> }) => {
         await connectToMongo();
-        return normalizeDoc(
-            await ProjectImageModel.deleteMany(opts.where || {}).exec(),
-        );
+        return ProjectImageModel.deleteMany(opts.where || {}).exec();
     },
 };
 
 export const projectTagRepository = {
-    findMany: async (opts: any) => {
+    findMany: async (opts: FindManyOpts) => {
         await connectToMongo();
-        return normalizeDoc(
+        return normalizeDoc<IProjectTag[]>(
             await ProjectTagModel.find(opts?.where || {})
                 .lean()
                 .exec(),

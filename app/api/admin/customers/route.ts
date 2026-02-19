@@ -1,6 +1,7 @@
-import { NextResponse } from "next/server";
 import { CustomersService } from "./service";
 import { validateCreateCustomerBody } from "./validation";
+import { successResponse, handleError } from "@/lib/api-response";
+import { ValidationError, ConflictError } from "@/lib/errors";
 
 /**
  * GET /api/admin/customers
@@ -15,13 +16,9 @@ export async function GET(request: Request) {
       to: searchParams.get("to"),
       q: searchParams.get("q"),
     });
-    return NextResponse.json({ success: true, data });
-  } catch (error: any) {
-    console.error("[GET /api/admin/customers]", error);
-    return NextResponse.json(
-      { success: false, error: error?.message || String(error) },
-      { status: 500 },
-    );
+    return successResponse(data);
+  } catch (error) {
+    return handleError(error);
   }
 }
 
@@ -35,34 +32,28 @@ export async function POST(req: Request) {
     // 1. Input validieren
     const validation = validateCreateCustomerBody(body);
     if (!validation.valid) {
-      return NextResponse.json(
-        { success: false, error: validation.error },
-        { status: 400 },
-      );
+      throw new ValidationError(validation.error);
     }
 
     // 2. Service aufrufen
     const customer = await CustomersService.create(validation.value);
-    return NextResponse.json({ success: true, data: customer });
-  } catch (err: any) {
-    const msg = err?.message || String(err);
-
+    return successResponse(customer);
+  } catch (err: unknown) {
     // Duplicate-Key → 409
-    if (msg.includes("duplicate key value") || msg.includes("unique constraint") || (err?.code === 11000)) {
-      return NextResponse.json(
-        {
-          success: false,
-          error:
+    if (err instanceof Error) {
+      const msg = err.message;
+      if (
+        msg.includes("duplicate key value") ||
+        msg.includes("unique constraint") ||
+        (err as any)?.code === 11000
+      ) {
+        return handleError(
+          new ConflictError(
             "This email address is already registered. Each customer must have a unique email address.",
-        },
-        { status: 409 },
-      );
+          ),
+        );
+      }
     }
-
-    console.error("[POST /api/admin/customers]", err);
-    return NextResponse.json(
-      { success: false, error: msg },
-      { status: 500 },
-    );
+    return handleError(err);
   }
 }

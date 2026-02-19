@@ -4,16 +4,9 @@
  */
 
 import { CreateContactRequest } from "./types";
+import { isValidEmail } from "@/lib/validation";
 
-/**
- * Validiert Email Format mit Regex
- * @param email - Email-String zu validieren
- * @returns true wenn gültig, false sonst
- */
-export function isValidEmail(email: string): boolean {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-}
+export { isValidEmail };
 
 /**
  * Validiert ob alle erforderlichen Felder vorhanden sind

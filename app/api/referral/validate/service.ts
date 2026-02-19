@@ -1,4 +1,5 @@
 import { customerRepository } from "@/lib/repositories";
+import { NotFoundError } from "@/lib/errors";
 
 interface ValidateReferralInput {
     referralCode: string;
@@ -50,7 +51,7 @@ export async function validateReferral(
 ): Promise<ValidateReferralResult> {
     const referrer = await findReferrerByCode(input.referralCode);
     if (!referrer) {
-        throw new Error("Invalid referral code");
+        throw new NotFoundError("Invalid referral code");
     }
 
     const discount = computeDiscount(input.basePrice, referrer.referralCount || 0);

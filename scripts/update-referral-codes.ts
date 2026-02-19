@@ -47,7 +47,7 @@ async function updateReferralCodes() {
 
       // Müşteriyi güncelle
       try {
-        await customerRepository.update({ where: { id: customer.id }, data: { myReferralCode, referralCount: 0, totalEarnings: 0, updatedAt: new Date() } });
+        await customerRepository.update({ where: { id: (customer as any)._id ?? (customer as any).id }, data: { myReferralCode, referralCount: 0, totalEarnings: 0, updatedAt: new Date() } });
         console.log(`✓ ${customer.firstname} ${customer.lastname} - Kod: ${myReferralCode}`);
       } catch (e) {
         console.error(`${customer.firstname} ${customer.lastname} güncellenemedi:`, e);

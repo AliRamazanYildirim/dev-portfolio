@@ -14,4 +14,5 @@ export {
 export { contactRepository } from "./contactRepository";
 export { customerRepository } from "./customerRepository";
 export { referralRepository } from "./referralRepository";
+export { settingsRepository } from "./settingsRepository";
 export { normalizeDoc } from "./normalize";

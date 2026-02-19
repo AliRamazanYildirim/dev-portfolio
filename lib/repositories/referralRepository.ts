@@ -1,27 +1,32 @@
-import ReferralTransactionModel from "@/models/ReferralTransaction";
+import ReferralTransactionModel, { type IReferralTransaction } from "@/models/ReferralTransaction";
 import { connectToMongo } from "@/lib/mongodb";
 import { normalizeDoc } from "./normalize";
 
+interface FindManyOpts {
+    where?: Record<string, unknown>;
+    orderBy?: Record<string, 1 | -1>;
+}
+
 export const referralRepository = {
-    create: async (params: any) => {
+    create: async (params: { data: Partial<IReferralTransaction> & Record<string, unknown> }) => {
         await connectToMongo();
-        return normalizeDoc(
+        return normalizeDoc<IReferralTransaction>(
             await ReferralTransactionModel.create(params.data),
         );
     },
 
     findById: async (id: string) => {
         await connectToMongo();
-        return normalizeDoc(
+        return normalizeDoc<IReferralTransaction>(
             await ReferralTransactionModel.findById(id).exec(),
         );
     },
 
-    findMany: async (opts: any) => {
+    findMany: async (opts: FindManyOpts) => {
         await connectToMongo();
         const where = opts?.where || {};
         const orderBy = opts?.orderBy || {};
-        return normalizeDoc(
+        return normalizeDoc<IReferralTransaction[]>(
             await ReferralTransactionModel.find(where)
                 .sort(orderBy)
                 .lean()
@@ -29,9 +34,9 @@ export const referralRepository = {
         );
     },
 
-    update: async (opts: any) => {
+    update: async (opts: { where: { id: string }; data: Record<string, unknown> }) => {
         await connectToMongo();
-        return normalizeDoc(
+        return normalizeDoc<IReferralTransaction>(
             await ReferralTransactionModel.findByIdAndUpdate(
                 opts.where.id,
                 opts.data,
@@ -40,9 +45,9 @@ export const referralRepository = {
         );
     },
 
-    delete: async (opts: any) => {
+    delete: async (opts: { where: { id: string } }) => {
         await connectToMongo();
-        return normalizeDoc(
+        return normalizeDoc<IReferralTransaction>(
             await ReferralTransactionModel.findByIdAndDelete(
                 opts.where.id,
             )
@@ -51,7 +56,7 @@ export const referralRepository = {
         );
     },
 
-    countDocuments: async (where: any) => {
+    countDocuments: async (where: Record<string, unknown>) => {
         await connectToMongo();
         return ReferralTransactionModel.countDocuments(where).exec();
     },

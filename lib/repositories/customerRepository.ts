@@ -1,30 +1,54 @@
-import CustomerModel from "@/models/Customer";
+import CustomerModel, { type ICustomer } from "@/models/Customer";
 import { connectToMongo } from "@/lib/mongodb";
 import { normalizeDoc } from "./normalize";
 
+/* ---------- Query-Typen ---------- */
+
+interface FindManyOpts {
+    where?: Record<string, unknown>;
+    orderBy?: Record<string, 1 | -1 | "asc" | "desc">;
+    select?: Record<string, boolean>;
+}
+
+interface FindUniqueOpts {
+    where: { id?: string; email?: string; myReferralCode?: string };
+}
+
+interface MutateOpts {
+    where: { id: string };
+    data: Partial<ICustomer> & Record<string, unknown>;
+}
+
+interface CreateOpts {
+    data: Partial<ICustomer> & Record<string, unknown>;
+}
+
 export const customerRepository = {
-    findMany: async (opts: any) => {
+    findMany: async (opts: FindManyOpts) => {
         await connectToMongo();
-        return normalizeDoc(
-            await CustomerModel.find(opts?.where || {})
-                .sort(opts?.orderBy || {})
-                .lean()
-                .exec(),
-        );
+        let query = CustomerModel.find(opts?.where || {});
+        if (opts?.orderBy) query = query.sort(opts.orderBy);
+        if (opts?.select) {
+            const projection = Object.fromEntries(
+                Object.entries(opts.select).filter(([, v]) => v).map(([k]) => [k, 1]),
+            );
+            query = query.select(projection);
+        }
+        return normalizeDoc<ICustomer[]>(await query.lean().exec());
     },
 
-    findUnique: async (opts: any) => {
+    findUnique: async (opts: FindUniqueOpts) => {
         await connectToMongo();
         if (opts.where?.id)
-            return normalizeDoc(
+            return normalizeDoc<ICustomer>(
                 await CustomerModel.findById(opts.where.id).lean().exec(),
             );
         if (opts.where?.email)
-            return normalizeDoc(
+            return normalizeDoc<ICustomer>(
                 await CustomerModel.findOne({ email: opts.where.email }).lean().exec(),
             );
         if (opts.where?.myReferralCode)
-            return normalizeDoc(
+            return normalizeDoc<ICustomer>(
                 await CustomerModel.findOne({
                     myReferralCode: opts.where.myReferralCode,
                 })
@@ -35,7 +59,7 @@ export const customerRepository = {
     },
 
     /** Find a single customer with an executable query (not lean) */
-    findOneExec: async (where: any) => {
+    findOneExec: async (where: Record<string, unknown>) => {
         await connectToMongo();
         return CustomerModel.findOne(where).exec();
     },
@@ -49,13 +73,13 @@ export const customerRepository = {
     /** Find multiple customers by an array of IDs */
     findByIds: async (ids: string[]) => {
         await connectToMongo();
-        return normalizeDoc(
+        return normalizeDoc<ICustomer[]>(
             await CustomerModel.find({ _id: { $in: ids } }).lean().exec(),
         );
     },
 
     /** Build a find query with optional sort & lean */
-    findWithQuery: async (query: any, sort?: any) => {
+    findWithQuery: async (query: Record<string, unknown>, sort?: Record<string, 1 | -1>) => {
         await connectToMongo();
         const cursor = CustomerModel.find(query);
         if (sort && Object.keys(sort).length > 0) cursor.sort(sort);
@@ -63,28 +87,28 @@ export const customerRepository = {
     },
 
     /** Update a single document matching a filter */
-    updateOne: async (filter: any, data: any) => {
+    updateOne: async (filter: Record<string, unknown>, data: Record<string, unknown>) => {
         await connectToMongo();
         return CustomerModel.updateOne(filter, data).exec();
     },
 
-    create: async (params: any) => {
+    create: async (params: CreateOpts) => {
         await connectToMongo();
-        return normalizeDoc(await CustomerModel.create(params.data));
+        return normalizeDoc<ICustomer>(await CustomerModel.create(params.data));
     },
 
-    update: async (opts: any) => {
+    update: async (opts: MutateOpts) => {
         await connectToMongo();
-        return normalizeDoc(
+        return normalizeDoc<ICustomer>(
             await CustomerModel.findByIdAndUpdate(opts.where.id, opts.data, {
                 new: true,
             }).exec(),
         );
     },
 
-    delete: async (opts: any) => {
+    delete: async (opts: { where: { id: string } }) => {
         await connectToMongo();
-        return normalizeDoc(
+        return normalizeDoc<ICustomer>(
             await CustomerModel.findByIdAndDelete(opts.where.id).exec(),
         );
     },

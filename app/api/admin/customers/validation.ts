@@ -3,6 +3,7 @@
  */
 
 import type { CreateCustomerRequest } from "./types";
+import { isValidEmail } from "@/lib/validation";
 
 export function validateCreateCustomerBody(
     body: unknown,
@@ -18,8 +19,7 @@ export function validateCreateCustomerBody(
         return { valid: false, error: "Email is required" };
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
+    if (!isValidEmail(email)) {
         return { valid: false, error: "Invalid email format" };
     }
 
