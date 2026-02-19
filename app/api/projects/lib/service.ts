@@ -1,5 +1,10 @@
 /**
  * Projects API – Business Logic / Service Layer
+ *
+ * SRP-Refactored: Read/Write ayrımı (CQRS-lite).
+ *  - ProjectReadService: list, getBySlug (sorgulama)
+ *  - ProjectWriteService: create, updateNavigation (değişiklik)
+ *  - ProjectsService: geriye uyumlu facade
  */
 
 import {
@@ -9,7 +14,11 @@ import {
 } from "@/lib/repositories";
 import type { CreateProjectInput, ProjectQueryParams } from "./types";
 
-export class ProjectsService {
+/* ================================================================
+ * READ SERVICE
+ * ================================================================ */
+
+export class ProjectReadService {
     /**
      * Alle veröffentlichten Projekte mit Gallery + Tags laden.
      * N+1-Fix: Gallery und Tags werden einmal gebündelt geladen
@@ -26,10 +35,8 @@ export class ProjectsService {
 
         if (!projects || projects.length === 0) return [];
 
-        // Alle Projekt-IDs sammeln
         const projectIds = projects.map((p) => String(p._id ?? p.id));
 
-        // Gebündelter Laden: Gallery + Tags für alle Projekte in 2 Queries statt 2×N
         const [allGallery, allTags] = await Promise.all([
             projectImageRepository.findMany({
                 where: { projectId: { $in: projectIds } },
@@ -40,27 +47,8 @@ export class ProjectsService {
             }).catch(() => []),
         ]);
 
-        // Maps aufbauen für O(1)-Zuordnung
-        const galleryMap = new Map<string, typeof allGallery>();
-        for (const img of ((allGallery || []) as unknown as Record<string, unknown>[])) {
-            const pid = String(img.projectId);
-            const arr = galleryMap.get(pid) || [];
-            arr.push(img as never);
-            galleryMap.set(pid, arr);
-        }
-
-        const tagMap = new Map<string, typeof allTags>();
-        for (const tag of ((allTags || []) as unknown as Record<string, unknown>[])) {
-            const pids = tag.projects;
-            if (Array.isArray(pids)) {
-                for (const pid of pids) {
-                    const key = String(pid);
-                    const arr = tagMap.get(key) || [];
-                    arr.push(tag as never);
-                    tagMap.set(key, arr);
-                }
-            }
-        }
+        const galleryMap = ProjectReadService.buildGalleryMap(allGallery);
+        const tagMap = ProjectReadService.buildTagMap(allTags);
 
         return projects.map((p) => {
             const pid = String(p._id ?? p.id);
@@ -84,6 +72,101 @@ export class ProjectsService {
     }
 
     /**
+     * Einzelnes Projekt anhand des Slugs mit Gallery + Navigation laden
+     */
+    static async getBySlug(slug: string) {
+        const project = await projectRepository.findUnique({ where: { slug } }) as Record<string, unknown> | null;
+        if (!project || !project.published) return null;
+
+        const { prev, next } = await ProjectReadService.resolveNavigation(slug);
+        const technologies = ProjectReadService.parseTechnologies(project.technologies);
+
+        const gallery = await projectImageRepository.findMany({
+            where: { projectId: String(project._id ?? project.id) },
+            orderBy: { order: "asc" },
+        });
+
+        return {
+            ...project,
+            gallery,
+            technologies,
+            previousSlug: prev,
+            nextSlug: next,
+        };
+    }
+
+    /* ---------- Private Helpers ---------- */
+
+    private static buildGalleryMap(allGallery: unknown): Map<string, unknown[]> {
+        const map = new Map<string, unknown[]>();
+        for (const img of ((allGallery || []) as Record<string, unknown>[])) {
+            const pid = String(img.projectId);
+            const arr = map.get(pid) || [];
+            arr.push(img);
+            map.set(pid, arr);
+        }
+        return map;
+    }
+
+    private static buildTagMap(allTags: unknown): Map<string, unknown[]> {
+        const map = new Map<string, unknown[]>();
+        for (const tag of ((allTags || []) as Record<string, unknown>[])) {
+            const pids = tag.projects;
+            if (Array.isArray(pids)) {
+                for (const pid of pids) {
+                    const key = String(pid);
+                    const arr = map.get(key) || [];
+                    arr.push(tag);
+                    map.set(key, arr);
+                }
+            }
+        }
+        return map;
+    }
+
+    private static async resolveNavigation(slug: string): Promise<{ prev: string | null; next: string | null }> {
+        const allProjects = await projectRepository.findMany({
+            where: { published: true },
+            orderBy: { createdAt: "asc" },
+        }) as unknown as Record<string, unknown>[];
+
+        let prev: string | null = null;
+        let next: string | null = null;
+
+        if (allProjects && allProjects.length > 0) {
+            const index = allProjects.findIndex((p) => p.slug === slug);
+            if (index !== -1) {
+                prev = index > 0 ? allProjects[index - 1].slug as string : null;
+                next = index < allProjects.length - 1 ? allProjects[index + 1].slug as string : null;
+            }
+        }
+
+        return { prev, next };
+    }
+
+    private static parseTechnologies(raw: unknown): string[] {
+        try {
+            if (typeof raw === "string") {
+                return JSON.parse(raw);
+            }
+            if (Array.isArray(raw)) {
+                return raw as string[];
+            }
+        } catch {
+            if (typeof raw === "string") {
+                return raw.split(",").map((tech: string) => tech.trim());
+            }
+        }
+        return [];
+    }
+}
+
+/* ================================================================
+ * WRITE SERVICE
+ * ================================================================ */
+
+export class ProjectWriteService {
+    /**
      * Neues Projekt erstellen + Gallery + Navigation aktualisieren
      */
     static async create(input: CreateProjectInput) {
@@ -93,7 +176,6 @@ export class ProjectsService {
             return { success: false as const, error: "A project with this slug already exists" };
         }
 
-        // Projekt anlegen
         const project = await projectRepository.create({
             data: {
                 slug: input.slug,
@@ -130,7 +212,6 @@ export class ProjectsService {
         // Navigation aktualisieren
         await this.updateNavigation();
 
-        // Ergebnis mit Gallery + Tags zurückgeben
         const galleryRes = await projectImageRepository.findMany({
             where: { projectId },
         });
@@ -141,59 +222,6 @@ export class ProjectsService {
         return {
             success: true as const,
             data: { ...project, gallery: galleryRes, tags: tagsRes },
-        };
-    }
-
-    /**
-     * Einzelnes Projekt anhand des Slugs mit Gallery + Navigation laden
-     */
-    static async getBySlug(slug: string) {
-        const project = await projectRepository.findUnique({ where: { slug } }) as Record<string, unknown> | null;
-        if (!project || !project.published) return null;
-
-        // previous/next berechnen
-        const allProjects = await projectRepository.findMany({
-            where: { published: true },
-            orderBy: { createdAt: "asc" },
-        }) as unknown as Record<string, unknown>[];
-
-        let prev: string | null = null;
-        let next: string | null = null;
-
-        if (allProjects && allProjects.length > 0) {
-            const index = allProjects.findIndex((p) => p.slug === slug);
-            if (index !== -1) {
-                prev = index > 0 ? allProjects[index - 1].slug as string : null;
-                next = index < allProjects.length - 1 ? allProjects[index + 1].slug as string : null;
-            }
-        }
-
-        // Technologien parsen
-        let technologies: string[] = [];
-        try {
-            if (typeof project.technologies === "string") {
-                technologies = JSON.parse(project.technologies);
-            } else if (Array.isArray(project.technologies)) {
-                technologies = project.technologies as string[];
-            }
-        } catch {
-            technologies =
-                typeof project.technologies === "string"
-                    ? project.technologies.split(",").map((tech: string) => tech.trim())
-                    : [];
-        }
-
-        const gallery = await projectImageRepository.findMany({
-            where: { projectId: String(project._id ?? project.id) },
-            orderBy: { order: "asc" },
-        });
-
-        return {
-            ...project,
-            gallery,
-            technologies,
-            previousSlug: prev,
-            nextSlug: next,
         };
     }
 
@@ -216,12 +244,23 @@ export class ProjectsService {
             return {
                 id: String(current._id ?? current.id),
                 data: {
-                    previousSlug: (previous as Record<string, unknown>)?.slug || null,
-                    nextSlug: (next as Record<string, unknown>)?.slug || null,
+                    previousSlug: (previous as Record<string, unknown> | null)?.slug || null,
+                    nextSlug: (next as Record<string, unknown> | null)?.slug || null,
                 },
             };
         });
 
         await projectRepository.bulkUpdate(operations);
     }
+}
+
+/* ================================================================
+ * FACADE – Geriye uyumlu adapter
+ * ================================================================ */
+
+export class ProjectsService {
+    static list = ProjectReadService.list;
+    static getBySlug = ProjectReadService.getBySlug;
+    static create = ProjectWriteService.create.bind(ProjectWriteService);
+    static updateNavigation = ProjectWriteService.updateNavigation;
 }

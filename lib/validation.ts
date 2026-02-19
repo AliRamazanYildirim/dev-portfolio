@@ -53,3 +53,43 @@ export function toIsoString(value: unknown): string | null {
     const parsed = new Date(value as string);
     return Number.isNaN(parsed.getTime()) ? null : parsed.toISOString();
 }
+
+/* ---------- Normalization / Sanitization (NEU) ---------- */
+
+/**
+ * Trimmt und normalisiert einen String-Wert.
+ * Gibt den Fallback zurück wenn leer/kein String.
+ */
+export function sanitizeString(value: unknown, fallback = ""): string {
+    if (typeof value !== "string") return fallback;
+    const trimmed = value.trim();
+    return trimmed || fallback;
+}
+
+/**
+ * Trimmt und gibt null zurück wenn leer.
+ */
+export function sanitizeOptionalString(value: unknown): string | null {
+    if (typeof value !== "string") return null;
+    const trimmed = value.trim();
+    return trimmed || null;
+}
+
+/**
+ * Sichere ID-Validierung (nicht leer, kein Whitespace).
+ */
+export function isValidId(value: unknown): value is string {
+    return typeof value === "string" && value.trim().length > 0 && !/\s/.test(value);
+}
+
+/**
+ * Prüft ob ein Wert ein gültiger MongoDB ObjectId oder CUID ist.
+ */
+export function isValidDocumentId(value: unknown): value is string {
+    if (typeof value !== "string") return false;
+    // MongoDB ObjectId (24 hex chars)
+    if (/^[a-f\d]{24}$/i.test(value)) return true;
+    // CUID2 (starts with letter, 21-32 chars)
+    if (/^[a-z][a-z0-9]{20,31}$/i.test(value)) return true;
+    return false;
+}

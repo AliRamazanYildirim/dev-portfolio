@@ -89,9 +89,8 @@ export const projectImageRepository = {
 
     createMany: async (params: { data: Array<Partial<IProjectImage> & Record<string, unknown>> }) => {
         await connectToMongo();
-        return normalizeDoc<IProjectImage[]>(
-            await ProjectImageModel.insertMany(params.data || []),
-        );
+        const docs = await ProjectImageModel.insertMany(params.data || []);
+        return normalizeDoc<IProjectImage[]>(docs as unknown as IProjectImage[]);
     },
 
     deleteMany: async (opts: { where: Record<string, unknown> }) => {

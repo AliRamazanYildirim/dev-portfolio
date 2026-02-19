@@ -16,3 +16,13 @@ export { customerRepository } from "./customerRepository";
 export { referralRepository } from "./referralRepository";
 export { settingsRepository } from "./settingsRepository";
 export { normalizeDoc } from "./normalize";
+export type {
+    IReadRepository,
+    IWriteRepository,
+    IRepository,
+    FindManyOptions,
+    FindUniqueOptions,
+    MutateOptions,
+    CreateOptions,
+    DeleteOptions,
+} from "./types";

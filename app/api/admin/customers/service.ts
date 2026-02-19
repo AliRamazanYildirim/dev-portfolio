@@ -1,20 +1,23 @@
 /**
  * Admin Customers API – Business Logic / Service Layer
+ *
+ * SRP-Refactored:
+ *  - Welcome-E-Mail → WelcomeEmailService (lib/welcomeEmailService.ts)
+ *  - Referral-Logik → processReferral (lib/referralService.ts)
+ *  - Recalc-Logik → RecalcService (lib/recalcService.ts)
+ *  - Dieser Service: reiner Kunden-CRUD + Orchestrierung
  */
 
-import path from "path";
-import fs from "fs";
 import { customerRepository } from "@/lib/repositories";
 import { connectToMongo } from "@/lib/mongodb";
 import { fetchCustomers } from "./lib/query";
 import {
-    calcDiscountedPrice,
     calcTotalEarnings,
     generateUniqueReferralCode,
 } from "./lib/referral";
 import { processReferral } from "./lib/referralService";
-import { buildWelcomeEmailHTML } from "./lib/email-templates";
-import { sendAdminEmail } from "./lib/mailer";
+import { WelcomeEmailService } from "./lib/welcomeEmailService";
+import { RecalcService } from "./lib/recalcService";
 import { NotFoundError, ConflictError } from "@/lib/errors";
 import type { CreateCustomerRequest, CustomerQueryParams } from "./types";
 
@@ -72,60 +75,17 @@ export class CustomersService {
             );
         }
 
-        // ------- Welcome-Mail senden -------
-        await this.sendWelcomeEmail(customer, input.language || "de");
+        // ------- Welcome-Mail senden (delegiert an WelcomeEmailService) -------
+        await WelcomeEmailService.send(
+            {
+                email: customer.email as string,
+                firstname: customer.firstname as string,
+                lastname: customer.lastname as string,
+            },
+            input.language || "de",
+        );
 
         return customer;
-    }
-
-    /**
-     * Willkommens-E-Mail mit Vertrag senden
-     */
-    private static async sendWelcomeEmail(
-        customer: any,
-        language: string,
-    ) {
-        if (!customer.email) return;
-
-        try {
-            const welcomeEmail = buildWelcomeEmailHTML({
-                firstName: customer.firstname || "",
-                lastName: customer.lastname || "",
-                language,
-            });
-
-            const pdfPath = path.join(
-                process.cwd(),
-                "public",
-                "contracts",
-                "IT_Service_Agreement_EN-DE-TR.pdf",
-            );
-            const pdfExists = fs.existsSync(pdfPath);
-
-            if (!pdfExists) {
-                console.warn("Contract PDF not found at:", pdfPath);
-            }
-
-            await sendAdminEmail({
-                to: customer.email,
-                subject: welcomeEmail.subject,
-                html: welcomeEmail.html,
-                attachments: pdfExists
-                    ? [
-                        {
-                            filename: "IT_Service_Agreement_EN-DE-TR.pdf",
-                            path: pdfPath,
-                            contentType: "application/pdf",
-                        },
-                    ]
-                    : undefined,
-            });
-
-            console.log("Welcome email sent to:", customer.email);
-        } catch (emailErr) {
-            console.error("Failed sending welcome email:", emailErr);
-            // E-Mail-Fehler soll Kundenanlage nicht blockieren
-        }
     }
 
     /**
@@ -133,21 +93,25 @@ export class CustomersService {
      */
     static async getById(id: string) {
         await connectToMongo();
-        const data = await customerRepository.findUnique({ where: { id } }) as any;
+        const data = await customerRepository.findUnique({ where: { id } });
         if (!data) return null;
 
-        const computedTotalEarnings = calcTotalEarnings(data.price, data.referralCount);
-        const storedTotal = typeof data.totalEarnings === "number" ? data.totalEarnings : 0;
+        const typedData = data as unknown as Record<string, unknown>;
+        const computedTotalEarnings = calcTotalEarnings(
+            typedData.price as number,
+            typedData.referralCount as number,
+        );
+        const storedTotal = typeof typedData.totalEarnings === "number" ? typedData.totalEarnings : 0;
 
         if (Math.abs(storedTotal - computedTotalEarnings) > 0.009) {
             await customerRepository.update({
                 where: { id },
                 data: { totalEarnings: computedTotalEarnings, updatedAt: new Date() },
             });
-            data.totalEarnings = computedTotalEarnings;
+            typedData.totalEarnings = computedTotalEarnings;
         }
 
-        return data;
+        return typedData;
     }
 
     /**
@@ -163,7 +127,7 @@ export class CustomersService {
 
         const existing = existingCustomer as unknown as Record<string, unknown>;
 
-        // Referral-Verarbeitung nur bei Erstverwendung eines Codes (delegiert an ReferralService)
+        // Referral-Verarbeitung nur bei Erstverwendung eines Codes
         let referralApplied = false;
         if (body.reference && body.price && !existing.reference) {
             const referralResult = await processReferral(
@@ -193,7 +157,7 @@ export class CustomersService {
         try {
             const result = await customerRepository.update({
                 where: { id },
-                data: updateData as any,
+                data: updateData as Record<string, unknown>,
             });
             return {
                 data: result,
@@ -210,13 +174,13 @@ export class CustomersService {
                     const conflictEmail = conflictEmailMatch ? conflictEmailMatch[1] : updateData.email as string;
                     const owner = await customerRepository.findUnique({ where: { email: conflictEmail } });
                     if (owner) {
+                        const ownerData = owner as unknown as Record<string, unknown>;
                         throw new ConflictError(
-                            `This email address is already registered to: ${owner.firstname} ${owner.lastname}`,
+                            `This email address is already registered to: ${ownerData.firstname} ${ownerData.lastname}`,
                         );
                     }
                 } catch (lookupErr) {
                     if (lookupErr instanceof ConflictError) throw lookupErr;
-                    // ignore lookup errors
                 }
                 throw new ConflictError("This email address is already registered.");
             }
@@ -234,26 +198,9 @@ export class CustomersService {
     }
 
     /**
-     * FinalPrice neu berechnen
+     * FinalPrice neu berechnen (delegiert an RecalcService)
      */
     static async recalcFinalPrice(customerId: string) {
-        await connectToMongo();
-        const customer = await customerRepository.findByIdExec(customerId);
-        if (!customer) {
-            throw new NotFoundError("Customer not found");
-        }
-
-        const basePrice = typeof (customer as any).price === "number" ? Number((customer as any).price) : 0;
-        const refCount = typeof (customer as any).referralCount === "number" ? (customer as any).referralCount : 0;
-
-        const newFinal = calcDiscountedPrice(basePrice, refCount);
-        const totalEarnings = calcTotalEarnings(basePrice, refCount);
-
-        await customerRepository.update({
-            where: { id: String((customer as any)._id) },
-            data: { finalPrice: newFinal, totalEarnings, updatedAt: new Date() },
-        });
-
-        return { id: (customer as any)._id, finalPrice: newFinal, totalEarnings };
+        return RecalcService.recalcFinalPrice(customerId);
     }
 }

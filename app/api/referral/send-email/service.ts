@@ -2,7 +2,7 @@ import { customerRepository } from "@/lib/repositories";
 import { getDiscountsEnabled } from "@/lib/discountSettings";
 import { NotFoundError, ConflictError, ValidationError } from "@/lib/errors";
 import { buildReferralEmailTemplate } from "./lib/template";
-import { sendReferralEmail } from "./lib/mailer";
+import { getMailPort } from "@/lib/mail";
 
 interface SendReferralEmailInput {
     customerId: string;
@@ -60,7 +60,9 @@ export class ReferralEmailService {
             throw new ValidationError("No recipient email provided");
         }
 
-        const { messageId, previewUrl } = await sendReferralEmail({
+        // Mail über zentralen Mail Port senden (DIP)
+        const mailPort = getMailPort();
+        const { messageId, previewUrl } = await mailPort.send({
             to: toAddress,
             subject,
             html,
@@ -71,7 +73,7 @@ export class ReferralEmailService {
             customerName: `${firstname} ${lastname}`,
             customerEmail: toAddress,
             messageId,
-            previewUrl,
+            previewUrl: previewUrl ?? null,
         };
     }
 }

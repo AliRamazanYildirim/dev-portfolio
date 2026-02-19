@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
         : undefined,
     });
 
-    return successResponse({ data: data || [], count: data.length });
+    return successResponse(data || []);
   } catch (error) {
     return handleError(error);
   }

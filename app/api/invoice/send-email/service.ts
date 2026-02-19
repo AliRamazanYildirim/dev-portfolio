@@ -2,7 +2,9 @@ import { INVOICE_CONSTANTS } from "@/constants/invoice";
 import { ValidationError } from "@/lib/errors";
 import { resolveInvoiceDates } from "./lib/date-utils";
 import { fetchInvoicePdf } from "./lib/pdf";
-import { buildMailOptions, createVerifiedTransporter } from "./lib/mailer";
+import { buildInvoiceHtml } from "./lib/mail-template";
+import { getMailPort } from "@/lib/mail";
+import type { InvoiceData } from "@/lib/invoiceUtils";
 
 interface SendInvoiceInput {
     invoiceData: Record<string, unknown>;
@@ -26,29 +28,41 @@ export class InvoiceEmailService {
             throw new ValidationError("Missing required fields");
         }
 
-        const pdfBuffer = await fetchInvoicePdf(invoiceData as any);
-        const { issueDateFormatted, dueDateFormatted } = resolveInvoiceDates(invoiceData as any);
+        const pdfBuffer = await fetchInvoicePdf(invoiceData as unknown as InvoiceData);
+        const { issueDateFormatted, dueDateFormatted } = resolveInvoiceDates(invoiceData as unknown as InvoiceData);
 
         const displayProjectTitle = InvoiceEmailService.resolveProjectTitle(invoiceData);
 
-        const transporter = await createVerifiedTransporter();
-        const mailOptions = buildMailOptions({
-            customerEmail,
+        const html = buildInvoiceHtml({
             customerName,
             displayProjectTitle,
-            invoiceData: invoiceData as any,
+            invoiceData: invoiceData as unknown as InvoiceData,
             issueDateFormatted,
             dueDateFormatted,
-            pdfBuffer,
         });
 
-        const result = await transporter.sendMail(mailOptions);
+        const invoiceNumber = (invoiceData as Record<string, unknown>).invoiceNumber as string;
+
+        // Mail über zentralen Mail Port senden (DIP)
+        const mailPort = getMailPort();
+        const result = await mailPort.send({
+            to: customerEmail,
+            subject: `Ihre Rechnung ${invoiceNumber} - Ali Ramazan Yildirim`,
+            html,
+            attachments: [
+                {
+                    filename: `invoice-${invoiceNumber}.pdf`,
+                    content: pdfBuffer as unknown as Buffer,
+                    contentType: "application/pdf",
+                },
+            ],
+        });
 
         return {
             message: "Invoice email sent successfully with PDF attachment",
             customerEmail,
-            invoiceNumber: (invoiceData as any).invoiceNumber,
-            pdfSize: pdfBuffer.length,
+            invoiceNumber,
+            pdfSize: (pdfBuffer as unknown as Buffer).length,
             messageId: result.messageId,
         };
     }
