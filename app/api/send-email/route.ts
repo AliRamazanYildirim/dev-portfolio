@@ -1,6 +1,6 @@
-import { SendEmailService } from "./service";
-import { jsonResponse } from "./utils";
-import { validateSendEmailPayload } from "./validation";
+import { SendEmailService } from "./lib/service";
+import { jsonResponse } from "./lib/utils";
+import { validateSendEmailPayload } from "./lib/validation";
 
 export async function POST(req: Request): Promise<Response> {
   try {
