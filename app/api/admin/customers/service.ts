@@ -4,8 +4,8 @@
 
 import path from "path";
 import fs from "fs";
-import CustomerModel from "@/models/Customer";
-import ReferralTransactionModel from "@/models/ReferralTransaction";
+import { customerRepository } from "@/lib/repositories";
+import { referralRepository } from "@/lib/repositories";
 import { connectToMongo } from "@/lib/mongodb";
 import { getDiscountsEnabled } from "@/lib/discountSettings";
 import { fetchCustomers } from "./lib/query";
@@ -51,9 +51,9 @@ export class CustomersService {
         const finalPriceForNewCustomer = input.price || 0;
 
         if (input.reference && input.price) {
-            referrer = await CustomerModel.findOne({
-                myReferralCode: input.reference,
-            }).exec();
+            referrer = await customerRepository.findUnique({
+                where: { myReferralCode: input.reference },
+            });
 
             if (referrer && referrer.price) {
                 referrerCode = referrer.myReferralCode || null;
@@ -80,7 +80,10 @@ export class CustomersService {
                 }
 
                 try {
-                    await CustomerModel.findByIdAndUpdate(referrer._id, referrerUpdateData).exec();
+                    await customerRepository.update({
+                        where: { id: String(referrer._id ?? referrer.id) },
+                        data: referrerUpdateData,
+                    });
                 } catch (updateErr) {
                     console.error("Error updating referrer:", updateErr);
                 }
@@ -109,21 +112,23 @@ export class CustomersService {
             updatedAt: new Date(),
         };
 
-        const customer = await CustomerModel.create(customerData);
+        const customer = await customerRepository.create({ data: customerData }) as any;
 
         // ------- Referral-Transaktion erstellen -------
         if (referrerCode) {
-            await ReferralTransactionModel.create({
-                referrerCode,
-                newCustomerId: customer._id.toString(),
-                discountRate: referrerDiscount,
-                originalPrice: referrerOriginalPrice ?? input.price,
-                finalPrice: referrerDiscountedPrice ?? input.price,
-                referralLevel: Math.ceil(referrerDiscount / 3),
-                invoiceStatus: "pending",
-                invoiceNumber: null,
-                invoiceSentAt: null,
-                emailSent,
+            await referralRepository.create({
+                data: {
+                    referrerCode,
+                    newCustomerId: customer._id.toString(),
+                    discountRate: referrerDiscount,
+                    originalPrice: referrerOriginalPrice ?? input.price,
+                    finalPrice: referrerDiscountedPrice ?? input.price,
+                    referralLevel: Math.ceil(referrerDiscount / 3),
+                    invoiceStatus: "pending",
+                    invoiceNumber: null,
+                    invoiceSentAt: null,
+                    emailSent,
+                },
             });
         }
 
@@ -181,5 +186,179 @@ export class CustomersService {
             console.error("Failed sending welcome email:", emailErr);
             // E-Mail-Fehler soll Kundenanlage nicht blockieren
         }
+    }
+
+    /**
+     * Einzelnen Kunden anhand der ID abrufen
+     */
+    static async getById(id: string) {
+        await connectToMongo();
+        const data = await customerRepository.findUnique({ where: { id } }) as any;
+        if (!data) return null;
+
+        const computedTotalEarnings = calcTotalEarnings(data.price, data.referralCount);
+        const storedTotal = typeof data.totalEarnings === "number" ? data.totalEarnings : 0;
+
+        if (Math.abs(storedTotal - computedTotalEarnings) > 0.009) {
+            await customerRepository.update({
+                where: { id },
+                data: { totalEarnings: computedTotalEarnings, updatedAt: new Date() },
+            });
+            data.totalEarnings = computedTotalEarnings;
+        }
+
+        return data;
+    }
+
+    /**
+     * Kunden aktualisieren inkl. Referral-Logik
+     */
+    static async updateById(id: string, body: any) {
+        await connectToMongo();
+        const discountsEnabled = await getDiscountsEnabled();
+        const existingCustomer = await customerRepository.findByIdExec(id);
+
+        if (!existingCustomer) {
+            return { success: false, error: "Customer not found", status: 404 };
+        }
+
+        let referrerDiscount = 0;
+        let referrerCode = null;
+        let emailSent = false;
+
+        if (body.reference && body.price && !(existingCustomer as any).reference) {
+            const referrer = await customerRepository.findOneExec({ myReferralCode: body.reference });
+
+            if (referrer && (referrer as any).price && (referrer as any).myReferralCode) {
+                referrerCode = (referrer as any).myReferralCode;
+                const currentReferralCount = (referrer as any).referralCount || 0;
+                referrerDiscount = 3 + currentReferralCount * 3;
+                referrerDiscount = Math.min(referrerDiscount, 9);
+
+                const referrerFinalPrice = calcDiscountedPrice((referrer as any).price, currentReferralCount + 1);
+
+                const referrerUpdateData: Record<string, any> = {
+                    referralCount: currentReferralCount + 1,
+                    updatedAt: new Date(),
+                };
+                referrerUpdateData.totalEarnings = calcTotalEarnings(
+                    (referrer as any).price,
+                    currentReferralCount + 1,
+                );
+
+                if (discountsEnabled) {
+                    referrerUpdateData.discountRate = referrerDiscount;
+                    referrerUpdateData.finalPrice = referrerFinalPrice;
+                    emailSent = false;
+                }
+
+                await customerRepository.update({
+                    where: { id: String((referrer as any)._id) },
+                    data: referrerUpdateData,
+                });
+
+                await referralRepository.create({
+                    data: {
+                        referrerCode,
+                        newCustomerId: String((existingCustomer as any)._id),
+                        discountRate: referrerDiscount,
+                        originalPrice: body.price,
+                        finalPrice: body.price,
+                        referralLevel: Math.ceil(referrerDiscount / 3),
+                        invoiceStatus: "pending",
+                        invoiceNumber: null,
+                        invoiceSentAt: null,
+                        emailSent,
+                    },
+                });
+            }
+        }
+
+        const hasPriceUpdate = Object.prototype.hasOwnProperty.call(body, "price");
+        const hasReferralCountUpdate = Object.prototype.hasOwnProperty.call(body, "referralCount");
+        const nextPrice = hasPriceUpdate ? body.price : (existingCustomer as any).price;
+        const nextReferralCount = hasReferralCountUpdate
+            ? body.referralCount
+            : (existingCustomer as any).referralCount;
+        const nextTotalEarnings = calcTotalEarnings(nextPrice, nextReferralCount);
+
+        const updateData = {
+            ...body,
+            finalPrice: body.price,
+            discountRate: (existingCustomer as any).discountRate,
+            totalEarnings: nextTotalEarnings,
+            updatedAt: new Date(),
+        };
+
+        try {
+            const result = await customerRepository.update({
+                where: { id },
+                data: updateData,
+            });
+            return {
+                success: true,
+                data: result,
+                referralApplied: referrerDiscount > 0,
+                referrerReward: referrerDiscount > 0
+                    ? { rate: referrerDiscount, message: `Der empfehlende Kunde hat ${referrerDiscount}% Rabatt erhalten!` }
+                    : null,
+            };
+        } catch (err: any) {
+            const msg = err?.message || String(err);
+            if (msg.includes("duplicate key") || msg.includes("E11000") || msg.includes("email_1")) {
+                try {
+                    const conflictEmailMatch = msg.match(/\{\s*email:\s*"([^"]+)"\s*\}/);
+                    const conflictEmail = conflictEmailMatch ? conflictEmailMatch[1] : updateData.email;
+                    const owner = await customerRepository.findUnique({ where: { email: conflictEmail } });
+                    if (owner) {
+                        return {
+                            success: false,
+                            error: `This email address is already registered to: ${(owner as any).firstname} ${(owner as any).lastname}`,
+                            status: 409,
+                        };
+                    }
+                } catch {
+                    // ignore lookup errors
+                }
+                return { success: false, error: "This email address is already registered.", status: 409 };
+            }
+            return { success: false, error: msg, status: 500 };
+        }
+    }
+
+    /**
+     * Kunden löschen
+     */
+    static async deleteById(id: string) {
+        await connectToMongo();
+        await customerRepository.delete({ where: { id } });
+        return { success: true };
+    }
+
+    /**
+     * FinalPrice neu berechnen
+     */
+    static async recalcFinalPrice(customerId: string) {
+        await connectToMongo();
+        const customer = await customerRepository.findByIdExec(customerId);
+        if (!customer) {
+            return { success: false, error: "Customer not found", status: 404 };
+        }
+
+        const basePrice = typeof (customer as any).price === "number" ? Number((customer as any).price) : 0;
+        const refCount = typeof (customer as any).referralCount === "number" ? (customer as any).referralCount : 0;
+
+        const newFinal = calcDiscountedPrice(basePrice, refCount);
+        const totalEarnings = calcTotalEarnings(basePrice, refCount);
+
+        await customerRepository.update({
+            where: { id: String((customer as any)._id) },
+            data: { finalPrice: newFinal, totalEarnings, updatedAt: new Date() },
+        });
+
+        return {
+            success: true,
+            data: { id: (customer as any)._id, finalPrice: newFinal, totalEarnings },
+        };
     }
 }

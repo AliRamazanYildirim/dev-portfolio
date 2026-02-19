@@ -1,5 +1,5 @@
-import CustomerModel from "@/models/Customer";
+import { customerRepository } from "@/lib/repositories";
 
 export function findCustomerById(customerId: string) {
-    return CustomerModel.findById(customerId).lean().exec();
+    return customerRepository.findUnique({ where: { id: customerId } });
 }

@@ -51,6 +51,19 @@ export const projectRepository = {
 };
 
 export const projectImageRepository = {
+    findMany: async (opts: any) => {
+        await connectToMongo();
+        const where = opts?.where || {};
+        const orderBy = opts?.orderBy || {};
+        const sort: Record<string, 1 | -1> = {};
+        if (orderBy.order === "asc") sort.order = 1;
+        else if (orderBy.order === "desc") sort.order = -1;
+        else sort.order = 1;
+        return normalizeDoc(
+            await ProjectImageModel.find(where).sort(sort).lean().exec(),
+        );
+    },
+
     createMany: async (params: any) => {
         await connectToMongo();
         return normalizeDoc(

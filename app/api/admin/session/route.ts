@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import AdminModel from "@/models/Admin";
-import { connectToMongo } from "@/lib/mongodb";
+import { adminRepository } from "@/lib/repositories";
 import { verifyToken, AUTH_COOKIE_NAME } from "@/lib/auth";
 
 // GET /api/admin/session - Session-Status prüfen - Check session status
@@ -34,9 +33,8 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // MongoDB ile admin user sorgula
-    await connectToMongo();
-    const adminUser = await AdminModel.findById(decoded.userId).exec();
+    // Admin user via Repository abfragen
+    const adminUser = await adminRepository.findByIdExec(decoded.userId);
 
     if (!adminUser || !adminUser.active) {
       return NextResponse.json({ success: false, authenticated: false, error: "User not found" }, { status: 401 });

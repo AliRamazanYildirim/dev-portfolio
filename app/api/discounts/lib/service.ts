@@ -1,6 +1,5 @@
 import { connectToMongo } from "@/lib/mongodb";
-import ReferralTransactionModel from "@/models/ReferralTransaction";
-import CustomerModel from "@/models/Customer";
+import { customerRepository, referralRepository } from "@/lib/repositories";
 import {
     calcDiscountedPrice,
     calcTotalEarnings,
@@ -34,20 +33,18 @@ export class DiscountsService {
             filter.invoiceStatus = status;
         }
 
-        const transactions = await ReferralTransactionModel.find(filter)
-            .sort({ createdAt: -1 })
-            .lean()
-            .exec();
+        const transactions = await referralRepository.findMany({
+            where: filter,
+            orderBy: { createdAt: -1 },
+        }) as any[];
 
-        const customerIds = transactions
-            .map((tx) => tx.newCustomerId)
-            .filter((id): id is string => Boolean(id));
+        const customerIds = (transactions ?? [])
+            .map((tx: any) => tx.newCustomerId)
+            .filter((id: any): id is string => Boolean(id));
 
         const uniqueCustomerIds = Array.from(new Set(customerIds));
 
-        const customers = await CustomerModel.find({ _id: { $in: uniqueCustomerIds } })
-            .lean()
-            .exec();
+        const customers = await customerRepository.findByIds(uniqueCustomerIds) as any[];
 
         const customerMap = new Map(
             customers.map((customer) => [String(customer._id), customer])
@@ -61,11 +58,9 @@ export class DiscountsService {
             )
         );
 
-        const referrers = await CustomerModel.find({
-            myReferralCode: { $in: referrerCodes },
-        })
-            .lean()
-            .exec();
+        const referrers = await customerRepository.findMany({
+            where: { myReferralCode: { $in: referrerCodes } },
+        }) as any[];
 
         const referrerMap = new Map(
             referrers.map((referrer) => [referrer.myReferralCode, referrer])
@@ -262,9 +257,10 @@ export class DiscountsService {
             update.invoiceSentAt = new Date();
         }
 
-        const updated = await ReferralTransactionModel.findByIdAndUpdate(input.id, update, {
-            new: true,
-        }).lean();
+        const updated = await referralRepository.update({
+            where: { id: input.id },
+            data: update,
+        }) as any;
 
         if (!updated) {
             return null;
@@ -283,7 +279,7 @@ export class DiscountsService {
     static async deleteDiscount(id: string) {
         await connectToMongo();
 
-        const deleted = await ReferralTransactionModel.findByIdAndDelete(id).lean();
+        const deleted = await referralRepository.delete({ where: { id } }) as any;
         if (!deleted) {
             return null;
         }
@@ -291,10 +287,12 @@ export class DiscountsService {
         try {
             const code = deleted.referrerCode;
             if (code) {
-                const remaining = await ReferralTransactionModel.countDocuments({
+                const remaining = await referralRepository.countDocuments({
                     referrerCode: code,
-                }).exec();
-                const referrer = await CustomerModel.findOne({ myReferralCode: code }).exec();
+                });
+                const referrer = await customerRepository.findUnique({
+                    where: { myReferralCode: code },
+                }) as any;
                 if (referrer) {
                     const newCount = Math.max(0, remaining);
                     const newRate = Math.min(newCount * 3, 9);
@@ -304,13 +302,16 @@ export class DiscountsService {
                             : referrer.finalPrice;
                     const totalEarnings = calcTotalEarnings(referrer.price, newCount);
 
-                    await CustomerModel.findByIdAndUpdate(referrer._id, {
-                        referralCount: newCount,
-                        discountRate: newRate,
-                        finalPrice: newFinal,
-                        totalEarnings,
-                        updatedAt: new Date(),
-                    }).exec();
+                    await customerRepository.update({
+                        where: { id: String(referrer._id ?? referrer.id) },
+                        data: {
+                            referralCount: newCount,
+                            discountRate: newRate,
+                            finalPrice: newFinal,
+                            totalEarnings,
+                            updatedAt: new Date(),
+                        },
+                    });
                 }
             }
         } catch (err) {
@@ -321,12 +322,14 @@ export class DiscountsService {
             const usedCustomerId = deleted.newCustomerId;
             const usedCode = deleted.referrerCode;
             if (usedCustomerId && usedCode) {
-                const usedCustomer = await CustomerModel.findById(usedCustomerId).exec();
-                if (usedCustomer && (usedCustomer as any).reference === usedCode) {
-                    await CustomerModel.findByIdAndUpdate(usedCustomerId, {
-                        reference: null,
-                        updatedAt: new Date(),
-                    }).exec();
+                const usedCustomer = await customerRepository.findUnique({
+                    where: { id: usedCustomerId },
+                }) as any;
+                if (usedCustomer && usedCustomer.reference === usedCode) {
+                    await customerRepository.update({
+                        where: { id: usedCustomerId },
+                        data: { reference: null, updatedAt: new Date() },
+                    });
                 }
             }
         } catch (err) {

@@ -16,6 +16,18 @@ export const adminRepository = {
         return null;
     },
 
+    /** Find active admin by email (returns full mongoose doc for password access) */
+    findActiveByEmail: async (email: string) => {
+        await connectToMongo();
+        return AdminModel.findOne({ email, active: true }).exec();
+    },
+
+    /** Find admin by ID (returns full mongoose doc) */
+    findByIdExec: async (id: string) => {
+        await connectToMongo();
+        return AdminModel.findById(id).exec();
+    },
+
     findFirst: async (opts: any) => {
         return adminRepository.findUnique(opts);
     },

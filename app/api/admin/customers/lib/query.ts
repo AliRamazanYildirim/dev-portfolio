@@ -1,5 +1,4 @@
-import CustomerModel from "@/models/Customer";
-import { connectToMongo } from "@/lib/mongodb";
+import { customerRepository } from "@/lib/repositories";
 import { calcTotalEarnings } from "./referral";
 
 interface CustomerQueryOptions {
@@ -62,8 +61,6 @@ function buildSortObject(sortParam?: string | null) {
 }
 
 export async function fetchCustomers(options: CustomerQueryOptions) {
-    await connectToMongo();
-
     const query: Record<string, unknown> = {};
     const dateFilter = buildDateRangeFilter(options.from, options.to);
     if (dateFilter) {
@@ -76,12 +73,8 @@ export async function fetchCustomers(options: CustomerQueryOptions) {
     }
 
     const sortObj = buildSortObject(options.sort);
-    const cursor = CustomerModel.find(query);
-    if (Object.keys(sortObj).length > 0) {
-        cursor.sort(sortObj);
-    }
 
-    const raw = await cursor.lean().exec();
+    const raw = await customerRepository.findWithQuery(query, sortObj);
     if (!Array.isArray(raw)) {
         return raw;
     }
@@ -93,10 +86,10 @@ export async function fetchCustomers(options: CustomerQueryOptions) {
         const storedTotal = typeof doc.totalEarnings === "number" ? doc.totalEarnings : 0;
         if (doc._id && Math.abs(storedTotal - computedTotal) > 0.009) {
             updates.push(
-                CustomerModel.updateOne(
+                customerRepository.updateOne(
                     { _id: doc._id },
                     { totalEarnings: computedTotal, updatedAt: now }
-                ).exec()
+                )
             );
         }
 

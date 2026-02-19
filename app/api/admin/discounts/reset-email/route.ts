@@ -1,85 +1,23 @@
 import { NextResponse } from "next/server";
-import { connectToMongo } from "@/lib/mongodb";
-import CustomerModel from "@/models/Customer";
-import ReferralTransactionModel from "@/models/ReferralTransaction";
-import { buildCorrectionEmailHTML } from "@/app/api/admin/customers/lib/email-templates";
-import { sendAdminEmail } from "@/app/api/admin/customers/lib/mailer";
+import { DiscountEmailService } from "@/app/api/admin/discounts/service";
 
 export async function POST(request: Request) {
     try {
         const body = await request.json();
         const { transactionId, sendCorrectionEmail = true } = body;
 
-        if (!transactionId) {
+        const result = await DiscountEmailService.resetEmail(transactionId, sendCorrectionEmail);
+
+        if (!result.success) {
             return NextResponse.json(
-                { success: false, error: "Transaction ID is required" },
-                { status: 400 }
+                { success: false, error: result.error },
+                { status: (result as any).status || 500 }
             );
         }
-
-        await connectToMongo();
-
-        const transaction = await ReferralTransactionModel.findById(transactionId).exec();
-        if (!transaction) {
-            return NextResponse.json(
-                { success: false, error: "Transaction not found" },
-                { status: 404 }
-            );
-        }
-
-        if (!transaction.emailSent) {
-            return NextResponse.json(
-                { success: false, error: "Email was not sent for this transaction, nothing to reset" },
-                { status: 400 }
-            );
-        }
-
-        const referrer = await CustomerModel.findOne({
-            myReferralCode: transaction.referrerCode,
-        }).exec();
-
-        if (!referrer) {
-            return NextResponse.json(
-                { success: false, error: "Referrer not found" },
-                { status: 404 }
-            );
-        }
-
-        // Store original values for correction email
-        const originalDiscountRate = transaction.discountRate;
-        const originalAmount = Math.max(transaction.originalPrice - transaction.finalPrice, 0);
-
-        // Send correction email if requested
-        if (sendCorrectionEmail && referrer.email) {
-            const { html, subject } = buildCorrectionEmailHTML({
-                refFirst: referrer.firstname ?? "",
-                refLast: referrer.lastname ?? "",
-                myReferralCode: referrer.myReferralCode ?? "",
-                originalDiscountRate,
-                originalAmount,
-            });
-
-            await sendAdminEmail({
-                to: referrer.email,
-                subject,
-                html,
-            });
-        }
-
-        // Reset transaction emailSent status
-        await ReferralTransactionModel.findByIdAndUpdate(transactionId, {
-            emailSent: false,
-            isBonus: false,
-        }).exec();
 
         return NextResponse.json({
             success: true,
-            data: {
-                transactionId,
-                emailSent: false,
-                correctionEmailSent: sendCorrectionEmail && !!referrer.email,
-                referrerEmail: referrer.email,
-            },
+            data: result.data,
         });
     } catch (error: unknown) {
         console.error("Failed to reset email status:", error);

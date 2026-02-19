@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import AdminModel from "@/models/Admin";
-import { connectToMongo } from "@/lib/mongodb";
+import { adminRepository } from "@/lib/repositories";
 import { verifyPassword, createToken, AUTH_COOKIE_NAME, COOKIE_OPTIONS } from "@/lib/auth";
 
 // POST /api/admin/login - Admin login
@@ -26,9 +25,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 3️⃣ Admin-Benutzerabfrage (MongoDB)
-    await connectToMongo();
-    const adminUser = await AdminModel.findOne({ email: email.toLowerCase().trim(), active: true }).exec();
+    // 3️⃣ Admin-Benutzerabfrage via Repository
+    const adminUser = await adminRepository.findActiveByEmail(email.toLowerCase().trim());
 
     if (!adminUser) {
       return NextResponse.json({ success: false, error: "Invalid credentials" }, { status: 401 });

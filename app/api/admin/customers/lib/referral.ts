@@ -1,4 +1,4 @@
-import CustomerModel from "@/models/Customer";
+import { customerRepository } from "@/lib/repositories";
 
 export function calcDiscountedPrice(originalPrice: number, referralCount: number) {
     if (!referralCount || referralCount <= 0) {
@@ -44,7 +44,7 @@ export async function generateUniqueReferralCode() {
     let exists = true;
 
     while (exists) {
-        const existing = await CustomerModel.findOne({ myReferralCode: code }).lean().exec();
+        const existing = await customerRepository.findUnique({ where: { myReferralCode: code } });
         if (!existing) {
             exists = false;
         } else {
