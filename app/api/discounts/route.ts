@@ -1,11 +1,11 @@
 import { NextRequest } from "next/server";
-import { DiscountsService } from "./service";
+import { DiscountsService } from "./lib/service";
 import {
   parseStatusFilter,
   validateDeleteDiscountBody,
   validatePatchDiscountBody,
-} from "./validation";
-import { errorResponse, successResponse } from "./utils";
+} from "./lib/validation";
+import { errorResponse, successResponse } from "./lib/utils";
 
 export async function GET(request: NextRequest) {
   try {
