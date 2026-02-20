@@ -23,6 +23,7 @@ export {
 } from "./mail-adapter";
 
 import type { IDiscountNotifier, IReferralNotifier, IWelcomeNotifier } from "./types";
+import { getDependencies } from "@/lib/composition-root";
 
 /* ---------- Explicit Overrides (Abwärtskompatibilität) ---------- */
 
@@ -33,14 +34,7 @@ let _welcomeOverride: IWelcomeNotifier | null = null;
 function resolveFromRoot<K extends keyof import("@/lib/composition-root").AppDependencies["notifications"]>(
     key: K,
 ): import("@/lib/composition-root").AppDependencies["notifications"][K] {
-    try {
-        const { getDependencies } = require("@/lib/composition-root");
-        return getDependencies().notifications[key];
-    } catch {
-        const { MailDiscountNotifier, MailReferralNotifier, MailWelcomeNotifier } = require("./mail-adapter");
-        const map = { discount: MailDiscountNotifier, referral: MailReferralNotifier, welcome: MailWelcomeNotifier };
-        return new map[key]();
-    }
+    return getDependencies().notifications[key];
 }
 
 export function getDiscountNotifier(): IDiscountNotifier {

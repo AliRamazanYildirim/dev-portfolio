@@ -10,6 +10,7 @@
 
 import { calcDiscountedPrice } from "@/app/api/admin/customers/lib/referral";
 import type { CustomerReadDto } from "@/app/api/admin/customers/lib/dto";
+import type { IReferralTransaction } from "@/models/ReferralTransaction";
 
 /* ================================================================
  * TYPES
@@ -217,20 +218,21 @@ export interface TransactionUpdateData {
     originalPrice?: number;
     finalPrice?: number;
     discountAmount?: number;
+    [key: string]: unknown;
 }
 
 export function computeTransactionUpdate(
-    transaction: Record<string, unknown>,
+    transaction: IReferralTransaction,
     isBonusRate: boolean,
     discountRate: DiscountRateInput,
     referralCount: number,
     emailContent: EmailContent,
 ): TransactionUpdateData {
-    let newReferralLevel: number | undefined = transaction.referralLevel as number | undefined;
+    let newReferralLevel: number | undefined = transaction.referralLevel;
     if (isBonusRate) {
         const baseLevel =
             typeof transaction.referralLevel === "number"
-                ? (transaction.referralLevel as number) + 1
+                ? transaction.referralLevel + 1
                 : referralCount + 1;
         newReferralLevel = Math.min(baseLevel, referralCount);
     }
@@ -256,13 +258,21 @@ export function computeTransactionUpdate(
     return result;
 }
 
+/** Typisiertes Referrer-Update für Persistenz */
+export interface ReferrerUpdateData {
+    discountRate: number;
+    finalPrice: number;
+    updatedAt: Date;
+    [key: string]: unknown;
+}
+
 export function computeReferrerUpdate(
     isBonusRate: boolean,
     discountRate: DiscountRateInput,
     finalNewPrice: number,
-): Record<string, unknown> {
+): ReferrerUpdateData {
     return {
-        discountRate: isBonusRate ? 9 : discountRate,
+        discountRate: isBonusRate ? 9 : (discountRate as number),
         finalPrice: finalNewPrice,
         updatedAt: new Date(),
     };

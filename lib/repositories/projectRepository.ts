@@ -3,6 +3,7 @@ import ProjectImageModel, { type IProjectImage } from "@/models/ProjectImage";
 import ProjectTagModel, { type IProjectTag } from "@/models/ProjectTag";
 import { connectToMongo } from "@/lib/mongodb";
 import { normalizeDoc } from "./normalize";
+import { classifyMongoError } from "./errors";
 import type { IRepository } from "./types";
 
 interface FindManyOpts {
@@ -38,18 +39,26 @@ export const projectRepository: IRepository<IProject> & {
 
     create: async (params: { data: Partial<IProject> & Record<string, unknown> }): Promise<IProject> => {
         await connectToMongo();
-        const doc = normalizeDoc<IProject>(await ProjectModel.create(params.data));
-        if (!doc) throw new Error("Failed to create project");
-        return doc;
+        try {
+            const doc = normalizeDoc<IProject>(await ProjectModel.create(params.data));
+            if (!doc) throw new Error("Failed to create project");
+            return doc;
+        } catch (err) {
+            throw classifyMongoError(err);
+        }
     },
 
     update: async (opts: { where: { id: string }; data: Record<string, unknown> }): Promise<IProject | null> => {
         await connectToMongo();
-        return normalizeDoc<IProject>(
-            await ProjectModel.findByIdAndUpdate(opts.where.id, opts.data, {
-                new: true,
-            }).exec(),
-        );
+        try {
+            return normalizeDoc<IProject>(
+                await ProjectModel.findByIdAndUpdate(opts.where.id, opts.data, {
+                    new: true,
+                }).exec(),
+            );
+        } catch (err) {
+            throw classifyMongoError(err);
+        }
     },
 
     delete: async (opts: { where: { id: string } }): Promise<IProject | null> => {

@@ -14,6 +14,7 @@ import {
     type DiscountRateInput,
     type EmailContent,
     type TransactionUpdateData,
+    type ReferrerUpdateData,
 } from "./discountPolicy";
 import type { IEmailTemplateBuilder } from "./discountPolicy";
 import type { ValidatedDiscountContext } from "./validateUseCase";
@@ -28,7 +29,7 @@ export interface ComputedDiscountContext {
     referrer: CustomerReadDto;
     isBonus: boolean;
     emailContent: EmailContent;
-    referrerUpdate: Record<string, unknown>;
+    referrerUpdate: ReferrerUpdateData;
     transactionUpdate: TransactionUpdateData;
 }
 

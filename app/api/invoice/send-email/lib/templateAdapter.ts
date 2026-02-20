@@ -38,12 +38,8 @@ let _override: IInvoiceTemplateBuilder | null = null;
 
 export function getInvoiceTemplateBuilder(): IInvoiceTemplateBuilder {
     if (_override) return _override;
-    try {
-        const { getDependencies } = require("@/lib/composition-root");
-        return getDependencies().templates.invoiceEmail;
-    } catch {
-        return new DefaultInvoiceTemplateBuilder();
-    }
+    const { getDependencies } = require("@/lib/composition-root") as typeof import("@/lib/composition-root");
+    return getDependencies().templates.invoiceEmail;
 }
 
 /** @deprecated Prefer initDependencies() from composition-root instead. */

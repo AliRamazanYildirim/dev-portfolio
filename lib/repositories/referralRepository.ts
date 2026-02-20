@@ -1,6 +1,7 @@
 import ReferralTransactionModel, { type IReferralTransaction } from "@/models/ReferralTransaction";
 import { connectToMongo } from "@/lib/mongodb";
 import { normalizeDoc } from "./normalize";
+import { classifyMongoError } from "./errors";
 
 interface FindManyOpts {
     where?: Record<string, unknown>;
@@ -10,9 +11,13 @@ interface FindManyOpts {
 export const referralRepository = {
     create: async (params: { data: Partial<IReferralTransaction> & Record<string, unknown> }) => {
         await connectToMongo();
-        return normalizeDoc<IReferralTransaction>(
-            await ReferralTransactionModel.create(params.data),
-        );
+        try {
+            return normalizeDoc<IReferralTransaction>(
+                await ReferralTransactionModel.create(params.data),
+            );
+        } catch (err) {
+            throw classifyMongoError(err);
+        }
     },
 
     findById: async (id: string) => {
@@ -36,13 +41,17 @@ export const referralRepository = {
 
     update: async (opts: { where: { id: string }; data: Record<string, unknown> }) => {
         await connectToMongo();
-        return normalizeDoc<IReferralTransaction>(
-            await ReferralTransactionModel.findByIdAndUpdate(
-                opts.where.id,
-                opts.data,
-                { new: true },
-            ).exec(),
-        );
+        try {
+            return normalizeDoc<IReferralTransaction>(
+                await ReferralTransactionModel.findByIdAndUpdate(
+                    opts.where.id,
+                    opts.data,
+                    { new: true },
+                ).exec(),
+            );
+        } catch (err) {
+            throw classifyMongoError(err);
+        }
     },
 
     delete: async (opts: { where: { id: string } }) => {

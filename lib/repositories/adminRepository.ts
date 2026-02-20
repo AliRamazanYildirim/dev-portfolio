@@ -1,6 +1,7 @@
 import AdminModel, { type IAdmin } from "@/models/Admin";
 import { connectToMongo } from "@/lib/mongodb";
 import { normalizeDoc } from "./normalize";
+import { classifyMongoError } from "./errors";
 
 export const adminRepository = {
     findUnique: async (opts: { where: { id?: string; email?: string } }) => {
@@ -34,7 +35,11 @@ export const adminRepository = {
 
     create: async (params: { data: Partial<IAdmin> & Record<string, unknown> }) => {
         await connectToMongo();
-        return normalizeDoc<IAdmin>(await AdminModel.create(params.data));
+        try {
+            return normalizeDoc<IAdmin>(await AdminModel.create(params.data));
+        } catch (err) {
+            throw classifyMongoError(err);
+        }
     },
 
     delete: async (opts: { where: { email: string } }) => {
@@ -46,11 +51,15 @@ export const adminRepository = {
 
     update: async (opts: { where: Record<string, unknown>; data: Record<string, unknown> }) => {
         await connectToMongo();
-        return normalizeDoc<IAdmin>(
-            await AdminModel.findOneAndUpdate(opts.where, opts.data, {
-                new: true,
-            }).exec(),
-        );
+        try {
+            return normalizeDoc<IAdmin>(
+                await AdminModel.findOneAndUpdate(opts.where, opts.data, {
+                    new: true,
+                }).exec(),
+            );
+        } catch (err) {
+            throw classifyMongoError(err);
+        }
     },
 
     upsert: async (opts: {

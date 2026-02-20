@@ -10,6 +10,7 @@ import { customerRepository, referralRepository } from "@/lib/repositories";
 import { connectToMongo } from "@/lib/mongodb";
 import { ValidationError, NotFoundError } from "@/lib/errors";
 import { toCustomerReadDto, type CustomerReadDto } from "@/app/api/admin/customers/lib/dto";
+import type { IReferralTransaction } from "@/models/ReferralTransaction";
 import {
     validateRate,
     checkBonusEligibility,
@@ -24,7 +25,7 @@ import {
 /** Vollständig validierter Kontext – bereit für Compute-Phase. */
 export interface ValidatedDiscountContext {
     transactionId: string;
-    transaction: Record<string, unknown>;
+    transaction: IReferralTransaction;
     referrer: CustomerReadDto;
     discountRate: DiscountRateInput;
     isBonus: boolean;
@@ -59,7 +60,7 @@ export class ValidateDiscountUseCase {
         await connectToMongo();
 
         // 2. Transaction laden & Status prüfen (Typed Result Union)
-        const transaction = (await referralRepository.findById(transactionId)) as Record<string, unknown> | null;
+        const transaction = await referralRepository.findById(transactionId);
         if (!transaction) throw new NotFoundError("Transaction not found");
 
         const emailStatus = checkEmailStatus(transaction.emailSent);
@@ -68,12 +69,12 @@ export class ValidateDiscountUseCase {
         }
 
         // 3. Referrer laden & prüfen
-        const referrerRaw = (await customerRepository.findOneExec({
+        const referrerRaw = await customerRepository.findOneExec({
             myReferralCode: transaction.referrerCode,
-        })) as Record<string, unknown> | null;
+        });
         if (!referrerRaw) throw new NotFoundError("Referrer not found");
 
-        const referrer = toCustomerReadDto(referrerRaw);
+        const referrer = toCustomerReadDto(referrerRaw as unknown as Record<string, unknown>);
         if (!referrer.email) throw new ValidationError("Referrer has no email address");
 
         // 4. Bonus-Eligibility (Typed Result Union)

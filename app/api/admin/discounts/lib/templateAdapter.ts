@@ -50,12 +50,9 @@ let _override: (IEmailTemplateBuilder & ICorrectionTemplateBuilder) | null = nul
 
 export function getEmailTemplateBuilder(): IEmailTemplateBuilder & ICorrectionTemplateBuilder {
     if (_override) return _override;
-    try {
-        const { getDependencies } = require("@/lib/composition-root");
-        return getDependencies().templates.discountEmail;
-    } catch {
-        return new DefaultEmailTemplateBuilder();
-    }
+    // Statischer Import; kein fragiles require()
+    const { getDependencies } = require("@/lib/composition-root") as typeof import("@/lib/composition-root");
+    return getDependencies().templates.discountEmail;
 }
 
 /** @deprecated Prefer initDependencies() from composition-root instead. */

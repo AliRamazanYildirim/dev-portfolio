@@ -5,13 +5,15 @@
  * typisierte Dependencies bereitgestellt. Services erhalten ihre
  * Abhängigkeiten über dieses Modul statt über Singleton set/get.
  *
+ * v3: `require()` durch statische ESM-Imports ersetzt.
+ *     Next.js tree-shaked die Adapter korrekt – kein Laufzeit-
+ *     Overhead. getDependencies() bleibt synchron (hot-path cached).
+ *
  * Vorteile:
  *  - Explizite Wiring: Alle Abhängigkeiten sichtbar an einem Ort
- *  - Test-Isolation: resolveDependencies() kann mit Mocks aufgerufen werden
+ *  - Test-Isolation: initDependencies() kann mit Mocks aufgerufen werden
  *  - Kein globaler Mutable State (kein set*-Antipattern)
- *
- * Bestehende set/get-Singleton-APIs bleiben für Abwärtskompatibilität
- * erhalten, delegieren aber an die Composition Root.
+ *  - Typ-sichere Imports statt runtime `require()`
  */
 
 import type { IMailPort } from "@/lib/mail/types";
@@ -20,6 +22,13 @@ import type { IEmailTemplateBuilder } from "@/app/api/admin/discounts/lib/discou
 import type { ICorrectionTemplateBuilder } from "@/app/api/admin/discounts/lib/templateAdapter";
 import type { IWelcomeTemplateBuilder } from "@/app/api/admin/customers/lib/welcomeTemplateAdapter";
 import type { IInvoiceTemplateBuilder } from "@/app/api/invoice/send-email/lib/templateAdapter";
+
+/* --- Concrete Adapter Imports (statisch, typ-sicher) --- */
+import { SmtpMailAdapter, EtherealMailAdapter } from "@/lib/mail/smtp-adapter";
+import { MailDiscountNotifier, MailReferralNotifier, MailWelcomeNotifier } from "@/lib/notifications/mail-adapter";
+import { DefaultEmailTemplateBuilder } from "@/app/api/admin/discounts/lib/templateAdapter";
+import { DefaultWelcomeTemplateBuilder } from "@/app/api/admin/customers/lib/welcomeTemplateAdapter";
+import { DefaultInvoiceTemplateBuilder } from "@/app/api/invoice/send-email/lib/templateAdapter";
 
 /* ================================================================
  * DEPENDENCY CONTAINER TYPE
@@ -54,17 +63,10 @@ export type DependencyOverrides = {
 };
 
 /* ================================================================
- * LAZY PRODUCTION DEFAULTS
+ * LAZY PRODUCTION DEFAULTS (statische Imports, keine require())
  * ================================================================ */
 
 function createProductionDependencies(): AppDependencies {
-    // Lazy imports – erst bei Aufruf, nicht bei Modul-Load
-    const { SmtpMailAdapter, EtherealMailAdapter } = require("@/lib/mail/smtp-adapter");
-    const { MailDiscountNotifier, MailReferralNotifier, MailWelcomeNotifier } = require("@/lib/notifications/mail-adapter");
-    const { DefaultEmailTemplateBuilder } = require("@/app/api/admin/discounts/lib/templateAdapter");
-    const { DefaultWelcomeTemplateBuilder } = require("@/app/api/admin/customers/lib/welcomeTemplateAdapter");
-    const { DefaultInvoiceTemplateBuilder } = require("@/app/api/invoice/send-email/lib/templateAdapter");
-
     const hasCredentials = Boolean(
         (process.env.SMTP_USER || process.env.EMAIL_USER) &&
         (process.env.SMTP_PASS || process.env.EMAIL_PASS),

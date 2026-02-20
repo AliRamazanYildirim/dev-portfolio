@@ -11,30 +11,18 @@ export type { IMailPort, SendMailOptions, SendMailResult, MailAttachment } from 
 export { SmtpMailAdapter, EtherealMailAdapter } from "./smtp-adapter";
 
 import type { IMailPort } from "./types";
+import { getDependencies } from "@/lib/composition-root";
 
 /** Explicit override (für Abwärtskompatibilität & direkte Test-Overrides) */
 let _override: IMailPort | null = null;
 
 /**
  * Returns the shared mail port instance.
- * Priority: explicit override → composition root → auto-detect.
+ * Priority: explicit override → composition root.
  */
 export function getMailPort(): IMailPort {
     if (_override) return _override;
-
-    // Lazy delegation to composition root
-    try {
-        const { getDependencies } = require("@/lib/composition-root");
-        return getDependencies().mail;
-    } catch {
-        // Fallback wenn Composition Root nicht verfügbar
-        const { SmtpMailAdapter, EtherealMailAdapter } = require("./smtp-adapter");
-        const hasCredentials = Boolean(
-            (process.env.SMTP_USER || process.env.EMAIL_USER) &&
-            (process.env.SMTP_PASS || process.env.EMAIL_PASS),
-        );
-        return hasCredentials ? new SmtpMailAdapter() : new EtherealMailAdapter();
-    }
+    return getDependencies().mail;
 }
 
 /**

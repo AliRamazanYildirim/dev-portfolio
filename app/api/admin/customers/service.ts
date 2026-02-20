@@ -2,25 +2,22 @@
  * Admin Customers API – Business Logic / Service Layer
  *
  * SRP-Refactored:
+ *  - Kunden-Erstellung → CreateCustomerUseCase (lib/createUseCase.ts)
  *  - Welcome-E-Mail → WelcomeEmailService (lib/welcomeEmailService.ts)
  *  - Referral-Logik → processReferral (lib/referralService.ts)
  *  - Recalc-Logik → RecalcService (lib/recalcService.ts)
  *  - Update-UseCase → CustomerUpdateUseCase (lib/updateUseCase.ts)
  *  - DTOs → dto.ts (typ-sichere Mapper)
- *  - Dieser Service: reiner Kunden-CRUD + Orchestrierung
+ *  - Dieser Service: reiner Kunden-CRUD-Fassade + Orchestrierung
  */
 
 import { customerRepository } from "@/lib/repositories";
 import { connectToMongo } from "@/lib/mongodb";
 import { fetchCustomers } from "./lib/query";
-import {
-    calcTotalEarnings,
-    generateUniqueReferralCode,
-} from "./lib/referral";
-import { processReferral } from "./lib/referralService";
-import { WelcomeEmailService } from "./lib/welcomeEmailService";
+import { calcTotalEarnings } from "./lib/referral";
 import { RecalcService } from "./lib/recalcService";
 import { CustomerUpdateUseCase } from "./lib/updateUseCase";
+import { CreateCustomerUseCase } from "./lib/createUseCase";
 import { toCustomerReadDto } from "./lib/dto";
 import type { CustomerReadDto } from "./lib/dto";
 import { NotFoundError } from "@/lib/errors";
@@ -40,58 +37,10 @@ export class CustomersService {
     }
 
     /**
-     * Neuen Kunden erstellen inkl. Referral-Logik + Welcome-Mail
+     * Neuen Kunden erstellen (delegiert an CreateCustomerUseCase)
      */
     static async create(input: CreateCustomerRequest): Promise<CustomerReadDto> {
-        await connectToMongo();
-
-        const finalPriceForNewCustomer = input.price || 0;
-
-        // ------- Neuen Kunden anlegen -------
-        const myReferralCode = await generateUniqueReferralCode();
-
-        const customerData: Record<string, unknown> = {
-            firstname: input.firstname || "",
-            lastname: input.lastname || "",
-            companyname: input.companyname || "",
-            email: input.email,
-            phone: input.phone || "",
-            address: input.address || "",
-            city: input.city || null,
-            postcode: input.postcode || null,
-            reference: input.reference || null,
-            price: input.price,
-            myReferralCode,
-            finalPrice: finalPriceForNewCustomer,
-            discountRate: null,
-            referralCount: 0,
-            createdAt: input.createdAt ? new Date(input.createdAt) : new Date(),
-            updatedAt: new Date(),
-        };
-
-        const rawCustomer = await customerRepository.create({ data: customerData });
-        const customer = toCustomerReadDto(rawCustomer as unknown as Record<string, unknown>);
-
-        // ------- Referral-Verarbeitung (delegiert an ReferralService) -------
-        if (input.reference && input.price) {
-            await processReferral(
-                input.reference,
-                input.price,
-                customer.id,
-            );
-        }
-
-        // ------- Welcome-Mail senden (delegiert an WelcomeEmailService) -------
-        await WelcomeEmailService.send(
-            {
-                email: customer.email,
-                firstname: customer.firstname,
-                lastname: customer.lastname,
-            },
-            input.language || "de",
-        );
-
-        return customer;
+        return CreateCustomerUseCase.execute(input);
     }
 
     /**

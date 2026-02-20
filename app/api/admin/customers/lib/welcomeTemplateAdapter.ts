@@ -35,12 +35,8 @@ let _override: IWelcomeTemplateBuilder | null = null;
 
 export function getWelcomeTemplateBuilder(): IWelcomeTemplateBuilder {
     if (_override) return _override;
-    try {
-        const { getDependencies } = require("@/lib/composition-root");
-        return getDependencies().templates.welcomeEmail;
-    } catch {
-        return new DefaultWelcomeTemplateBuilder();
-    }
+    const { getDependencies } = require("@/lib/composition-root") as typeof import("@/lib/composition-root");
+    return getDependencies().templates.welcomeEmail;
 }
 
 /** @deprecated Prefer initDependencies() from composition-root instead. */

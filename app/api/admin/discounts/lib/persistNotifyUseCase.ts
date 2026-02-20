@@ -51,7 +51,7 @@ export class PersistNotifyDiscountUseCase {
         // 3. Transaction als gesendet markieren
         await referralRepository.update({
             where: { id: ctx.transactionId },
-            data: ctx.transactionUpdate as unknown as Record<string, unknown>,
+            data: ctx.transactionUpdate as Record<string, unknown>,
         });
 
         return {
