@@ -2,7 +2,8 @@ import { customerRepository } from "@/lib/repositories";
 import { getDiscountsEnabled } from "@/lib/discountSettings";
 import { NotFoundError, ConflictError, ValidationError } from "@/lib/errors";
 import { buildReferralEmailTemplate } from "./lib/template";
-import { getMailPort } from "@/lib/mail";
+import { getReferralNotifier } from "@/lib/notifications";
+import { toCustomerReadDto } from "@/app/api/admin/customers/lib/dto";
 
 interface SendReferralEmailInput {
     customerId: string;
@@ -13,8 +14,7 @@ interface SendReferralEmailResult {
     referralCode: string;
     customerName: string;
     customerEmail: string;
-    messageId: string;
-    previewUrl: string | false | null;
+    sent: boolean;
 }
 
 export class ReferralEmailService {
@@ -35,45 +35,35 @@ export class ReferralEmailService {
             throw new NotFoundError("Customer not found");
         }
 
-        const cust = customer as unknown as Record<string, unknown>;
+        const cust = toCustomerReadDto(customer as unknown as Record<string, unknown>);
 
-        const referralCode = cust.myReferralCode as string | undefined;
+        const referralCode = cust.myReferralCode;
         if (!referralCode) {
             throw new NotFoundError("Customer does not have a referral code");
         }
 
-        const firstname = (cust.firstname as string) ?? "";
-        const lastname = (cust.lastname as string) ?? "";
-        const referralCount = (cust.referralCount as number) ?? 0;
-        const price = (cust.price as number) ?? 0;
-
         const { subject, html } = buildReferralEmailTemplate({
-            firstName: firstname,
-            lastName: lastname,
+            firstName: cust.firstname,
+            lastName: cust.lastname,
             referralCode,
-            referralCount,
-            referrerPrice: price,
+            referralCount: cust.referralCount,
+            referrerPrice: cust.price,
         });
 
-        const toAddress = customerEmail || (cust.email as string);
+        const toAddress = customerEmail || cust.email;
         if (!toAddress) {
             throw new ValidationError("No recipient email provided");
         }
 
-        // Mail über zentralen Mail Port senden (DIP)
-        const mailPort = getMailPort();
-        const { messageId, previewUrl } = await mailPort.send({
-            to: toAddress,
-            subject,
-            html,
-        });
+        // Mail über Notification Port senden (DIP)
+        const notifier = getReferralNotifier();
+        await notifier.sendReferralInfo({ to: toAddress, subject, html });
 
         return {
             referralCode,
-            customerName: `${firstname} ${lastname}`,
+            customerName: `${cust.firstname} ${cust.lastname}`,
             customerEmail: toAddress,
-            messageId,
-            previewUrl: previewUrl ?? null,
+            sent: true,
         };
     }
 }

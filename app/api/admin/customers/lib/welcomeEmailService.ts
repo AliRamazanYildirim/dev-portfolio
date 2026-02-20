@@ -2,12 +2,12 @@
  * Welcome Email Service – Eigenständiger Service für Willkommens-E-Mails.
  *
  * SRP-Fix: E-Mail-Logik aus CustomersService herausgelöst.
- * Verwendet den zentralen Mail-Port (DIP) anstelle der direkten Nutzung von nodemailer.
+ * Verwendet den Notification Port (DIP) anstelle der direkten Nutzung von Mail Port.
  */
 
 import path from "path";
 import fs from "fs";
-import { getMailPort } from "@/lib/mail";
+import { getWelcomeNotifier } from "@/lib/notifications";
 import { buildWelcomeEmailHTML } from "./email-templates";
 
 interface WelcomeEmailRecipient {
@@ -43,8 +43,8 @@ export class WelcomeEmailService {
                 console.warn("Contract PDF not found at:", pdfPath);
             }
 
-            const mailPort = getMailPort();
-            await mailPort.send({
+            const mailPort = getWelcomeNotifier();
+            await mailPort.sendWelcome({
                 to: customer.email,
                 subject: welcomeEmail.subject,
                 html: welcomeEmail.html,

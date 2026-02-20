@@ -5,6 +5,8 @@
  *  - Welcome-E-Mail → WelcomeEmailService (lib/welcomeEmailService.ts)
  *  - Referral-Logik → processReferral (lib/referralService.ts)
  *  - Recalc-Logik → RecalcService (lib/recalcService.ts)
+ *  - Update-UseCase → CustomerUpdateUseCase (lib/updateUseCase.ts)
+ *  - DTOs → dto.ts (typ-sichere Mapper)
  *  - Dieser Service: reiner Kunden-CRUD + Orchestrierung
  */
 
@@ -18,7 +20,10 @@ import {
 import { processReferral } from "./lib/referralService";
 import { WelcomeEmailService } from "./lib/welcomeEmailService";
 import { RecalcService } from "./lib/recalcService";
-import { NotFoundError, ConflictError } from "@/lib/errors";
+import { CustomerUpdateUseCase } from "./lib/updateUseCase";
+import { toCustomerReadDto } from "./lib/dto";
+import type { CustomerReadDto } from "./lib/dto";
+import { NotFoundError } from "@/lib/errors";
 import type { CreateCustomerRequest, CustomerQueryParams } from "./types";
 
 export class CustomersService {
@@ -37,7 +42,7 @@ export class CustomersService {
     /**
      * Neuen Kunden erstellen inkl. Referral-Logik + Welcome-Mail
      */
-    static async create(input: CreateCustomerRequest) {
+    static async create(input: CreateCustomerRequest): Promise<CustomerReadDto> {
         await connectToMongo();
 
         const finalPriceForNewCustomer = input.price || 0;
@@ -64,23 +69,24 @@ export class CustomersService {
             updatedAt: new Date(),
         };
 
-        const customer = await customerRepository.create({ data: customerData }) as unknown as Record<string, unknown>;
+        const rawCustomer = await customerRepository.create({ data: customerData });
+        const customer = toCustomerReadDto(rawCustomer as unknown as Record<string, unknown>);
 
         // ------- Referral-Verarbeitung (delegiert an ReferralService) -------
         if (input.reference && input.price) {
             await processReferral(
                 input.reference,
                 input.price,
-                String(customer._id),
+                customer.id,
             );
         }
 
         // ------- Welcome-Mail senden (delegiert an WelcomeEmailService) -------
         await WelcomeEmailService.send(
             {
-                email: customer.email as string,
-                firstname: customer.firstname as string,
-                lastname: customer.lastname as string,
+                email: customer.email,
+                firstname: customer.firstname,
+                lastname: customer.lastname,
             },
             input.language || "de",
         );
@@ -91,101 +97,30 @@ export class CustomersService {
     /**
      * Einzelnen Kunden anhand der ID abrufen
      */
-    static async getById(id: string) {
+    static async getById(id: string): Promise<CustomerReadDto | null> {
         await connectToMongo();
         const data = await customerRepository.findUnique({ where: { id } });
         if (!data) return null;
 
-        const typedData = data as unknown as Record<string, unknown>;
-        const computedTotalEarnings = calcTotalEarnings(
-            typedData.price as number,
-            typedData.referralCount as number,
-        );
-        const storedTotal = typeof typedData.totalEarnings === "number" ? typedData.totalEarnings : 0;
+        const dto = toCustomerReadDto(data as unknown as Record<string, unknown>);
+        const computedTotalEarnings = calcTotalEarnings(dto.price, dto.referralCount);
 
-        if (Math.abs(storedTotal - computedTotalEarnings) > 0.009) {
+        if (Math.abs(dto.totalEarnings - computedTotalEarnings) > 0.009) {
             await customerRepository.update({
                 where: { id },
                 data: { totalEarnings: computedTotalEarnings, updatedAt: new Date() },
             });
-            typedData.totalEarnings = computedTotalEarnings;
+            dto.totalEarnings = computedTotalEarnings;
         }
 
-        return typedData;
+        return dto;
     }
 
     /**
-     * Kunden aktualisieren inkl. Referral-Logik
+     * Kunden aktualisieren inkl. Referral-Logik (delegiert an CustomerUpdateUseCase)
      */
     static async updateById(id: string, body: Record<string, unknown>) {
-        await connectToMongo();
-        const existingCustomer = await customerRepository.findByIdExec(id);
-
-        if (!existingCustomer) {
-            throw new NotFoundError("Customer not found");
-        }
-
-        const existing = existingCustomer as unknown as Record<string, unknown>;
-
-        // Referral-Verarbeitung nur bei Erstverwendung eines Codes
-        let referralApplied = false;
-        if (body.reference && body.price && !existing.reference) {
-            const referralResult = await processReferral(
-                body.reference as string,
-                body.price as number,
-                String(existing._id),
-            );
-            referralApplied = referralResult.referrerDiscount > 0;
-        }
-
-        const hasPriceUpdate = Object.prototype.hasOwnProperty.call(body, "price");
-        const hasReferralCountUpdate = Object.prototype.hasOwnProperty.call(body, "referralCount");
-        const nextPrice = hasPriceUpdate ? body.price as number : existing.price as number;
-        const nextReferralCount = hasReferralCountUpdate
-            ? body.referralCount as number
-            : existing.referralCount as number;
-        const nextTotalEarnings = calcTotalEarnings(nextPrice, nextReferralCount);
-
-        const updateData: Record<string, unknown> = {
-            ...body,
-            finalPrice: body.price,
-            discountRate: existing.discountRate,
-            totalEarnings: nextTotalEarnings,
-            updatedAt: new Date(),
-        };
-
-        try {
-            const result = await customerRepository.update({
-                where: { id },
-                data: updateData as Record<string, unknown>,
-            });
-            return {
-                data: result,
-                referralApplied,
-                referrerReward: referralApplied
-                    ? { message: "Referral discount applied to the referrer." }
-                    : null,
-            };
-        } catch (err: unknown) {
-            const msg = err instanceof Error ? err.message : String(err);
-            if (msg.includes("duplicate key") || msg.includes("E11000") || msg.includes("email_1")) {
-                try {
-                    const conflictEmailMatch = msg.match(/\{\s*email:\s*"([^"]+)"\s*\}/);
-                    const conflictEmail = conflictEmailMatch ? conflictEmailMatch[1] : updateData.email as string;
-                    const owner = await customerRepository.findUnique({ where: { email: conflictEmail } });
-                    if (owner) {
-                        const ownerData = owner as unknown as Record<string, unknown>;
-                        throw new ConflictError(
-                            `This email address is already registered to: ${ownerData.firstname} ${ownerData.lastname}`,
-                        );
-                    }
-                } catch (lookupErr) {
-                    if (lookupErr instanceof ConflictError) throw lookupErr;
-                }
-                throw new ConflictError("This email address is already registered.");
-            }
-            throw err;
-        }
+        return CustomerUpdateUseCase.execute(id, body);
     }
 
     /**

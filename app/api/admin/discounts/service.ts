@@ -1,11 +1,11 @@
 /**
- * Admin Discount Email Service – Business Logic Layer
+ * Discount Email Service – SOLID-Refactored (SRP + OCP + DIP).
  *
- * SRP-Refactored:
- *  - Validierung/Lookup → DiscountEmailOrchestrator (dieser Service)
- *  - E-Mail-Versand → zentraler Mail Port (DIP)
- *  - Template-Erstellung → email-templates (unverändert)
- *  - DB-Operationen → Repositories
+ * Änderungen gegenüber der alten Version:
+ *  - sendEmail() orchestriert nur noch, enthält keine Geschäftslogik mehr (SRP)
+ *  - Bonus/Standard-Strategien sind als reine Funktionen extrahiert (OCP)
+ *  - Notification via IDiscountNotifier Port statt direktem getMailPort() (DIP)
+ *  - Typ-sichere Customer-DTOs statt Record<string, unknown> (LSP/ISP)
  *
  * Route handlers must NOT access Models directly.
  */
@@ -18,87 +18,236 @@ import {
     buildBonusEmailHTML,
     buildCorrectionEmailHTML,
 } from "@/app/api/admin/customers/lib/email-templates";
-import { getMailPort } from "@/lib/mail";
+import { getDiscountNotifier } from "@/lib/notifications";
 import { ValidationError, NotFoundError, ConflictError } from "@/lib/errors";
+import { toCustomerReadDto, type CustomerReadDto } from "@/app/api/admin/customers/lib/dto";
+
+/* ================================================================
+ * TYPES
+ * ================================================================ */
 
 const VALID_RATES = [3, 6, 9] as const;
 type ValidRate = (typeof VALID_RATES)[number];
+type DiscountRateInput = ValidRate | "+3";
 
-function isValidRate(rate: unknown): rate is ValidRate | "+3" {
+interface EmailContent {
+    html: string;
+    subject: string;
+    finalNewPrice: number;
+    actualDiscountRate: number | "+3";
+    bonusOriginalPrice: number | null;
+    bonusFinalPrice: number | null;
+    bonusAmount: number | null;
+}
+
+/* ================================================================
+ * VALIDATION
+ * ================================================================ */
+
+function isValidRate(rate: unknown): rate is DiscountRateInput {
     if (rate === "+3") return true;
     return typeof rate === "number" && VALID_RATES.includes(rate as ValidRate);
 }
 
+/* ================================================================
+ * DISCOUNT STRATEGIES – Reine Funktionen (OCP)
+ * Neue Rabatttypen können ohne sendEmail-Änderung hinzugefügt werden.
+ * ================================================================ */
+
+function buildStandardEmailContent(
+    referrer: CustomerReadDto,
+    discountRate: number,
+): EmailContent {
+    const { referralCount, price: referrerPrice } = referrer;
+    const referrerFinalPrice = calcDiscountedPrice(referrerPrice, referralCount);
+    const previousPrice =
+        referralCount > 1 ? calcDiscountedPrice(referrerPrice, referralCount - 1) : referrerPrice;
+    const currentDiscountAmount = previousPrice - referrerFinalPrice;
+
+    const standardEmail = buildReferrerEmailHTML({
+        refFirst: referrer.firstname,
+        refLast: referrer.lastname,
+        myReferralCode: referrer.myReferralCode ?? "",
+        newCount: referralCount,
+        discountRate,
+        referrerPrice,
+        referrerFinalPrice,
+        currentDiscountAmount,
+        discountsEnabled: true,
+    });
+
+    return {
+        html: standardEmail.html,
+        subject: standardEmail.subject,
+        finalNewPrice: referrerFinalPrice,
+        actualDiscountRate: discountRate,
+        bonusOriginalPrice: null,
+        bonusFinalPrice: null,
+        bonusAmount: null,
+    };
+}
+
+function buildBonusEmailContent(referrer: CustomerReadDto): EmailContent {
+    const currentFinal =
+        typeof referrer.finalPrice === "number" && !Number.isNaN(referrer.finalPrice)
+            ? referrer.finalPrice
+            : calcDiscountedPrice(referrer.price, referrer.referralCount);
+
+    const discountCents = Math.round(currentFinal * 0.03 * 100);
+    const nextPrice = Math.round((currentFinal - discountCents / 100) * 100) / 100;
+    const computedBonusAmount = Math.max(Math.round((currentFinal - nextPrice) * 100) / 100, 0);
+
+    const bonusEmail = buildBonusEmailHTML({
+        refFirst: referrer.firstname,
+        refLast: referrer.lastname,
+        myReferralCode: referrer.myReferralCode ?? "",
+        referralCount: referrer.referralCount,
+        previousFinalPrice: currentFinal,
+        newFinalPrice: nextPrice,
+        bonusAmount: computedBonusAmount,
+    });
+
+    return {
+        html: bonusEmail.html,
+        subject: bonusEmail.subject,
+        finalNewPrice: nextPrice,
+        actualDiscountRate: "+3" as const,
+        bonusOriginalPrice: currentFinal,
+        bonusFinalPrice: nextPrice,
+        bonusAmount: computedBonusAmount,
+    };
+}
+
+/* ================================================================
+ * DATA ACCESS HELPERS – Laden & Validieren (SRP)
+ * ================================================================ */
+
+async function loadValidatedTransaction(transactionId: string) {
+    const transaction = await referralRepository.findById(transactionId) as Record<string, unknown> | null;
+    if (!transaction) throw new NotFoundError("Transaction not found");
+    return transaction;
+}
+
+async function loadValidatedReferrer(referrerCode: unknown): Promise<CustomerReadDto> {
+    const referrerRaw = await customerRepository.findOneExec({
+        myReferralCode: referrerCode,
+    }) as Record<string, unknown> | null;
+
+    if (!referrerRaw) throw new NotFoundError("Referrer not found");
+
+    const referrer = toCustomerReadDto(referrerRaw as Record<string, unknown>);
+    if (!referrer.email) throw new ValidationError("Referrer has no email address");
+
+    return referrer;
+}
+
+/* ================================================================
+ * PERSISTENCE HELPERS (SRP)
+ * ================================================================ */
+
+async function updateReferrerDiscount(
+    referrerId: string,
+    isBonusRate: boolean,
+    discountRate: DiscountRateInput,
+    finalNewPrice: number,
+) {
+    await customerRepository.update({
+        where: { id: referrerId },
+        data: {
+            discountRate: isBonusRate ? 9 : discountRate,
+            finalPrice: finalNewPrice,
+            updatedAt: new Date(),
+        },
+    });
+}
+
+async function updateTransactionAfterSend(
+    transactionId: string,
+    transaction: Record<string, unknown>,
+    isBonusRate: boolean,
+    discountRate: DiscountRateInput,
+    referralCount: number,
+    emailContent: EmailContent,
+) {
+    let newReferralLevel: number | undefined = transaction.referralLevel as number | undefined;
+    if (isBonusRate) {
+        const baseLevel =
+            typeof transaction.referralLevel === "number"
+                ? (transaction.referralLevel as number) + 1
+                : referralCount + 1;
+        newReferralLevel = Math.min(baseLevel, referralCount);
+    }
+
+    const txUpdate: Record<string, unknown> = {
+        emailSent: true,
+        discountRate: isBonusRate ? 3 : discountRate,
+        isBonus: isBonusRate,
+        referralLevel: newReferralLevel,
+    };
+
+    if (
+        isBonusRate &&
+        emailContent.bonusOriginalPrice !== null &&
+        emailContent.bonusFinalPrice !== null &&
+        emailContent.bonusAmount !== null
+    ) {
+        txUpdate.originalPrice = emailContent.bonusOriginalPrice;
+        txUpdate.finalPrice = emailContent.bonusFinalPrice;
+        txUpdate.discountAmount = emailContent.bonusAmount;
+    }
+
+    await referralRepository.update({
+        where: { id: transactionId },
+        data: txUpdate,
+    });
+}
+
+/* ================================================================
+ * SERVICE – Dünne Orchestrierungsschicht
+ * ================================================================ */
+
 export class DiscountEmailService {
     /**
-     * Discount-E-Mail senden
+     * Discount-E-Mail senden – orchestriert nur, enthält keine Logik.
      */
     static async sendEmail(transactionId: string, discountRate: unknown) {
-        if (!transactionId) {
-            throw new ValidationError("Transaction ID is required");
-        }
-
-        if (!isValidRate(discountRate)) {
-            throw new ValidationError("Discount rate must be 3, 6, 9, or '+3' (bonus)");
-        }
+        if (!transactionId) throw new ValidationError("Transaction ID is required");
+        if (!isValidRate(discountRate)) throw new ValidationError("Discount rate must be 3, 6, 9, or '+3' (bonus)");
 
         const isBonusRate = discountRate === "+3";
-
         await connectToMongo();
 
-        const transaction = await referralRepository.findById(transactionId) as Record<string, unknown> | null;
-        if (!transaction) {
-            throw new NotFoundError("Transaction not found");
-        }
+        // 1. Daten laden & validieren
+        const transaction = await loadValidatedTransaction(transactionId);
+        if (transaction.emailSent) throw new ConflictError("Email already sent for this transaction");
 
-        if (transaction.emailSent) {
-            throw new ConflictError("Email already sent for this transaction");
-        }
+        const referrer = await loadValidatedReferrer(transaction.referrerCode);
 
-        const referrer = await customerRepository.findOneExec({
-            myReferralCode: transaction.referrerCode,
-        }) as Record<string, unknown> | null;
-
-        if (!referrer) {
-            throw new NotFoundError("Referrer not found");
-        }
-
-        if (!referrer.email) {
-            throw new ValidationError("Referrer has no email address");
-        }
-
-        const referrerPrice = (referrer.price as number) || 0;
-        const referralCount = (referrer.referralCount as number) || 0;
-
-        if (isBonusRate && referralCount < 3) {
+        if (isBonusRate && referrer.referralCount < 3) {
             throw new ValidationError("Bonus rate (+3%) is only available for customers who reached 9% (3+ referrals)");
         }
 
-        // --- E-Mail-Inhalt berechnen ---
+        // 2. E-Mail-Inhalt berechnen (Strategy)
         const emailContent = isBonusRate
-            ? this.buildBonusContent(referrer, referrerPrice, referralCount)
-            : this.buildStandardContent(referrer, referrerPrice, referralCount, discountRate as number);
+            ? buildBonusEmailContent(referrer)
+            : buildStandardEmailContent(referrer, discountRate as number);
 
-        // --- Referrer DB-Update ---
-        await customerRepository.update({
-            where: { id: String(referrer._id) },
-            data: {
-                discountRate: isBonusRate ? 9 : discountRate,
-                finalPrice: emailContent.finalNewPrice,
-                updatedAt: new Date(),
-            },
-        });
+        // 3. Referrer aktualisieren
+        await updateReferrerDiscount(referrer.id, isBonusRate, discountRate as DiscountRateInput, emailContent.finalNewPrice);
 
-        // --- E-Mail über Mail Port senden (DIP) ---
-        const mailPort = getMailPort();
-        await mailPort.send({
-            to: referrer.email as string,
+        // 4. E-Mail über Notification Port senden (DIP)
+        const notifier = getDiscountNotifier();
+        await notifier.notifyReferrer({
+            to: referrer.email,
             subject: emailContent.subject,
             html: emailContent.html,
         });
 
-        // --- Transaction DB-Update ---
-        await this.updateTransaction(transactionId, transaction, isBonusRate, discountRate, referralCount, emailContent);
+        // 5. Transaction aktualisieren
+        await updateTransactionAfterSend(
+            transactionId, transaction, isBonusRate,
+            discountRate as DiscountRateInput, referrer.referralCount, emailContent,
+        );
 
         return {
             transactionId,
@@ -110,176 +259,39 @@ export class DiscountEmailService {
     }
 
     /**
-     * Bonus-E-Mail-Inhalt berechnen (+3%)
-     */
-    private static buildBonusContent(
-        referrer: Record<string, unknown>,
-        referrerPrice: number,
-        referralCount: number,
-    ) {
-        const currentFinal =
-            typeof referrer.finalPrice === "number" && !Number.isNaN(referrer.finalPrice)
-                ? Number(referrer.finalPrice)
-                : calcDiscountedPrice(referrerPrice, referralCount);
-
-        const discountCents = Math.round(currentFinal * 0.03 * 100);
-        const nextPrice = Math.round((currentFinal - discountCents / 100) * 100) / 100;
-        const computedBonusAmount = Math.max(Math.round((currentFinal - nextPrice) * 100) / 100, 0);
-
-        const bonusEmail = buildBonusEmailHTML({
-            refFirst: (referrer.firstname as string) ?? "",
-            refLast: (referrer.lastname as string) ?? "",
-            myReferralCode: (referrer.myReferralCode as string) ?? "",
-            referralCount,
-            previousFinalPrice: currentFinal,
-            newFinalPrice: nextPrice,
-            bonusAmount: computedBonusAmount,
-        });
-
-        return {
-            html: bonusEmail.html,
-            subject: bonusEmail.subject,
-            finalNewPrice: nextPrice,
-            actualDiscountRate: "+3" as const,
-            bonusOriginalPrice: currentFinal,
-            bonusFinalPrice: nextPrice,
-            bonusAmount: computedBonusAmount,
-        };
-    }
-
-    /**
-     * Standard-Rabatt-E-Mail-Inhalt berechnen (3/6/9%)
-     */
-    private static buildStandardContent(
-        referrer: Record<string, unknown>,
-        referrerPrice: number,
-        referralCount: number,
-        discountRate: number,
-    ) {
-        const referrerFinalPrice = calcDiscountedPrice(referrerPrice, referralCount);
-        const previousPrice =
-            referralCount > 1 ? calcDiscountedPrice(referrerPrice, referralCount - 1) : referrerPrice;
-        const currentDiscountAmount = previousPrice - referrerFinalPrice;
-
-        const standardEmail = buildReferrerEmailHTML({
-            refFirst: (referrer.firstname as string) ?? "",
-            refLast: (referrer.lastname as string) ?? "",
-            myReferralCode: (referrer.myReferralCode as string) ?? "",
-            newCount: referralCount,
-            discountRate,
-            referrerPrice,
-            referrerFinalPrice,
-            currentDiscountAmount,
-            discountsEnabled: true,
-        });
-
-        return {
-            html: standardEmail.html,
-            subject: standardEmail.subject,
-            finalNewPrice: referrerFinalPrice,
-            actualDiscountRate: discountRate,
-            bonusOriginalPrice: null as number | null,
-            bonusFinalPrice: null as number | null,
-            bonusAmount: null as number | null,
-        };
-    }
-
-    /**
-     * Transaction nach E-Mail-Versand aktualisieren
-     */
-    private static async updateTransaction(
-        transactionId: string,
-        transaction: Record<string, unknown>,
-        isBonusRate: boolean,
-        discountRate: unknown,
-        referralCount: number,
-        emailContent: { bonusOriginalPrice: number | null; bonusFinalPrice: number | null; bonusAmount: number | null },
-    ) {
-        let newReferralLevel: number | undefined = transaction.referralLevel as number | undefined;
-        if (isBonusRate) {
-            const baseLevel =
-                typeof transaction.referralLevel === "number"
-                    ? (transaction.referralLevel as number) + 1
-                    : referralCount + 1;
-            newReferralLevel = Math.min(baseLevel, referralCount);
-        }
-
-        const txUpdate: Record<string, unknown> = {
-            emailSent: true,
-            discountRate: isBonusRate ? 3 : discountRate,
-            isBonus: isBonusRate,
-            referralLevel: newReferralLevel,
-        };
-
-        if (
-            isBonusRate &&
-            emailContent.bonusOriginalPrice !== null &&
-            emailContent.bonusFinalPrice !== null &&
-            emailContent.bonusAmount !== null
-        ) {
-            txUpdate.originalPrice = emailContent.bonusOriginalPrice;
-            txUpdate.finalPrice = emailContent.bonusFinalPrice;
-            txUpdate.discountAmount = emailContent.bonusAmount;
-        }
-
-        await referralRepository.update({
-            where: { id: transactionId },
-            data: txUpdate,
-        });
-    }
-
-    /**
      * Discount-E-Mail zurücksetzen (Reset)
      */
     static async resetEmail(transactionId: string, sendCorrectionEmail = true) {
-        if (!transactionId) {
-            throw new ValidationError("Transaction ID is required");
-        }
-
+        if (!transactionId) throw new ValidationError("Transaction ID is required");
         await connectToMongo();
 
-        const transaction = await referralRepository.findById(transactionId) as Record<string, unknown> | null;
-        if (!transaction) {
-            throw new NotFoundError("Transaction not found");
-        }
+        // 1. Daten laden & validieren
+        const transaction = await loadValidatedTransaction(transactionId);
+        if (!transaction.emailSent) throw new ValidationError("Email was not sent for this transaction, nothing to reset");
 
-        if (!transaction.emailSent) {
-            throw new ValidationError("Email was not sent for this transaction, nothing to reset");
-        }
+        const referrer = await loadValidatedReferrer(transaction.referrerCode);
 
-        const referrer = await customerRepository.findOneExec({
-            myReferralCode: transaction.referrerCode,
-        }) as Record<string, unknown> | null;
-
-        if (!referrer) {
-            throw new NotFoundError("Referrer not found");
-        }
-
-        const originalDiscountRate = transaction.discountRate as number;
-        const originalAmount = Math.max(
-            (transaction.originalPrice as number) - (transaction.finalPrice as number),
-            0,
-        );
-
-        // Korrektur-E-Mail über Mail Port senden (DIP)
+        // 2. Korrektur-E-Mail senden (DIP)
         if (sendCorrectionEmail && referrer.email) {
+            const originalDiscountRate = transaction.discountRate as number;
+            const originalAmount = Math.max(
+                (transaction.originalPrice as number) - (transaction.finalPrice as number),
+                0,
+            );
+
             const { html, subject } = buildCorrectionEmailHTML({
-                refFirst: (referrer.firstname as string) ?? "",
-                refLast: (referrer.lastname as string) ?? "",
-                myReferralCode: (referrer.myReferralCode as string) ?? "",
+                refFirst: referrer.firstname,
+                refLast: referrer.lastname,
+                myReferralCode: referrer.myReferralCode ?? "",
                 originalDiscountRate,
                 originalAmount,
             });
 
-            const mailPort = getMailPort();
-            await mailPort.send({
-                to: referrer.email as string,
-                subject,
-                html,
-            });
+            const notifier = getDiscountNotifier();
+            await notifier.notifyCorrection({ to: referrer.email, subject, html });
         }
 
-        // Transaction emailSent zurücksetzen
+        // 3. Transaction zurücksetzen
         await referralRepository.update({
             where: { id: transactionId },
             data: { emailSent: false, isBonus: false },

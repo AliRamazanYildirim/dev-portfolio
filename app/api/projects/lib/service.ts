@@ -5,6 +5,7 @@
  *  - ProjectReadService: list, getBySlug (sorgulama)
  *  - ProjectWriteService: create, updateNavigation (değişiklik)
  *  - ProjectsService: geriye uyumlu facade
+ *  - DTOs: typ-sichere Mapper statt unknown-Casts
  */
 
 import {
@@ -13,6 +14,14 @@ import {
     projectTagRepository,
 } from "@/lib/repositories";
 import type { CreateProjectInput, ProjectQueryParams } from "./types";
+import {
+    toProjectReadDto,
+    toProjectDetailDto,
+    type ProjectReadDto,
+    type ProjectDetailDto,
+    type ProjectGalleryItemDto,
+    type ProjectTagDto,
+} from "./dto";
 
 /* ================================================================
  * READ SERVICE
@@ -24,18 +33,18 @@ export class ProjectReadService {
      * N+1-Fix: Gallery und Tags werden einmal gebündelt geladen
      * und per Map zugeordnet.
      */
-    static async list(params: ProjectQueryParams) {
+    static async list(params: ProjectQueryParams): Promise<ProjectReadDto[]> {
         const where: Record<string, unknown> = { published: true };
         if (params.featured) where.featured = true;
 
         const projects = await projectRepository.findMany({
             where,
             orderBy: { createdAt: "desc" },
-        }) as unknown as Record<string, unknown>[];
+        });
 
         if (!projects || projects.length === 0) return [];
 
-        const projectIds = projects.map((p) => String(p._id ?? p.id));
+        const projectIds = projects.map((p) => String(p._id ?? (p as unknown as Record<string, unknown>).id));
 
         const [allGallery, allTags] = await Promise.all([
             projectImageRepository.findMany({
@@ -51,55 +60,44 @@ export class ProjectReadService {
         const tagMap = ProjectReadService.buildTagMap(allTags);
 
         return projects.map((p) => {
-            const pid = String(p._id ?? p.id);
-
-            let description = p.description;
-            if (typeof description === "object" && description !== null) {
-                description = {
-                    en: (description as Record<string, string>).en || "",
-                    de: (description as Record<string, string>).de || "",
-                    tr: (description as Record<string, string>).tr || "",
-                };
-            }
-
-            return {
-                ...p,
-                description,
-                gallery: galleryMap.get(pid) || [],
-                tags: tagMap.get(pid) || [],
-            };
+            const pid = String(p._id ?? (p as unknown as Record<string, unknown>).id);
+            return toProjectReadDto(
+                p as unknown as Record<string, unknown>,
+                galleryMap.get(pid) || [],
+                tagMap.get(pid) || [],
+            );
         });
     }
 
     /**
      * Einzelnes Projekt anhand des Slugs mit Gallery + Navigation laden
      */
-    static async getBySlug(slug: string) {
-        const project = await projectRepository.findUnique({ where: { slug } }) as Record<string, unknown> | null;
+    static async getBySlug(slug: string): Promise<ProjectDetailDto | null> {
+        const project = await projectRepository.findUnique({ where: { slug } });
         if (!project || !project.published) return null;
 
         const { prev, next } = await ProjectReadService.resolveNavigation(slug);
         const technologies = ProjectReadService.parseTechnologies(project.technologies);
 
         const gallery = await projectImageRepository.findMany({
-            where: { projectId: String(project._id ?? project.id) },
+            where: { projectId: String(project._id ?? (project as unknown as Record<string, unknown>).id) },
             orderBy: { order: "asc" },
         });
 
-        return {
-            ...project,
-            gallery,
+        return toProjectDetailDto(
+            project as unknown as Record<string, unknown>,
+            gallery as unknown[],
             technologies,
-            previousSlug: prev,
-            nextSlug: next,
-        };
+            prev,
+            next,
+        );
     }
 
     /* ---------- Private Helpers ---------- */
 
-    private static buildGalleryMap(allGallery: unknown): Map<string, unknown[]> {
+    private static buildGalleryMap(allGallery: unknown[]): Map<string, unknown[]> {
         const map = new Map<string, unknown[]>();
-        for (const img of ((allGallery || []) as Record<string, unknown>[])) {
+        for (const img of (allGallery as Record<string, unknown>[])) {
             const pid = String(img.projectId);
             const arr = map.get(pid) || [];
             arr.push(img);
@@ -108,9 +106,9 @@ export class ProjectReadService {
         return map;
     }
 
-    private static buildTagMap(allTags: unknown): Map<string, unknown[]> {
+    private static buildTagMap(allTags: unknown[]): Map<string, unknown[]> {
         const map = new Map<string, unknown[]>();
-        for (const tag of ((allTags || []) as Record<string, unknown>[])) {
+        for (const tag of (allTags as Record<string, unknown>[])) {
             const pids = tag.projects;
             if (Array.isArray(pids)) {
                 for (const pid of pids) {
@@ -128,7 +126,7 @@ export class ProjectReadService {
         const allProjects = await projectRepository.findMany({
             where: { published: true },
             orderBy: { createdAt: "asc" },
-        }) as unknown as Record<string, unknown>[];
+        });
 
         let prev: string | null = null;
         let next: string | null = null;
@@ -136,8 +134,8 @@ export class ProjectReadService {
         if (allProjects && allProjects.length > 0) {
             const index = allProjects.findIndex((p) => p.slug === slug);
             if (index !== -1) {
-                prev = index > 0 ? allProjects[index - 1].slug as string : null;
-                next = index < allProjects.length - 1 ? allProjects[index + 1].slug as string : null;
+                prev = index > 0 ? allProjects[index - 1].slug : null;
+                next = index < allProjects.length - 1 ? allProjects[index + 1].slug : null;
             }
         }
 
@@ -192,9 +190,9 @@ export class ProjectWriteService {
                 previousSlug: input.previousSlug,
                 nextSlug: input.nextSlug,
             },
-        }) as unknown as Record<string, unknown>;
+        });
 
-        const projectId = String(project._id ?? project.id);
+        const projectId = String(project._id ?? (project as unknown as Record<string, unknown>).id);
 
         // Gallery einfügen
         const galleryData = (input.gallery ?? []).map((url, index) => ({
@@ -221,7 +219,11 @@ export class ProjectWriteService {
 
         return {
             success: true as const,
-            data: { ...project, gallery: galleryRes, tags: tagsRes },
+            data: toProjectReadDto(
+                project as unknown as Record<string, unknown>,
+                galleryRes as unknown[],
+                tagsRes as unknown[],
+            ),
         };
     }
 
@@ -233,7 +235,7 @@ export class ProjectWriteService {
         const projects = await projectRepository.findMany({
             where: { published: true },
             orderBy: { createdAt: "asc" },
-        }) as unknown as Record<string, unknown>[];
+        });
 
         if (!projects || projects.length === 0) return;
 
@@ -242,10 +244,10 @@ export class ProjectWriteService {
             const next = i < projects.length - 1 ? projects[i + 1] : null;
 
             return {
-                id: String(current._id ?? current.id),
+                id: String(current._id ?? (current as unknown as Record<string, unknown>).id),
                 data: {
-                    previousSlug: (previous as Record<string, unknown> | null)?.slug || null,
-                    nextSlug: (next as Record<string, unknown> | null)?.slug || null,
+                    previousSlug: previous?.slug || null,
+                    nextSlug: next?.slug || null,
                 },
             };
         });
