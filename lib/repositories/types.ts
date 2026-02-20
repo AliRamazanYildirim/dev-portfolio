@@ -79,6 +79,12 @@ export interface IProjectImageRepository<T> {
     deleteMany(opts: { where: Record<string, unknown> }): Promise<unknown>;
 }
 
+/* ---------- Project Tag Repository ---------- */
+
+export interface IProjectTagReadRepository<T> {
+    findMany(opts: FindManyOptions): Promise<T[]>;
+}
+
 /* ---------- Customer Repository (Narrowed) ---------- */
 
 export interface ICustomerReadRepository<T> {
@@ -102,4 +108,20 @@ export interface IReferralReadRepository<T> {
 export interface IReferralWriteRepository<T> {
     create(opts: CreateOptions): Promise<T>;
     update(opts: MutateOptions): Promise<T | null>;
+}
+
+/* ---------- Contact Repository ---------- */
+
+export interface IContactWriteRepository<T> {
+    create(opts: CreateOptions): Promise<T>;
+}
+
+/* ---------- Settings Repository ---------- */
+
+export interface ISettingsReadRepository<T> {
+    findFirst(): Promise<T | null>;
+}
+
+export interface ISettingsWriteRepository<T> {
+    upsert(opts: { where: Record<string, unknown>; data: Record<string, unknown> }): Promise<T>;
 }

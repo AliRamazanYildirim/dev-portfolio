@@ -11,6 +11,7 @@
  */
 
 import { customerRepository } from "@/lib/repositories";
+import { RepositoryError, RepositoryErrorCode } from "@/lib/repositories/errors";
 import { connectToMongo } from "@/lib/mongodb";
 import { processReferral } from "./referralService";
 import { evaluateReferralPolicy } from "./referralPolicy";
@@ -49,20 +50,21 @@ function computeUpdateFields(
 }
 
 /** Versucht aus einem Duplikat-Fehler den Besitzer zu ermitteln. */
-async function resolveDuplicateOwner(errorMessage: string, fallbackEmail: unknown): Promise<never> {
-    const conflictEmailMatch = errorMessage.match(/\{\s*email:\s*"([^"]+)"\s*\}/);
-    const conflictEmail = conflictEmailMatch ? conflictEmailMatch[1] : (fallbackEmail as string);
+async function resolveDuplicateOwner(repoError: RepositoryError): Promise<never> {
+    const duplicateEmail = repoError.duplicateKeyInfo?.value ?? null;
 
-    try {
-        const owner = await customerRepository.findUnique({ where: { email: conflictEmail } });
-        if (owner) {
-            const ownerDto = toCustomerReadDto(owner as unknown as Record<string, unknown>);
-            throw new ConflictError(
-                `This email address is already registered to: ${ownerDto.firstname} ${ownerDto.lastname}`,
-            );
+    if (duplicateEmail) {
+        try {
+            const owner = await customerRepository.findUnique({ where: { email: duplicateEmail } });
+            if (owner) {
+                const ownerDto = toCustomerReadDto(owner as unknown as Record<string, unknown>);
+                throw new ConflictError(
+                    `This email address is already registered to: ${ownerDto.firstname} ${ownerDto.lastname}`,
+                );
+            }
+        } catch (lookupErr) {
+            if (lookupErr instanceof ConflictError) throw lookupErr;
         }
-    } catch (lookupErr) {
-        if (lookupErr instanceof ConflictError) throw lookupErr;
     }
 
     throw new ConflictError("This email address is already registered.");
@@ -118,8 +120,9 @@ export class CustomerUpdateUseCase {
         const policy = evaluateReferralPolicy(body, existing);
         if (!policy.shouldApply) return false;
 
+        // TypeScript knows: policy.referralCode is string (not null) here
         const result = await processReferral(
-            policy.referralCode!,
+            policy.referralCode,
             policy.price,
             existing.id,
         );
@@ -137,9 +140,8 @@ export class CustomerUpdateUseCase {
                 data: updateData,
             });
         } catch (err: unknown) {
-            const msg = err instanceof Error ? err.message : String(err);
-            if (msg.includes("duplicate key") || msg.includes("E11000") || msg.includes("email_1")) {
-                return resolveDuplicateOwner(msg, updateData.email);
+            if (err instanceof RepositoryError && err.code === RepositoryErrorCode.DUPLICATE_KEY) {
+                return resolveDuplicateOwner(err);
             }
             throw err;
         }

@@ -1,6 +1,7 @@
 import CustomerModel, { type ICustomer } from "@/models/Customer";
 import { connectToMongo } from "@/lib/mongodb";
 import { normalizeDoc } from "./normalize";
+import { classifyMongoError } from "./errors";
 import type { IRepository } from "./types";
 
 /* ---------- Query-Typen ---------- */
@@ -110,18 +111,26 @@ export const customerRepository: IRepository<ICustomer> & {
 
     create: async (params: CreateOpts): Promise<ICustomer> => {
         await connectToMongo();
-        const doc = normalizeDoc<ICustomer>(await CustomerModel.create(params.data));
-        if (!doc) throw new Error("Failed to create customer");
-        return doc;
+        try {
+            const doc = normalizeDoc<ICustomer>(await CustomerModel.create(params.data));
+            if (!doc) throw new Error("Failed to create customer");
+            return doc;
+        } catch (err) {
+            throw classifyMongoError(err);
+        }
     },
 
     update: async (opts: MutateOpts): Promise<ICustomer | null> => {
         await connectToMongo();
-        return normalizeDoc<ICustomer>(
-            await CustomerModel.findByIdAndUpdate(opts.where.id, opts.data, {
-                new: true,
-            }).exec(),
-        );
+        try {
+            return normalizeDoc<ICustomer>(
+                await CustomerModel.findByIdAndUpdate(opts.where.id, opts.data, {
+                    new: true,
+                }).exec(),
+            );
+        } catch (err) {
+            throw classifyMongoError(err);
+        }
     },
 
     delete: async (opts: { where: { id: string } }): Promise<ICustomer | null> => {

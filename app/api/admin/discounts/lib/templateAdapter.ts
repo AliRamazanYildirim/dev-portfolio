@@ -44,14 +44,21 @@ export class DefaultEmailTemplateBuilder implements IEmailTemplateBuilder, ICorr
     }
 }
 
-/* ---------- Singleton + Override ---------- */
+/* ---------- Singleton + Override → Composition Root ---------- */
 
-let _templateBuilder: IEmailTemplateBuilder & ICorrectionTemplateBuilder = new DefaultEmailTemplateBuilder();
+let _override: (IEmailTemplateBuilder & ICorrectionTemplateBuilder) | null = null;
 
 export function getEmailTemplateBuilder(): IEmailTemplateBuilder & ICorrectionTemplateBuilder {
-    return _templateBuilder;
+    if (_override) return _override;
+    try {
+        const { getDependencies } = require("@/lib/composition-root");
+        return getDependencies().templates.discountEmail;
+    } catch {
+        return new DefaultEmailTemplateBuilder();
+    }
 }
 
+/** @deprecated Prefer initDependencies() from composition-root instead. */
 export function setEmailTemplateBuilder(builder: IEmailTemplateBuilder & ICorrectionTemplateBuilder): void {
-    _templateBuilder = builder;
+    _override = builder;
 }

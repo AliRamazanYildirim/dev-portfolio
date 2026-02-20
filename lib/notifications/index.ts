@@ -3,6 +3,8 @@
  *
  * Einzelner Einstiegspunkt für Notification-Ports.
  * Die Auswahl des konkreten Adapters (Mail, Push, etc.) erfolgt hier (DIP).
+ *
+ * v2: Delegiert an Composition Root, behält die bisherige API bei.
  */
 
 export type {
@@ -21,39 +23,51 @@ export {
 } from "./mail-adapter";
 
 import type { IDiscountNotifier, IReferralNotifier, IWelcomeNotifier } from "./types";
-import { MailDiscountNotifier, MailReferralNotifier, MailWelcomeNotifier } from "./mail-adapter";
 
-/* ---------- Singleton Instances ---------- */
+/* ---------- Explicit Overrides (Abwärtskompatibilität) ---------- */
 
-let _discountNotifier: IDiscountNotifier | null = null;
-let _referralNotifier: IReferralNotifier | null = null;
-let _welcomeNotifier: IWelcomeNotifier | null = null;
+let _discountOverride: IDiscountNotifier | null = null;
+let _referralOverride: IReferralNotifier | null = null;
+let _welcomeOverride: IWelcomeNotifier | null = null;
+
+function resolveFromRoot<K extends keyof import("@/lib/composition-root").AppDependencies["notifications"]>(
+    key: K,
+): import("@/lib/composition-root").AppDependencies["notifications"][K] {
+    try {
+        const { getDependencies } = require("@/lib/composition-root");
+        return getDependencies().notifications[key];
+    } catch {
+        const { MailDiscountNotifier, MailReferralNotifier, MailWelcomeNotifier } = require("./mail-adapter");
+        const map = { discount: MailDiscountNotifier, referral: MailReferralNotifier, welcome: MailWelcomeNotifier };
+        return new map[key]();
+    }
+}
 
 export function getDiscountNotifier(): IDiscountNotifier {
-    if (!_discountNotifier) _discountNotifier = new MailDiscountNotifier();
-    return _discountNotifier;
+    return _discountOverride ?? resolveFromRoot("discount");
 }
 
 export function getReferralNotifier(): IReferralNotifier {
-    if (!_referralNotifier) _referralNotifier = new MailReferralNotifier();
-    return _referralNotifier;
+    return _referralOverride ?? resolveFromRoot("referral");
 }
 
 export function getWelcomeNotifier(): IWelcomeNotifier {
-    if (!_welcomeNotifier) _welcomeNotifier = new MailWelcomeNotifier();
-    return _welcomeNotifier;
+    return _welcomeOverride ?? resolveFromRoot("welcome");
 }
 
 /* ---------- Test Overrides ---------- */
 
+/** @deprecated Prefer initDependencies() from composition-root instead. */
 export function setDiscountNotifier(notifier: IDiscountNotifier): void {
-    _discountNotifier = notifier;
+    _discountOverride = notifier;
 }
 
+/** @deprecated Prefer initDependencies() from composition-root instead. */
 export function setReferralNotifier(notifier: IReferralNotifier): void {
-    _referralNotifier = notifier;
+    _referralOverride = notifier;
 }
 
+/** @deprecated Prefer initDependencies() from composition-root instead. */
 export function setWelcomeNotifier(notifier: IWelcomeNotifier): void {
-    _welcomeNotifier = notifier;
+    _welcomeOverride = notifier;
 }

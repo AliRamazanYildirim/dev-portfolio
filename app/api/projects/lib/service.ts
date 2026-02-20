@@ -24,7 +24,18 @@ import {
     type ProjectDetailDto,
     type ProjectGalleryItemDto,
     type ProjectTagDto,
+    type ProjectListItemDto,
 } from "./dto";
+
+/* ================================================================
+ * SERVICE RESULT TYPES – Typisierte Ergebnisse (wie Customer-Domain)
+ * ================================================================ */
+
+export type CreateProjectResult =
+    | { success: true; data: ProjectReadDto }
+    | { success: false; error: string };
+
+export type GetProjectResult = ProjectDetailDto | null;
 
 /* ================================================================
  * READ SERVICE
@@ -75,7 +86,7 @@ export class ProjectReadService {
     /**
      * Einzelnes Projekt anhand des Slugs mit Gallery + Navigation laden
      */
-    static async getBySlug(slug: string): Promise<ProjectDetailDto | null> {
+    static async getBySlug(slug: string): Promise<GetProjectResult> {
         const project = await projectRepository.findUnique({ where: { slug } });
         if (!project || !project.published) return null;
 
@@ -170,7 +181,7 @@ export class ProjectWriteService {
     /**
      * Neues Projekt erstellen + Gallery + Navigation aktualisieren
      */
-    static async create(input: CreateProjectInput) {
+    static async create(input: CreateProjectInput): Promise<CreateProjectResult> {
         // Slug-Eindeutigkeit prüfen
         const existing = await projectRepository.findUnique({ where: { slug: input.slug } });
         if (existing) {
@@ -266,6 +277,6 @@ export class ProjectWriteService {
 export class ProjectsService {
     static list = ProjectReadService.list;
     static getBySlug = ProjectReadService.getBySlug;
-    static create = ProjectWriteService.create.bind(ProjectWriteService);
+    static create = ProjectWriteService.create.bind(ProjectWriteService) as typeof ProjectWriteService.create;
     static updateNavigation = ProjectWriteService.updateNavigation;
 }

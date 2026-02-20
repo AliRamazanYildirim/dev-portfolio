@@ -2,6 +2,7 @@ import { CustomersService } from "./service";
 import { validateCreateCustomerBody } from "./validation";
 import { successResponse, handleError } from "@/lib/api-response";
 import { ValidationError, ConflictError } from "@/lib/errors";
+import { RepositoryError, RepositoryErrorCode } from "@/lib/repositories/errors";
 
 /**
  * GET /api/admin/customers
@@ -39,20 +40,13 @@ export async function POST(req: Request) {
     const customer = await CustomersService.create(validation.value);
     return successResponse(customer);
   } catch (err: unknown) {
-    // Duplicate-Key → 409
-    if (err instanceof Error) {
-      const msg = err.message;
-      if (
-        msg.includes("duplicate key value") ||
-        msg.includes("unique constraint") ||
-        (err as any)?.code === 11000
-      ) {
-        return handleError(
-          new ConflictError(
-            "This email address is already registered. Each customer must have a unique email address.",
-          ),
-        );
-      }
+    // Duplicate-Key → 409 (typisierter RepositoryError statt String-Matching)
+    if (err instanceof RepositoryError && err.code === RepositoryErrorCode.DUPLICATE_KEY) {
+      return handleError(
+        new ConflictError(
+          "This email address is already registered. Each customer must have a unique email address.",
+        ),
+      );
     }
     return handleError(err);
   }

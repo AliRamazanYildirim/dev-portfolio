@@ -25,4 +25,22 @@ export type {
     MutateOptions,
     CreateOptions,
     DeleteOptions,
+    IProjectReadRepository,
+    IProjectWriteRepository,
+    IProjectImageRepository,
+    IProjectTagReadRepository,
+    ICustomerReadRepository,
+    ICustomerWriteRepository,
+    IReferralReadRepository,
+    IReferralWriteRepository,
+    IContactWriteRepository,
+    ISettingsReadRepository,
+    ISettingsWriteRepository,
 } from "./types";
+export {
+    RepositoryError,
+    RepositoryErrorCode,
+    classifyMongoError,
+    isRepositoryError,
+    type DuplicateKeyInfo,
+} from "./errors";

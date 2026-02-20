@@ -4,6 +4,7 @@
  * Yeni discount türleri eklendiğinde servis kodu değişmez,
  * sadece bu modüle yeni bir strateji eklenir.
  *
+ * v2: Eligibility sonuçları Typed Result Union ile modellendi.
  * Tüm fonksiyonlar saf (pure) – yan etki yok, test edilmesi kolay.
  */
 
@@ -34,7 +35,26 @@ export interface DiscountStrategy {
 }
 
 /* ================================================================
- * VALIDATION – Pure
+ * TYPED RESULT UNIONS – Eligibility Checks
+ * ================================================================ */
+
+/** Rate validasyon sonucu */
+export type RateValidationResult =
+    | { valid: true; rate: DiscountRateInput; isBonus: boolean }
+    | { valid: false; reason: string };
+
+/** Bonus eligibility sonucu */
+export type BonusEligibilityResult =
+    | { eligible: true }
+    | { eligible: false; reason: string; referralCount: number; required: number };
+
+/** Email durum kontrolü sonucu */
+export type EmailStatusResult =
+    | { canSend: true }
+    | { canSend: false; reason: "already_sent" };
+
+/* ================================================================
+ * VALIDATION – Pure (Typed Result Union)
  * ================================================================ */
 
 export function isValidRate(rate: unknown): rate is DiscountRateInput {
@@ -46,22 +66,47 @@ export function isBonusRate(rate: DiscountRateInput): rate is "+3" {
     return rate === "+3";
 }
 
-/* ================================================================
- * ELIGIBILITY RULES – Pure (OCP: New rule can be added)
- * ================================================================ */
-
-export function assertBonusEligible(referralCount: number): void {
-    if (referralCount < 3) {
-        throw new Error(
-            "Bonus rate (+3%) is only available for customers who reached 9% (3+ referrals)",
-        );
+/** Tam typed rate validasyonu – caller discriminated union ile branching yapabilir */
+export function validateRate(rate: unknown): RateValidationResult {
+    if (!isValidRate(rate)) {
+        return { valid: false, reason: "Discount rate must be 3, 6, 9, or '+3' (bonus)" };
     }
+    return { valid: true, rate, isBonus: isBonusRate(rate) };
 }
 
-export function assertEmailNotSent(emailSent: unknown): void {
-    if (emailSent) {
-        throw new Error("Email already sent for this transaction");
+/* ================================================================
+ * ELIGIBILITY RULES – Pure (Typed Result Union)
+ * ================================================================ */
+
+export function checkBonusEligibility(referralCount: number): BonusEligibilityResult {
+    if (referralCount < 3) {
+        return {
+            eligible: false,
+            reason: "Bonus rate (+3%) is only available for customers who reached 9% (3+ referrals)",
+            referralCount,
+            required: 3,
+        };
     }
+    return { eligible: true };
+}
+
+export function checkEmailStatus(emailSent: unknown): EmailStatusResult {
+    if (emailSent) {
+        return { canSend: false, reason: "already_sent" };
+    }
+    return { canSend: true };
+}
+
+/** @deprecated Prefer checkBonusEligibility() which returns typed result */
+export function assertBonusEligible(referralCount: number): void {
+    const result = checkBonusEligibility(referralCount);
+    if (!result.eligible) throw new Error(result.reason);
+}
+
+/** @deprecated Prefer checkEmailStatus() which returns typed result */
+export function assertEmailNotSent(emailSent: unknown): void {
+    const result = checkEmailStatus(emailSent);
+    if (!result.canSend) throw new Error("Email already sent for this transaction");
 }
 
 /* ================================================================

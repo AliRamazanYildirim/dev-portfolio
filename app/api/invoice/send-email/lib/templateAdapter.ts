@@ -32,14 +32,21 @@ export class DefaultInvoiceTemplateBuilder implements IInvoiceTemplateBuilder {
     }
 }
 
-/* ---------- Singleton + Override ---------- */
+/* ---------- Singleton + Override → Composition Root ---------- */
 
-let _builder: IInvoiceTemplateBuilder = new DefaultInvoiceTemplateBuilder();
+let _override: IInvoiceTemplateBuilder | null = null;
 
 export function getInvoiceTemplateBuilder(): IInvoiceTemplateBuilder {
-    return _builder;
+    if (_override) return _override;
+    try {
+        const { getDependencies } = require("@/lib/composition-root");
+        return getDependencies().templates.invoiceEmail;
+    } catch {
+        return new DefaultInvoiceTemplateBuilder();
+    }
 }
 
+/** @deprecated Prefer initDependencies() from composition-root instead. */
 export function setInvoiceTemplateBuilder(builder: IInvoiceTemplateBuilder): void {
-    _builder = builder;
+    _override = builder;
 }
