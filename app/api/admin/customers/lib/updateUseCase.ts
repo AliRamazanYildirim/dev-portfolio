@@ -13,6 +13,7 @@
 import { customerRepository } from "@/lib/repositories";
 import { connectToMongo } from "@/lib/mongodb";
 import { processReferral } from "./referralService";
+import { evaluateReferralPolicy } from "./referralPolicy";
 import { calcTotalEarnings } from "./referral";
 import { NotFoundError, ConflictError } from "@/lib/errors";
 import type { CustomerReadDto } from "./dto";
@@ -109,18 +110,17 @@ export class CustomerUpdateUseCase {
         };
     }
 
-    /** Verarbeitet Referral nur wenn Code erstmalig verwendet wird. */
+    /** Referral policy'ye danışarak işlem kararı alır (OCP). */
     private static async tryProcessReferral(
         body: Record<string, unknown>,
         existing: CustomerReadDto,
     ): Promise<boolean> {
-        if (!body.reference || !body.price || existing.reference) {
-            return false;
-        }
+        const policy = evaluateReferralPolicy(body, existing);
+        if (!policy.shouldApply) return false;
 
         const result = await processReferral(
-            body.reference as string,
-            body.price as number,
+            policy.referralCode!,
+            policy.price,
             existing.id,
         );
         return result.referrerDiscount > 0;

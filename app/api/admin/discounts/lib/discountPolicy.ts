@@ -1,0 +1,224 @@
+/**
+ * Discount Policy – Domain kurallarını strateji/policy modülü olarak ayırır (OCP/SRP).
+ *
+ * Yeni discount türleri eklendiğinde servis kodu değişmez,
+ * sadece bu modüle yeni bir strateji eklenir.
+ *
+ * Tüm fonksiyonlar saf (pure) – yan etki yok, test edilmesi kolay.
+ */
+
+import { calcDiscountedPrice } from "@/app/api/admin/customers/lib/referral";
+import type { CustomerReadDto } from "@/app/api/admin/customers/lib/dto";
+
+/* ================================================================
+ * TYPES
+ * ================================================================ */
+
+const VALID_RATES = [3, 6, 9] as const;
+type ValidRate = (typeof VALID_RATES)[number];
+
+export type DiscountRateInput = ValidRate | "+3";
+
+export interface EmailContent {
+    html: string;
+    subject: string;
+    finalNewPrice: number;
+    actualDiscountRate: number | "+3";
+    bonusOriginalPrice: number | null;
+    bonusFinalPrice: number | null;
+    bonusAmount: number | null;
+}
+
+export interface DiscountStrategy {
+    buildEmailContent(referrer: CustomerReadDto): EmailContent;
+}
+
+/* ================================================================
+ * VALIDATION – Pure
+ * ================================================================ */
+
+export function isValidRate(rate: unknown): rate is DiscountRateInput {
+    if (rate === "+3") return true;
+    return typeof rate === "number" && VALID_RATES.includes(rate as ValidRate);
+}
+
+export function isBonusRate(rate: DiscountRateInput): rate is "+3" {
+    return rate === "+3";
+}
+
+/* ================================================================
+ * ELIGIBILITY RULES – Pure (OCP: New rule can be added)
+ * ================================================================ */
+
+export function assertBonusEligible(referralCount: number): void {
+    if (referralCount < 3) {
+        throw new Error(
+            "Bonus rate (+3%) is only available for customers who reached 9% (3+ referrals)",
+        );
+    }
+}
+
+export function assertEmailNotSent(emailSent: unknown): void {
+    if (emailSent) {
+        throw new Error("Email already sent for this transaction");
+    }
+}
+
+/* ================================================================
+ * STRATEGIES – Reine Funktionen (OCP)
+ * ================================================================ */
+
+export interface IEmailTemplateBuilder {
+    buildReferrerEmail(params: {
+        refFirst: string;
+        refLast: string;
+        myReferralCode: string;
+        newCount: number;
+        discountRate: number;
+        referrerPrice: number;
+        referrerFinalPrice: number;
+        currentDiscountAmount: number;
+        discountsEnabled: boolean;
+    }): { html: string; subject: string };
+
+    buildBonusEmail(params: {
+        refFirst: string;
+        refLast: string;
+        myReferralCode: string;
+        referralCount: number;
+        previousFinalPrice: number;
+        newFinalPrice: number;
+        bonusAmount: number;
+    }): { html: string; subject: string };
+}
+
+export function buildStandardEmailContent(
+    referrer: CustomerReadDto,
+    discountRate: number,
+    templateBuilder: IEmailTemplateBuilder,
+): EmailContent {
+    const { referralCount, price: referrerPrice } = referrer;
+    const referrerFinalPrice = calcDiscountedPrice(referrerPrice, referralCount);
+    const previousPrice =
+        referralCount > 1 ? calcDiscountedPrice(referrerPrice, referralCount - 1) : referrerPrice;
+    const currentDiscountAmount = previousPrice - referrerFinalPrice;
+
+    const standardEmail = templateBuilder.buildReferrerEmail({
+        refFirst: referrer.firstname,
+        refLast: referrer.lastname,
+        myReferralCode: referrer.myReferralCode ?? "",
+        newCount: referralCount,
+        discountRate,
+        referrerPrice,
+        referrerFinalPrice,
+        currentDiscountAmount,
+        discountsEnabled: true,
+    });
+
+    return {
+        html: standardEmail.html,
+        subject: standardEmail.subject,
+        finalNewPrice: referrerFinalPrice,
+        actualDiscountRate: discountRate,
+        bonusOriginalPrice: null,
+        bonusFinalPrice: null,
+        bonusAmount: null,
+    };
+}
+
+export function buildBonusEmailContent(
+    referrer: CustomerReadDto,
+    templateBuilder: IEmailTemplateBuilder,
+): EmailContent {
+    const currentFinal =
+        typeof referrer.finalPrice === "number" && !Number.isNaN(referrer.finalPrice)
+            ? referrer.finalPrice
+            : calcDiscountedPrice(referrer.price, referrer.referralCount);
+
+    const discountCents = Math.round(currentFinal * 0.03 * 100);
+    const nextPrice = Math.round((currentFinal - discountCents / 100) * 100) / 100;
+    const computedBonusAmount = Math.max(Math.round((currentFinal - nextPrice) * 100) / 100, 0);
+
+    const bonusEmail = templateBuilder.buildBonusEmail({
+        refFirst: referrer.firstname,
+        refLast: referrer.lastname,
+        myReferralCode: referrer.myReferralCode ?? "",
+        referralCount: referrer.referralCount,
+        previousFinalPrice: currentFinal,
+        newFinalPrice: nextPrice,
+        bonusAmount: computedBonusAmount,
+    });
+
+    return {
+        html: bonusEmail.html,
+        subject: bonusEmail.subject,
+        finalNewPrice: nextPrice,
+        actualDiscountRate: "+3" as const,
+        bonusOriginalPrice: currentFinal,
+        bonusFinalPrice: nextPrice,
+        bonusAmount: computedBonusAmount,
+    };
+}
+
+/* ================================================================
+ * PERSISTENCE COMPUTATION – Pure (berechnet Update-Daten)
+ * ================================================================ */
+
+export interface TransactionUpdateData {
+    emailSent: boolean;
+    discountRate: number | "+3";
+    isBonus: boolean;
+    referralLevel?: number;
+    originalPrice?: number;
+    finalPrice?: number;
+    discountAmount?: number;
+}
+
+export function computeTransactionUpdate(
+    transaction: Record<string, unknown>,
+    isBonusRate: boolean,
+    discountRate: DiscountRateInput,
+    referralCount: number,
+    emailContent: EmailContent,
+): TransactionUpdateData {
+    let newReferralLevel: number | undefined = transaction.referralLevel as number | undefined;
+    if (isBonusRate) {
+        const baseLevel =
+            typeof transaction.referralLevel === "number"
+                ? (transaction.referralLevel as number) + 1
+                : referralCount + 1;
+        newReferralLevel = Math.min(baseLevel, referralCount);
+    }
+
+    const result: TransactionUpdateData = {
+        emailSent: true,
+        discountRate: isBonusRate ? 3 : discountRate,
+        isBonus: isBonusRate,
+        referralLevel: newReferralLevel,
+    };
+
+    if (
+        isBonusRate &&
+        emailContent.bonusOriginalPrice !== null &&
+        emailContent.bonusFinalPrice !== null &&
+        emailContent.bonusAmount !== null
+    ) {
+        result.originalPrice = emailContent.bonusOriginalPrice;
+        result.finalPrice = emailContent.bonusFinalPrice;
+        result.discountAmount = emailContent.bonusAmount;
+    }
+
+    return result;
+}
+
+export function computeReferrerUpdate(
+    isBonusRate: boolean,
+    discountRate: DiscountRateInput,
+    finalNewPrice: number,
+): Record<string, unknown> {
+    return {
+        discountRate: isBonusRate ? 9 : discountRate,
+        finalPrice: finalNewPrice,
+        updatedAt: new Date(),
+    };
+}

@@ -2,7 +2,7 @@ import { INVOICE_CONSTANTS } from "@/constants/invoice";
 import { ValidationError } from "@/lib/errors";
 import { resolveInvoiceDates } from "./lib/date-utils";
 import { fetchInvoicePdf } from "./lib/pdf";
-import { buildInvoiceHtml } from "./lib/mail-template";
+import { getInvoiceTemplateBuilder } from "./lib/templateAdapter";
 import { getMailPort } from "@/lib/mail";
 import type { InvoiceData } from "@/lib/invoiceUtils";
 
@@ -33,7 +33,9 @@ export class InvoiceEmailService {
 
         const displayProjectTitle = InvoiceEmailService.resolveProjectTitle(invoiceData);
 
-        const html = buildInvoiceHtml({
+        // Template über Port erzeugen (DIP)
+        const templateBuilder = getInvoiceTemplateBuilder();
+        const html = templateBuilder.buildInvoiceEmail({
             customerName,
             displayProjectTitle,
             invoiceData: invoiceData as unknown as InvoiceData,

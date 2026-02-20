@@ -2,13 +2,14 @@
  * Welcome Email Service – Eigenständiger Service für Willkommens-E-Mails.
  *
  * SRP-Fix: E-Mail-Logik aus CustomersService herausgelöst.
- * Verwendet den Notification Port (DIP) anstelle der direkten Nutzung von Mail Port.
+ * DIP-Fix v2: Template-Erstellung über IWelcomeTemplateBuilder Port,
+ *             Versand über IWelcomeNotifier Port.
  */
 
 import path from "path";
 import fs from "fs";
 import { getWelcomeNotifier } from "@/lib/notifications";
-import { buildWelcomeEmailHTML } from "./email-templates";
+import { getWelcomeTemplateBuilder } from "./welcomeTemplateAdapter";
 
 interface WelcomeEmailRecipient {
     email?: string;
@@ -25,7 +26,8 @@ export class WelcomeEmailService {
         if (!customer.email) return false;
 
         try {
-            const welcomeEmail = buildWelcomeEmailHTML({
+            const templateBuilder = getWelcomeTemplateBuilder();
+            const welcomeEmail = templateBuilder.buildWelcomeEmail({
                 firstName: customer.firstname || "",
                 lastName: customer.lastname || "",
                 language,

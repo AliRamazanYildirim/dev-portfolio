@@ -1,8 +1,14 @@
 /**
  * Project Domain DTOs – Typ-sichere Read-/Write-Modelle.
  *
- * Eliminiert `unknown`/`as`-Cast-Ketten im gesamten Projects-Domain.
+ * v2: Mapper-Funktionen akzeptieren jetzt typisierte Model-Interfaces
+ * (IProject, IProjectImage, IProjectTag) statt Record<string, unknown>.
+ * unknown-Casts auf ein Minimum reduziert.
  */
+
+import type { IProject } from "@/models/Project";
+import type { IProjectImage } from "@/models/ProjectImage";
+import type { IProjectTag } from "@/models/ProjectTag";
 
 /* ---------- Shared ---------- */
 
@@ -87,37 +93,42 @@ function normalizeDescription(raw: unknown): ProjectDescriptionDto | string {
     return "";
 }
 
+/**
+ * Typed Mapper: IProject + IProjectImage[] + Tag-Rohdaten → ProjectReadDto.
+ * unknown-Casts eliminiert – direkte Model-Interface-Nutzung.
+ */
 export function toProjectReadDto(
-    raw: Record<string, unknown>,
-    gallery: unknown[] = [],
-    tags: unknown[] = [],
+    raw: IProject | Record<string, unknown>,
+    gallery: IProjectImage[] | unknown[] = [],
+    tags: ProjectTagRaw[] | unknown[] = [],
 ): ProjectReadDto {
+    const doc = raw as IProject & Record<string, unknown>;
     return {
-        id: String(raw._id ?? raw.id),
-        _id: raw._id ? String(raw._id) : undefined,
-        slug: (raw.slug as string) ?? "",
-        title: (raw.title as string) ?? "",
-        author: (raw.author as string) ?? undefined,
-        description: normalizeDescription(raw.description),
-        role: (raw.role as string) ?? "",
-        duration: (raw.duration as string) ?? "",
-        category: (raw.category as string) ?? "",
-        technologies: raw.technologies as string,
-        mainImage: (raw.mainImage as string) ?? "",
-        featured: Boolean(raw.featured),
-        published: Boolean(raw.published),
-        previousSlug: (raw.previousSlug as string) ?? null,
-        nextSlug: (raw.nextSlug as string) ?? null,
-        gallery: gallery.map(toGalleryItemDto),
-        tags: tags.map(toTagDto),
-        createdAt: raw.createdAt instanceof Date ? raw.createdAt : new Date(raw.createdAt as string),
-        updatedAt: raw.updatedAt instanceof Date ? raw.updatedAt : new Date(raw.updatedAt as string),
+        id: String(doc._id ?? (doc as Record<string, unknown>).id),
+        _id: doc._id ? String(doc._id) : undefined,
+        slug: doc.slug ?? "",
+        title: doc.title ?? "",
+        author: doc.author ?? undefined,
+        description: normalizeDescription(doc.description),
+        role: doc.role ?? "",
+        duration: doc.duration ?? "",
+        category: doc.category ?? "",
+        technologies: doc.technologies,
+        mainImage: doc.mainImage ?? "",
+        featured: Boolean(doc.featured),
+        published: Boolean(doc.published),
+        previousSlug: doc.previousSlug ?? null,
+        nextSlug: doc.nextSlug ?? null,
+        gallery: (gallery as IProjectImage[]).map(toGalleryItemDto),
+        tags: (tags as ProjectTagRaw[]).map(toTagDto),
+        createdAt: doc.createdAt instanceof Date ? doc.createdAt : new Date(doc.createdAt as unknown as string),
+        updatedAt: doc.updatedAt instanceof Date ? doc.updatedAt : new Date(doc.updatedAt as unknown as string),
     };
 }
 
 export function toProjectDetailDto(
-    raw: Record<string, unknown>,
-    gallery: unknown[] = [],
+    raw: IProject | Record<string, unknown>,
+    gallery: IProjectImage[] | unknown[] = [],
     technologies: string[] = [],
     previousSlug: string | null = null,
     nextSlug: string | null = null,
@@ -131,40 +142,44 @@ export function toProjectDetailDto(
 }
 
 export function toProjectListItemDto(
-    raw: Record<string, unknown>,
-    gallery: unknown[] = [],
-    tags: unknown[] = [],
+    raw: IProject | Record<string, unknown>,
+    gallery: IProjectImage[] | unknown[] = [],
+    tags: ProjectTagRaw[] | unknown[] = [],
 ): ProjectListItemDto {
+    const doc = raw as IProject & Record<string, unknown>;
     return {
-        id: String(raw._id ?? raw.id),
-        slug: (raw.slug as string) ?? "",
-        title: (raw.title as string) ?? "",
-        description: normalizeDescription(raw.description),
-        category: (raw.category as string) ?? "",
-        mainImage: (raw.mainImage as string) ?? "",
-        featured: Boolean(raw.featured),
-        gallery: gallery.map(toGalleryItemDto),
-        tags: tags.map(toTagDto),
+        id: String(doc._id ?? (doc as Record<string, unknown>).id),
+        slug: doc.slug ?? "",
+        title: doc.title ?? "",
+        description: normalizeDescription(doc.description),
+        category: doc.category ?? "",
+        mainImage: doc.mainImage ?? "",
+        featured: Boolean(doc.featured),
+        gallery: (gallery as IProjectImage[]).map(toGalleryItemDto),
+        tags: (tags as ProjectTagRaw[]).map(toTagDto),
     };
 }
 
-function toGalleryItemDto(raw: unknown): ProjectGalleryItemDto {
-    const obj = raw as Record<string, unknown>;
+/** Tag-Dokumente (Mongoose leak) projects alanı içerebilir – IProjectTag'den genişletilmiş */
+type ProjectTagRaw = IProjectTag & { projects?: string[] };
+
+function toGalleryItemDto(raw: IProjectImage | unknown): ProjectGalleryItemDto {
+    const obj = raw as IProjectImage & Record<string, unknown>;
     return {
         id: String(obj._id ?? obj.id ?? ""),
         projectId: String(obj.projectId ?? ""),
-        url: (obj.url as string) ?? "",
-        publicId: (obj.publicId as string) ?? undefined,
-        alt: (obj.alt as string) ?? undefined,
+        url: obj.url ?? "",
+        publicId: obj.publicId ?? undefined,
+        alt: obj.alt ?? undefined,
         order: Number(obj.order ?? 0),
     };
 }
 
-function toTagDto(raw: unknown): ProjectTagDto {
-    const obj = raw as Record<string, unknown>;
+function toTagDto(raw: ProjectTagRaw | unknown): ProjectTagDto {
+    const obj = raw as ProjectTagRaw;
     return {
-        id: String(obj._id ?? obj.id ?? ""),
-        name: (obj.name as string) ?? "",
+        id: String(obj._id ?? (obj as unknown as Record<string, unknown>).id ?? ""),
+        name: obj.name ?? "",
         projects: Array.isArray(obj.projects) ? obj.projects.map(String) : [],
     };
 }

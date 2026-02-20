@@ -1,11 +1,11 @@
 /**
  * Projects API – Business Logic / Service Layer
  *
- * SRP-Refactored: Read/Write ayrımı (CQRS-lite).
+ * SRP-Refactored v2: Read/Write ayrımı (CQRS-lite).
  *  - ProjectReadService: list, getBySlug (sorgulama)
  *  - ProjectWriteService: create, updateNavigation (değişiklik)
  *  - ProjectsService: geriye uyumlu facade
- *  - DTOs: typ-sichere Mapper statt unknown-Casts
+ *  - DTOs: typ-sichere Mapper mit Model-Interfaces (IProject, IProjectImage)
  */
 
 import {
@@ -13,6 +13,9 @@ import {
     projectImageRepository,
     projectTagRepository,
 } from "@/lib/repositories";
+import type { IProject } from "@/models/Project";
+import type { IProjectImage } from "@/models/ProjectImage";
+import type { IProjectTag } from "@/models/ProjectTag";
 import type { CreateProjectInput, ProjectQueryParams } from "./types";
 import {
     toProjectReadDto,
@@ -44,7 +47,7 @@ export class ProjectReadService {
 
         if (!projects || projects.length === 0) return [];
 
-        const projectIds = projects.map((p) => String(p._id ?? (p as unknown as Record<string, unknown>).id));
+        const projectIds = projects.map((p) => String(p._id));
 
         const [allGallery, allTags] = await Promise.all([
             projectImageRepository.findMany({
@@ -53,16 +56,16 @@ export class ProjectReadService {
             }),
             projectTagRepository.findMany({
                 where: { projects: { $in: projectIds } },
-            }).catch(() => []),
+            }).catch(() => [] as IProjectTag[]),
         ]);
 
         const galleryMap = ProjectReadService.buildGalleryMap(allGallery);
-        const tagMap = ProjectReadService.buildTagMap(allTags);
+        const tagMap = ProjectReadService.buildTagMap(allTags as Array<IProjectTag & { projects?: string[] }>);
 
         return projects.map((p) => {
-            const pid = String(p._id ?? (p as unknown as Record<string, unknown>).id);
+            const pid = String(p._id);
             return toProjectReadDto(
-                p as unknown as Record<string, unknown>,
+                p,
                 galleryMap.get(pid) || [],
                 tagMap.get(pid) || [],
             );
@@ -80,13 +83,13 @@ export class ProjectReadService {
         const technologies = ProjectReadService.parseTechnologies(project.technologies);
 
         const gallery = await projectImageRepository.findMany({
-            where: { projectId: String(project._id ?? (project as unknown as Record<string, unknown>).id) },
+            where: { projectId: String(project._id) },
             orderBy: { order: "asc" },
         });
 
         return toProjectDetailDto(
-            project as unknown as Record<string, unknown>,
-            gallery as unknown[],
+            project,
+            gallery,
             technologies,
             prev,
             next,
@@ -95,9 +98,9 @@ export class ProjectReadService {
 
     /* ---------- Private Helpers ---------- */
 
-    private static buildGalleryMap(allGallery: unknown[]): Map<string, unknown[]> {
-        const map = new Map<string, unknown[]>();
-        for (const img of (allGallery as Record<string, unknown>[])) {
+    private static buildGalleryMap(allGallery: IProjectImage[]): Map<string, IProjectImage[]> {
+        const map = new Map<string, IProjectImage[]>();
+        for (const img of allGallery) {
             const pid = String(img.projectId);
             const arr = map.get(pid) || [];
             arr.push(img);
@@ -106,9 +109,9 @@ export class ProjectReadService {
         return map;
     }
 
-    private static buildTagMap(allTags: unknown[]): Map<string, unknown[]> {
-        const map = new Map<string, unknown[]>();
-        for (const tag of (allTags as Record<string, unknown>[])) {
+    private static buildTagMap(allTags: Array<IProjectTag & { projects?: string[] }>): Map<string, Array<IProjectTag & { projects?: string[] }>> {
+        const map = new Map<string, Array<IProjectTag & { projects?: string[] }>>();
+        for (const tag of allTags) {
             const pids = tag.projects;
             if (Array.isArray(pids)) {
                 for (const pid of pids) {
@@ -192,7 +195,7 @@ export class ProjectWriteService {
             },
         });
 
-        const projectId = String(project._id ?? (project as unknown as Record<string, unknown>).id);
+        const projectId = String(project._id);
 
         // Gallery einfügen
         const galleryData = (input.gallery ?? []).map((url, index) => ({
@@ -215,14 +218,14 @@ export class ProjectWriteService {
         });
         const tagsRes = await projectTagRepository.findMany({
             where: { projects: projectId },
-        }).catch(() => []);
+        }).catch(() => [] as IProjectTag[]);
 
         return {
             success: true as const,
             data: toProjectReadDto(
-                project as unknown as Record<string, unknown>,
-                galleryRes as unknown[],
-                tagsRes as unknown[],
+                project,
+                galleryRes,
+                tagsRes as Array<IProjectTag & { projects?: string[] }>,
             ),
         };
     }
@@ -244,7 +247,7 @@ export class ProjectWriteService {
             const next = i < projects.length - 1 ? projects[i + 1] : null;
 
             return {
-                id: String(current._id ?? (current as unknown as Record<string, unknown>).id),
+                id: String(current._id),
                 data: {
                     previousSlug: previous?.slug || null,
                     nextSlug: next?.slug || null,
