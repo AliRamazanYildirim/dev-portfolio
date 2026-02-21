@@ -1,6 +1,7 @@
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { AuthService } from "@/app/api/admin/auth/service";
-import { successResponse, handleError } from "@/lib/api-response";
+import { handleError } from "@/lib/api-response";
+import { createAdminSessionSuccessResponse } from "@/lib/contracts/adminSession";
 import { extractSessionToken } from "./validation";
 import { AdminSessionService } from "./service";
 
@@ -11,7 +12,7 @@ export async function GET(request: NextRequest) {
 
     const { user } = await AdminSessionService.verify(token);
 
-    return successResponse({ authenticated: true, user });
+    return NextResponse.json(createAdminSessionSuccessResponse(user));
   } catch (error) {
     return handleError(error, "Session check failed");
   }

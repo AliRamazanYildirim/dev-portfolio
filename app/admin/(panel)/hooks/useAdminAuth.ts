@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { parseAdminSessionResponse } from "@/lib/contracts/adminSession";
 
 // Interface für Admin-Benutzer - Interface for admin user
 interface AdminUser {
@@ -38,12 +39,13 @@ export function useAdminAuth() {
             });
 
             const result = await response.json();
+            const parsed = parseAdminSessionResponse(result);
 
-            if (result.success && result.authenticated) {
+            if (parsed.success && parsed.authenticated) {
                 // Session gültig - Session valid
                 setAuthState({
                     isAuthenticated: true,
-                    user: result.user,
+                    user: parsed.user,
                     loading: false,
                 });
             } else {

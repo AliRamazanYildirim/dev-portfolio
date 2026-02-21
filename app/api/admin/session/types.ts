@@ -1,8 +1,5 @@
-export interface SessionPayload {
-    authenticated: boolean;
-    user: {
-        id: string;
-        email: string;
-        name: string;
-    };
-}
+export type {
+    AdminSessionUser as SessionUser,
+    AdminSessionSuccessResponse as SessionPayload,
+    AdminSessionResponse,
+} from "@/lib/contracts/adminSession";

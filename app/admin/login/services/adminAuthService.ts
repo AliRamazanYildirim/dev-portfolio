@@ -1,10 +1,15 @@
+import {
+  parseAdminSessionResponse,
+  type AdminSessionResponse,
+} from "@/lib/contracts/adminSession";
+
 export async function checkSession() {
   try {
     const res = await fetch("/api/admin/session", { credentials: "include" });
     const json = await res.json();
-    return json;
+    return parseAdminSessionResponse(json);
   } catch (err) {
-    return { success: false };
+    return { success: false, authenticated: false, error: "network" } satisfies AdminSessionResponse;
   }
 }
 
