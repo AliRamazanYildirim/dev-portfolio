@@ -8,6 +8,7 @@ import { useAdminLoginForm } from "./hooks/useAdminLoginForm";
 import LoginForm from "./components/LoginForm";
 import CheckingSessionScreen from "./components/CheckingSessionScreen";
 import BackToHomeButton from "./components/BackToHomeButton";
+import { ArrowLeft } from "lucide-react";
 
 export default function AdminLoginPage() {
   const { dictionary } = useTranslation();
@@ -77,7 +78,11 @@ export default function AdminLoginPage() {
               </motion.div>
             </div>
 
-            <BackToHomeButton>{loginTexts.backToHome}</BackToHomeButton>
+            <BackToHomeButton>
+                <span className="inline-flex items-center font-bold">
+                <ArrowLeft className="mr-1 h-4 w-4 font-bold" />{loginTexts.backToHome}
+                </span>
+            </BackToHomeButton>
           </motion.div>
         </div>
       </NoiseBackground>

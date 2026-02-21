@@ -1,4 +1,4 @@
-export interface LogoutPayload {
-    success: true;
-    message: string;
-}
+export type {
+    AdminLogoutSuccessResponse as LogoutPayload,
+    AdminLogoutResponse,
+} from "@/lib/contracts/adminLogout";

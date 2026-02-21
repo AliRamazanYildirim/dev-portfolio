@@ -4,6 +4,7 @@ import { useCallback } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { parseAdminLogoutResponse } from "@/lib/contracts/adminLogout";
 import NoiseBackground from "@/components/ui/NoiseBackground";
 import {
   LayoutDashboard,
@@ -67,10 +68,18 @@ export function AdminSidebar({ isOpen, onClose, onToggle }: AdminSidebarProps) {
 
   const handleLogout = useCallback(async () => {
     try {
-      await fetch("/api/admin/logout", {
+      const response = await fetch("/api/admin/logout", {
         method: "POST",
         credentials: "include",
       });
+
+      const parsed = parseAdminLogoutResponse(
+        await response.json().catch(() => null),
+      );
+
+      if (!parsed.success) {
+        console.error("Logout response validation failed", parsed.error);
+      }
     } catch (error) {
       // ignore logout errors, still redirect user
     } finally {

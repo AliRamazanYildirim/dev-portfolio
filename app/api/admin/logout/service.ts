@@ -1,12 +1,10 @@
 import { AuthService } from "@/app/api/admin/auth/service";
+import { createAdminLogoutSuccessResponse } from "@/lib/contracts/adminLogout";
 import type { LogoutPayload } from "./types";
 
 export class AdminLogoutService {
     static buildPayload(): LogoutPayload {
-        return {
-            success: true,
-            message: "Successfully logged out",
-        };
+        return createAdminLogoutSuccessResponse();
     }
 
     static getCookieName() {

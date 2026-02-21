@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { parseAdminLogoutResponse } from "@/lib/contracts/adminLogout";
 import { parseAdminSessionResponse } from "@/lib/contracts/adminSession";
 
 // Interface für Admin-Benutzer - Interface for admin user
@@ -75,10 +76,18 @@ export function useAdminAuth() {
     // Logout-Funktion - Logout function
     const logout = async () => {
         try {
-            await fetch("/api/admin/logout", {
+            const response = await fetch("/api/admin/logout", {
                 method: "POST",
                 credentials: "include",
             });
+
+            const parsed = parseAdminLogoutResponse(
+                await response.json().catch(() => null),
+            );
+
+            if (!parsed.success) {
+                console.error("Logout response validation failed", parsed.error);
+            }
 
             // Auth-Status zurücksetzen - Reset auth state
             setAuthState({
