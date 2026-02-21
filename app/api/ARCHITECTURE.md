@@ -215,3 +215,20 @@ export function getTemplateBuilder(): ITemplateBuilder {
 
 **Legende:** ✅ = direkt vorhanden, 🔄 = Root-Facade (re-export aus lib/), Sub = nur Sub-Routen,
 ✅ (→auth) = lokale Service-Facade delegiert an admin/auth, ✅* = erlaubte Inline-Response (Cookie/Binary), — = nicht benötigt
+
+## Subroute-Compliance-Status (Phase 5)
+
+Diese Tabelle dokumentiert explizit die Unterordner mit eigener `route.ts`, damit
+die Template-Einheitlichkeit auch unterhalb der Domain-Roots nachvollziehbar bleibt.
+
+| Subroute | route | service | types | validation | Delegation | Status |
+| --- | --- | --- | --- | --- | --- | --- |
+| admin/customers/[id] | ✅ | ✅ | ✅ | ✅ | →admin/customers | **GOLD** |
+| admin/customers/recalc-final | ✅ | ✅ | ✅ | ✅ | →admin/customers | **GOLD** |
+| admin/discounts/send-email | ✅ | ✅ | ✅ | ✅ | →admin/discounts | **GOLD** |
+| admin/discounts/reset-email | ✅ | ✅ | ✅ | ✅ | →admin/discounts | **GOLD** |
+| admin/projects/[id] | ✅ | ✅ | ✅ | ✅ | →admin/projects | **GOLD** |
+| projects/[slug] | ✅ | ✅ | ✅ | ✅ | →projects | **GOLD** |
+
+**Hinweis:** Delegations-Subroutes folgen demselben Schichtenmodell wie Root-Domains.
+Business-Logik bleibt im delegierten Domain-Service; Subroute-Services sind Facades.
