@@ -17,6 +17,7 @@ import { processReferral } from "./referralService";
 import { evaluateReferralPolicy } from "./referralPolicy";
 import { calcTotalEarnings } from "./referral";
 import { NotFoundError, ConflictError } from "@/lib/errors";
+import type { ICustomer } from "@/models/Customer";
 import type { CustomerReadDto } from "./dto";
 import { toCustomerReadDto } from "./dto";
 
@@ -57,7 +58,7 @@ async function resolveDuplicateOwner(repoError: RepositoryError): Promise<never>
         try {
             const owner = await customerRepository.findUnique({ where: { email: duplicateEmail } });
             if (owner) {
-                const ownerDto = toCustomerReadDto(owner as unknown as Record<string, unknown>);
+                const ownerDto = toCustomerReadDto(owner);
                 throw new ConflictError(
                     `This email address is already registered to: ${ownerDto.firstname} ${ownerDto.lastname}`,
                 );
@@ -85,7 +86,7 @@ export class CustomerUpdateUseCase {
         if (!existingRaw) {
             throw new NotFoundError("Customer not found");
         }
-        const existing = toCustomerReadDto(existingRaw as unknown as Record<string, unknown>);
+        const existing = toCustomerReadDto(existingRaw);
 
         // 2. Referral verarbeiten (nur bei Erstverwendung)
         const referralApplied = await this.tryProcessReferral(body, existing);
@@ -104,7 +105,7 @@ export class CustomerUpdateUseCase {
         const result = await this.persistUpdate(id, updateData);
 
         return {
-            data: toCustomerReadDto(result as unknown as Record<string, unknown>),
+            data: toCustomerReadDto(result),
             referralApplied,
             referrerReward: referralApplied
                 ? { message: "Referral discount applied to the referrer." }
@@ -133,12 +134,14 @@ export class CustomerUpdateUseCase {
     private static async persistUpdate(
         id: string,
         updateData: Record<string, unknown>,
-    ): Promise<unknown> {
+    ): Promise<ICustomer> {
         try {
-            return await customerRepository.update({
+            const result = await customerRepository.update({
                 where: { id },
                 data: updateData,
             });
+            if (!result) throw new NotFoundError("Customer not found after update");
+            return result;
         } catch (err: unknown) {
             if (err instanceof RepositoryError && err.code === RepositoryErrorCode.DUPLICATE_KEY) {
                 return resolveDuplicateOwner(err);

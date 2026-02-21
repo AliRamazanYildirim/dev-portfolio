@@ -1,14 +1,14 @@
 /**
- * Discount Email Service – SOLID-Refactored v3 (SRP + OCP + DIP).
+ * Rabatt-E-Mail-Dienst – SOLID-Refactored v3 (SRP + OCP + DIP).
  *
- * v3 değişiklikleri:
- *  - Send akışı 3 bağımsız use-case'e ayrıldı: validate → compute → persist-notify (SRP)
- *  - Her use-case tek bir sorumluluğa sahip, bağımsız test edilebilir
- *  - Bağımlılıklar explicit DI ile enjekte ediliyor (DIP)
- *  - Reset akışı ayrı use-case olarak korunuyor (SRP)
- *  - Facade geriye uyumluluk için korunuyor
+ * Änderungen in v3:
+ *  - Der Send-Flow wurde in 3 unabhängige Use-Cases aufgeteilt: validate → compute → persist-notify (SRP)
+ *  - Jeder Use-Case hat eine einzige Verantwortung, ist unabhängig testbar
+ *  - Abhängigkeiten werden explizit über DI injiziert (DIP)
+ *  - Der Reset-Flow wird als separater Use-Case beibehalten (SRP)
+ *  - Die Fassade wird zur Rückwärtskompatibilität beibehalten
  *
- * Route handlers must NOT access Models directly.
+ * Routen-Handler dürfen nicht direkt auf Modelle zugreifen.
  */
 
 import { customerRepository, referralRepository } from "@/lib/repositories";
@@ -16,6 +16,7 @@ import { connectToMongo } from "@/lib/mongodb";
 import { getDiscountNotifier } from "@/lib/notifications";
 import { ValidationError, NotFoundError } from "@/lib/errors";
 import { toCustomerReadDto, type CustomerReadDto } from "@/app/api/admin/customers/lib/dto";
+import type { IReferralTransaction } from "@/models/ReferralTransaction";
 import { ValidateDiscountUseCase } from "./lib/validateUseCase";
 import { ComputeDiscountUseCase } from "./lib/computeUseCase";
 import { PersistNotifyDiscountUseCase, type PersistNotifyResult } from "./lib/persistNotifyUseCase";
@@ -59,20 +60,20 @@ export interface ResetEmailResult {
     referrerEmail: string;
 }
 
-async function loadValidatedTransaction(transactionId: string) {
-    const transaction = await referralRepository.findById(transactionId) as Record<string, unknown> | null;
+async function loadValidatedTransaction(transactionId: string): Promise<IReferralTransaction> {
+    const transaction = await referralRepository.findById(transactionId);
     if (!transaction) throw new NotFoundError("Transaction not found");
     return transaction;
 }
 
-async function loadValidatedReferrer(referrerCode: unknown): Promise<CustomerReadDto> {
+async function loadValidatedReferrer(referrerCode: string): Promise<CustomerReadDto> {
     const referrerRaw = await customerRepository.findOneExec({
         myReferralCode: referrerCode,
-    }) as Record<string, unknown> | null;
+    });
 
     if (!referrerRaw) throw new NotFoundError("Referrer not found");
 
-    const referrer = toCustomerReadDto(referrerRaw as Record<string, unknown>);
+    const referrer = toCustomerReadDto(referrerRaw);
     if (!referrer.email) throw new ValidationError("Referrer has no email address");
 
     return referrer;
@@ -80,7 +81,7 @@ async function loadValidatedReferrer(referrerCode: unknown): Promise<CustomerRea
 
 export class DiscountResetEmailUseCase {
     /**
-     * Discount-E-Mail zurücksetzen (Reset) – ince orkestrasyon.
+     * Reset discount email – fine orchestration.
      */
     static async execute(transactionId: string, sendCorrectionEmail = true): Promise<ResetEmailResult> {
         if (!transactionId) throw new ValidationError("Transaction ID is required");
@@ -94,16 +95,16 @@ export class DiscountResetEmailUseCase {
 
         const referrer = await loadValidatedReferrer(transaction.referrerCode);
 
-        // 2. Correction e-mail gönder (isteğe bağlı – template port DIP)
+        // 2. Send correction email (optional – template Port DIP)
         if (sendCorrectionEmail && referrer.email) {
             const templateBuilder = getEmailTemplateBuilder();
             const { html, subject } = templateBuilder.buildCorrectionEmail({
                 refFirst: referrer.firstname,
                 refLast: referrer.lastname,
                 myReferralCode: referrer.myReferralCode ?? "",
-                originalDiscountRate: transaction.discountRate as number,
+                originalDiscountRate: transaction.discountRate,
                 originalAmount: Math.max(
-                    (transaction.originalPrice as number) - (transaction.finalPrice as number),
+                    transaction.originalPrice - transaction.finalPrice,
                     0,
                 ),
             });
@@ -112,7 +113,7 @@ export class DiscountResetEmailUseCase {
             await notifier.notifyCorrection({ to: referrer.email, subject, html });
         }
 
-        // 3. Transaction sıfırla
+        // 3. Transaction Reset
         await referralRepository.update({
             where: { id: transactionId },
             data: { emailSent: false, isBonus: false },
@@ -128,7 +129,7 @@ export class DiscountResetEmailUseCase {
 }
 
 /* ================================================================
- * FACADE – Geriye uyumlu adapter
+ * FACADE – Backward-compatible adapter
  * ================================================================ */
 
 export class DiscountEmailService {

@@ -20,6 +20,7 @@ import { CustomerUpdateUseCase } from "./lib/updateUseCase";
 import { CreateCustomerUseCase } from "./lib/createUseCase";
 import { toCustomerReadDto } from "./lib/dto";
 import type { CustomerReadDto } from "./lib/dto";
+import type { ICustomer } from "@/models/Customer";
 import { NotFoundError } from "@/lib/errors";
 import type { CreateCustomerRequest, CustomerQueryParams } from "./types";
 
@@ -51,7 +52,7 @@ export class CustomersService {
         const data = await customerRepository.findUnique({ where: { id } });
         if (!data) return null;
 
-        const dto = toCustomerReadDto(data as unknown as Record<string, unknown>);
+        const dto = toCustomerReadDto(data as unknown as ICustomer);
         const computedTotalEarnings = calcTotalEarnings(dto.price, dto.referralCount);
 
         if (Math.abs(dto.totalEarnings - computedTotalEarnings) > 0.009) {

@@ -5,6 +5,8 @@
  * Jede Schicht arbeitet nur mit dem DTO, das sie braucht.
  */
 
+import type { ICustomer } from "@/models/Customer";
+
 /* ---------- Read DTOs ---------- */
 
 export interface CustomerReadDto {
@@ -65,29 +67,36 @@ export interface CustomerUpdateDto {
 /**
  * Wandelt ein rohes Dokument (Mongoose lean / normalized) in ein typisiertes DTO um.
  * Zentraler Ort für alle Casts – der Rest des Codes bleibt cast-frei.
+ *
+ * Overloads:
+ *  - ICustomer: direkter Mapper ohne Cast-Risiko
+ *  - Record<string, unknown>: Legacy-Kompatibilität für untypisierte Quellen
  */
-export function toCustomerReadDto(raw: Record<string, unknown>): CustomerReadDto {
+export function toCustomerReadDto(raw: ICustomer): CustomerReadDto;
+export function toCustomerReadDto(raw: Record<string, unknown>): CustomerReadDto;
+export function toCustomerReadDto(raw: ICustomer | Record<string, unknown>): CustomerReadDto {
+    const r = raw as Record<string, unknown>;
     return {
-        id: String(raw._id ?? raw.id),
-        _id: raw._id ? String(raw._id) : undefined,
-        firstname: (raw.firstname as string) ?? "",
-        lastname: (raw.lastname as string) ?? "",
-        companyname: (raw.companyname as string) ?? "",
-        email: (raw.email as string) ?? "",
-        phone: (raw.phone as string) ?? "",
-        address: (raw.address as string) ?? "",
-        city: (raw.city as string) ?? null,
-        postcode: (raw.postcode as string) ?? null,
-        projectStatus: raw.projectStatus as CustomerReadDto["projectStatus"],
-        reference: (raw.reference as string) ?? null,
-        price: Number(raw.price ?? 0),
-        finalPrice: Number(raw.finalPrice ?? raw.price ?? 0),
-        discountRate: typeof raw.discountRate === "number" ? raw.discountRate : null,
-        myReferralCode: (raw.myReferralCode as string) ?? null,
-        referralCount: Number(raw.referralCount ?? 0),
-        totalEarnings: Number(raw.totalEarnings ?? 0),
-        createdAt: raw.createdAt instanceof Date ? raw.createdAt : new Date(raw.createdAt as string),
-        updatedAt: raw.updatedAt instanceof Date ? raw.updatedAt : new Date(raw.updatedAt as string),
+        id: String(r._id ?? r.id),
+        _id: r._id ? String(r._id) : undefined,
+        firstname: (r.firstname as string) ?? "",
+        lastname: (r.lastname as string) ?? "",
+        companyname: (r.companyname as string) ?? "",
+        email: (r.email as string) ?? "",
+        phone: (r.phone as string) ?? "",
+        address: (r.address as string) ?? "",
+        city: (r.city as string) ?? null,
+        postcode: (r.postcode as string) ?? null,
+        projectStatus: r.projectStatus as CustomerReadDto["projectStatus"],
+        reference: (r.reference as string) ?? null,
+        price: Number(r.price ?? 0),
+        finalPrice: Number(r.finalPrice ?? r.price ?? 0),
+        discountRate: typeof r.discountRate === "number" ? r.discountRate : null,
+        myReferralCode: (r.myReferralCode as string) ?? null,
+        referralCount: Number(r.referralCount ?? 0),
+        totalEarnings: Number(r.totalEarnings ?? 0),
+        createdAt: r.createdAt instanceof Date ? r.createdAt : new Date(r.createdAt as string),
+        updatedAt: r.updatedAt instanceof Date ? r.updatedAt : new Date(r.updatedAt as string),
     };
 }
 

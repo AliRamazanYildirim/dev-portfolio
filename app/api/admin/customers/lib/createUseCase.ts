@@ -90,7 +90,7 @@ export class CreateCustomerUseCase {
 
         // 2. Kunden persistieren
         const rawCustomer = await customerRepository.create({ data: customerData });
-        const customer = toCustomerReadDto(rawCustomer as unknown as Record<string, unknown>);
+        const customer = toCustomerReadDto(rawCustomer);
 
         // 3. Referral verarbeiten (if applicable)
         if (input.reference && input.price) {

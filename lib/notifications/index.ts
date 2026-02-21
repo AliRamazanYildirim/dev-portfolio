@@ -2,9 +2,10 @@
  * Notifications Module – Barrel Export & Factory
  *
  * Einzelner Einstiegspunkt für Notification-Ports.
- * Die Auswahl des konkreten Adapters (Mail, Push, etc.) erfolgt hier (DIP).
+ * Die Auswahl des konkreten Adapters erfolgt über die Composition Root (DIP).
  *
- * v2: Delegiert an Composition Root, behält die bisherige API bei.
+ * v3: Lokaler Override-State entfernt.
+ *     Einziger Wiring-Punkt ist jetzt initDependencies() in composition-root.
  */
 
 export type {
@@ -25,43 +26,16 @@ export {
 import type { IDiscountNotifier, IReferralNotifier, IWelcomeNotifier } from "./types";
 import { getDependencies } from "@/lib/composition-root";
 
-/* ---------- Explicit Overrides (Abwärtskompatibilität) ---------- */
-
-let _discountOverride: IDiscountNotifier | null = null;
-let _referralOverride: IReferralNotifier | null = null;
-let _welcomeOverride: IWelcomeNotifier | null = null;
-
-function resolveFromRoot<K extends keyof import("@/lib/composition-root").AppDependencies["notifications"]>(
-    key: K,
-): import("@/lib/composition-root").AppDependencies["notifications"][K] {
-    return getDependencies().notifications[key];
-}
+/* ---------- Factory Functions (delegate to Composition Root) ---------- */
 
 export function getDiscountNotifier(): IDiscountNotifier {
-    return _discountOverride ?? resolveFromRoot("discount");
+    return getDependencies().notifications.discount;
 }
 
 export function getReferralNotifier(): IReferralNotifier {
-    return _referralOverride ?? resolveFromRoot("referral");
+    return getDependencies().notifications.referral;
 }
 
 export function getWelcomeNotifier(): IWelcomeNotifier {
-    return _welcomeOverride ?? resolveFromRoot("welcome");
-}
-
-/* ---------- Test Overrides ---------- */
-
-/** @deprecated Prefer initDependencies() from composition-root instead. */
-export function setDiscountNotifier(notifier: IDiscountNotifier): void {
-    _discountOverride = notifier;
-}
-
-/** @deprecated Prefer initDependencies() from composition-root instead. */
-export function setReferralNotifier(notifier: IReferralNotifier): void {
-    _referralOverride = notifier;
-}
-
-/** @deprecated Prefer initDependencies() from composition-root instead. */
-export function setWelcomeNotifier(notifier: IWelcomeNotifier): void {
-    _welcomeOverride = notifier;
+    return getDependencies().notifications.welcome;
 }

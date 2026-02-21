@@ -6,6 +6,7 @@
 
 import SettingsModel from "@/models/Settings";
 import { connectToMongo } from "@/lib/mongodb";
+import { classifyMongoError } from "./errors";
 
 export const settingsRepository = {
     findByKey: async (key: string) => {
@@ -15,16 +16,24 @@ export const settingsRepository = {
 
     upsertBoolean: async (key: string, booleanValue: boolean) => {
         await connectToMongo();
-        await SettingsModel.updateOne(
-            { key },
-            { $set: { booleanValue } },
-            { upsert: true },
-        ).exec();
-        return booleanValue;
+        try {
+            await SettingsModel.updateOne(
+                { key },
+                { $set: { booleanValue } },
+                { upsert: true },
+            ).exec();
+            return booleanValue;
+        } catch (err) {
+            throw classifyMongoError(err);
+        }
     },
 
     create: async (data: { key: string; booleanValue?: boolean }) => {
         await connectToMongo();
-        return SettingsModel.create(data);
+        try {
+            return SettingsModel.create(data);
+        } catch (err) {
+            throw classifyMongoError(err);
+        }
     },
 };

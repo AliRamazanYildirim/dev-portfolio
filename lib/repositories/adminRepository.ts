@@ -68,12 +68,16 @@ export const adminRepository = {
         create?: Record<string, unknown>;
     }) => {
         await connectToMongo();
-        return normalizeDoc<IAdmin>(
-            await AdminModel.findOneAndUpdate(
-                opts.where,
-                opts.update || opts.create,
-                { upsert: true, new: true },
-            ).exec(),
-        );
+        try {
+            return normalizeDoc<IAdmin>(
+                await AdminModel.findOneAndUpdate(
+                    opts.where,
+                    opts.update || opts.create,
+                    { upsert: true, new: true },
+                ).exec(),
+            );
+        } catch (err) {
+            throw classifyMongoError(err);
+        }
     },
 };

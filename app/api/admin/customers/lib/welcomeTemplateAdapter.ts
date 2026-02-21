@@ -29,17 +29,8 @@ export class DefaultWelcomeTemplateBuilder implements IWelcomeTemplateBuilder {
     }
 }
 
-/* ---------- Singleton + Override → Composition Root ---------- */
-
-let _override: IWelcomeTemplateBuilder | null = null;
+/* ---------- Singleton → Composition Root ---------- */
 
 export function getWelcomeTemplateBuilder(): IWelcomeTemplateBuilder {
-    if (_override) return _override;
-    const { getDependencies } = require("@/lib/composition-root") as typeof import("@/lib/composition-root");
-    return getDependencies().templates.welcomeEmail;
-}
-
-/** @deprecated Prefer initDependencies() from composition-root instead. */
-export function setWelcomeTemplateBuilder(builder: IWelcomeTemplateBuilder): void {
-    _override = builder;
+    return new DefaultWelcomeTemplateBuilder();
 }

@@ -74,7 +74,7 @@ export class ValidateDiscountUseCase {
         });
         if (!referrerRaw) throw new NotFoundError("Referrer not found");
 
-        const referrer = toCustomerReadDto(referrerRaw as unknown as Record<string, unknown>);
+        const referrer = toCustomerReadDto(referrerRaw);
         if (!referrer.email) throw new ValidationError("Referrer has no email address");
 
         // 4. Bonus-Eligibility (Typed Result Union)

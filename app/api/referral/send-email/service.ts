@@ -35,7 +35,7 @@ export class ReferralEmailService {
             throw new NotFoundError("Customer not found");
         }
 
-        const cust = toCustomerReadDto(customer as unknown as Record<string, unknown>);
+        const cust = toCustomerReadDto(customer);
 
         const referralCode = cust.myReferralCode;
         if (!referralCode) {
