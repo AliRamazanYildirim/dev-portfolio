@@ -1,6 +1,8 @@
 import { NextRequest } from "next/server";
 import { AdminProjectsService } from "@/app/api/admin/projects/service";
+import { validateUpdateProjectBody } from "@/app/api/admin/projects/validation";
 import { successResponse, handleError } from "@/lib/api-response";
+import { ValidationError } from "@/lib/errors";
 
 // PUT /api/projects/admin/[id] - Projekt aktualisieren (Admin) - Update project (Admin)
 export async function PUT(
@@ -10,7 +12,14 @@ export async function PUT(
   try {
     const { id } = await params;
     const body = await request.json();
-    const result = await AdminProjectsService.update(id, body);
+
+    // Input validieren
+    const validation = validateUpdateProjectBody(body);
+    if (!validation.valid) {
+      throw new ValidationError(validation.error);
+    }
+
+    const result = await AdminProjectsService.update(id, validation.value);
     return successResponse(result);
   } catch (error) {
     return handleError(error);

@@ -1,12 +1,12 @@
 import { NextRequest } from "next/server";
-import { ContactService } from "./lib/service";
+import { ContactService } from "./service";
 import { validateCreateContactRequest } from "./lib/validation";
 import {
-  attachRateLimitHeaders,
-  errorResponse,
-  rateLimitedResponse,
   successResponse,
-} from "./lib/utils";
+  errorResponse,
+  handleError,
+} from "@/lib/api-response";
+import { attachRateLimitHeaders, rateLimitedResponse } from "./lib/utils";
 
 export const runtime = "nodejs"; // Node runtime notwendig für crypto
 

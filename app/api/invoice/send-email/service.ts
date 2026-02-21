@@ -5,20 +5,7 @@ import { fetchInvoicePdf } from "./lib/pdf";
 import { getInvoiceTemplateBuilder } from "./lib/templateAdapter";
 import { getMailPort } from "@/lib/mail";
 import type { InvoiceData } from "@/lib/invoiceUtils";
-
-interface SendInvoiceInput {
-    invoiceData: Record<string, unknown>;
-    customerEmail: string;
-    customerName: string;
-}
-
-interface SendInvoiceResult {
-    message: string;
-    customerEmail: string;
-    invoiceNumber: string;
-    pdfSize: number;
-    messageId: string;
-}
+import type { SendInvoiceInput, SendInvoiceResult } from "./types";
 
 export class InvoiceEmailService {
     static async send(input: SendInvoiceInput): Promise<SendInvoiceResult> {
@@ -28,8 +15,8 @@ export class InvoiceEmailService {
             throw new ValidationError("Missing required fields");
         }
 
-        const pdfBuffer = await fetchInvoicePdf(invoiceData as unknown as InvoiceData);
-        const { issueDateFormatted, dueDateFormatted } = resolveInvoiceDates(invoiceData as unknown as InvoiceData);
+        const pdfBuffer = await fetchInvoicePdf(invoiceData);
+        const { issueDateFormatted, dueDateFormatted } = resolveInvoiceDates(invoiceData);
 
         const displayProjectTitle = InvoiceEmailService.resolveProjectTitle(invoiceData);
 
@@ -38,12 +25,12 @@ export class InvoiceEmailService {
         const html = templateBuilder.buildInvoiceEmail({
             customerName,
             displayProjectTitle,
-            invoiceData: invoiceData as unknown as InvoiceData,
+            invoiceData,
             issueDateFormatted,
             dueDateFormatted,
         });
 
-        const invoiceNumber = (invoiceData as Record<string, unknown>).invoiceNumber as string;
+        const { invoiceNumber } = invoiceData;
 
         // Mail über zentralen Mail Port senden (DIP)
         const mailPort = getMailPort();
@@ -69,11 +56,11 @@ export class InvoiceEmailService {
         };
     }
 
-    private static resolveProjectTitle(invoiceData: Record<string, unknown>): string {
+    private static resolveProjectTitle(invoiceData: InvoiceData): string {
         const defaultTitle = INVOICE_CONSTANTS.PROJECT.DEFAULT_TITLE;
-        const project = invoiceData.project as Record<string, unknown> | undefined;
-        const rawTitle = (project?.title as string || "").trim();
-        const category = (project?.category as string || "").trim();
+        const project = invoiceData.project;
+        const rawTitle = (project?.title || "").trim();
+        const category = (project?.category || "").trim();
 
         if ((!rawTitle || rawTitle === defaultTitle) && category) {
             return `Custom (${category}) Project`;

@@ -4,18 +4,7 @@ import { NotFoundError, ConflictError, ValidationError } from "@/lib/errors";
 import { buildReferralEmailTemplate } from "./lib/template";
 import { getReferralNotifier } from "@/lib/notifications";
 import { toCustomerReadDto } from "@/app/api/admin/customers/lib/dto";
-
-interface SendReferralEmailInput {
-    customerId: string;
-    customerEmail?: string;
-}
-
-interface SendReferralEmailResult {
-    referralCode: string;
-    customerName: string;
-    customerEmail: string;
-    sent: boolean;
-}
+import type { SendReferralEmailInput, SendReferralEmailResult } from "./types";
 
 export class ReferralEmailService {
     static async send(input: SendReferralEmailInput): Promise<SendReferralEmailResult> {

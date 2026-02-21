@@ -1,28 +1,10 @@
 import { customerRepository } from "@/lib/repositories";
 import { NotFoundError } from "@/lib/errors";
-
-interface ValidateReferralInput {
-    referralCode: string;
-    basePrice: number;
-}
-
-interface ReferrerResult {
-    name: string;
-    referralCount: number;
-}
-
-interface DiscountResult {
-    rate: number;
-    amount: number;
-    originalPrice: number;
-    finalPrice: number;
-    referralLevel: number;
-}
-
-export interface ValidateReferralResult {
-    referrer: ReferrerResult;
-    discount: DiscountResult;
-}
+import type {
+    ValidateReferralInput,
+    ValidateReferralResult,
+    DiscountResult,
+} from "./types";
 
 function computeDiscount(basePrice: number, referralCount: number): DiscountResult {
     const clampedBasePrice = Math.max(0, basePrice);

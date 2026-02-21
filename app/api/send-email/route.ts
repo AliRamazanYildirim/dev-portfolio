@@ -1,6 +1,7 @@
-import { SendEmailService } from "./lib/service";
-import { jsonResponse } from "./lib/utils";
+import { SendEmailService } from "./service";
+import { successResponse, handleError } from "@/lib/api-response";
 import { validateSendEmailPayload } from "./lib/validation";
+import { ValidationError } from "@/lib/errors";
 
 export async function POST(req: Request): Promise<Response> {
   try {
@@ -8,17 +9,12 @@ export async function POST(req: Request): Promise<Response> {
     const validation = validateSendEmailPayload(body);
 
     if (!validation.valid) {
-      return jsonResponse({ success: false, error: validation.error }, 400);
+      throw new ValidationError(validation.error);
     }
 
     const info = await SendEmailService.sendContactEmail(validation.value);
-    return jsonResponse({ success: true, info }, 200);
+    return successResponse({ info });
   } catch (error) {
-    console.error("Error sending email via SMTP:", error);
-    const details = error instanceof Error ? error.message : String(error);
-    return jsonResponse(
-      { success: false, error: "Failed to send email", details },
-      500
-    );
+    return handleError(error, "Failed to send email");
   }
 }

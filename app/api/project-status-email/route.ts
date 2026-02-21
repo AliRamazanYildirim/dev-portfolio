@@ -1,35 +1,26 @@
 import { successResponse, handleError } from "@/lib/api-response";
 import { ValidationError } from "@/lib/errors";
-import { buildMailPayload, createProjectStatusTransporter } from "./lib/mailer";
-import { buildBaseUrl } from "./lib/request";
-import { buildLogoAttachment } from "./lib/logo";
-import type { ProjectStatusPayload } from "./lib/types";
+import { validateProjectStatusPayload } from "./validation";
+import { ProjectStatusEmailService } from "./service";
 
 // Auth is enforced by middleware.ts — no manual token check needed here.
 
 export async function POST(req: Request) {
   try {
-    const body: ProjectStatusPayload = await req.json();
+    const body = await req.json();
 
-    if (!body?.clientEmail || !body?.clientName) {
-      throw new ValidationError("Missing client information");
+    // Input validieren
+    const validation = validateProjectStatusPayload(body);
+    if (!validation.valid) {
+      throw new ValidationError(validation.error);
     }
 
-    const { transporter, from } = createProjectStatusTransporter();
-    const baseUrl = buildBaseUrl(req);
-    const { attachments, logoCid } = buildLogoAttachment();
-
-    const mailOptions = buildMailPayload({
-      payload: body,
-      baseUrl,
-      from,
-      attachments,
-      logoCid,
+    const result = await ProjectStatusEmailService.send({
+      payload: validation.value,
+      request: req,
     });
 
-    await transporter.sendMail(mailOptions);
-
-    return successResponse({ sent: true });
+    return successResponse(result);
   } catch (error) {
     return handleError(error);
   }

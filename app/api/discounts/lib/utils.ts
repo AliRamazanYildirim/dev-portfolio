@@ -1,9 +1,8 @@
-import { NextResponse } from "next/server";
+/**
+ * @deprecated Verwende stattdessen @/lib/api-response.
+ * Diese Datei wird in einem zukünftigen Cleanup entfernt.
+ *
+ * Cross-Cutting-Regel: Response-Helfer nur über @/lib/api-response.
+ */
 
-export function successResponse<T>(data: T, status = 200) {
-    return NextResponse.json({ success: true, data }, { status });
-}
-
-export function errorResponse(error: string, status = 500) {
-    return NextResponse.json({ success: false, error }, { status });
-}
+export { successResponse, errorResponse } from "@/lib/api-response";

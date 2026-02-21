@@ -10,21 +10,7 @@ import {
     projectImageRepository,
 } from "@/lib/repositories";
 import { ValidationError, NotFoundError, AppError } from "@/lib/errors";
-
-interface UpdateProjectInput {
-    slug: string;
-    title: string;
-    description?: any;
-    role?: string;
-    duration?: string;
-    category?: string;
-    technologies?: any;
-    mainImage?: string;
-    gallery?: string[];
-    featured?: boolean;
-    previousSlug?: string | null;
-    nextSlug?: string | null;
-}
+import type { UpdateProjectInput, UpdateProjectResult, DeleteProjectResult } from "./types";
 
 export class AdminProjectsService {
     /**

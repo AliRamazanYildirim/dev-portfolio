@@ -6,12 +6,7 @@
  */
 
 import cloudinary from "@/lib/cloudinary";
-import { ValidationError } from "@/lib/errors";
-
-export interface UploadResult {
-    url: string;
-    publicId: string;
-}
+import type { UploadResult } from "./types";
 
 export class UploadService {
     /**
@@ -21,10 +16,7 @@ export class UploadService {
      * @param folder  Ziel-Ordner in Cloudinary (Standard: "portfolio")
      * @throws ValidationError wenn keine Datei übergeben wird
      */
-    static async uploadImage(file: File | null, folder = "portfolio"): Promise<UploadResult> {
-        if (!file) {
-            throw new ValidationError("File not found");
-        }
+    static async uploadImage(file: File, folder = "portfolio"): Promise<UploadResult> {
 
         const bytes = await file.arrayBuffer();
         const buffer = Buffer.from(bytes);
