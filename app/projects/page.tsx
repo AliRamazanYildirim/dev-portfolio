@@ -10,9 +10,9 @@ import { useTranslation } from "@/hooks/useTranslation";
 import { useLanguageContext } from "@/contexts/LanguageContext";
 import { useProjects } from "./hooks/useProjects";
 import ProjectCard from "./components/ProjectCard";
-import Loading from "./components/ui/Loading";
+import ProjectLoadingState from "./components/ui/ProjectLoadingState";
 import ErrorState from "./components/ui/ErrorState";
-import { getLocalizedText } from "./lib/getLocalizedText";
+import { getLocalizedText } from "./utils/getLocalizedText";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -57,7 +57,7 @@ const ProjectsPage = () => {
   if (loading) {
     return (
       <NoiseBackground mode="dark" intensity={0.1}>
-        <Loading text={projectsDictionary.projectsLoading} />
+        <ProjectLoadingState text={projectsDictionary.projectsLoading} />
       </NoiseBackground>
     );
   }

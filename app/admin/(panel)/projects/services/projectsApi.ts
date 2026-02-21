@@ -1,5 +1,5 @@
 import type { Project, ProjectApiResponse } from "../types";
-import { mapApiProject } from "../lib/format";
+import { mapApiProject } from "../utils/format";
 
 type ApiResult<T> =
   | { success: true; data: T }

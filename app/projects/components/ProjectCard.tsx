@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import ProjectImage from "./ProjectImage";
-import { getLocalizedText, Locales } from "../lib/getLocalizedText";
+import { getLocalizedText, Locales } from "../utils/getLocalizedText";
 
 interface Project {
   id: string;

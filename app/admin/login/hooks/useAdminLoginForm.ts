@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { login as loginService } from "../services/adminAuth.service";
+import { login as loginService } from "../services/adminAuthService";
 
 interface LoginTexts {
   errorAllFields: string;

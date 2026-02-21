@@ -4,7 +4,7 @@ interface Props {
   text?: string;
 }
 
-export default function Loading({ text = "Loading..." }: Props) {
+export default function ProjectLoadingState({ text = "Loading..." }: Props) {
   return (
     <div className="text-white px-5 pb-10 md:px-20 md:pb-20 min-h-screen flex items-center justify-center">
       <div className="text-center">

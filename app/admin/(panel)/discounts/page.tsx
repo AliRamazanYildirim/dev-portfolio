@@ -12,7 +12,7 @@ import {
   confirmMarkPending,
   confirmDelete,
   confirmResetEmail,
-} from "./components/confirmToasts";
+} from "./components/ConfirmToasts";
 import { createDiscountActions } from "./actions/discountActions";
 import { DiscountRecords } from "./components/DiscountRecords";
 import { DiscountSummary } from "./components/DiscountSummary";

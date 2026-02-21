@@ -3,7 +3,7 @@
 import { useRouter, useParams } from "next/navigation";
 import NoiseBackground from "@/components/ui/NoiseBackground";
 import { useTranslation } from "@/hooks/useTranslation";
-import { getLocalizedText, type Locales } from "../lib/getLocalizedText";
+import { getLocalizedText, type Locales } from "../utils/getLocalizedText";
 import { useProject } from "./hooks/useProject";
 import {
   useLanguageContext,

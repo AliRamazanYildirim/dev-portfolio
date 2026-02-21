@@ -3,8 +3,8 @@
 import { useCallback, useState } from "react";
 import type { Project } from "../types";
 import * as projectsApi from "../services/projectsApi";
-import { makeSlug } from "../lib/slug";
-import { notify } from "../lib/notify";
+import { makeSlug } from "../utils/slug";
+import { notify } from "../utils/notify";
 
 interface UseProjectFormOptions {
   onSaved?: (project: Project) => void;

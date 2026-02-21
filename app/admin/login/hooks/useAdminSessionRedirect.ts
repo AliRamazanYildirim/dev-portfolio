@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { checkSession } from "../services/adminAuth.service";
+import { checkSession } from "../services/adminAuthService";
 
 export function useAdminSessionRedirect() {
   const router = useRouter();

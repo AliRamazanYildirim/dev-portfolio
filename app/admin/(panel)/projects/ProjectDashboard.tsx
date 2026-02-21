@@ -19,7 +19,7 @@ import {
   getDescriptionText,
   formatStatsText,
   formatTotalLabel,
-} from "./lib/format";
+} from "./utils/format";
 import type { Project, ProjectSortOption } from "./types";
 
 const ITEMS_PER_PAGE = 2;
