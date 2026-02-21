@@ -32,9 +32,7 @@ export class AdminProjectsService {
             nextSlug,
         } = input;
 
-        if (!title || !slug) {
-            throw new ValidationError("Title and slug are required");
-        }
+        // Validierung erfolgt bereits in validation.ts → route.ts prüft vor Service-Aufruf
 
         const existingProject = await projectRepository.findUnique({ where: { id } });
         if (!existingProject) {

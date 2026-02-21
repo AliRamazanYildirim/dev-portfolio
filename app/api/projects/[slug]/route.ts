@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
-import { ProjectsService } from "@/app/api/projects/lib/service";
+import { ProjectBySlugService } from "./service";
+import { validateProjectSlug } from "./validation";
 import { successResponse, handleError } from "@/lib/api-response";
 import { NotFoundError } from "@/lib/errors";
 
@@ -9,9 +10,9 @@ export async function GET(
   { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const { slug } = await params;
+    const { slug } = validateProjectSlug((await params).slug);
 
-    const project = await ProjectsService.getBySlug(slug);
+    const project = await ProjectBySlugService.getBySlug(slug);
     if (!project) {
       throw new NotFoundError("Project not found");
     }

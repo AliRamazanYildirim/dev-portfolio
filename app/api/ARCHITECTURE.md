@@ -1,7 +1,7 @@
 # API Domain Architecture Standard
 
 > **Gültig ab:** 21.02.2026 — Alle neuen und bestehenden Domains MÜSSEN diesem Standard folgen.
-> **Zuletzt aktualisiert:** Phase-2-Standardisierung (vollständige Domain-Abdeckung)
+> **Zuletzt aktualisiert:** Phase-5-Standardisierung (Subroute-Template-Harmonisierung, Facade-Konsistenz 100%, Update-Validierung, Service-Layer-Bereinigung)
 
 ## Offizielle Ordner-Vorlage
 
@@ -39,6 +39,35 @@ export { MyService } from "./lib/service";
 ```
 
 **Regel:** Externe Consumer importieren IMMER vom Domain-Root, nie direkt aus `lib/`.
+
+### Cross-Domain-Imports
+
+Wenn Domain A Typen/Funktionen von Domain B benötigt:
+
+```ts
+// ✅ Richtig – Import vom Domain-Root
+import { CustomerReadDto, toCustomerReadDto } from "@/app/api/admin/customers/types";
+import { calcDiscountedPrice } from "@/app/api/admin/customers/types";
+
+// ❌ Falsch – Direkter lib/-Zugriff
+import { toCustomerReadDto } from "@/app/api/admin/customers/lib/dto";
+import { calcDiscountedPrice } from "@/app/api/admin/customers/lib/referral";
+```
+
+**Regel:** `lib/` ist privat. Nur der Domain-Root (`types.ts`, `service.ts`) exponiert die öffentliche API.
+
+Auch **domain-interne** `route.ts`-Dateien importieren über Root-Facades, nie direkt aus `lib/`:
+
+```ts
+// ✅ route.ts → Root-Facade
+import { MyService } from "./service";
+import { validateInput } from "./validation";
+import { rateLimitHelper } from "./utils";
+
+// ❌ route.ts → lib/ direkt
+import { MyService } from "./lib/service";
+import { validateInput } from "./lib/validation";
+```
 
 ## Schichten & Verantwortlichkeiten
 
@@ -102,10 +131,15 @@ für mehrere Route-Handler (z.B. `admin/login/`, `admin/session/`, `admin/logout
 
 In **seltenen** Fällen darf der Route-Handler die Response manuell konstruieren:
 
-- **Cookie-Setting:** `admin/login/` setzt Cookies auf `NextResponse.json(...)` → `successResponse` kann keine Cookies setzen
+- **Cookie-Setting:** `admin/login/` und `admin/logout/` setzen Cookies auf `NextResponse.json(...)` → `successResponse` kann keine Cookies setzen
 - **Binary Response:** `invoice/generate/` gibt `new NextResponse(pdfBytes, ...)` zurück → kein JSON
 
 In diesen Fällen MUSS trotzdem `handleError` für den Catch-Block verwendet werden.
+
+### 3b. Keine duplizierte Validierung im Service
+
+Wenn `validation.ts` Input-Felder prüft, darf `service.ts` dieselben Checks **nicht** wiederholen.
+Der Service darf nur **Business-Validierung** durchführen (z.B. Slug-Eindeutigkeit, Existenz-Prüfung).
 
 ### 4. Typed Result Union für Policy-Ergebnisse
 
@@ -161,23 +195,23 @@ export function getTemplateBuilder(): ITemplateBuilder {
 | Domain | route | service | types | validation | lib/ | api-response | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | admin/customers | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | **GOLD** |
-| admin/discounts | Sub | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| admin/discounts | Sub | ✅ | ✅ | ✅ | ✅ | ✅ | **GOLD** |
 | admin/projects | Sub | ✅ | ✅ | ✅ | — | ✅ | ✅ |
 | admin/auth | — | ✅ | ✅ | — | — | — | Shared |
-| admin/login | ✅ | →auth | — | — | — | ✅* | ✅ |
-| admin/logout | ✅ | — | — | — | — | ✅* | ✅ |
-| admin/session | ✅ | →auth | — | — | — | ✅ | ✅ |
-| admin/settings/discounts | ✅ | ✅ | ✅ | ✅ | — | ✅ | ✅ |
+| admin/login | ✅ | ✅ (→auth) | ✅ | ✅ | — | ✅* | **GOLD** |
+| admin/logout | ✅ | ✅ (→auth) | ✅ | ✅ | — | ✅* | **GOLD** |
+| admin/session | ✅ | ✅ (→auth) | ✅ | ✅ | — | ✅ | **GOLD** |
+| admin/settings/discounts | ✅ | ✅ | ✅ | ✅ | — | ✅ | **GOLD** |
 | contact | ✅ | 🔄 | 🔄 | 🔄 | ✅ | ✅ | ✅ |
 | discounts | ✅ | 🔄 | 🔄 | 🔄 | ✅ | ✅ | ✅ |
 | invoice/generate | ✅ | ✅ | ✅ | ✅ | ✅ | ✅* | ✅ |
-| invoice/send-email | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| invoice/send-email | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | **GOLD** |
 | project-status-email | ✅ | ✅ | 🔄 | ✅ | ✅ | ✅ | ✅ |
 | projects | ✅ | 🔄 | 🔄 | 🔄 | ✅ | ✅ | ✅ |
-| referral/send-email | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| referral/send-email | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | **GOLD** |
 | referral/validate | ✅ | ✅ | ✅ | ✅ | — | ✅ | ✅ |
 | send-email | ✅ | 🔄 | 🔄 | 🔄 | ✅ | ✅ | ✅ |
 | upload | ✅ | ✅ | ✅ | ✅ | — | ✅ | **GOLD** |
 
 **Legende:** ✅ = direkt vorhanden, 🔄 = Root-Facade (re-export aus lib/), Sub = nur Sub-Routen,
-→auth = delegiert an admin/auth, ✅* = erlaubte Inline-Response (Cookie/Binary), — = nicht benötigt
+✅ (→auth) = lokale Service-Facade delegiert an admin/auth, ✅* = erlaubte Inline-Response (Cookie/Binary), — = nicht benötigt

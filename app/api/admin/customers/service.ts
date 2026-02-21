@@ -22,7 +22,7 @@ import { toCustomerReadDto } from "./lib/dto";
 import type { CustomerReadDto } from "./lib/dto";
 import type { ICustomer } from "@/models/Customer";
 import { NotFoundError } from "@/lib/errors";
-import type { CreateCustomerRequest, CustomerQueryParams } from "./types";
+import type { CreateCustomerRequest, CustomerQueryParams, UpdateCustomerRequest } from "./types";
 
 export class CustomersService {
     /**
@@ -69,8 +69,8 @@ export class CustomersService {
     /**
      * Kunden aktualisieren inkl. Referral-Logik (delegiert an CustomerUpdateUseCase)
      */
-    static async updateById(id: string, body: Record<string, unknown>) {
-        return CustomerUpdateUseCase.execute(id, body);
+    static async updateById(id: string, body: UpdateCustomerRequest) {
+        return CustomerUpdateUseCase.execute(id, body as Record<string, unknown>);
     }
 
     /**

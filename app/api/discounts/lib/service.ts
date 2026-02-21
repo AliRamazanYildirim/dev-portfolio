@@ -3,7 +3,7 @@ import { customerRepository, referralRepository } from "@/lib/repositories";
 import {
     calcDiscountedPrice,
     calcTotalEarnings,
-} from "@/app/api/admin/customers/lib/referral";
+} from "@/app/api/admin/customers/types";
 import { toIsoString, toSafeNumber as safeNumber } from "@/lib/validation";
 import type { DiscountGroups, DiscountStatus, PatchDiscountInput } from "./types";
 

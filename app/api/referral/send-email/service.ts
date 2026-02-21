@@ -3,7 +3,7 @@ import { getDiscountsEnabled } from "@/lib/discountSettings";
 import { NotFoundError, ConflictError, ValidationError } from "@/lib/errors";
 import { buildReferralEmailTemplate } from "./lib/template";
 import { getReferralNotifier } from "@/lib/notifications";
-import { toCustomerReadDto } from "@/app/api/admin/customers/lib/dto";
+import { toCustomerReadDto } from "@/app/api/admin/customers/types";
 import type { SendReferralEmailInput, SendReferralEmailResult } from "./types";
 
 export class ReferralEmailService {

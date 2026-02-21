@@ -1,6 +1,7 @@
-import { CustomersService } from "@/app/api/admin/customers/service";
+import { CustomerByIdService } from "./service";
+import { validateCustomerId, validateUpdateBody } from "./validation";
 import { successResponse, handleError } from "@/lib/api-response";
-import { NotFoundError } from "@/lib/errors";
+import { NotFoundError, ValidationError } from "@/lib/errors";
 
 // GET: Einzelnen Kunden abrufen
 export async function GET(
@@ -8,8 +9,8 @@ export async function GET(
   context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = await context.params;
-    const data = await CustomersService.getById(id);
+    const { id } = validateCustomerId((await context.params).id);
+    const data = await CustomerByIdService.getById(id);
 
     if (!data) {
       throw new NotFoundError("Customer not found");
@@ -27,9 +28,15 @@ export async function PUT(
   context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = await context.params;
+    const { id } = validateCustomerId((await context.params).id);
     const body = await req.json();
-    const result = await CustomersService.updateById(id, body);
+
+    const validation = validateUpdateBody(body);
+    if (!validation.valid) {
+      throw new ValidationError(validation.error);
+    }
+
+    const result = await CustomerByIdService.updateById(id, validation.value);
     return successResponse(result);
   } catch (error) {
     return handleError(error);
@@ -42,8 +49,8 @@ export async function DELETE(
   context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = await context.params;
-    await CustomersService.deleteById(id);
+    const { id } = validateCustomerId((await context.params).id);
+    await CustomerByIdService.deleteById(id);
     return successResponse({ deleted: true });
   } catch (error) {
     return handleError(error);

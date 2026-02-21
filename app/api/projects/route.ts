@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
-import { ProjectsService } from "./lib/service";
-import { validateCreateProjectBody } from "./lib/validation";
+import { ProjectsService } from "./service";
+import { validateCreateProjectBody } from "./validation";
 import { successResponse, handleError } from "@/lib/api-response";
 import { ValidationError } from "@/lib/errors";
 

@@ -1,10 +1,10 @@
 import { NextRequest } from "next/server";
-import { DiscountsService } from "./lib/service";
+import { DiscountsService } from "./service";
 import {
   parseStatusFilter,
   validateDeleteDiscountBody,
   validatePatchDiscountBody,
-} from "./lib/validation";
+} from "./validation";
 import { successResponse, handleError } from "@/lib/api-response";
 import { ValidationError, NotFoundError } from "@/lib/errors";
 

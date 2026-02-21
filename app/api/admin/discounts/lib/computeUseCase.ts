@@ -5,7 +5,7 @@
  * Update-Daten und E-Mail-Inhalte. Reine Funktionen, kein I/O.
  */
 
-import type { CustomerReadDto } from "@/app/api/admin/customers/lib/dto";
+import type { CustomerReadDto } from "@/app/api/admin/customers/types";
 import {
     buildStandardEmailContent,
     buildBonusEmailContent,

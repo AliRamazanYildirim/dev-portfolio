@@ -8,8 +8,7 @@
  * Tüm fonksiyonlar saf (pure) – yan etki yok, test edilmesi kolay.
  */
 
-import { calcDiscountedPrice } from "@/app/api/admin/customers/lib/referral";
-import type { CustomerReadDto } from "@/app/api/admin/customers/lib/dto";
+import { calcDiscountedPrice, type CustomerReadDto } from "@/app/api/admin/customers/types";
 import type { IReferralTransaction } from "@/models/ReferralTransaction";
 
 /* ================================================================

@@ -1,6 +1,6 @@
 import { SendEmailService } from "./service";
 import { successResponse, handleError } from "@/lib/api-response";
-import { validateSendEmailPayload } from "./lib/validation";
+import { validateSendEmailPayload } from "./validation";
 import { ValidationError } from "@/lib/errors";
 
 export async function POST(req: Request): Promise<Response> {

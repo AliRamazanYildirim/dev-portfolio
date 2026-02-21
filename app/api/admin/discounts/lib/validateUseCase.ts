@@ -9,7 +9,7 @@
 import { customerRepository, referralRepository } from "@/lib/repositories";
 import { connectToMongo } from "@/lib/mongodb";
 import { ValidationError, NotFoundError } from "@/lib/errors";
-import { toCustomerReadDto, type CustomerReadDto } from "@/app/api/admin/customers/lib/dto";
+import { toCustomerReadDto, type CustomerReadDto } from "@/app/api/admin/customers/types";
 import type { IReferralTransaction } from "@/models/ReferralTransaction";
 import {
     validateRate,

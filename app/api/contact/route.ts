@@ -1,12 +1,12 @@
 import { NextRequest } from "next/server";
 import { ContactService } from "./service";
-import { validateCreateContactRequest } from "./lib/validation";
+import { validateCreateContactRequest } from "./validation";
 import {
   successResponse,
   errorResponse,
   handleError,
 } from "@/lib/api-response";
-import { attachRateLimitHeaders, rateLimitedResponse } from "./lib/utils";
+import { attachRateLimitHeaders, rateLimitedResponse } from "./utils";
 
 export const runtime = "nodejs"; // Node runtime notwendig für crypto
 
@@ -55,8 +55,7 @@ export async function POST(request: NextRequest) {
     );
     return attachRateLimitHeaders(response, rateLimitResult.meta);
   } catch (error) {
-    console.error("[POST /api/contact]", error);
-    return errorResponse("Internal server error", 500);
+    return handleError(error, "Contact POST failed");
   }
 }
 
@@ -96,7 +95,6 @@ export async function GET(request: NextRequest) {
     response.headers.set("X-Total-Count", String(result.count));
     return attachRateLimitHeaders(response, rateLimitResult.meta);
   } catch (error) {
-    console.error("[GET /api/contact]", error);
-    return errorResponse("Internal server error", 500);
+    return handleError(error, "Contact GET failed");
   }
 }

@@ -9,7 +9,7 @@ import {
     buildReferrerEmailHTML,
     buildBonusEmailHTML,
     buildCorrectionEmailHTML,
-} from "@/app/api/admin/customers/lib/email-templates";
+} from "@/app/api/admin/customers/types";
 import type { IEmailTemplateBuilder } from "./discountPolicy";
 
 /* ================================================================

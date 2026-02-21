@@ -1,25 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
-import { AUTH_COOKIE_NAME } from "@/lib/auth";
 import { handleError } from "@/lib/api-response";
+import { validateLogoutRequest } from "./validation";
+import { AdminLogoutService } from "./service";
 
 // POST /api/admin/logout - Admin-Abmeldung - Admin logout
 export async function POST(request: NextRequest) {
   try {
+    validateLogoutRequest(request);
+
     // Erfolgreiche Antwort vorbereiten - Prepare successful response
-    const response = NextResponse.json({
-      success: true,
-      message: "Successfully logged out",
-    });
+    const response = NextResponse.json(AdminLogoutService.buildPayload());
 
     // Cookie löschen durch Überschreiben mit abgelaufenem Datum
     // Delete cookie by overwriting with expired date
-    response.cookies.set(AUTH_COOKIE_NAME, "", {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      path: "/",
-      expires: new Date(0), // Sofort ablaufen lassen - Expire immediately
-    });
+    response.cookies.set(AdminLogoutService.getCookieName(), "", AdminLogoutService.getExpiredCookieOptions());
 
     return response;
   } catch (error) {

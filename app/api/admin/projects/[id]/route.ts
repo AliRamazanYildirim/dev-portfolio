@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
-import { AdminProjectsService } from "@/app/api/admin/projects/service";
-import { validateUpdateProjectBody } from "@/app/api/admin/projects/validation";
+import { AdminProjectByIdService } from "./service";
+import { validateProjectId, validateUpdateBody } from "./validation";
 import { successResponse, handleError } from "@/lib/api-response";
 import { ValidationError } from "@/lib/errors";
 
@@ -10,16 +10,16 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = await params;
+    const { id } = validateProjectId((await params).id);
     const body = await request.json();
 
     // Input validieren
-    const validation = validateUpdateProjectBody(body);
+    const validation = validateUpdateBody(body);
     if (!validation.valid) {
       throw new ValidationError(validation.error);
     }
 
-    const result = await AdminProjectsService.update(id, validation.value);
+    const result = await AdminProjectByIdService.update(id, validation.value);
     return successResponse(result);
   } catch (error) {
     return handleError(error);
@@ -32,8 +32,8 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = await params;
-    const result = await AdminProjectsService.delete(id);
+    const { id } = validateProjectId((await params).id);
+    const result = await AdminProjectByIdService.delete(id);
     return successResponse(result);
   } catch (error) {
     return handleError(error);
