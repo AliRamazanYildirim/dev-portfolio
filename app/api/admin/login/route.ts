@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { AuthService } from "@/app/api/admin/auth/service";
 import { handleError } from "@/lib/api-response";
+import { createAdminLoginSuccessResponse } from "@/lib/contracts/adminLogin";
 import { validateLoginBody } from "./validation";
 import { AdminLoginService } from "./service";
 
@@ -12,11 +13,7 @@ export async function POST(request: NextRequest) {
 
     const { token, user } = await AdminLoginService.login(input);
 
-    const response = NextResponse.json({
-      success: true,
-      message: "Successfully logged in",
-      user,
-    });
+    const response = NextResponse.json(createAdminLoginSuccessResponse(user));
 
     response.cookies.set(AuthService.cookieName, token, AuthService.cookieOptions);
 

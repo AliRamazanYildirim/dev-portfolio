@@ -2,6 +2,10 @@ import {
   parseAdminSessionResponse,
   type AdminSessionResponse,
 } from "@/lib/contracts/adminSession";
+import {
+  parseAdminLoginResponse,
+  type AdminLoginResponse,
+} from "@/lib/contracts/adminLogin";
 
 export async function checkSession() {
   try {
@@ -20,8 +24,9 @@ export async function login(formData: { email: string; password: string }) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData),
     });
-    return await res.json();
+    const json = await res.json();
+    return parseAdminLoginResponse(json);
   } catch (err) {
-    return { success: false, error: "network" };
+    return { success: false, error: "network" } satisfies AdminLoginResponse;
   }
 }
