@@ -1,6 +1,7 @@
 # API Domain Architecture Standard
 
 > **Gültig ab:** 21.02.2026 — Alle neuen und bestehenden Domains MÜSSEN diesem Standard folgen.
+> **Zuletzt aktualisiert:** Phase-2-Standardisierung (vollständige Domain-Abdeckung)
 
 ## Offizielle Ordner-Vorlage
 
@@ -20,6 +21,24 @@ domain/
     ├── *Service.ts    # Domain-spezifische Sub-Services
     └── ...            # Weitere interne Helfer
 ```
+
+### Facade-Pattern für Domains mit `lib/`-Tiefe
+
+Wenn die Haupt-Implementierung in `lib/` liegt, verwenden `service.ts`, `types.ts` und
+`validation.ts` am Domain-Root **Re-Export-Facades**:
+
+```ts
+// types.ts (Root)
+export * from "./lib/types";
+
+// validation.ts (Root)
+export * from "./lib/validation";
+
+// service.ts (Root)
+export { MyService } from "./lib/service";
+```
+
+**Regel:** Externe Consumer importieren IMMER vom Domain-Root, nie direkt aus `lib/`.
 
 ## Schichten & Verantwortlichkeiten
 
@@ -73,7 +92,20 @@ export async function POST(req: Request) {
 
 ### 3. Service am Domain-Root
 
-`service.ts` liegt IMMER direkt im Domain-Ordner, NICHT in `lib/`. Die `lib/`-Ordner enthalten nur interne Implementierungsdetails.
+`service.ts` liegt IMMER direkt im Domain-Ordner, NICHT in `lib/`. Bei Domains mit `lib/`-Tiefe
+kann `service.ts` ein Re-Export-Facade sein (siehe Facade-Pattern oben).
+
+**Ausnahme:** Shared Services ohne eigene Route (z.B. `admin/auth/`) dienen als Domain-Service
+für mehrere Route-Handler (z.B. `admin/login/`, `admin/session/`, `admin/logout/`).
+
+### 3a. Erlaubte Inline-Response-Konstruktion
+
+In **seltenen** Fällen darf der Route-Handler die Response manuell konstruieren:
+
+- **Cookie-Setting:** `admin/login/` setzt Cookies auf `NextResponse.json(...)` → `successResponse` kann keine Cookies setzen
+- **Binary Response:** `invoice/generate/` gibt `new NextResponse(pdfBytes, ...)` zurück → kein JSON
+
+In diesen Fällen MUSS trotzdem `handleError` für den Catch-Block verwendet werden.
 
 ### 4. Typed Result Union für Policy-Ergebnisse
 
@@ -123,3 +155,29 @@ export function getTemplateBuilder(): ITemplateBuilder {
 | **LSP** | Typed Result Unions statt Exceptions für erwartbare Ergebnisse |
 | **ISP** | Kleine, fokussierte Interfaces (ITemplateBuilder, INotifier, etc.) |
 | **DIP** | Service hängt von Ports (Interfaces) ab, nicht von konkreten Implementierungen |
+
+## Domain-Compliance-Status
+
+| Domain | route | service | types | validation | lib/ | api-response | Status |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| admin/customers | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | **GOLD** |
+| admin/discounts | Sub | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| admin/projects | Sub | ✅ | ✅ | ✅ | — | ✅ | ✅ |
+| admin/auth | — | ✅ | ✅ | — | — | — | Shared |
+| admin/login | ✅ | →auth | — | — | — | ✅* | ✅ |
+| admin/logout | ✅ | — | — | — | — | ✅* | ✅ |
+| admin/session | ✅ | →auth | — | — | — | ✅ | ✅ |
+| admin/settings/discounts | ✅ | ✅ | ✅ | ✅ | — | ✅ | ✅ |
+| contact | ✅ | 🔄 | 🔄 | 🔄 | ✅ | ✅ | ✅ |
+| discounts | ✅ | 🔄 | 🔄 | 🔄 | ✅ | ✅ | ✅ |
+| invoice/generate | ✅ | ✅ | ✅ | ✅ | ✅ | ✅* | ✅ |
+| invoice/send-email | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| project-status-email | ✅ | ✅ | 🔄 | ✅ | ✅ | ✅ | ✅ |
+| projects | ✅ | 🔄 | 🔄 | 🔄 | ✅ | ✅ | ✅ |
+| referral/send-email | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| referral/validate | ✅ | ✅ | ✅ | ✅ | — | ✅ | ✅ |
+| send-email | ✅ | 🔄 | 🔄 | 🔄 | ✅ | ✅ | ✅ |
+| upload | ✅ | ✅ | ✅ | ✅ | — | ✅ | **GOLD** |
+
+**Legende:** ✅ = direkt vorhanden, 🔄 = Root-Facade (re-export aus lib/), Sub = nur Sub-Routen,
+→auth = delegiert an admin/auth, ✅* = erlaubte Inline-Response (Cookie/Binary), — = nicht benötigt

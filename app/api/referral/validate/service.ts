@@ -1,5 +1,6 @@
 import { customerRepository } from "@/lib/repositories";
-import { NotFoundError } from "@/lib/errors";
+import { getDiscountsEnabled } from "@/lib/discountSettings";
+import { NotFoundError, ConflictError } from "@/lib/errors";
 import type {
     ValidateReferralInput,
     ValidateReferralResult,
@@ -31,6 +32,12 @@ async function findReferrerByCode(referralCode: string) {
 export async function validateReferral(
     input: ValidateReferralInput
 ): Promise<ValidateReferralResult> {
+    // Business-Regel: Rabatte müssen aktiviert sein
+    const discountsEnabled = await getDiscountsEnabled();
+    if (!discountsEnabled) {
+        throw new ConflictError("Discounts are disabled");
+    }
+
     const referrer = await findReferrerByCode(input.referralCode);
     if (!referrer) {
         throw new NotFoundError("Invalid referral code");

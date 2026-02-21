@@ -1,7 +1,6 @@
 import { validateReferral } from "./service";
-import { getDiscountsEnabled } from "@/lib/discountSettings";
 import { successResponse, handleError } from "@/lib/api-response";
-import { ValidationError, ConflictError } from "@/lib/errors";
+import { ValidationError } from "@/lib/errors";
 import { validateReferralInput } from "./validation";
 
 // Route handler delegates to service for validation and discount calculation
@@ -13,11 +12,6 @@ export async function POST(request: Request) {
     const validation = validateReferralInput(body);
     if (!validation.valid) {
       throw new ValidationError(validation.error);
-    }
-
-    const discountsEnabled = await getDiscountsEnabled();
-    if (!discountsEnabled) {
-      throw new ConflictError("Discounts are disabled");
     }
 
     const result = await validateReferral(validation.value);

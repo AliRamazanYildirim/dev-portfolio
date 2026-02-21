@@ -1,5 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { ProjectsService } from "@/app/api/projects/lib/service";
+import { successResponse, handleError } from "@/lib/api-response";
+import { NotFoundError } from "@/lib/errors";
 
 // GET /api/projects/[slug] - Retrieve single project by slug
 export async function GET(
@@ -11,14 +13,11 @@ export async function GET(
 
     const project = await ProjectsService.getBySlug(slug);
     if (!project) {
-      return NextResponse.json({ success: false, error: "Project not found" }, { status: 404 });
+      throw new NotFoundError("Project not found");
     }
 
-    return NextResponse.json({ success: true, data: project });
+    return successResponse(project);
   } catch (error) {
-    return NextResponse.json(
-      { success: false, error: "Failed to fetch project" },
-      { status: 500 }
-    );
+    return handleError(error, "Failed to fetch project");
   }
 }

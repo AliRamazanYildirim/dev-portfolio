@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { AuthService } from "@/app/api/admin/auth/service";
-import { handleError } from "@/lib/api-response";
+import { successResponse, handleError } from "@/lib/api-response";
 
 // GET /api/admin/session - Session-Status prüfen - Check session status
 export async function GET(request: NextRequest) {
@@ -9,11 +9,7 @@ export async function GET(request: NextRequest) {
 
     const { user } = await AuthService.verifySession(token);
 
-    return NextResponse.json({
-      success: true,
-      authenticated: true,
-      user,
-    });
+    return successResponse({ authenticated: true, user });
   } catch (error) {
     return handleError(error, "Session check failed");
   }

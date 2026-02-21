@@ -16,15 +16,9 @@ import {
 } from "@/lib/auth";
 import { UnauthorizedError, ValidationError } from "@/lib/errors";
 import { isValidEmail } from "@/lib/validation";
+import type { LoginResult, SessionResult } from "./types";
 
-export interface LoginResult {
-    token: string;
-    user: AdminUser;
-}
-
-export interface SessionResult {
-    user: AdminUser;
-}
+export type { LoginResult, SessionResult };
 
 export class AuthService {
     /**

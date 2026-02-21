@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { AUTH_COOKIE_NAME } from "@/lib/auth";
+import { handleError } from "@/lib/api-response";
 
 // POST /api/admin/logout - Admin-Abmeldung - Admin logout
 export async function POST(request: NextRequest) {
@@ -22,14 +23,7 @@ export async function POST(request: NextRequest) {
 
     return response;
   } catch (error) {
-    console.error("Logout error:", error);
-    return NextResponse.json(
-      {
-        success: false,
-        error: "Logout failed",
-      },
-      { status: 500 }
-    );
+    return handleError(error, "Logout failed");
   }
 }
 
