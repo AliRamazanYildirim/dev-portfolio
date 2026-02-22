@@ -3,7 +3,7 @@ import { connectToMongo } from "@/lib/mongodb";
 import ProjectModel from "@/models/Project";
 import { solutionSlugs } from "@/constants/solutionsContent";
 
-const BASE_URL = "https://arytechsolutions.com";
+const BASE_URL = "https://www.arytechsolutions.com";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     /* ─── Static pages ─── */

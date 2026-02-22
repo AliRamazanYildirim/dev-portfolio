@@ -5,7 +5,7 @@ import { Toaster } from "react-hot-toast";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://arytechsolutions.com"),
+  metadataBase: new URL("https://www.arytechsolutions.com"),
   title: {
     default: "ARY Tech Solutions – Webentwicklung & Digitale Lösungen",
     template: "%s | ARY Tech Solutions",
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "de_DE",
-    url: "https://arytechsolutions.com",
+    url: "https://www.arytechsolutions.com",
     siteName: "ARY Tech Solutions",
     title: "ARY Tech Solutions – Webentwicklung & Digitale Lösungen",
     description:
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
     images: ["/ali-ramazan-yildirim-white.png"],
   },
   alternates: {
-    canonical: "https://arytechsolutions.com",
+    canonical: "https://www.arytechsolutions.com",
   },
   icons: {
     icon: [
