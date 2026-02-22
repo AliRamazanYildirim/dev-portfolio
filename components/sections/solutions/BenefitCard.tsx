@@ -65,7 +65,7 @@ export default function BenefitCard({
                 alt={title}
                 width={32}
                 height={32}
-                className="h-8 w-8 object-contain opacity-90 transition-opacity group-hover:opacity-100"
+                className="h-8 w-8 object-contain brightness-0 invert opacity-90 transition-opacity group-hover:opacity-100"
               />
             </motion.div>
           </motion.div>
