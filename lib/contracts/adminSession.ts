@@ -1,24 +1,15 @@
-export interface AdminSessionUser {
-    id: string;
-    email: string;
-    name: string;
-}
+import type {
+    AdminSessionResponse,
+    AdminSessionSuccessResponse,
+    AdminSessionUser,
+} from "./types";
 
-export interface AdminSessionSuccessResponse {
-    success: true;
-    authenticated: true;
-    user: AdminSessionUser;
-}
-
-export interface AdminSessionFailureResponse {
-    success: false;
-    authenticated?: false;
-    error?: string;
-}
-
-export type AdminSessionResponse =
-    | AdminSessionSuccessResponse
-    | AdminSessionFailureResponse;
+export type {
+    AdminSessionFailureResponse,
+    AdminSessionResponse,
+    AdminSessionSuccessResponse,
+    AdminSessionUser,
+} from "./types";
 
 function isRecord(value: unknown): value is Record<string, unknown> {
     return typeof value === "object" && value !== null;

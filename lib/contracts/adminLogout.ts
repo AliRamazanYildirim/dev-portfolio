@@ -1,16 +1,13 @@
-export interface AdminLogoutSuccessResponse {
-    success: true;
-    message: string;
-}
+import type {
+    AdminLogoutResponse,
+    AdminLogoutSuccessResponse,
+} from "./types";
 
-export interface AdminLogoutFailureResponse {
-    success: false;
-    error?: string;
-}
-
-export type AdminLogoutResponse =
-    | AdminLogoutSuccessResponse
-    | AdminLogoutFailureResponse;
+export type {
+    AdminLogoutFailureResponse,
+    AdminLogoutResponse,
+    AdminLogoutSuccessResponse,
+} from "./types";
 
 function isRecord(value: unknown): value is Record<string, unknown> {
     return typeof value === "object" && value !== null;
