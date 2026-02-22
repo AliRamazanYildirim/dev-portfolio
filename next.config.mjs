@@ -8,6 +8,11 @@ const nextConfig = {
       },
     ],
   },
+  turbopack: {
+    resolveAlias: {
+      '../build/polyfills/polyfill-module': './lib/next-empty-polyfill-module.js',
+    },
+  },
 };
 
 export default nextConfig;
