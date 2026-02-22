@@ -1,28 +1,42 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function ScrollToTopButton() {
   const [visible, setVisible] = useState(false);
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    function onScroll() {
+    let rafId = 0;
+
+    function updateFromScroll() {
+      rafId = 0;
       const scrollTop = window.scrollY || document.documentElement.scrollTop;
-      const docHeight =
-        document.documentElement.scrollHeight -
-        document.documentElement.clientHeight;
+      const maxScrollable =
+        document.documentElement.scrollHeight - window.innerHeight;
       const pct =
-        docHeight > 0
-          ? Math.min(100, Math.round((scrollTop / docHeight) * 100))
+        maxScrollable > 0
+          ? Math.min(100, Math.round((scrollTop / maxScrollable) * 100))
           : 0;
+
       setProgress(pct);
       setVisible(scrollTop > 240);
     }
 
+    function onScroll() {
+      if (rafId !== 0) return;
+      rafId = window.requestAnimationFrame(updateFromScroll);
+    }
+
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (rafId !== 0) {
+        window.cancelAnimationFrame(rafId);
+      }
+    };
   }, []);
 
   const handleClick = () => {
