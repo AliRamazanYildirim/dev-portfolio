@@ -13,6 +13,9 @@ const nextConfig = {
       '../build/polyfills/polyfill-module': './lib/next-empty-polyfill-module.js',
     },
   },
+  experimental: {
+    inlineCss: true,
+  },
 };
 
 export default nextConfig;

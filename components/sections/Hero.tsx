@@ -43,7 +43,7 @@ export default function Hero() {
           />
           <motion.div
             className="w-full max-w-sm sm:max-w-md lg:max-w-lg xl:max-w-xl"
-            initial={{ opacity: 0, scale: 0.95 }}
+            initial={false}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.1 }}
           >
@@ -196,8 +196,6 @@ const Portrait = () => (
     className="rounded-md w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl h-auto object-cover"
     priority
     fetchPriority="high"
-    decoding="sync"
-    unoptimized
   />
 );
 
