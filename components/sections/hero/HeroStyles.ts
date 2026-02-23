@@ -22,14 +22,14 @@ export const premiumSurfaceVariantStyles: Record<
 > = {
   panel: {
     container:
-      "rounded-[28px] p-5 shadow-[0_22px_56px_rgba(36,12,2,0.14)] hover:-translate-y-1 hover:shadow-[0_28px_64px_rgba(36,12,2,0.2)]",
+      "rounded-[24px] p-4 sm:rounded-[28px] sm:p-5 shadow-[0_20px_46px_rgba(36,12,2,0.14)] md:hover:-translate-y-1 md:hover:shadow-[0_28px_64px_rgba(36,12,2,0.2)]",
     primaryGlow: "-right-16 -top-20 h-56 w-56",
     secondaryGlow: "-left-16 bottom-0 h-40 w-40",
     topLine: "inset-x-8 top-0",
   },
   card: {
     container:
-      "h-full rounded-[26px] p-5 shadow-[0_16px_38px_rgba(36,12,2,0.09)] hover:-translate-y-1.5 hover:shadow-[0_24px_50px_rgba(36,12,2,0.16)]",
+      "h-full rounded-[22px] p-4 sm:rounded-[26px] sm:p-5 shadow-[0_14px_32px_rgba(36,12,2,0.09)] md:hover:-translate-y-1.5 md:hover:shadow-[0_24px_50px_rgba(36,12,2,0.16)]",
     primaryGlow: "-right-10 -top-12 h-36 w-36",
     secondaryGlow: "-left-10 bottom-0 h-24 w-24",
     topLine: "inset-x-10 top-0",

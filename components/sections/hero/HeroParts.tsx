@@ -184,7 +184,7 @@ export const PortraitColumn = ({
 }: {
   panel: HeroDictionary["portraitPanel"];
 }) => (
-  <div className="flex h-full flex-col gap-5">
+  <div className="flex h-full flex-col-reverse gap-4 sm:gap-5 lg:flex-col">
     <Portrait />
     {panel && <PortraitPanel panel={panel} />}
   </div>
@@ -196,37 +196,37 @@ const PortraitPanel = ({
   panel: NonNullable<HeroDictionary["portraitPanel"]>;
 }) => (
   <PremiumSurface variant="panel" className="lg:mt-5 xl:mt-8">
-    <span className="inline-flex items-center rounded-full border border-[#ddb76f]/45 bg-[#fffbef] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.35em] text-[#946d27] shadow-[inset_0_1px_0_rgba(255,255,255,0.85)]">
+    <span className="inline-flex items-center rounded-full border border-[#ddb76f]/45 bg-[#fffbef] px-3 py-1 text-[9px] sm:text-[10px] font-semibold uppercase tracking-[0.26em] sm:tracking-[0.35em] text-[#946d27] shadow-[inset_0_1px_0_rgba(255,255,255,0.85)]">
       {panel.badge}
     </span>
-    <h3 className="mt-4 text-lg md:text-xl font-semibold leading-snug text-[#1b1007]">
+    <h3 className="mt-4 text-lg md:text-xl font-semibold leading-snug text-[#1b1007] text-balance">
       {panel.title}
     </h3>
-    <p className="mt-2 text-sm md:text-base leading-relaxed text-[#4a3625]">
+    <p className="mt-2 text-sm md:text-base leading-relaxed text-[#4a3625] text-balance">
       {panel.summary}
     </p>
 
-    <div className="mt-5 grid grid-cols-3 gap-2">
+    <div className="mt-5 grid grid-cols-3 gap-2 sm:gap-2.5">
       {panel.stats.map((stat) => (
         <div
           key={`${stat.value}-${stat.label}`}
-          className="rounded-2xl border border-[#ecd3a8] bg-linear-to-br from-[#fffefb] to-[#fdf2db]/90 px-3 py-3 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.88),0_10px_18px_rgba(79,46,7,0.06)]"
+          className="min-w-0 rounded-[18px] sm:rounded-2xl border border-[#ecd3a8] bg-linear-to-br from-[#fffefb] to-[#fdf2db]/90 px-2.5 sm:px-3 py-3 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.88),0_10px_18px_rgba(79,46,7,0.06)]"
         >
-          <p className="text-base sm:text-lg font-semibold text-[#25160c]">
+          <p className="text-base sm:text-lg font-semibold leading-none text-[#25160c]">
             {stat.value}
           </p>
-          <p className="mt-1 text-[11px] leading-tight text-[#72563a]">
+          <p className="mt-1 text-[10px] sm:text-[11px] leading-tight text-[#72563a] text-balance">
             {stat.label}
           </p>
         </div>
       ))}
     </div>
 
-    <div className="mt-5 space-y-2.5">
+    <div className="mt-5 space-y-2.5 sm:space-y-3">
       {panel.bullets.map((bullet) => (
         <p
           key={bullet}
-          className="flex items-start gap-2 text-sm leading-relaxed text-[#362415]"
+          className="flex items-start gap-2 text-sm leading-relaxed text-[#362415] text-balance"
         >
           <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#d9a84d] shadow-[0_0_8px_rgba(217,168,77,0.55)]" />
           <span>{bullet}</span>

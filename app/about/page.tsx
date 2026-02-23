@@ -9,7 +9,7 @@ import { useTranslation } from "@/hooks/useTranslation";
 import type { TranslationDictionary } from "@/constants/translations";
 
 const AboutPage = () => {
-  const { dictionary } = useTranslation();
+  const { dictionary, language } = useTranslation();
   const aboutDictionary = dictionary.aboutPage;
 
   return (
@@ -49,7 +49,10 @@ const AboutPage = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, ease: "easeOut", delay: 0.4 }}
               >
-                <Header2 text={aboutDictionary.sectionHeading} />
+                <Header2
+                  text={aboutDictionary.sectionHeading}
+                  isTurkish={language === "tr"}
+                />
               </motion.div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 mt-8">
@@ -83,10 +86,10 @@ const Header = ({
   lines: TranslationDictionary["aboutPage"]["headline"];
 }) => {
   const lineClasses = [
-    "block text-4xl sm:text-5xl lg:text-8xl xl:text-[6.5rem]",
-    "block text-4xl sm:text-5xl lg:text-8xl xl:text-[6.5rem]",
-    "block pl-12 md:pl-32 text-4xl sm:text-5xl lg:text-8xl xl:text-[6.5rem]",
-    "block pl-12 md:pl-10 text-4xl sm:text-5xl lg:text-8xl xl:text-[6.5rem]",
+    "block text-2xl sm:text-5xl lg:text-8xl xl:text-[6.5rem]",
+    "block text-2xl sm:text-5xl lg:text-8xl xl:text-[6.5rem]",
+    "block pl-12 md:pl-32 text-3xl sm:text-5xl lg:text-8xl xl:text-[6.5rem]",
+    "block pl-12 md:pl-10 text-3xl sm:text-5xl lg:text-8xl xl:text-[6.5rem]",
   ];
 
   return (
@@ -120,9 +123,21 @@ const Portrait = () => (
   />
 );
 
-const Header2 = ({ text }: { text: string }) => (
-  <h2 className="heading sm:text-4xl lg:text-lgHeading md:pb-10">
-    <SplitText text={text} />
+const Header2 = ({
+  text,
+  isTurkish,
+}: {
+  text: string;
+  isTurkish: boolean;
+}) => (
+  <h2
+    className={`heading leading-tight md:pb-10 ${
+      isTurkish
+        ? "max-w-full whitespace-normal wrap-break-word text-[1.7rem] sm:text-4xl lg:text-lgHeading"
+        : "sm:text-4xl lg:text-lgHeading"
+    }`}
+  >
+    {isTurkish ? text : <SplitText text={text} />}
   </h2>
 );
 
