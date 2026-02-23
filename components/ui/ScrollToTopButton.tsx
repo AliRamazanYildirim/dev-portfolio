@@ -2,16 +2,33 @@
 
 import { useEffect, useRef, useState } from "react";
 
+const RING_SIZE = 44;
+const RING_STROKE = 3;
+const RING_RADIUS = (RING_SIZE - RING_STROKE) / 2;
+const RING_CIRCUMFERENCE = 2 * Math.PI * RING_RADIUS;
+
 export default function ScrollToTopButton() {
   const [visible, setVisible] = useState(false);
   const visibleRef = useRef(false);
+  const progressCircleRef = useRef<SVGCircleElement | null>(null);
 
   useEffect(() => {
     let rafId = 0;
 
     function updateFromScroll() {
       rafId = 0;
-      const nextVisible = (window.scrollY || 0) > 240;
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const maxScrollable =
+        document.documentElement.scrollHeight - window.innerHeight;
+      const progress =
+        maxScrollable > 0 ? Math.min(1, Math.max(0, scrollTop / maxScrollable)) : 0;
+      const dashOffset = (1 - progress) * RING_CIRCUMFERENCE;
+
+      if (progressCircleRef.current) {
+        progressCircleRef.current.style.strokeDashoffset = `${dashOffset}`;
+      }
+
+      const nextVisible = scrollTop > 240;
       if (nextVisible !== visibleRef.current) {
         visibleRef.current = nextVisible;
         setVisible(nextVisible);
@@ -57,21 +74,53 @@ export default function ScrollToTopButton() {
             : "opacity-0 pointer-events-none"
         }`}
     >
-      <svg
-        className="relative w-6 h-6"
-        viewBox="0 0 24 24"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        aria-hidden
-      >
-        <path
-          d="M6 15l6-6 6 6"
-          stroke="currentColor"
-          strokeWidth="1.8"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
+      <span className="relative flex items-center justify-center w-full h-full">
+        <svg
+          className="absolute inset-0 m-auto"
+          width={RING_SIZE}
+          height={RING_SIZE}
+          viewBox={`0 0 ${RING_SIZE} ${RING_SIZE}`}
+          aria-hidden
+        >
+          <circle
+            cx={RING_SIZE / 2}
+            cy={RING_SIZE / 2}
+            r={RING_RADIUS}
+            stroke="rgba(255,255,255,0.2)"
+            strokeWidth={RING_STROKE}
+            fill="none"
+          />
+          <circle
+            ref={progressCircleRef}
+            cx={RING_SIZE / 2}
+            cy={RING_SIZE / 2}
+            r={RING_RADIUS}
+            stroke="white"
+            strokeWidth={RING_STROKE}
+            strokeDasharray={RING_CIRCUMFERENCE}
+            strokeDashoffset={RING_CIRCUMFERENCE}
+            strokeLinecap="round"
+            fill="none"
+            style={{ transition: "stroke-dashoffset 180ms linear" }}
+          />
+        </svg>
+
+        <svg
+          className="relative w-6 h-6"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          aria-hidden
+        >
+          <path
+            d="M6 15l6-6 6 6"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </span>
     </button>
   );
 }
