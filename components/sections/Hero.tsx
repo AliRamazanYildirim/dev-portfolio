@@ -1,18 +1,24 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import Image from "next/image";
-import { useState } from "react";
-import { motion } from "framer-motion";
 import Link from "next/link";
-import SplitText from "@/components/animations/SplitText";
+import { useState } from "react";
 import { footerItems } from "@/data";
-import ProcessExperienceModal from "@/components/sections/ProcessExperienceModal";
 import { ShimmerButton } from "@/components/registry/magicui/ShimmerButton";
 import {
   heroTranslations,
   type HeroDictionary,
 } from "@/constants/translationsHero";
 import { useTranslation } from "@/hooks/useTranslation";
+
+const ProcessExperienceModal = dynamic(
+  () => import("@/components/sections/ProcessExperienceModal"),
+  {
+    ssr: false,
+    loading: () => null,
+  },
+);
 
 export default function Hero() {
   const { dictionary, language } = useTranslation();
@@ -41,14 +47,9 @@ export default function Hero() {
             hero={heroDictionary}
             onOpenProcess={handleOpenProcess}
           />
-          <motion.div
-            className="w-full max-w-sm sm:max-w-md lg:max-w-lg xl:max-w-xl"
-            initial={false}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.1 }}
-          >
+          <div className="hero-reveal hero-reveal-delay-1 w-full max-w-sm sm:max-w-md lg:max-w-lg xl:max-w-xl">
             <Portrait />
-          </motion.div>
+          </div>
         </div>
 
         <HeroFooter
@@ -58,7 +59,7 @@ export default function Hero() {
         />
         <SocialLinksBar ariaPrefix={footerDictionary.socialAriaPrefix} />
       </div>
-      {heroDictionary.processModal && (
+      {heroDictionary.processModal && isProcessOpen && (
         <ProcessExperienceModal
           open={isProcessOpen}
           onClose={handleCloseProcess}
@@ -86,15 +87,16 @@ const HeroContent = ({
     ctas,
     trustNote,
   } = hero;
+  const leadingLines =
+    language === "de" && headline.leading
+      ? ["Mehr passende Anfragen und Talente", "dank einer"]
+      : headline.leading
+        ? [headline.leading]
+        : [];
 
   return (
     <div className="flex-1 space-y-8 text-[#260a03]">
-      <motion.div
-        className="space-y-6"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-      >
+      <div className="hero-reveal space-y-6">
         {tagline && (
           <span className="mt-8 inline-flex items-center rounded-full bg-[#c58d12] px-4 py-1 text-xs md:text-sm font-medium uppercase tracking-[0.45em] text-[#1a0f00]">
             {tagline}
@@ -102,37 +104,27 @@ const HeroContent = ({
         )}
 
         <div className="space-y-4">
-          {headline.leading && (
-            <h1>
-              {language === "de" ? (
-                <>
-                  <SplitText
-                    text="Mehr passende Anfragen und Talente"
-                    className="flex-wrap gap-y-2 text-lg sm:text-xl md:text-[32px] lg:text-[40px] font-light uppercase tracking-tight leading-tight sm:leading-snug md:leading-snug"
-                  />
-                  <SplitText
-                    text="dank einer"
-                    className="flex-wrap gap-y-2 text-lg sm:text-xl md:text-[32px] lg:text-[40px] font-light uppercase tracking-tight leading-tight sm:leading-snug md:leading-snug"
-                  />
-                </>
-              ) : (
-                <SplitText
-                  text={headline.leading}
-                  className="flex-wrap gap-y-2 text-lg sm:text-xl md:text-[32px] lg:text-[40px] font-light uppercase tracking-tight leading-tight sm:leading-snug md:leading-snug"
+          {leadingLines.length > 0 && (
+            <h1 className="space-y-1">
+              {leadingLines.map((line, index) => (
+                <HeadlineLine
+                  key={`${line}-${index}`}
+                  text={line}
+                  className="text-lg sm:text-xl md:text-[32px] lg:text-[40px] font-light uppercase tracking-tight leading-tight sm:leading-snug md:leading-snug"
                 />
-              )}
+              ))}
             </h1>
           )}
           {headline.highlight && (
-            <SplitText
+            <HeadlineLine
               text={headline.highlight}
-              className="flex-wrap gap-y-2 text-xl sm:text-2xl md:text-title lg:text-[46px] font-semibold uppercase tracking-tight text-[#c58d12] leading-tight sm:leading-snug md:leading-snug"
+              className="text-xl sm:text-2xl md:text-title lg:text-[46px] font-semibold uppercase tracking-tight text-[#c58d12] leading-tight sm:leading-snug md:leading-snug"
             />
           )}
           {headline.trailing && (
-            <SplitText
+            <HeadlineLine
               text={headline.trailing}
-              className="flex-wrap gap-y-2 text-xl sm:text-2xl md:text-title lg:text-[42px] font-light uppercase tracking-tight leading-tight sm:leading-snug md:leading-snug"
+              className="text-xl sm:text-2xl md:text-title lg:text-[42px] font-light uppercase tracking-tight leading-tight sm:leading-snug md:leading-snug"
             />
           )}
         </div>
@@ -140,7 +132,7 @@ const HeroContent = ({
         {subheadline && (
           <p className="text-base md:text-lg text-[#4a3625]">{subheadline}</p>
         )}
-      </motion.div>
+      </div>
 
       {Array.isArray(introParagraphs) && introParagraphs.length > 0 && (
         <div className="space-y-4 text-base md:text-lg leading-relaxed text-[#3a2a1c]">
@@ -185,6 +177,14 @@ const HeroContent = ({
     </div>
   );
 };
+
+const HeadlineLine = ({
+  text,
+  className,
+}: {
+  text: string;
+  className: string;
+}) => <span className={`block ${className}`}>{text}</span>;
 
 const Portrait = () => (
   <Image
@@ -239,11 +239,7 @@ const HeroFooter = ({
       className="flex items-center gap-2 text-sm md:text-base font-semibold text-[#260a03] transition hover:text-[#c58d12]"
     >
       <span>{scrollLabel}</span>
-      <motion.div
-        initial={{ y: 0 }}
-        animate={{ y: [0, 8, 0] }}
-        transition={{ duration: 1.1, repeat: Infinity }}
-      >
+      <span className="hero-bounce inline-flex">
         <Image
           src="/icons/arrowdown.svg"
           alt="Arrow Down Icon for scrolling"
@@ -251,7 +247,7 @@ const HeroFooter = ({
           height={16}
           className="md:w-4 md:h-4 lg:w-5 lg:h-5"
         />
-      </motion.div>
+      </span>
     </button>
   </div>
 );
