@@ -39,6 +39,22 @@ export const heroTranslations = {
             secondary: { label: "See how the process works" },
         },
         trustNote: "I respond within one business day with a tailored next step.",
+        portraitPanel: {
+            badge: "Built for momentum",
+            title: "One partner from strategy to launch",
+            summary:
+                "No agency relay race. I turn ideas into conversion-ready pages with weekly visibility and clear ownership.",
+            stats: [
+                { value: "24h", label: "response window" },
+                { value: "Weekly", label: "prototype rhythm" },
+                { value: "1:1", label: "direct collaboration" },
+            ],
+            bullets: [
+                "Clear priorities and milestone ownership",
+                "Content, UX, and engineering in one flow",
+                "Proactive updates without chasing status",
+            ],
+        },
         location: "Remote from Sasbach · serving clients across Europe",
         scrollLabel: "Scroll For More",
         processModal: {
@@ -153,6 +169,22 @@ export const heroTranslations = {
             secondary: { label: "Ablauf der Zusammenarbeit ansehen" },
         },
         trustNote: "Antwort innerhalb von 24 Stunden mit konkretem Vorschlag.",
+        portraitPanel: {
+            badge: "Auf Tempo ausgelegt",
+            title: "Ein Ansprechpartner von Strategie bis Launch",
+            summary:
+                "Kein Agentur-Pingpong. Ich verwandle Ideen mit wöchentlichen Fortschritten in conversion-starke Seiten.",
+            stats: [
+                { value: "24s", label: "Antwortfenster" },
+                { value: "Wöchentlich", label: "Prototyp-Rhythmus" },
+                { value: "1:1", label: "Direkte Zusammenarbeit" },
+            ],
+            bullets: [
+                "Klare Prioritäten und belastbare Meilensteine",
+                "Inhalte, UX und Entwicklung aus einem Flow",
+                "Proaktive Updates ohne Nachfassen",
+            ],
+        },
         location: "Remote aus Sasbach · Projekte in DACH & Europa",
         scrollLabel: "Scroll für mehr",
         processModal: {
@@ -267,6 +299,22 @@ export const heroTranslations = {
             secondary: { label: "Sürecin nasıl ilerlediğini gör" },
         },
         trustNote: "24 saat içinde size özel bir aksiyon planıyla dönüş yaparım.",
+        portraitPanel: {
+            badge: "İvme odaklı süreç",
+            title: "Stratejiden lansmana tek sorumlu",
+            summary:
+                "Ajans devri yok. Fikirleri haftalık görünür ilerleme ile dönüşüm odaklı sayfalara dönüştürüyorum.",
+            stats: [
+                { value: "24 Saat", label: "yanıt süresi" },
+                { value: "Haftalık", label: "prototip ritmi" },
+                { value: "1:1", label: "doğrudan çalışma" },
+            ],
+            bullets: [
+                "Net öncelikler ve takip edilebilir milestone'lar",
+                "İçerik, UX ve geliştirme tek akışta",
+                "Siz sormadan gelen proaktif durum güncellemeleri",
+            ],
+        },
         location: "Sasbach'tan remote · Avrupa ve Türkiye'deki işletmelerle",
         scrollLabel: "Daha fazlası için kaydır",
         processModal: {
