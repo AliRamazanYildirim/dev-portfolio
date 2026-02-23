@@ -39,15 +39,26 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "https://www.arytechsolutions.com",
   },
+  manifest: "/site.webmanifest",
   icons: {
     icon: [
-      { url: "/ali-ramazan-yildirim-white-favicon.svg", type: "image/svg+xml" },
+      {
+        url: "/ali-ramazan-yildirim-white-favicon.svg",
+        type: "image/svg+xml",
+        sizes: "any",
+      },
     ],
     shortcut: [
-      { url: "/ali-ramazan-yildirim-white-favicon.svg", type: "image/svg+xml" },
+      {
+        url: "/ali-ramazan-yildirim-white-favicon.svg",
+        type: "image/svg+xml",
+      },
     ],
     apple: [
-      { url: "/ali-ramazan-yildirim-white-favicon.svg", type: "image/svg+xml" },
+      {
+        url: "/ali-ramazan-yildirim-white-favicon.svg",
+        type: "image/svg+xml",
+      },
     ],
   },
 };

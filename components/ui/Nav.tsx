@@ -90,6 +90,7 @@ export const Nav = ({ className }: { className?: string }) => {
   // Admin-Seite prüfen - Check if admin page
   const isAdminPage = pathname.startsWith("/admin");
   const noiseMode = isProjectsPage || isAdminPage ? "dark" : "light";
+  const navHeight = "clamp(6rem, calc(25vw - 4rem), 12rem)";
 
   const mobileMenuVariants = {
     hidden: { opacity: 0, y: 16, scale: 0.98 },
@@ -282,6 +283,7 @@ export const Nav = ({ className }: { className?: string }) => {
               className={`flex items-center ${
                 isAdminPage ? "justify-center" : "justify-between"
               }`}
+              style={{ minHeight: navHeight }}
             >
               <Link
                 href="/"
@@ -302,9 +304,12 @@ export const Nav = ({ className }: { className?: string }) => {
                         : "/ali-ramazan-yildirim.svg"
                     }
                     alt="Logo"
-                    width={120}
-                    height={80}
-                    className="h-24 md:h-32 lg:h-48 w-auto opacity-100"
+                    width={288}
+                    height={192}
+                    sizes="(max-width: 767px) 96px, (max-width: 1023px) 240px, 288px"
+                    className="w-auto opacity-100"
+                    style={{ height: navHeight }}
+                    priority
                   />
                 </motion.div>
               </Link>
