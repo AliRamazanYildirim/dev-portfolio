@@ -16,6 +16,7 @@ export interface ProjectDescriptionDto {
     en: string;
     de: string;
     tr: string;
+    fr: string;
 }
 
 export interface ProjectGalleryItemDto {
@@ -88,6 +89,7 @@ function normalizeDescription(raw: unknown): ProjectDescriptionDto | string {
             en: obj.en || "",
             de: obj.de || "",
             tr: obj.tr || "",
+            fr: obj.fr || "",
         };
     }
     return "";

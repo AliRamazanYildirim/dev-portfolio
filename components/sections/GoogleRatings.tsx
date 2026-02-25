@@ -11,6 +11,7 @@ import {
   enGoogleRatings,
   deGoogleRatings,
   trGoogleRatings,
+  frGoogleRatings,
 } from "@/constants/googleRatings";
 import PremiumSeparator from "../ui/PremiumSeparator";
 
@@ -22,6 +23,7 @@ const GoogleRatings: React.FC = () => {
       en: enGoogleRatings,
       de: deGoogleRatings,
       tr: trGoogleRatings,
+      fr: frGoogleRatings,
     }[language] || enGoogleRatings;
 
   const containerVariants = {

@@ -2,6 +2,7 @@ export interface ProjectDescription {
   en?: string;
   de?: string;
   tr?: string;
+  fr?: string;
   [key: string]: string | undefined;
 }
 

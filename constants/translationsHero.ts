@@ -1,4 +1,4 @@
-export const heroTranslations = {
+const baseHeroTranslations = {
     en: {
         tagline: "Websites without guesswork",
         headline: {
@@ -383,6 +383,137 @@ export const heroTranslations = {
                 next: "Sonraki aşama",
                 jumpTo: "Aşama seç",
                 progress: "İlerleme",
+            },
+        },
+    },
+} as const;
+
+export const heroTranslations = {
+    ...baseHeroTranslations,
+    fr: {
+        tagline: "Des sites web sans approximation",
+        headline: {
+            leading: "Gagnez vos clients idéaux et votre équipe avec un",
+            highlight: "site web conçu pour inspirer confiance",
+            trailing: "et générer une croissance mesurable",
+        },
+        subheadline:
+            "Travaillez directement avec un développeur full-stack senior qui gère stratégie, contenu, design et développement dans un processus fluide.",
+        introParagraphs: [
+            "Chaque collaboration commence par un atelier approfondi pour clarifier votre proposition de valeur, les points de douleur de votre audience et les déclencheurs de conversion. Ces insights guident le message, l'UX et l'architecture technique avant la première ligne de code.",
+            "Ensuite, je livre des prototypes hebdomadaires, des mises à jour transparentes et des assets prêts au lancement afin que votre marketing avance sans blocage.",
+        ],
+        valueProps: [
+            {
+                title: "Livraison tout-en-un",
+                description:
+                    "Discovery, copywriting, design, développement, QA et analytics — coordonnés de bout en bout par un seul interlocuteur responsable.",
+            },
+            {
+                title: "Expertise senior directe",
+                description:
+                    "Vous travaillez uniquement avec moi : pas de transfert à des juniors, pas de surcharge agence, juste des décisions claires alignées sur vos objectifs business.",
+            },
+            {
+                title: "Build orienté conversion",
+                description:
+                    "Des sites Next.js rapides et sécurisés, avec une structure de contenu claire, des funnels lead et un tracking en place dès le premier jour.",
+            },
+            {
+                title: "Investissement transparent",
+                description:
+                    "Des offres cadrées, des délais clairs et une communication proactive pour savoir exactement ce qui vient ensuite.",
+            },
+        ],
+        ctas: {
+            primary: { label: "Réserver un appel découverte", href: "/#contact" },
+            secondary: { label: "Voir comment le process fonctionne" },
+        },
+        trustNote: "Je réponds sous un jour ouvré avec une prochaine étape adaptée.",
+        portraitPanel: {
+            badge: "Conçu pour la dynamique",
+            title: "Un seul partenaire de la stratégie au lancement",
+            summary:
+                "Pas de relais d'agence. Je transforme les idées en pages prêtes à convertir avec visibilité hebdomadaire et ownership clair.",
+            stats: [
+                { value: "24h", label: "délai de réponse" },
+                { value: "Hebdo", label: "rythme de prototype" },
+                { value: "1:1", label: "collaboration directe" },
+            ],
+            bullets: [
+                "Priorités claires et responsabilité sur chaque jalon",
+                "Contenu, UX et ingénierie dans un flux unique",
+                "Mises à jour proactives sans relance",
+            ],
+        },
+        location: "À distance depuis Sasbach · clients en Europe",
+        scrollLabel: "Faire défiler",
+        processModal: {
+            title: "Le Playbook Momentum",
+            subtitle:
+                "Chaque phase aligne les décideurs, montre un progrès visible et supprime l'incertitude du lancement.",
+            closeLabel: "Fermer l'aperçu",
+            steps: [
+                {
+                    stage: "Phase 01",
+                    title: "Discovery et Architecture Stratégique",
+                    description:
+                        "J'analyse votre modèle business, les motivations clients et les indicateurs de succès pour que chaque décision design produise un impact mesurable.",
+                    highlights: [
+                        "Atelier exécutif pour extraire objectifs, contraintes et déclencheurs d'achat.",
+                        "Cartographie d'audience, analyse concurrentielle et signaux SEO.",
+                        "Roadmap d'expérience avec jalons, responsables, budget et KPI.",
+                    ],
+                    duration: "Durée : 3 à 5 jours",
+                    outcome: "Résultat : blueprint stratégique partagé et backlog priorisé.",
+                },
+                {
+                    stage: "Phase 02",
+                    title: "Blueprint Message et Expérience",
+                    description:
+                        "Je transforme votre positionnement en messages clairs, parcours UX et architecture de contenu qui mènent de la curiosité à l'action.",
+                    highlights: [
+                        "Framework de message qui convertit la proposition de valeur en narration persuasive.",
+                        "Architecture d'information, wireflows et walkthrough de prototype interactif.",
+                        "Direction visuelle pour l'ambiance, la typographie et le langage de composants.",
+                    ],
+                    duration: "Durée : 5 à 7 jours",
+                    outcome: "Résultat : prototype validé et plan de contenu prêt pour la production.",
+                },
+                {
+                    stage: "Phase 03",
+                    title: "Design, Développement et Qualité",
+                    description:
+                        "Système de design, animations et code performant avancent en parallèle pour un lancement prêt en production.",
+                    highlights: [
+                        "Système de design responsive avec sections réutilisables, états et micro-interactions.",
+                        "Build Next.js optimisé pour performance, accessibilité et SEO.",
+                        "Sprints QA avec tests multi-devices et automatisation.",
+                    ],
+                    duration: "Durée : 2 à 3 semaines",
+                    outcome: "Résultat : expérience prête en production avec analytics et CMS connectés.",
+                },
+                {
+                    stage: "Phase 04",
+                    title: "Lancement, Formation et Accélération",
+                    description:
+                        "J'orchestre le déploiement, forme votre équipe et installe la mesure pour garder l'élan après la mise en ligne.",
+                    highlights: [
+                        "Runbook de lancement avec plan de rollback, monitoring et checklist de succès.",
+                        "Sessions de formation équipe et walkthroughs vidéo pour les mises à jour futures.",
+                        "Tableau de bord croissance réunissant analytics, heatmaps et insights leads.",
+                    ],
+                    duration: "Durée : 3 à 5 jours",
+                    outcome: "Résultat : lancement serein et feuille de route d'optimisation continue.",
+                },
+            ],
+            finalNote:
+                "Besoin d'accélérer plus vite ? Après le lancement, nous continuons avec des sprints croissance, des tests de conversion et des déploiements de fonctionnalités — toujours avec la même cadence transparente.",
+            navigation: {
+                previous: "Phase précédente",
+                next: "Phase suivante",
+                jumpTo: "Aller à la phase",
+                progress: "Progression",
             },
         },
     },

@@ -10,7 +10,7 @@ import {
 } from "react";
 import { translations } from "@/constants/translations";
 
-export type SupportedLanguage = "en" | "de" | "tr";
+export type SupportedLanguage = "en" | "de" | "tr" | "fr";
 
 interface LanguageContextValue {
   language: SupportedLanguage;
@@ -23,12 +23,21 @@ const LanguageContext = createContext<LanguageContextValue | null>(null);
 
 const DEFAULT_LANGUAGE: SupportedLanguage = "de";
 const STORAGE_KEY = "preferred-language";
+const SUPPORTED_LANGUAGES: readonly SupportedLanguage[] = [
+  "en",
+  "de",
+  "tr",
+  "fr",
+];
+
+const isSupportedLanguage = (value: string): value is SupportedLanguage =>
+  SUPPORTED_LANGUAGES.includes(value as SupportedLanguage);
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [language, setLanguage] = useState<SupportedLanguage>(() => {
     if (typeof window !== "undefined") {
       const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored && (stored === "en" || stored === "de" || stored === "tr")) {
+      if (stored && isSupportedLanguage(stored)) {
         return stored;
       }
     }

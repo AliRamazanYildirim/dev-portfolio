@@ -1441,10 +1441,446 @@ const solutionDetailsTr = {
   },
 } satisfies Record<SolutionSlug, SolutionContent>;
 
+const solutionDetailsFr = {
+  "lead-generation-websites": {
+    "hero": {
+      "title": "Sites Web de génération de leads qui convertissent",
+      "subtitle": "Lancez des messages, une structure et des éléments de preuve qui guident les visiteurs vers une conversation significative avec votre équipe.",
+      "cta": "Planifiez votre projet"
+    },
+    "benefits": [
+      {
+        "title": "Architecture axée sur la conversion",
+        "description": "Des flux de pages stratégiques, des CTA audacieux et des crochets de suivi alignés sur votre entonnoir pour que chaque section travaille plus dur.",
+        "icon": "/icons/global.png"
+      },
+      {
+        "title": "Une narration convaincante",
+        "description": "Preuve client, objections et hiérarchie de messagerie mappées dans des blocs réutilisables que vous pouvez tester et itérer.",
+        "icon": "/icons/good-feedback.png"
+      },
+      {
+        "title": "Performances et fiabilité",
+        "description": "Le rendu côté serveur, la mise en cache périphérique et l'optimisation des images maintiennent les temps de chargement en dessous de deux secondes dans le monde entier.",
+        "icon": "/icons/speedometer.png"
+      }
+    ],
+    "testimonial": {
+      "quote": "Notre nouveau site a doublé les demandes qualifiées au cours du premier mois. Les réunions commencent désormais avec une confiance déjà en place.",
+      "author": "Lena Kramer",
+      "role": "Responsable marketing",
+      "company": "BrightRecruit"
+    },
+    "pricing": {
+      "starter": {
+        "price": "2 500",
+        "duration": "2-3 semaines",
+        "description": "Expérience d'atterrissage ciblée, prête à capturer des prospects dès le premier jour.",
+        "features": [
+          "5 pages clés avec copie de conversion",
+          "Mises en page réactives et configuration des analyses",
+          "Capture de leads et transfert CRM",
+          "Un cycle de révision"
+        ]
+      },
+      "professional": {
+        "price": "4 500",
+        "duration": "3-4 semaines",
+        "description": "Site Web complet avec ressources de conversion, automatisation et CMS évolutif.",
+        "features": [
+          "10+ pages modulaires",
+          "Atelier de messagerie et rédaction",
+          "Principes fondamentaux du référencement et configuration du schéma",
+          "Flux de travail de suivi automatisés"
+        ],
+        "highlighted": true,
+        "badge": "Recommandé"
+      },
+      "enterprise": {
+        "price": "8 500",
+        "duration": "6-8 semaines",
+        "description": "Composants personnalisés, expériences et intégrations axées sur les revenus.",
+        "features": [
+          "Flux d'intégration personnalisés",
+          "Configuration avancée des tests A/B",
+          "Intégrations d'automatisation du marketing",
+          "3 mois d'assistance à l'optimisation"
+        ]
+      }
+    },
+    "cta": {
+      "title": "Prêt à attirer des leads qualifiés ?",
+      "subtitle": "Alignons la stratégie, la copie et l'UX pour que votre site Web devienne le plus fiable de votre pipeline.",
+      "button": "Réservez un appel découverte"
+    }
+  },
+  "performance-seo": {
+    "hero": {
+      "title": "Optimisation des performances et du référencement pour les équipes modernes",
+      "subtitle": "Supprimez les anciens goulots d'étranglement, obtenez des scores parfaits et protégez vos classements avec une clarté technique.",
+      "cta": "Planifier un examen"
+    },
+    "benefits": [
+      {
+        "title": "Améliorations de vitesse mesurées",
+        "description": "Audits approfondis de Core Web Vitals avec des refactorisations ciblées sur les scripts, les images, les polices et les politiques de mise en cache.",
+        "icon": "/icons/blitz.png"
+      },
+      {
+        "title": "Hygiène technique du référencement",
+        "description": "Données structurées, santé du plan du site, redirections et gouvernance des robots gérées dans un backlog transparent.",
+        "icon": "/icons/good-feedback.png"
+      },
+      {
+        "title": "Surveillance continue",
+        "description": "Vérifications et tableaux de bord automatisés pour que les régressions apparaissent instantanément et que les équipes restent confiantes après chaque version.",
+        "icon": "/icons/speedometer.png"
+      }
+    ],
+    "testimonial": {
+      "quote": "Nous sommes passés d'un score Lighthouse de 58 à 96 et avons vu les sessions organiques augmenter de 42 % en un trimestre.",
+      "author": "Ethan Powell",
+      "role": "Responsable de la croissance",
+      "company": "SaaS nordique"
+    },
+    "pricing": {
+      "starter": {
+        "price": "2 200",
+        "duration": "2 semaines",
+        "description": "Audit essentiel, gains rapides et assistance à la mise en œuvre pour les petits sites.",
+        "features": [
+          "Audit complet des performances et du référencement",
+          "Plan de remédiation priorisé",
+          "Optimisation de la construction Next.js",
+          "Séance de jumelage de mise en œuvre"
+        ]
+      },
+      "professional": {
+        "price": "4 100",
+        "duration": "3-4 semaines",
+        "description": "Optimisation complète pour les propriétés à contenu important ou internationales.",
+        "features": [
+          "Optimisation de bout en bout",
+          "Stratégie de schéma et de localisation",
+          "Crochets de surveillance CI",
+          "Formation pour les équipes internes"
+        ],
+        "highlighted": true,
+        "badge": "Populaire"
+      },
+      "enterprise": {
+        "price": "7 900",
+        "duration": "5-7 semaines",
+        "description": "Support continu des partenaires pour les architectures complexes et les portefeuilles multimarques.",
+        "features": [
+          "Ajustement Edge et CDN",
+          "Search Console et automatisation des analyses",
+          "Playbooks de déploiement pour les versions",
+          "Cycles d'amélioration trimestriels"
+        ]
+      }
+    },
+    "cta": {
+      "title": "Rendons votre site instantané",
+      "subtitle": "Partagez votre pile actuelle et nous définirons la feuille de route d'optimisation exacte avec des points de contrôle mesurables.",
+      "button": "Demander l'audit"
+    }
+  },
+  "online-shop-setup": {
+    "hero": {
+      "title": "Lancer une boutique en ligne maintenable",
+      "subtitle": "Créez une vitrine prête à être convertie avec un contrôle des stocks, des paiements et des traitements que votre équipe peut gérer quotidiennement.",
+      "cta": "Démarrez votre boutique"
+    },
+    "benefits": [
+      {
+        "title": "Fondations du commerce électronique",
+        "description": "Catalogues de produits robustes, logique de variantes et règles fiscales mises en œuvre pour vos régions préférées.",
+        "icon": "/icons/online-store.png"
+      },
+      {
+        "title": "Des parcours d’achat optimisés",
+        "description": "Pages de produits, offres groupées et flux de paiement hautement performants, adaptés aux clients qui privilégient les appareils mobiles.",
+        "icon": "/icons/global.png"
+      },
+      {
+        "title": "Opérations que votre équipe contrôle",
+        "description": "Formation, documentation et alertes automatisées pour que l'exécution reste fluide à mesure que le volume augmente.",
+        "icon": "/icons/good-feedback.png"
+      }
+    ],
+    "testimonial": {
+      "quote": "Nous avons lancé notre solution en quatre semaines et traité nos 100 premières commandes sans un seul ticket d'assistance.",
+      "author": "Maria Lopez",
+      "role": "Fondateur",
+      "company": "Atelier n°3"
+    },
+    "pricing": {
+      "starter": {
+        "price": "3 200",
+        "duration": "3-4 semaines",
+        "description": "Shopify ou vitrine personnalisée prête avec des intégrations et un suivi essentiels.",
+        "features": [
+          "Configuration du catalogue de produits",
+          "Paiements et facturation sécurisés",
+          "Zones de livraison et fiscalité",
+          "Reçus et analyses d'e-mails"
+        ]
+      },
+      "professional": {
+        "price": "5 800",
+        "duration": "4-6 semaines",
+        "description": "Contenu avancé de merchandising, d'automatisation et de CMS pour la narration de la marque.",
+        "features": [
+          "Flux de forfaits et d'abonnements",
+          "Intégration CMS sans tête",
+          "Automatisations du marketing",
+          "Modèles de destination testés A/B"
+        ],
+        "highlighted": true,
+        "badge": "Meilleur rapport qualité-prix"
+      },
+      "enterprise": {
+        "price": "9 500",
+        "duration": "7-9 semaines",
+        "description": "Flux de travail de commerce d'entreprise, liens ERP et expansion multilingue.",
+        "features": [
+          "Intégrations et API personnalisées",
+          "Synchronisation de l'entrepôt et de l'ERP",
+          "Suivi du budget de performance",
+          "Feuille de route des expériences de croissance"
+        ]
+      }
+    },
+    "cta": {
+      "title": "Prêt à ouvrir votre boutique ?",
+      "subtitle": "Obtenez une configuration de commerce électronique qui a l'air premium, qui se charge rapidement et qui donne les clés à votre équipe dès le premier jour.",
+      "button": "Planifier le déploiement"
+    }
+  },
+  "content-management": {
+    "hero": {
+      "title": "Gestion de contenu sans friction",
+      "subtitle": "Donnez aux spécialistes du marketing les moyens de lancer des mises à jour, des campagnes et des traductions en quelques minutes sans attendre les développeurs.",
+      "cta": "Voir le flux de travail"
+    },
+    "benefits": [
+      {
+        "title": "CMS basé sur les composants",
+        "description": "Blocs, garde-corps et aperçus réutilisables qui maintiennent les mises en page fidèles à la marque tout en donnant aux éditeurs une liberté totale.",
+        "icon": "/icons/browser.png"
+      },
+      {
+        "title": "Collaboration gouvernée",
+        "description": "Des rôles, des environnements de test et des listes de contrôle de publication qui mettent les équipes de conformité à l'aise.",
+        "icon": "/icons/global.png"
+      },
+      {
+        "title": "Activation du déploiement",
+        "description": "Documentation, présentations vidéo et heures de bureau pour renforcer la confiance au sein de votre organisation.",
+        "icon": "/icons/training.png"
+      }
+    ],
+    "testimonial": {
+      "quote": "Le marketing envoie désormais les mises à jour deux fois plus vite et l'équipe de la marque dort enfin la nuit.",
+      "author": "Judith Steiner",
+      "role": "Directeur marketing",
+      "company": "FlowCorp"
+    },
+    "pricing": {
+      "starter": {
+        "price": "2 700",
+        "duration": "3 semaines",
+        "description": "Configuration d'un CMS sans tête avec modèles de base et flux de publication pour les équipes réduites.",
+        "features": [
+          "Atelier de modélisation de contenu",
+          "Intégration de la bibliothèque de composants",
+          "Étapes de rédaction, de révision et de publication",
+          "Séance de formation d'éditeur"
+        ]
+      },
+      "professional": {
+        "price": "4 600",
+        "duration": "4-5 semaines",
+        "description": "Gouvernance adaptée à l'entreprise avec localisation, automatisation des actifs et outils d'assurance qualité.",
+        "features": [
+          "Flux de travail multilingues",
+          "Pipeline d’optimisation des actifs",
+          "Journaux d'accès et d'audit basés sur les rôles",
+          "Tests de régression visuelle"
+        ],
+        "highlighted": true,
+        "badge": "Favoris de l'équipe"
+      },
+      "enterprise": {
+        "price": "7 600",
+        "duration": "6-8 semaines",
+        "description": "Opérations de contenu mondiales avec intégrations dans les piles CRM, DAM et analytiques.",
+        "features": [
+          "Synchronisation des outils CRM et marketing",
+          "Expériences de personnalisation",
+          "Manuel de gestion du changement",
+          "Revues d'optimisation trimestrielles"
+        ]
+      }
+    },
+    "cta": {
+      "title": "Donnez à votre équipe des super pouvoirs de publication",
+      "subtitle": "Nous cartographierons votre modèle de contenu, créerons des outils conviviaux et vous remettrons un manuel de jeu qui gardera les choses en ordre.",
+      "button": "Concevoir mon CMS"
+    }
+  },
+  "analytics-insights": {
+    "hero": {
+      "title": "Des analyses qui éclairent chaque décision",
+      "subtitle": "Suivez les mesures importantes, automatisez les rapports et obtenez des informations qui orienteront votre prochain sprint.",
+      "cta": "Demander le tableau de bord"
+    },
+    "benefits": [
+      {
+        "title": "KPI de l'étoile du Nord",
+        "description": "Ateliers d'alignement et plans de mesure axés sur les indicateurs qui font progresser votre entreprise.",
+        "icon": "/icons/good-feedback.png"
+      },
+      {
+        "title": "Instrumentation fiable",
+        "description": "Des événements de serveur, un suivi tenant compte du consentement et des contrôles de confidentialité qui font le bonheur des équipes juridiques et chargées des données.",
+        "icon": "/icons/blitz.png"
+      },
+      {
+        "title": "Une narration perspicace",
+        "description": "Tableaux de bord, procédures pas à pas de Loom et listes d'actions envoyées aux parties prenantes à chaque sprint.",
+        "icon": "/icons/speedometer.png"
+      }
+    ],
+    "testimonial": {
+      "quote": "Au lieu de courir après les feuilles de calcul manuelles, nous proposons désormais des expériences de croissance basées sur une source de vérité partagée.",
+      "author": "Claudia Meier",
+      "role": "Chef de produit",
+      "company": "InsightOps"
+    },
+    "pricing": {
+      "starter": {
+        "price": "1 900",
+        "duration": "2 semaines",
+        "description": "Base d'analyse avec suivi sensible au consentement et modèles de rapports hebdomadaires.",
+        "features": [
+          "Atelier d'alignement des KPI",
+          "Configuration des événements GA4 et serveur",
+          "Tableau de bord avec vues principales",
+          "Modèle d'informations hebdomadaires"
+        ]
+      },
+      "professional": {
+        "price": "3 900",
+        "duration": "3-4 semaines",
+        "description": "Instrumentation avancée sur toutes les plates-formes avec alertes automatisées et prise en charge de l'expérimentation.",
+        "features": [
+          "Attribution multicanal",
+          "Rapports et alertes automatisés",
+          "Carnet d'expériences et notation",
+          "Séances d'animation d'équipe"
+        ],
+        "highlighted": true,
+        "badge": "Aperçus Pro"
+      },
+      "enterprise": {
+        "price": "6 500",
+        "duration": "5-6 semaines",
+        "description": "Entrepôt d’analyse centralisé, ETL inversé et support narratif exécutif.",
+        "features": [
+          "Connecteurs d'entrepôt de données",
+          "Inverser l'ETL en CRM",
+          "Récits des KPI exécutifs",
+          "Cycles d'optimisation trimestriels"
+        ]
+      }
+    },
+    "cta": {
+      "title": "Confiance dans chaque métrique",
+      "subtitle": "Dites-nous ce que vous suivez aujourd’hui et nous concevrons des instruments permettant de prendre des décisions claires et sûres.",
+      "button": "Construire mes tableaux de bord"
+    }
+  },
+  "handover-training": {
+    "hero": {
+      "title": "Passation de relais et formation qui colle",
+      "subtitle": "Transformez la livraison en un élan durable grâce à de la documentation, des playbooks et une assistance continue que votre équipe adorera.",
+      "cta": "Planifier l'activation"
+    },
+    "benefits": [
+      {
+        "title": "Base de connaissances structurée",
+        "description": "Des guides étape par étape, des vidéos et des runbooks qui facilitent l'intégration et le dépannage.",
+        "icon": "/icons/browser.png"
+      },
+      {
+        "title": "Séances d'équipe interactives",
+        "description": "Ateliers basés sur les rôles et cliniques de questions-réponses conçus pour renforcer rapidement la confiance entre les parties prenantes.",
+        "icon": "/icons/training.png"
+      },
+      {
+        "title": "Partenariat post-lancement",
+        "description": "La hotline Slack, les réunions rétro et les sprints d'amélioration maintiennent leur élan après la mise en ligne.",
+        "icon": "/icons/good-feedback.png"
+      }
+    ],
+    "testimonial": {
+      "quote": "Notre équipe interne s'est sentie soutenue dès le premier jour et expédie désormais les mises à jour de manière indépendante sans interrompre le flux.",
+      "author": "Patrick Jones",
+      "role": "Directeur des opérations",
+      "company": "FinSuite"
+    },
+    "pricing": {
+      "starter": {
+        "price": "1 600",
+        "duration": "2 semaines",
+        "description": "Activation ciblée pour les petites équipes qui ont besoin de confiance après le lancement.",
+        "features": [
+          "Création d'une base de connaissances",
+          "Deux sessions de formation en direct",
+          "Bibliothèque de visites guidées enregistrées",
+          "Assistance questions et réponses pendant 30 jours"
+        ]
+      },
+      "professional": {
+        "price": "3 200",
+        "duration": "3-4 semaines",
+        "description": "Programme d’habilitation complet avec gestion du changement et suivi de l’adoption.",
+        "features": [
+          "Parcours de formation basés sur les rôles",
+          "Cartes de pointage d'adoption",
+          "Conseils pour l'automatisation des processus",
+          "Co-création d’une feuille de route"
+        ],
+        "highlighted": true,
+        "badge": "Équipe prête"
+      },
+      "enterprise": {
+        "price": "5 400",
+        "duration": "5-6 semaines",
+        "description": "Partenariat à long terme avec coaching exécutif, plans de dotation en personnel et améliorations trimestrielles.",
+        "features": [
+          "Ateliers de formation des dirigeants",
+          "Conseils en matière d'embauche et de dotation en personnel",
+          "Évaluations trimestrielles de la maturité",
+          "Gestionnaire de réussite dédié"
+        ]
+      }
+    },
+    "cta": {
+      "title": "Donnez du pouvoir à votre équipe sur le long terme",
+      "subtitle": "Bénéficiez d'une documentation, d'un encadrement et d'une assistance qui permettent d'apporter des améliorations bien au-delà du projet initial.",
+      "button": "Planifier la formation"
+    }
+  }
+} satisfies Record<SolutionSlug, SolutionContent>;
+
 export const solutionDetails: Record<SupportedLanguage, Record<SolutionSlug, SolutionContent>> = {
   en: solutionDetailsEn,
   de: solutionDetailsDe,
   tr: solutionDetailsTr,
+  fr: solutionDetailsFr,
 };
 
 export const solutionSlugs = Object.keys(solutionDetailsEn) as SolutionSlug[];

@@ -7,7 +7,7 @@ interface Project {
   id: string;
   slug: string;
   title: string;
-  description: { en: string; de: string; tr: string } | string;
+  description: { en: string; de: string; tr: string; fr: string } | string;
   mainImage: string;
   featured?: boolean;
   gallery?: Array<any>;

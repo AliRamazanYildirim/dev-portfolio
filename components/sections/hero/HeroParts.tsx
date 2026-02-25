@@ -28,6 +28,13 @@ const getLeadingHeadlineLines = (
     return ["Mehr passende Anfragen und Talente", "dank einer"];
   }
 
+  if (language === "fr" && leading) {
+    const match = leading.match(/^(.*?)(\s+et votre [ée]quipe avec un)$/i);
+    if (match) {
+      return [match[1].trim(), match[2].trim()];
+    }
+  }
+
   return leading ? [leading] : [];
 };
 

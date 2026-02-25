@@ -7,6 +7,7 @@ export interface TranslatedDescription {
     en: string;
     de: string;
     tr: string;
+    fr: string;
 }
 
 export interface IProject {

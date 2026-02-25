@@ -1,6 +1,6 @@
 // Auto-generated from translations.ts to keep heavy legal copy out of the core client bundle.
 
-export const privacyTranslations = {
+const basePrivacyTranslations = {
   en: {
       title: "Privacy Policy",
       lastUpdated: "Last updated: 17 October 2025",
@@ -376,6 +376,135 @@ export const privacyTranslations = {
       ],
       note: "Çeviriler arasında farklılık olması halinde İngilizce metin esas alınır. Yerel tüketici haklarınız saklıdır.",
     } as const,
+} as const;
+
+export const privacyTranslations = {
+  ...basePrivacyTranslations,
+  fr: {
+    "title": "politique de confidentialité",
+    "lastUpdated": "Dernière mise à jour : 17 octobre 2025",
+    "intro": [
+      "Cette politique de confidentialité explique comment je traite les données personnelles lorsque vous interagissez avec l'application dev-portfolio, ses API et les services connectés.",
+      "L'application propose un contenu multilingue (anglais, allemand, turc) et est principalement destinée aux clients situés en Allemagne, dans l'UE et en Turquie. Dans la mesure du possible, nous nous conformons au règlement général sur la protection des données (RGPD) de l'UE et à la loi allemande applicable."
+    ],
+    "sections": [
+      {
+        "heading": "1. Contrôleur",
+        "paragraphs": [
+          "Ali Ramazan Yildirim, Hebelstraße 1, 77880 Sasbach, Deuschland, e-mail : aliramazanyildirim@gmail.com, téléphone : +49 151 67145187, agit en tant que responsable du traitement pour tous les traitements décrits ici.",
+          "Pour les résidents de l'UE/EEE, vous pouvez également adresser vos demandes à notre adresse de correspondance allemande sur demande ; nous vous répondrons dans les délais légaux."
+        ]
+      },
+      {
+        "heading": "2. Données personnelles que nous traitons",
+        "paragraphs": [
+          "Nous traitons uniquement les données que vous fournissez activement ou qui sont techniquement nécessaires au fonctionnement de ce portefeuille."
+        ],
+        "bullets": [
+          "Coordonnées (nom, adresse e-mail, contenu du message) soumises via le formulaire de contact à l'adresse /api/contact ; stocké avec des métadonnées d'horodatage et de limiteur de débit dans notre base de données MongoDB.",
+          "Dossiers clients créés via la zone d'administration (/api/admin/customers) : prénom et nom, entreprise, adresse postale, numéro de téléphone, email, codes de parrainage, notes de projet, tarification, discountRate, finalPrice, ReferCount et horodatages.",
+          "Transactions du programme de parrainage enregistrées via les enregistrements ReferralTransaction, y compris referrerCode, discountRate (3/6/9%), le niveau de parrainage et l'ID client lié.",
+          "Informations sur la facture produites avec le générateur de facture (InvoiceService), telles que le numéro de facture, les livrables, les descriptions de projet, les calculs de TVA et les références de paiement.",
+          "Données d'authentification des administrateurs (e-mail, mot de passe haché, jeton de session stocké sous le cookie httpOnly « admin-auth-token »).",
+          "Métadonnées techniques telles que l'adresse IP (conservée brièvement par la clé du limiteur de débit), les en-têtes du navigateur et les journaux du serveur nécessaires pour sécuriser le service."
+        ]
+      },
+      {
+        "heading": "3. Finalités et bases juridiques",
+        "bullets": [
+          "Répondre aux demandes de contact et préparer des propositions (Art. 6(1)(b) RGPD).",
+          "Administration des comptes clients, des récompenses de parrainage et des livrables du projet (Art. 6(1)(b) et 6(1)(f) du RGPD).",
+          "Générer des factures et remplir les obligations légales de comptabilité (article 6, paragraphe 1, point c) du RGPD).",
+          "Envoi de notifications de référencement et de rappels par e-mail à l'aide de nodemailer (intérêt légitime, art. 6(1)(f) du RGPD).",
+          "Atténuer les abus, faire respecter les limites de tarifs et défendre nos systèmes (intérêt légitime, art. 6(1)(f) du RGPD).",
+          "Se conformer aux obligations légales ou aux demandes des autorités (article 6, paragraphe 1, point c) du RGPD)."
+        ]
+      },
+      {
+        "heading": "4. Rétention",
+        "bullets": [
+          "Les demandes de contact sont conservées jusqu'à 12 mois après leur achèvement, sauf conclusion d'un nouveau contrat.",
+          "Les données des clients et des références sont conservées pendant toute la durée de notre relation commerciale, plus jusqu'à 3 ans pour les délais de prescription, à moins que la loi comptable n'exige une conservation plus longue.",
+          "Les informations relatives aux factures sont conservées pendant 10 ans conformément aux règles allemandes de conservation commerciale et fiscale.",
+          "Les entrées du limiteur de débit contenant des clés basées sur IP expirent automatiquement dans la fenêtre configurée (60 secondes) et sont ensuite supprimées.",
+          "Les journaux du serveur et de sécurité sont purgés dans les 90 jours, sauf s'ils font partie d'une enquête sur un incident."
+        ]
+      },
+      {
+        "heading": "5. Destinataires et sous-traitants",
+        "bullets": [
+          "Fournisseurs d'hébergement et de déploiement utilisés pour le portefeuille en direct (par exemple Vercel ou plates-formes cloud comparables).",
+          "Hébergement de base de données avec MongoDB Atlas ou un autre fournisseur défini par la variable d'environnement MONGODB_URI.",
+          "Transmission d'e-mails via Gmail SMTP ou, en développement, comptes de test Ethereal exploités par nodemailer.",
+          "Cloudinary pour le stockage multimédia et la livraison d'actifs réactifs lorsque vous téléchargez des images via /api/upload.",
+          "Fournisseurs de services de paiement (par exemple banques, PayPal) si vous versez les montants des factures en utilisant les méthodes répertoriées.",
+          "Conseillers professionnels ou autorités lorsque la loi l’exige."
+        ]
+      },
+      {
+        "heading": "6. Transferts internationaux",
+        "paragraphs": [
+          "Les données peuvent être traitées en Turquie, dans l'UE/EEE et dans d'autres juridictions où nos sous-traitants opèrent (notamment les États-Unis pour Cloudinary et Gmail).",
+          "Lors d'un transfert en dehors de l'UE/EEE, nous nous appuyons sur des garanties appropriées telles que des clauses contractuelles types ou des garanties équivalentes fournies par le prestataire de services concerné."
+        ]
+      },
+      {
+        "heading": "7. Sécurité",
+        "bullets": [
+          "Transport chiffré (HTTPS) pour les points de terminaison publics et les interfaces d'administration.",
+          "Accès administratif étendu protégé par les cookies JWT et httpOnly.",
+          "Limitation du débit et limitation IP mises en œuvre via mongoRateLimiter pour lutter contre les abus.",
+          "Maintenance régulière des dépendances et surveillance des journaux du serveur pour détecter les anomalies."
+        ]
+      },
+      {
+        "heading": "8. Vos droits",
+        "bullets": [
+          "Accès à vos données personnelles (Art. 15 RGPD).",
+          "Rectification des données inexactes (art. 16 RGPD).",
+          "Effacement (art. 17 RGPD) et restriction (art. 18 RGPD) dans les limites légales.",
+          "Portabilité des données que vous nous avez fournies (Art. 20 RGPD).",
+          "Objection au traitement fondée sur des intérêts légitimes (article 21 du RGPD).",
+          "Retrait du consentement avec effet pour l'avenir, lorsque le traitement repose sur le consentement.",
+          "Droit de déposer une plainte auprès d'une autorité de contrôle, notamment en Allemagne (LfDI Baden-Württemberg) ou de votre autorité locale."
+        ]
+      },
+      {
+        "heading": "9. Exercer vos droits",
+        "paragraphs": [
+          "Veuillez nous contacter en utilisant les coordonnées ci-dessous. Nous pouvons demander une preuve d'identité pour protéger vos données. Les réponses sont apportées sans retard excessif et dans les délais fixés par la loi."
+        ]
+      },
+      {
+        "heading": "10. Projets clients et vitrine des logos des partenaires",
+        "paragraphs": [
+          "Dans le cadre de mon service de portfolio professionnel, je présente les projets que j'ai développés pour les clients et j'affiche les logos des partenaires dans la section partenaires de mon site Web.",
+          "Cette vitrine sert de référence aux clients potentiels pour comprendre la qualité et la portée de mon travail, et pour démontrer des relations professionnelles avec des partenaires établis."
+        ],
+        "bullets": [
+          "Vitrine du projet : avec le consentement écrit explicite de chaque client, j'affiche les détails du projet, notamment les descriptions, les technologies utilisées, les captures d'écran et les résultats du projet. Les noms des clients et les informations sur l’entreprise ne sont affichés que lorsque cela est expressément autorisé.",
+          "Logos des partenaires : les logos des entreprises partenaires sont affichés dans la section des partenaires uniquement après avoir obtenu une autorisation explicite via un accord écrit ou une clause contractuelle. Les logos sont utilisés uniquement dans le but de démontrer des collaborations professionnelles.",
+          "Contrôle client : les clients conservent le droit de demander la suppression ou la modification des informations ou des logos de leur projet à tout moment en me contactant directement. Ces demandes seront traitées dans un délai de 7 jours ouvrables.",
+          "Informations confidentielles : aucune information commerciale confidentielle, code propriétaire ou donnée sensible n'est jamais publié sans autorisation écrite explicite. Tous les documents de présentation sont soumis à l'examen et à l'approbation du client avant publication.",
+          "Base juridique : Ces activités de démonstration sont menées conformément à l'art. 6, paragraphe 1, point a) du RGPD (consentement) et art. 6, paragraphe 1, point f) du RGPD (intérêt légitime à présenter un travail professionnel), le consentement du client étant toujours prioritaire."
+        ]
+      },
+      {
+        "heading": "11. Mises à jour",
+        "paragraphs": [
+          "Nous mettrons à jour cette politique de confidentialité chaque fois que nos services ou nos obligations légales changeront. La version actuelle est toujours disponible sur /privacy."
+        ]
+      }
+    ],
+    "contactHeading": "Contact pour les demandes de confidentialité",
+    "contactDetails": [
+      "Ali Ramazan Yildirim",
+      "Adresse : Hebelstraße 1, 77880 Sasbach, Allemagne",
+      "Courriel : aliramazanyildirim@gmail.com",
+      "Téléphone : +49 151 67145187"
+    ],
+    "note": "Si les traductions diffèrent, la version anglaise prévaut. La protection des consommateurs locaux reste inchangée."
+  } as const,
 } as const;
 
 export type PrivacyDictionary = (typeof privacyTranslations)[keyof typeof privacyTranslations];

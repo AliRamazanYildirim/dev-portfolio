@@ -140,3 +140,43 @@ export const trGoogleRatings: GoogleRatingsContent = {
 
     ],
 };
+
+export const frGoogleRatings: GoogleRatingsContent = {
+    heading: "Approuvé par les entreprises",
+    subheading: "Découvrez ce que mes clients disent de mes services",
+    verified: "Vérifié sur Google",
+    reviews: "avis",
+    seeMore: "Voir tous les avis sur Google",
+    ratings: [
+        {
+            id: "rating-1",
+            businessName: "KARACA",
+            rating: 5,
+            reviewText: "Services de développement web exceptionnels ! L'équipe a été professionnelle, réactive et a tout livré dans les délais. Je recommande vivement.",
+            verificationDate: "2025-10-15",
+            positivePercentage: 100,
+            googleProfileUrl: "https://www.google.com/maps/place/ARY+Tech+Solutions/@48.644612,8.0867801,17z/data=!3m1!4b1!4m6!3m5!1s0x4796d9f3ec334a07:0x23557441b543c6fd!8m2!3d48.644612!4d8.0867801!16s%2Fg%2F11ylwkp1d5?hl=de&entry=ttu&g_ep=EgoyMDI1MTAyOS4yIKXMDSoASAFQAw%3D%3D",
+            badges: ["verified", "recommended"],
+        },
+        {
+            id: "rating-2",
+            businessName: "kingnetz.de",
+            rating: 5,
+            reviewText: "Design et fonctionnalités remarquables ! Ils ont parfaitement compris nos besoins et livré des résultats au-delà de nos attentes.",
+            verificationDate: "2025-09-28",
+            positivePercentage: 100,
+            googleProfileUrl: "https://www.google.com/maps/place/ARY+Tech+Solutions/@48.644612,8.0867801,17z/data=!3m1!4b1!4m6!3m5!1s0x4796d9f3ec334a07:0x23557441b543c6fd!8m2!3d48.644612!4d8.0867801!16s%2Fg%2F11ylwkp1d5?hl=de&entry=ttu&g_ep=EgoyMDI1MTAyOS4yIKXMDSoASAFQAw%3D%3D",
+            badges: ["verified"],
+        },
+        {
+            id: "rating-3",
+            businessName: "SARA BAU",
+            rating: 5,
+            reviewText: "La meilleure décision pour notre présence en ligne ! L'équipe a été très disponible et aidante tout au long du projet.",
+            verificationDate: "2025-10-22",
+            positivePercentage: 100,
+            googleProfileUrl: "https://www.google.com/maps/place/ARY+Tech+Solutions/@48.644612,8.0867801,17z/data=!3m1!4b1!4m6!3m5!1s0x4796d9f3ec334a07:0x23557441b543c6fd!8m2!3d48.644612!4d8.0867801!16s%2Fg%2F11ylwkp1d5?hl=de&entry=ttu&g_ep=EgoyMDI1MTAyOS4yIKXMDSoASAFQAw%3D%3D",
+            badges: ["verified", "recommended"],
+        },
+    ],
+};

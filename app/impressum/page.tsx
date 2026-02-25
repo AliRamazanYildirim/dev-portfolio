@@ -8,7 +8,9 @@ import Link from "next/link";
 import Script from "next/script";
 
 // JSON-LD Structured Data for SEO
-function generateStructuredData(language: "en" | "de" | "tr") {
+type ImprintLocale = keyof typeof imprintTranslations;
+
+function generateStructuredData(language: ImprintLocale) {
   const imprint = imprintTranslations[language];
   const sections = imprint.sections;
 
@@ -60,6 +62,56 @@ export default function ImpressumPage() {
   const { language } = useTranslation();
   const imprint = imprintTranslations[language];
   const sections = imprint.sections;
+  const legalCopy = {
+    odrTitle: {
+      en: "Online Dispute Resolution (ODR)",
+      de: "Online-Streitbeilegung (OS)",
+      tr: "Çevrimiçi Uyuşmazlık Çözümü (ODR)",
+      fr: "Reglement en ligne des litiges (RLL)",
+    },
+    arbitrationNoticeTitle: {
+      en: "Consumer Arbitration Notice",
+      de: "Hinweis zur Verbraucherschlichtung",
+      tr: "Tüketici Tahkimi Bildirimi",
+      fr: "Information sur la mediation des consommateurs",
+    },
+    moreLegalInformation: {
+      en: "More legal information",
+      de: "Weitere rechtliche Informationen",
+      tr: "Diğer yasal bilgiler",
+      fr: "Plus d informations juridiques",
+    },
+    privacyCardTitle: {
+      en: "Privacy Policy",
+      de: "Datenschutzerklärung",
+      tr: "Gizlilik Politikası",
+      fr: "Politique de confidentialite",
+    },
+    privacyCardDescription: {
+      en: "Learn how we protect and process your data.",
+      de: "Erfahren Sie, wie wir Ihre Daten schützen und verarbeiten.",
+      tr: "Verilerinizi nasıl koruduğumuzu ve işlediğimizi öğrenin.",
+      fr: "Decouvrez comment nous protegons et traitons vos donnees.",
+    },
+    termsCardTitle: {
+      en: "Terms & Conditions",
+      de: "Allgemeine Geschäftsbedingungen",
+      tr: "Hizmet Şartları",
+      fr: "Conditions generales",
+    },
+    termsCardDescription: {
+      en: "Our business terms and service policies.",
+      de: "Unsere Geschäftsbedingungen und Servicerichtlinien.",
+      tr: "Ticari koşullarımız ve hizmet politikalarımız.",
+      fr: "Nos conditions commerciales et politiques de service.",
+    },
+    learnMore: {
+      en: "Learn more",
+      de: "Mehr erfahren",
+      tr: "Daha fazla",
+      fr: "En savoir plus",
+    },
+  } as const;
 
   const structuredData = generateStructuredData(language);
 
@@ -330,11 +382,7 @@ export default function ImpressumPage() {
                     </div>
                     <div>
                       <h3 className="text-lg font-semibold text-[#180a04]">
-                        {language === "de"
-                          ? "Online-Streitbeilegung (OS)"
-                          : language === "tr"
-                            ? "Çevrimiçi Uyuşmazlık Çözümü (ODR)"
-                            : "Online Dispute Resolution (ODR)"}
+                        {legalCopy.odrTitle[language]}
                       </h3>
                       <p className="text-sm text-neutral-600 mt-1">
                         {sections.dispute.intro}
@@ -421,11 +469,7 @@ export default function ImpressumPage() {
                   </div>
                   <div>
                     <h4 className="font-semibold text-amber-900 mb-1">
-                      {language === "de"
-                        ? "Hinweis zur Verbraucherschlichtung"
-                        : language === "tr"
-                          ? "Tüketici Tahkimi Bildirimi"
-                          : "Consumer Arbitration Notice"}
+                      {legalCopy.arbitrationNoticeTitle[language]}
                     </h4>
                     <p className="text-sm md:text-base text-amber-800/90 leading-relaxed">
                       {sections.dispute.participation}
@@ -499,11 +543,7 @@ export default function ImpressumPage() {
               aria-label="Related legal pages"
             >
               <h2 className="text-xl font-semibold text-[#180a04] mb-6">
-                {language === "de"
-                  ? "Weitere rechtliche Informationen"
-                  : language === "tr"
-                    ? "Diğer yasal bilgiler"
-                    : "More legal information"}
+                {legalCopy.moreLegalInformation[language]}
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 {/* Privacy Policy Card */}
@@ -529,25 +569,13 @@ export default function ImpressumPage() {
                       </svg>
                     </div>
                     <h3 className="text-lg font-semibold text-[#180a04] mb-2 transition-colors duration-300 group-hover:text-[#c58d12]">
-                      {language === "de"
-                        ? "Datenschutzerklärung"
-                        : language === "tr"
-                          ? "Gizlilik Politikası"
-                          : "Privacy Policy"}
+                      {legalCopy.privacyCardTitle[language]}
                     </h3>
                     <p className="text-sm text-neutral-600 mb-4">
-                      {language === "de"
-                        ? "Erfahren Sie, wie wir Ihre Daten schützen und verarbeiten."
-                        : language === "tr"
-                          ? "Verilerinizi nasıl koruduğumuzu ve işlediğimizi öğrenin."
-                          : "Learn how we protect and process your data."}
+                      {legalCopy.privacyCardDescription[language]}
                     </p>
                     <span className="inline-flex items-center gap-2 text-sm font-medium text-[#c58d12] transition-all duration-300 group-hover:gap-3">
-                      {language === "de"
-                        ? "Mehr erfahren"
-                        : language === "tr"
-                          ? "Daha fazla"
-                          : "Learn more"}
+                      {legalCopy.learnMore[language]}
                       <svg
                         className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1"
                         fill="none"
@@ -588,25 +616,13 @@ export default function ImpressumPage() {
                       </svg>
                     </div>
                     <h3 className="text-lg font-semibold text-[#180a04] mb-2 transition-colors duration-300 group-hover:text-[#c58d12]">
-                      {language === "de"
-                        ? "Allgemeine Geschäftsbedingungen"
-                        : language === "tr"
-                          ? "Hizmet Şartları"
-                          : "Terms & Conditions"}
+                      {legalCopy.termsCardTitle[language]}
                     </h3>
                     <p className="text-sm text-neutral-600 mb-4">
-                      {language === "de"
-                        ? "Unsere Geschäftsbedingungen und Servicerichtlinien."
-                        : language === "tr"
-                          ? "Ticari koşullarımız ve hizmet politikalarımız."
-                          : "Our business terms and service policies."}
+                      {legalCopy.termsCardDescription[language]}
                     </p>
                     <span className="inline-flex items-center gap-2 text-sm font-medium text-[#c58d12] transition-all duration-300 group-hover:gap-3">
-                      {language === "de"
-                        ? "Mehr erfahren"
-                        : language === "tr"
-                          ? "Daha fazla"
-                          : "Learn more"}
+                      {legalCopy.learnMore[language]}
                       <svg
                         className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1"
                         fill="none"

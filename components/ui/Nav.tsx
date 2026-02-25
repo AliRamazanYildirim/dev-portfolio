@@ -22,6 +22,33 @@ interface NavItemType {
   }>;
 }
 
+const LANGUAGE_OPTIONS: ReadonlyArray<{
+  code: SupportedLanguage;
+  label: string;
+  flag: string;
+}> = [
+  {
+    code: "en",
+    label: "English",
+    flag: "/flags/us.svg",
+  },
+  {
+    code: "de",
+    label: "Deutsch",
+    flag: "/flags/de.svg",
+  },
+  {
+    code: "tr",
+    label: "Türkçe",
+    flag: "/flags/tr.svg",
+  },
+  {
+    code: "fr",
+    label: "Français",
+    flag: "/flags/fr.svg",
+  },
+];
+
 export const Nav = ({ className }: { className?: string }) => {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const submenuCloseTimer = React.useRef<number | null>(null);
@@ -40,23 +67,7 @@ export const Nav = ({ className }: { className?: string }) => {
   ).filter((item) => item.path !== "/admin/login");
   const languageLabel = navDictionary.languageMenu.label;
   const solutionsData = navDictionary.solutions;
-  const languages = [
-    {
-      code: "en" as SupportedLanguage,
-      label: navDictionary.languageMenu.languages.en,
-      flag: "/flags/us.svg",
-    },
-    {
-      code: "de" as SupportedLanguage,
-      label: navDictionary.languageMenu.languages.de,
-      flag: "/flags/de.svg",
-    },
-    {
-      code: "tr" as SupportedLanguage,
-      label: navDictionary.languageMenu.languages.tr,
-      flag: "/flags/tr.svg",
-    },
-  ];
+  const languages = LANGUAGE_OPTIONS;
   const currentLanguageData =
     languages.find((lang) => lang.code === language) ?? languages[0];
   const currentLanguageLabel = currentLanguageData.label;

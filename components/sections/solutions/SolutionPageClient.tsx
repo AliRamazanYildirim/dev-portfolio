@@ -33,11 +33,13 @@ export default function SolutionPageClient({ slug }: SolutionPageClientProps) {
       en: "Key Benefits",
       de: "Wichtigste Vorteile",
       tr: "Öne Çıkan Faydalar",
+      fr: "Avantages cles",
     },
     benefitsSubtitle: {
       en: "Discover the highlights of this solution and why teams rely on it to deliver results.",
       de: "Erfahren Sie, warum Teams dieser Lösung vertrauen, um messbare Ergebnisse zu erzielen.",
       tr: "Bu çözümün öne çıkan özelliklerini ve ekiplerin neden sonuç almak için ona güvendiğini keşfedin.",
+      fr: "Decouvrez les points forts de cette solution et pourquoi les equipes lui font confiance pour obtenir des resultats.",
     },
   } as const;
 

@@ -1,6 +1,6 @@
 // Auto-generated from translations.ts to keep heavy legal copy out of the core client bundle.
 
-export const termsTranslations = {
+const baseTermsTranslations = {
   en: {
       title: "Terms and Conditions",
       lastUpdated: "Last updated: 19 October 2025",
@@ -547,6 +547,192 @@ export const termsTranslations = {
       ],
       note: "Bu Şartlar İngilizce, Almanca ve Türkçe olarak sağlanmaktadır. Tutarsızlık durumunda, zorunlu tüketici koruma yasalarına tabi olarak Almanya/AB'deki müşteriler için Almanca versiyon önceliklidir.",
     } as const,
+} as const;
+
+export const termsTranslations = {
+  ...baseTermsTranslations,
+  fr: {
+    "title": "Termes et conditions",
+    "lastUpdated": "Dernière mise à jour : 19 octobre 2025",
+    "intro": [
+      "Les présentes conditions générales (« Conditions ») régissent tous les services de développement de logiciels professionnels fournis par Ramazan Yildirim (« Fournisseur de services », « Je », « moi ») aux clients (« Client », « vous ») via cette plateforme de portefeuille.",
+      "En faisant appel à mes services, en demandant un devis ou en concluant un accord de projet, vous acceptez ces conditions dans leur intégralité. Ces conditions s’appliquent parallèlement à tout accord ou contrat de projet individuel."
+    ],
+    "sections": [
+      {
+        "heading": "1. Portée des services",
+        "paragraphs": [
+          "Je fournis des services professionnels de développement de logiciels comprenant, mais sans s'y limiter :"
+        ],
+        "bullets": [
+          "Développement web full-stack (React, Next.js, Node.js, Express, MongoDB)",
+          "Développement frontend avec des frameworks modernes et un design réactif",
+          "Développement backend et intégrations d'API",
+          "Conseil en systèmes d'entreprise et développement SAP/ABAP",
+          "Solutions de commerce électronique et intégrations de paiement (Stripe, PayPal)",
+          "Conseil en projet, conception d'architecture et optimisation de code",
+          "Solutions logicielles personnalisées adaptées aux exigences du client"
+        ]
+      },
+      {
+        "heading": "2. Processus d'engagement du projet",
+        "bullets": [
+          "Consultation initiale : les clients soumettent des demandes via mon formulaire de contact. Je réponds dans les 2 jours ouvrables avec des commentaires préliminaires.",
+          "Proposition de projet : Après consultation, je fournis une proposition détaillée comprenant la portée, le calendrier (1 semaine à 6 mois), les livrables et les prix.",
+          "Accord : les projets démarrent dès l'acceptation écrite de la proposition et la réception de l'acompte convenu (généralement 30 à 50 %).",
+          "Développement : je travaille selon des étapes convenues avec des mises à jour régulières des progrès et des séances de feedback client.",
+          "Livraison et tests : les livrables finaux sont soumis à l'examen du client. Je propose une période de test de 7 à 14 jours en fonction de la complexité du projet.",
+          "Paiement final et lancement : Après approbation du client, le paiement final est dû avant le lancement ou la remise du projet."
+        ]
+      },
+      {
+        "heading": "3. Tarifs et conditions de paiement",
+        "bullets": [
+          "Prix ​​du projet : tous les prix sont indiqués en euros (EUR) et incluent la TVA allemande (19 %) le cas échéant.",
+          "Remises de parrainage : les clients peuvent bénéficier de mon programme de parrainage offrant des remises de 3 %, 6 % ou 9 % en fonction du niveau de parrainage.",
+          "Calendrier de paiement : Les conditions de paiement standard sont de 50 % à l'avance, 50 % à la fin. Pour les projets de plus de 3 mois, des paiements par étapes s'appliquent.",
+          "Modes de paiement : J'accepte les virements bancaires (SEPA), PayPal et d'autres méthodes spécifiées dans les factures individuelles.",
+          "Retard de paiement : Les factures sont payables dans les 14 jours. Les paiements tardifs entraînent des intérêts de 5 % au-dessus du taux de base (§ 288 BGB).",
+          "Coûts supplémentaires : les coûts des services tiers (hébergement, API, outils premium) sont facturés séparément, sauf s'ils sont inclus dans le devis du projet."
+        ]
+      },
+      {
+        "heading": "4. Obligations du Client",
+        "bullets": [
+          "Informations en temps opportun : les clients doivent fournir toutes les informations nécessaires, les informations d'identification et le matériel dans les délais convenus.",
+          "Commentaires et approbations : les clients doivent examiner les livrables et fournir des commentaires dans les délais convenus (généralement 5 à 7 jours ouvrables).",
+          "Responsabilité du contenu : les clients sont responsables de la légalité de tous les contenus, textes, images et documents qu'ils fournissent.",
+          "Coopération : Les clients doivent désigner une personne de contact autorisée à prendre des décisions et à fournir des réponses en temps opportun.",
+          "Services tiers : les clients sont responsables de la maintenance des licences, des abonnements et des comptes pour les services tiers qu'ils utilisent."
+        ]
+      },
+      {
+        "heading": "5. Calendrier et retards du projet",
+        "bullets": [
+          "Délais estimés : toutes les estimations de durée du projet (1 semaine à 6 mois) sont des projections au mieux basées sur la portée convenue.",
+          "Retards causés par le client : les retards dus à des commentaires tardifs de clients, à des matériaux manquants ou à des modifications de la portée prolongent les délais proportionnellement sans affecter mes obligations.",
+          "Force Majeure : Je ne suis pas responsable des retards causés par des événements échappant à mon contrôle raisonnable (pannes techniques, pannes de services tiers, catastrophes naturelles).",
+          "Prolongations du calendrier : des modifications importantes de la portée peuvent nécessiter une renégociation du calendrier et des frais supplémentaires."
+        ]
+      },
+      {
+        "heading": "6. Modifications et travaux supplémentaires",
+        "bullets": [
+          "Modifications de la portée : les modifications apportées à la portée du projet convenue nécessitent une approbation écrite et peuvent entraîner des coûts supplémentaires et des prolongations de délai.",
+          "Demandes de modification : des modifications mineures pendant le développement sont prises en compte lorsque cela est raisonnable. Les changements majeurs sont cités séparément.",
+          "Fonctionnalités supplémentaires : les fonctionnalités non incluses dans la portée d'origine sont facturées comme travail supplémentaire à notre taux horaire standard ou à une tarification basée sur le projet.",
+          "Approbation du client : tous les changements importants doivent être approuvés par écrit par le client avant leur mise en œuvre."
+        ]
+      },
+      {
+        "heading": "7. Droits de propriété intellectuelle",
+        "bullets": [
+          "Code personnalisé : après paiement intégral, les clients deviennent propriétaires du code personnalisé développé spécifiquement pour leur projet.",
+          "Licence d'utilisation : les clients reçoivent une licence perpétuelle et mondiale pour utiliser tout le travail livré à leurs fins commerciales.",
+          "Droits conservés : je conserve les droits sur : (a) les bibliothèques et cadres de code réutilisables, (b) les méthodologies et techniques générales, (c) ma propre propriété intellectuelle préexistante.",
+          "Composants tiers : les composants open source et les bibliothèques tierces restent soumis à leurs licences respectives.",
+          "Utilisation du portfolio : comme indiqué dans ma politique de confidentialité, je peux présenter le travail d'un projet avec le consentement du client. Les clients peuvent demander la suppression à tout moment.",
+          "Confidentialité : je maintiens la confidentialité des informations commerciales des clients et je ne divulgue pas de code propriétaire ou de données sensibles sans autorisation."
+        ]
+      },
+      {
+        "heading": "8. Assurance qualité et tests",
+        "bullets": [
+          "Normes de qualité : tous les livrables répondent aux normes professionnelles de l’industrie et aux spécifications convenues.",
+          "Compatibilité des navigateurs : les projets Web sont testés sur les principaux navigateurs (Chrome, Firefox, Safari, Edge) dans leurs versions majeures actuelles et précédentes.",
+          "Conception réactive : les projets incluent une conception réactive pour les ordinateurs de bureau, les tablettes et les appareils mobiles, sauf exclusion explicite.",
+          "Période de test : les clients disposent de 7 à 14 jours après la livraison pour signaler les problèmes. Je corrige les bugs et erreurs découverts pendant cette période sans frais supplémentaires.",
+          "Corrections de bogues : les bogues critiques affectant les fonctionnalités de base sont prioritaires. Les problèmes mineurs d’interface utilisateur sont résolus en fonction de la disponibilité."
+        ]
+      },
+      {
+        "heading": "9. Garanties et limitations",
+        "bullets": [
+          "Garantie fonctionnelle : je garantis que le travail livré fonctionnera essentiellement comme décrit dans la documentation du projet pendant 30 jours après la livraison.",
+          "Aucune garantie de résultats commerciaux : je ne garantis pas les résultats commerciaux, les revenus, le trafic, les conversions ou les classements SEO spécifiques.",
+          "Services tiers : je ne suis pas responsable des pannes, des modifications ou de l'arrêt des services tiers (API, hébergement, processeurs de paiement).",
+          "Modifications du navigateur/de la plate-forme : je ne suis pas responsable des modifications de fonctionnalités dues aux mises à jour du navigateur, aux modifications de la plate-forme ou à la dépréciation des technologies.",
+          "Modifications du client : la garantie devient nulle si les clients modifient le code livré sans ma consultation."
+        ]
+      },
+      {
+        "heading": "10. Assistance et maintenance",
+        "bullets": [
+          "Assistance initiale : 30 jours d'assistance par e-mail sont inclus après la livraison pour les questions et les ajustements mineurs.",
+          "Support étendu : la maintenance continue, la gestion de l'hébergement et les mises à jour des fonctionnalités sont disponibles via des accords de maintenance distincts.",
+          "Délais de réponse : les demandes d’assistance sont accusées dans un délai de 1 à 2 jours ouvrables. Le temps de résolution dépend de la complexité du problème.",
+          "Frais distincts : l'assistance au-delà de la période initiale de 30 jours est facturée à l'heure ou via des forfaits de maintenance mensuels."
+        ]
+      },
+      {
+        "heading": "11. Responsabilité et indemnisation",
+        "bullets": [
+          "Plafond de responsabilité : Ma responsabilité totale pour toute réclamation découlant d'un projet est limitée au total des frais payés pour ce projet.",
+          "Exclusions : Je ne suis pas responsable des dommages indirects, consécutifs ou spéciaux, notamment la perte de profits, la perte de données ou l'interruption des activités.",
+          "Indemnisation du client : les clients m'indemnisent contre les réclamations découlant de : (a) le contenu qu'ils fournissent, (b) leur utilisation du travail livré, (c) la violation des droits de tiers, (d) le non-respect des lois applicables.",
+          "Loi allemande : la responsabilité maximale suit les limites légales allemandes (§ 521 BGB pour les éléments cadeaux, § 619a BGB pour les contrats de services)."
+        ]
+      },
+      {
+        "heading": "12. Confidentialité et protection des données",
+        "bullets": [
+          "Informations confidentielles : les deux parties conviennent de garder strictement confidentielles les informations confidentielles échangées au cours du projet.",
+          "Protection des données : le traitement des données personnelles suit ma politique de confidentialité et les exigences du RGPD.",
+          "Mesures de sécurité : je mets en œuvre des mesures de sécurité standard de l'industrie pour protéger les données des clients et le matériel du projet.",
+          "Conservation des données : les fichiers et communications du projet sont conservés pendant 3 ans après l'achèvement du projet à des fins juridiques et de garantie."
+        ]
+      },
+      {
+        "heading": "13. Résiliation et annulation",
+        "bullets": [
+          "Résiliation du client : les clients peuvent mettre fin aux projets avec un préavis écrit de 14 jours. Les travaux terminés jusqu'à la date de résiliation doivent être payés en totalité.",
+          "Résiliation du fournisseur de services : je peux mettre fin à des projets si : (a) le client ne respecte pas les conditions de paiement, (b) le client ne remplit pas ses obligations, (c) le projet devient irréalisable.",
+          "Résiliation mutuelle : les projets peuvent être résiliés par accord écrit mutuel avec règlement équitable des travaux terminés.",
+          "Effet de la résiliation : En cas de résiliation, les clients reçoivent tous les livrables de travail terminés et paient pour le travail terminé à ce jour.",
+          "Remboursements : les paiements anticipés ne sont pas remboursables, sauf si je ne parviens pas à fournir les services convenus ou si je résilie sans motif."
+        ]
+      },
+      {
+        "heading": "14. Résolution des litiges",
+        "bullets": [
+          "Négociation de bonne foi : les parties conviennent de tenter dans un premier temps de résoudre le problème par le biais de négociations de bonne foi.",
+          "Médiation : si la négociation échoue, les parties conviennent de tenter une médiation avant d'engager une action en justice.",
+          "Loi applicable : les présentes conditions sont régies par le droit allemand, à l'exclusion du droit des ventes des Nations Unies (CISG).",
+          "Juridiction : Les tribunaux d'Offenburg, en Allemagne (le plus proche de 77880 Sasbach), sont seuls compétents.",
+          "Langue : En cas de litige, la version allemande des présentes conditions prévaut."
+        ]
+      },
+      {
+        "heading": "15. Dispositions générales",
+        "bullets": [
+          "Intégralité de l'accord : les présentes conditions, ainsi que les accords de projet individuels, constituent l'intégralité de l'accord entre les parties.",
+          "Modifications : les modifications apportées à ces conditions nécessitent un accord écrit. Les modifications spécifiques au projet n'affectent pas les présentes conditions générales.",
+          "Divisibilité : si une disposition s'avère inapplicable, les dispositions restantes restent pleinement en vigueur.",
+          "Cession : les clients ne peuvent pas céder les accords de projet sans notre consentement écrit. Nous pouvons céder avec un préavis raisonnable.",
+          "Force Majeure : Aucune des parties n'est responsable de l'inexécution due à des circonstances échappant à un contrôle raisonnable.",
+          "Survie : les dispositions concernant la propriété intellectuelle, la confidentialité, le paiement et la responsabilité survivent à l'achèvement ou à la résiliation du projet."
+        ]
+      },
+      {
+        "heading": "16. Conditions du programme de parrainage",
+        "bullets": [
+          "Éligibilité : Les clients qui parrainent de nouveaux clients bénéficient de réductions sur leurs propres projets : 3 % (1er parrainage), 6 % (2e), 9 % (3e+).",
+          "Références valides : les références doivent aboutir à des projets rémunérés terminés. Les réductions s'appliquent sur le prochain projet du client référent.",
+          "Aucune valeur monétaire : les remises de parrainage n'ont aucune valeur monétaire et ne peuvent pas être transférées ou combinées avec d'autres promotions.",
+          "Modifications du programme : je me réserve le droit de modifier ou de mettre fin au programme de parrainage avec un préavis de 30 jours aux participants actifs."
+        ]
+      }
+    ],
+    "contactHeading": "Des questions sur ces Conditions ?",
+    "contactDetails": [
+      "Ramazan Yildirim",
+      "Services de développement de logiciels",
+      "Adresse : Hebelstraße 1, 77880 Sasbach, Allemagne",
+      "Courriel : aliramazanyildirim@gmail.com",
+      "Téléphone : +49 151 67145187"
+    ],
+    "note": "Ces conditions sont fournies en anglais, allemand et turc. En cas de divergences, la version allemande prévaut pour les clients en Allemagne/UE, sous réserve des lois obligatoires sur la protection des consommateurs."
+  } as const,
 } as const;
 
 export type TermsDictionary = (typeof termsTranslations)[keyof typeof termsTranslations];

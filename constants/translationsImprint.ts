@@ -1,7 +1,7 @@
 // Impressum translations for legal compliance (TMG §5 / DDG)
 // SEO-optimized with structured data support
 
-export const imprintTranslations = {
+const baseImprintTranslations = {
     en: {
         title: "Legal Notice (Impressum)",
         lastUpdated: "Last updated: February 4, 2026",
@@ -362,6 +362,130 @@ export const imprintTranslations = {
             worksFor: "Serbest Meslek",
         },
     },
+} as const;
+
+export const imprintTranslations = {
+    ...baseImprintTranslations,
+    fr: {
+      "title": "Mentions légales (Impressum)",
+      "lastUpdated": "Dernière mise à jour : 4 février 2026",
+      "meta": {
+        "title": "Mentions légales | Ali Ramazan Yildirim - Développement de logiciels",
+        "description": "Mentions légales et informations sur la société Ali Ramazan Yildirim Software Development Services à Sasbach, Allemagne. Coordonnées, informations fiscales et informations légales."
+      },
+      "sections": {
+        "provider": {
+          "heading": "Informations selon § 5 DDG",
+          "subheading": "Fournisseur de services",
+          "content": {
+            "name": "Ali Ramazan Yildirim",
+            "profession": "Services de développement de logiciels et de développement Web",
+            "street": "Hebelstraße 1",
+            "city": "77880 Sasbach",
+            "country": "Allemagne"
+          }
+        },
+        "contact": {
+          "heading": "Contact",
+          "phone": {
+            "label": "Téléphone",
+            "value": "+49 151 67145187"
+          },
+          "email": {
+            "label": "E-mail",
+            "value": "aliramazanyildirim@gmail.com"
+          },
+          "website": {
+            "label": "Site web",
+            "value": "www.arytechsolutions.com"
+          },
+          "availability": "Disponible du lundi au vendredi • de 09h00 à 17h00 CET"
+        },
+        "tax": {
+          "heading": "Informations fiscales",
+          "vatId": {
+            "label": "Numéro de TVA (USt-IdNr.)",
+            "value": "DEXXXXXXXXX",
+            "note": "Numéro d'identification TVA selon § 27a UStG"
+          },
+          "taxNumber": {
+            "label": "Numéro fiscal",
+            "value": "XX/XXX/XXXXX",
+            "office": "Bureau des impôts d'Achern"
+          }
+        },
+        "registration": {
+          "heading": "Informations professionnelles",
+          "activity": {
+            "label": "Activité commerciale",
+            "value": "Services indépendants de développement de logiciels et de conseil informatique"
+          },
+          "authority": {
+            "label": "Autorité de surveillance",
+            "value": "Sans objet (exonéré de l'obligation d'autorisation commerciale selon § 18 EStG en tant qu'activité indépendante)"
+          }
+        },
+        "insurance": {
+          "heading": "Assurance responsabilité professionnelle",
+          "provider": {
+            "label": "Fournisseur d'assurance",
+            "value": "Allianz Versicherung AG"
+          },
+          "address": {
+            "label": "Adresse",
+            "value": "Königinstraße 28, 80802 Munich, Allemagne"
+          },
+          "coverage": {
+            "label": "Couverture géographique",
+            "value": "Mondial"
+          }
+        },
+        "responsible": {
+          "heading": "Responsable du contenu",
+          "note": "Selon le § 18 Abs. 2 MStV",
+          "name": "Ali Ramazan Yildirim",
+          "address": "Hebelstraße 1, 77880 Sasbach, Allemagne"
+        },
+        "dispute": {
+          "heading": "Résolution des litiges dans l'UE",
+          "intro": "La Commission européenne propose une plateforme de résolution des litiges en ligne (RLL) :",
+          "link": "https://ec.europa.eu/consumers/odr/",
+          "note": "Notre adresse e-mail se trouve dans la section contact ci-dessus.",
+          "participation": "Nous ne sommes ni disposés ni obligés de participer à une procédure de règlement des litiges devant un conseil d'arbitrage des consommateurs."
+        },
+        "liability": {
+          "heading": "Clause de non-responsabilité",
+          "content": {
+            "heading": "Responsabilité du contenu",
+            "text": "En tant que prestataire de services, nous sommes responsables de notre propre contenu sur ces pages conformément au § 7 Abs.1 DDG du droit général. Conformément aux §§ 8 à 10 DDG, nous ne sommes toutefois pas obligés, en tant que prestataire de services, de surveiller les informations de tiers transmises ou stockées ou d'enquêter sur les circonstances indiquant une activité illégale. Les obligations de supprimer ou de bloquer l'utilisation des informations conformément aux lois générales restent inchangées. Toutefois, la responsabilité à cet égard n'est possible qu'à partir du moment où l'on a connaissance d'une violation concrète de la loi. Dès que nous aurons connaissance de violations légales correspondantes, nous supprimerons immédiatement ce contenu."
+          },
+          "links": {
+            "heading": "Responsabilité pour les liens",
+            "text": "Notre site Internet contient des liens vers des sites Internet de tiers externes sur le contenu desquels nous n'avons aucune influence. Par conséquent, nous ne pouvons accepter aucune responsabilité pour ce contenu externe. Le fournisseur ou l'exploitant respectif des pages est toujours responsable du contenu des pages liées. Les pages liées ont été vérifiées au moment de la création du lien pour détecter d'éventuelles violations de la loi. Le contenu illégal n'était pas reconnaissable au moment de la création du lien. Toutefois, un contrôle permanent du contenu des pages liées n'est pas raisonnable sans preuves concrètes d'une violation de la loi. Dès que nous aurons connaissance de violations légales, nous supprimerons immédiatement ces liens."
+          },
+          "copyright": {
+            "heading": "Droit d'auteur",
+            "text": "Les contenus et les œuvres de ces pages créés par l'exploitant du site sont soumis à la loi allemande sur le droit d'auteur. La duplication, le traitement, la distribution et toute forme d'utilisation en dehors des limites du droit d'auteur nécessitent l'accord écrit de l'auteur ou du créateur respectif. Les téléchargements et copies de ce site ne sont autorisés que pour un usage privé et non commercial. Dans la mesure où le contenu de ce site n'a pas été créé par l'exploitant, les droits d'auteur de tiers sont respectés. Les contenus de tiers sont notamment marqués comme tels. Si vous constatez néanmoins une violation du droit d'auteur, veuillez nous en informer. Dès que nous aurons connaissance de violations légales, nous supprimerons immédiatement ce contenu."
+          }
+        },
+        "imageCredits": {
+          "heading": "Crédits images",
+          "intro": "Les images et médias suivants sont utilisés sur ce site Web :",
+          "credits": [
+            "Photos de profil : Photos personnelles d'Ali Ramazan Yildirim",
+            "Icônes : Flaticon.com, sous licence pour un usage commercial",
+            "Logos des partenaires : utilisés avec l'autorisation écrite des partenaires respectifs",
+            "Captures d'écran du projet : Créé par Ali Ramazan Yildirim pour les projets clients avec consentement",
+            "Textures d'arrière-plan : créées par vous-même ou sous licence de fournisseurs de stock premium"
+          ]
+        }
+      },
+      "structuredData": {
+        "type": "Personne",
+        "jobTitle": "Développeur de logiciels Full-Stack",
+        "worksFor": "Travailleur indépendant"
+      }
+    } as const,
 } as const;
 
 export type ImprintDictionary = (typeof imprintTranslations)[keyof typeof imprintTranslations];

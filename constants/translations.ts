@@ -151,7 +151,58 @@ const trSolutions = [
     },
 ];
 
-export const translations = {
+const frSolutions = [
+    {
+        title: "Des sites web qui génèrent des leads",
+        description: "Des pages conçues pour transformer les visiteurs en demandes de contact",
+        icon: "/icons/global.png",
+        alt: "Icône leads site web",
+        slug: "lead-generation-websites",
+        href: "/solutions/lead-generation-websites",
+    },
+    {
+        title: "Des sites plus rapides et mieux référencés",
+        description: "Performance et SEO de base pour être trouvé facilement",
+        icon: "/icons/blitz.png",
+        alt: "Icône performance",
+        slug: "performance-seo",
+        href: "/solutions/performance-seo",
+    },
+    {
+        title: "Mise en place de boutique en ligne",
+        description: "Des e-commerces rapides et faciles à gérer",
+        icon: "/icons/online-store.png",
+        alt: "Icône boutique en ligne",
+        slug: "online-shop-setup",
+        href: "/solutions/online-shop-setup",
+    },
+    {
+        title: "Édition de contenu simplifiée",
+        description: "Un système simple pour mettre à jour votre site facilement",
+        icon: "/icons/browser.png",
+        alt: "Icône gestion de contenu",
+        slug: "content-management",
+        href: "/solutions/content-management",
+    },
+    {
+        title: "Suivez ce qui compte",
+        description: "Des analyses et rapports simples pour comprendre les performances",
+        icon: "/icons/good-feedback.png",
+        alt: "Icône analytics",
+        slug: "analytics-insights",
+        href: "/solutions/analytics-insights",
+    },
+    {
+        title: "Passation et formation de l'équipe",
+        description: "Guides et formation pratique pour rendre l'équipe autonome",
+        icon: "/icons/training.png",
+        alt: "Icône formation",
+        slug: "handover-training",
+        href: "/solutions/handover-training",
+    },
+];
+
+const baseTranslations = {
     en: {
         nav: {
             languageMenu: {
@@ -160,6 +211,7 @@ export const translations = {
                     en: "English",
                     de: "Deutsch",
                     tr: "Türkçe",
+                    fr: "Français",
                 },
             },
             aria: {
@@ -390,6 +442,7 @@ export const translations = {
                     en: "Englisch",
                     de: "Deutsch",
                     tr: "Türkisch",
+                    fr: "Französisch",
                 },
             },
             aria: {
@@ -618,6 +671,7 @@ export const translations = {
                     en: "İngilizce",
                     de: "Almanca",
                     tr: "Türkçe",
+                    fr: "Fransızca",
                 },
             },
             aria: {
@@ -833,6 +887,239 @@ export const translations = {
                 checkingSession: "Oturum kontrol ediliyor...",
                 footerNote: "Sadece yetkili yöneticiler için",
                 backToHome: "Ana sayfaya dön",
+            },
+        },
+    },
+} as const;
+
+export const translations = {
+    ...baseTranslations,
+    fr: {
+        nav: {
+            languageMenu: {
+                label: "Langue",
+                languages: {
+                    en: "Anglais",
+                    de: "Allemand",
+                    tr: "Turc",
+                    fr: "Français",
+                },
+            },
+            aria: {
+                toggle: "Basculer le menu",
+                close: "Fermer le menu",
+                language: "Choisir la langue",
+            },
+            items: [
+                {
+                    title: "<Solutions>",
+                    submenu: frSolutions,
+                },
+                { title: "<À propos>", path: "/about" },
+                { title: "<Projets>", path: "/projects" },
+                { title: "<Contact>", path: "/#contact" },
+                {
+                    title: "<Blog>",
+                    path: "https://medium.com/@aliramazanyildirim",
+                    external: true,
+                },
+                { title: "<Admin>", path: "/admin/login" },
+            ],
+            solutions: {
+                label: "Solutions",
+                items: frSolutions,
+            },
+        },
+        footer: {
+            copyright: "© 2026. Ali Ramazan Yildirim",
+            socialAriaPrefix: "Aller vers",
+            scrollTopAria: "Remonter en haut",
+            privacyLink: "Politique de confidentialité",
+            privacyAria: "Ouvrir la page de politique de confidentialité",
+            termsLink: "Conditions générales",
+            termsAria: "Ouvrir la page des conditions générales",
+            imprintLink: "Mentions légales",
+            imprintAria: "Ouvrir la page des mentions légales",
+        },
+        littleAbout: {
+            heading: "Un Peu Sur Moi -",
+            paragraphOne:
+                "Je suis développeur logiciel full-stack avec une solide expérience des technologies web modernes telles que JavaScript, Node.js, Next.js, React, Blazor et .NET Core. Grâce à mes projets e-commerce, microservices et applications de blog, j'ai développé une forte orientation vers les architectures logicielles évolutives et les meilleures pratiques. Mon parcours couvre le développement concret, la résolution de problèmes et l'optimisation des performances des applications web.",
+            paragraphTwo:
+                "JavaScript, C#, TypeScript, React et Next.js — créer des solutions concrètes grâce à la technologie. J'aime travailler dans des environnements collaboratifs, progresser en continu et livrer des résultats utiles.",
+            cta: "(En savoir plus sur moi)",
+        },
+        littleProjects: {
+            heading: "MES PROJETS",
+            loadingTitle: "MES PROJETS",
+            featuredBadge: "Projet vedette",
+            emptyTitle: "Aucun projet pour le moment",
+            emptyDescription:
+                "Cliquez sur le bouton ci-dessus pour ajouter votre premier projet.",
+            showAll: "Voir tous les projets",
+            loadingMessage: "Chargement des projets...",
+            mobileShowcase: {
+                featured: "Vedette",
+            },
+        },
+        partners: {
+            strapline: "Plus forts ensemble",
+            heading: "Mes partenaires",
+        },
+        googleRatings: {
+            heading: "Approuvé par des entreprises",
+            subheading: "Découvrez ce que mes clients pensent de mes services",
+            verified: "Vérifié sur Google",
+            reviews: "avis",
+            testimonials: "Témoignages",
+            averageRating: "Note moyenne",
+            positiveReviews: "Avis positifs",
+            seeMore: "Voir tous les avis sur Google",
+        },
+        contact: {
+            headingLineOne: "Parlez-moi de votre idée ;",
+            headingLineTwo: "je construis l'effet waouh.",
+            placeholders: {
+                name: "Nom",
+                email: "E-mail",
+                message: "Message",
+            },
+            submit: "Envoyer le message",
+            success: "Votre message a été envoyé avec succès. Merci !",
+            toastSending: "Envoi du message...",
+            toastSuccess: "Message envoyé avec succès.",
+            toastEmailError:
+                "Impossible d'envoyer l'e-mail de notification, mais le message a bien été enregistré.",
+            toastErrorFallback:
+                "Une erreur est survenue. Veuillez réessayer plus tard.",
+        },
+        contactInfo: {
+            badge: "Ligne directe",
+            availability: "Disponible lun-ven • 09:00–17:00 CET",
+        },
+        aboutPage: {
+            headline: [
+                "MI-TEMPS",
+                "CAFÉ TURC,",
+                "PLEIN TEMPS",
+                "CODAGE !",
+            ],
+            quote:
+                "\"En grandissant avec une passion pour la technologie, j'ai toujours vu le développement logiciel comme le reflet d'un monde numérique en évolution rapide, dynamique et plein de possibilités. Tout comme l'innovation fait avancer le progrès, coder c'est s'adapter, résoudre des problèmes et créer des solutions durables. Chaque défi est une opportunité de grandir, chaque obstacle une leçon et chaque réussite un nouveau jalon. Je suis enthousiaste à l'idée de continuer à apprendre, créer et façonner le monde numérique, une ligne de code à la fois.\"",
+            sectionHeading: "-Mais il y a encore plus à découvrir",
+            interests: [
+                {
+                    icon: "/icons/coffee.svg",
+                    alt: "Icône café",
+                    title: "Passionné de café",
+                    description:
+                        "Je suis amateur de thé et j'adore savourer du thé turc et du café menengiç dans chaque café chaleureux et salon de thé traditionnel que je découvre.",
+                },
+                {
+                    icon: "/icons/lego.svg",
+                    alt: "Icône Lego",
+                    title: "Passionné de vélo et de robotique",
+                    description:
+                        "Quand je ne bois pas de thé, vous me trouverez probablement à vélo en ville ou en train de construire des créations robotiques en LEGO.",
+                },
+                {
+                    icon: "/icons/compass.svg",
+                    alt: "Icône boussole",
+                    title: "Explorateur dans l'âme",
+                    description:
+                        "Pendant mon temps libre, j'aime explorer la nature, découvrir des sentiers cachés et de beaux panoramas. Chaque sortie est une aventure, et j'aime toujours goûter de nouvelles saveurs !",
+                },
+            ],
+        },
+        projectsPage: {
+            heading: "Projets",
+            projectLabelSingular: "Projet",
+            projectLabelPlural: "projets",
+            projectsLoading: "Chargement des projets...",
+            retry: "Réessayer",
+            featured: "Vedette",
+            noneTitle: "Aucun projet pour le moment",
+            noneDescription:
+                "Cliquez sur le bouton ci-dessus pour ajouter votre premier projet.",
+            paginationInfo: {
+                pageLabel: "Page",
+                separator: "/",
+            },
+            resultsSuffix: "trouvés",
+            loadError: "Échec du chargement des projets.",
+            connectionError: "Erreur de connexion pendant le chargement des projets.",
+        },
+        projectDetail: {
+            loading: "Chargement du projet...",
+            notFoundTitle: "Projet introuvable",
+            notFoundAction: "Retour aux projets",
+            featuredBadge: "Projet vedette",
+            aboutHeading: "À propos du projet",
+            role: "Rôle",
+            duration: "Durée",
+            category: "Catégorie",
+            galleryHeading: "Galerie du projet",
+            technologiesHeading: "Technologies utilisées",
+            tagsHeading: "Tags",
+            previous: "Précédent",
+            next: "Suivant",
+            indexFallback: "Projets",
+            authorPrefix: "par",
+            dateLocale: "fr-FR",
+            loadError: "Une erreur est survenue pendant le chargement du projet.",
+            durationLabels: {
+                "1 Week": "1 semaine",
+                "2 Weeks": "2 semaines",
+                "3 Weeks": "3 semaines",
+                "4 Weeks": "4 semaines",
+                "1 Month": "1 mois",
+                "2 Months": "2 mois",
+                "3 Months": "3 mois",
+                "4 Months": "4 mois",
+                "5 Months": "5 mois",
+                "6 Months": "6 mois",
+            },
+            roleLabels: {
+                "Full Stack Developer": "Développeur full-stack",
+                Developer: "Développeur",
+                Designer: "Designer",
+                "Project Manager": "Chef de projet",
+            },
+            categoryLabels: {
+                "Web Development": "Développement web",
+                "Mobile App Development": "Développement mobile",
+                "UI/UX Design": "Design UI/UX",
+                "E-Commerce": "E-commerce",
+                Consulting: "Conseil",
+            },
+        },
+        pagination: {
+            nextAria: "Page suivante",
+            prevAria: "Page précédente",
+            info: ({ current, total, start, end, overall }: {
+                current: number;
+                total: number;
+                start: number;
+                end: number;
+                overall: number;
+            }) => `Page ${current} / ${total} (${start}-${end} / ${overall})`,
+        },
+        admin: {
+            login: {
+                title: "Connexion Admin",
+                subtitle: "Connectez-vous pour accéder au panneau d'administration",
+                emailLabel: "Adresse e-mail",
+                passwordLabel: "Mot de passe",
+                emailPlaceholder: "admin@example.com",
+                passwordPlaceholder: "••••••••",
+                signIn: "Se connecter",
+                signingIn: "Connexion en cours...",
+                errorAllFields: "Tous les champs sont obligatoires",
+                errorLoginFailed: "Échec de la connexion",
+                errorConnection: "Erreur de connexion",
+                checkingSession: "Vérification de la session...",
+                footerNote: "Réservé aux administrateurs autorisés",
+                backToHome: "Retour à l'accueil",
             },
         },
     },

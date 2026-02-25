@@ -18,19 +18,21 @@ export function useProjectForm(options?: UseProjectFormOptions) {
   const [description, setDescription] = useState("");
   const [descriptionDE, setDescriptionDE] = useState("");
   const [descriptionTR, setDescriptionTR] = useState("");
+  const [descriptionFR, setDescriptionFR] = useState("");
   const [shortDescription, setShortDescription] = useState("");
   const [techStack, setTechStack] = useState("");
   const [category, setCategory] = useState("");
   const [duration, setDuration] = useState("");
   const [isFeatured, setIsFeatured] = useState(false);
   const [gallery, setGallery] = useState<string[]>([]);
-  const [activeTab, setActiveTab] = useState<"en" | "de" | "tr">("en");
+  const [activeTab, setActiveTab] = useState<"en" | "de" | "tr" | "fr">("en");
 
   const resetForm = useCallback(() => {
     setTitle("");
     setDescription("");
     setDescriptionDE("");
     setDescriptionTR("");
+    setDescriptionFR("");
     setShortDescription("");
     setTechStack("");
     setCategory("");
@@ -53,10 +55,12 @@ export function useProjectForm(options?: UseProjectFormOptions) {
       setDescription(project.description.en || "");
       setDescriptionDE(project.description.de || "");
       setDescriptionTR(project.description.tr || "");
+      setDescriptionFR(project.description.fr || "");
     } else {
       setDescription(project.description || "");
       setDescriptionDE("");
       setDescriptionTR("");
+      setDescriptionFR("");
     }
     setShortDescription(
       typeof project.shortDescription === "string"
@@ -107,6 +111,7 @@ export function useProjectForm(options?: UseProjectFormOptions) {
         en: description,
         de: descriptionDE,
         tr: descriptionTR,
+        fr: descriptionFR,
       },
       role: "Full Stack Developer",
       duration,
@@ -157,6 +162,7 @@ export function useProjectForm(options?: UseProjectFormOptions) {
     description,
     descriptionDE,
     descriptionTR,
+    descriptionFR,
     techStack,
     duration,
     category,
@@ -182,6 +188,7 @@ export function useProjectForm(options?: UseProjectFormOptions) {
     description,
     descriptionDE,
     descriptionTR,
+    descriptionFR,
     shortDescription,
     techStack,
     category,
@@ -195,6 +202,7 @@ export function useProjectForm(options?: UseProjectFormOptions) {
     setDescription,
     setDescriptionDE,
     setDescriptionTR,
+    setDescriptionFR,
     setShortDescription,
     setTechStack,
     setCategory,

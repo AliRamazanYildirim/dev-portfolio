@@ -8,6 +8,44 @@ import { useTranslation } from "@/hooks/useTranslation";
 export default function SolutionsPage() {
   const { language, dictionary } = useTranslation();
   const solutions = dictionary.nav.solutions.items;
+  const copy = {
+    heroTitle: {
+      en: "Solutions Built for Growth",
+      de: "Lösungen für Wachstum",
+      tr: "Büyüme için Çözümler",
+      fr: "Des solutions pour grandir",
+    },
+    heroSubtitle: {
+      en: "From lead generation to team training—everything you need to scale your online presence with confidence.",
+      de: "Von Lead-Generierung bis Team-Schulung – alles, was Sie brauchen, um Ihre Online-Präsenz selbstbewusst zu skalieren.",
+      tr: "Lead üretiminden ekip eğitimine – çevrimiçi varlığınızı güvenle büyütmeniz için gereken her şey.",
+      fr: "De la generation de leads a la formation d equipe: tout ce qu il faut pour faire grandir votre presence en ligne avec confiance.",
+    },
+    learnMore: {
+      en: "Learn more",
+      de: "Mehr erfahren",
+      tr: "Daha fazla",
+      fr: "En savoir plus",
+    },
+    ctaTitle: {
+      en: "Not sure which solution fits?",
+      de: "Unsicher, welche Lösung passt?",
+      tr: "Hangi çözümün uygun olduğundan emin değil misiniz?",
+      fr: "Vous ne savez pas quelle solution choisir ?",
+    },
+    ctaSubtitle: {
+      en: "Book a free 30-minute consultation and we will shape a roadmap that matches your goals.",
+      de: "Buchen Sie ein kostenloses 30-minütiges Gespräch und wir erstellen eine Roadmap passend zu Ihren Zielen.",
+      tr: "Ücretsiz 30 dakikalık bir görüşme ayırtın, hedeflerinize uygun bir yol haritası hazırlayalım.",
+      fr: "Reservez une consultation gratuite de 30 minutes et construisons une feuille de route adaptee a vos objectifs.",
+    },
+    ctaButton: {
+      en: "Book Free Consultation",
+      de: "Kostenlose Beratung buchen",
+      tr: "Ücretsiz görüşme ayırt",
+      fr: "Reserver une consultation gratuite",
+    },
+  } as const;
 
   return (
     <main className="min-h-screen bg-black">
@@ -49,18 +87,11 @@ export default function SolutionsPage() {
             </motion.div>
 
             <h1 className="mb-6 bg-linear-to-r from-white via-zinc-100 to-zinc-400 bg-clip-text text-4xl font-bold text-transparent leading-tight md:text-6xl lg:text-7xl">
-              {language === "en" && "Solutions Built for Growth"}
-              {language === "de" && "Lösungen für Wachstum"}
-              {language === "tr" && "Büyüme için Çözümler"}
+              {copy.heroTitle[language]}
             </h1>
 
             <p className="mx-auto max-w-3xl text-lg leading-relaxed text-zinc-400 md:text-xl lg:text-2xl">
-              {language === "en" &&
-                "From lead generation to team training—everything you need to scale your online presence with confidence."}
-              {language === "de" &&
-                "Von Lead-Generierung bis Team-Schulung – alles, was Sie brauchen, um Ihre Online-Präsenz selbstbewusst zu skalieren."}
-              {language === "tr" &&
-                "Lead üretiminden ekip eğitimine – çevrimiçi varlığınızı güvenle büyütmeniz için gereken her şey."}
+              {copy.heroSubtitle[language]}
             </p>
           </motion.div>
         </div>
@@ -101,11 +132,7 @@ export default function SolutionsPage() {
                     </p>
 
                     <div className="flex items-center gap-2 font-semibold text-[#c58d12] transition-all duration-300 group-hover:gap-3">
-                      <span>
-                        {language === "en" && "Learn more"}
-                        {language === "de" && "Mehr erfahren"}
-                        {language === "tr" && "Daha fazla"}
-                      </span>
+                      <span>{copy.learnMore[language]}</span>
                       <svg
                         className="h-5 w-5"
                         fill="none"
@@ -139,19 +166,11 @@ export default function SolutionsPage() {
             transition={{ duration: 0.8 }}
           >
             <h2 className="mb-6 text-3xl font-bold text-white md:text-5xl">
-              {language === "en" && "Not sure which solution fits?"}
-              {language === "de" && "Unsicher, welche Lösung passt?"}
-              {language === "tr" &&
-                "Hangi çözümün uygun olduğundan emin değil misiniz?"}
+              {copy.ctaTitle[language]}
             </h2>
 
             <p className="mx-auto mb-10 max-w-2xl text-lg text-zinc-400 md:text-xl">
-              {language === "en" &&
-                "Book a free 30-minute consultation and we will shape a roadmap that matches your goals."}
-              {language === "de" &&
-                "Buchen Sie ein kostenloses 30-minütiges Gespräch und wir erstellen eine Roadmap passend zu Ihren Zielen."}
-              {language === "tr" &&
-                "Ücretsiz 30 dakikalık bir görüşme ayırtın, hedeflerinize uygun bir yol haritası hazırlayalım."}
+              {copy.ctaSubtitle[language]}
             </p>
 
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
@@ -159,11 +178,7 @@ export default function SolutionsPage() {
                 href="/#contact"
                 className="inline-flex items-center gap-3 rounded-xl bg-linear-to-r from-[#c58d12] to-[#d4a24a] px-10 py-5 text-lg font-bold text-black shadow-[0_0_50px_rgba(197,141,18,0.4)] transition-all duration-300 hover:from-[#d4a24a] hover:to-[#c58d12] hover:shadow-[0_0_80px_rgba(197,141,18,0.6)]"
               >
-                <span>
-                  {language === "en" && "Book Free Consultation"}
-                  {language === "de" && "Kostenlose Beratung buchen"}
-                  {language === "tr" && "Ücretsiz görüşme ayırt"}
-                </span>
+                <span>{copy.ctaButton[language]}</span>
                 <svg
                   className="h-6 w-6"
                   fill="none"

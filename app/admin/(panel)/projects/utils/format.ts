@@ -41,7 +41,11 @@ const parseDescription = (description?: ProjectDescription | string | null) => {
   }
 
   const summary =
-    description.en || description.de || description.tr || FALLBACK_DESCRIPTION;
+    description.en ||
+    description.fr ||
+    description.de ||
+    description.tr ||
+    FALLBACK_DESCRIPTION;
 
   return { object: description, summary };
 };
@@ -75,7 +79,7 @@ export const getDescriptionText = (
   if (!description) return "";
   if (typeof description === "string") return description;
   if (typeof description === "object") {
-    return description.en || description.de || description.tr || "";
+    return description.en || description.fr || description.de || description.tr || "";
   }
   return String(description);
 };

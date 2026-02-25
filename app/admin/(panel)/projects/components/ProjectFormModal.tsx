@@ -10,12 +10,13 @@ interface ProjectFormValues {
   description: string;
   descriptionDE: string;
   descriptionTR: string;
+  descriptionFR: string;
   techStack: string;
   category: string;
   duration: string;
   isFeatured: boolean;
   gallery: string[];
-  activeTab: "en" | "de" | "tr";
+  activeTab: "en" | "de" | "tr" | "fr";
 }
 
 interface ProjectFormHandlers {
@@ -24,11 +25,12 @@ interface ProjectFormHandlers {
   setDescription: (value: string) => void;
   setDescriptionDE: (value: string) => void;
   setDescriptionTR: (value: string) => void;
+  setDescriptionFR: (value: string) => void;
   setTechStack: (value: string) => void;
   setCategory: (value: string) => void;
   setDuration: (value: string) => void;
   setIsFeatured: (value: boolean) => void;
-  setActiveTab: (tab: "en" | "de" | "tr") => void;
+  setActiveTab: (tab: "en" | "de" | "tr" | "fr") => void;
   addGalleryImage: (url: string) => void;
   removeGalleryImage: (index: number) => void;
 }
@@ -58,6 +60,7 @@ export function ProjectFormModal({
     description,
     descriptionDE,
     descriptionTR,
+    descriptionFR,
     techStack,
     category,
     duration,
@@ -72,6 +75,7 @@ export function ProjectFormModal({
     setDescription,
     setDescriptionDE,
     setDescriptionTR,
+    setDescriptionFR,
     setTechStack,
     setCategory,
     setDuration,
@@ -182,6 +186,17 @@ export function ProjectFormModal({
                   >
                     🇹🇷 TR
                   </button>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab("fr")}
+                    className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                      activeTab === "fr"
+                        ? "bg-[#131313] text-white"
+                        : "bg-white/50 text-[#131313] hover:bg-white/80"
+                    }`}
+                  >
+                    🇫🇷 FR
+                  </button>
                 </div>
 
                 {activeTab === "en" && (
@@ -209,6 +224,16 @@ export function ProjectFormModal({
                     placeholder="Proje hakkında detaylı bilgi (Türkçe)..."
                     value={descriptionTR}
                     onChange={(event) => setDescriptionTR(event.target.value)}
+                    rows={4}
+                    className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl text-[#131313] placeholder:text-[#131313]/60 focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content resize-none text-sm sm:text-base"
+                  />
+                )}
+
+                {activeTab === "fr" && (
+                  <textarea
+                    placeholder="Fournissez des informations detaillees sur votre projet (Francais)..."
+                    value={descriptionFR}
+                    onChange={(event) => setDescriptionFR(event.target.value)}
                     rows={4}
                     className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-white/80 border border-[#131313]/20 rounded-xl text-[#131313] placeholder:text-[#131313]/60 focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content resize-none text-sm sm:text-base"
                   />

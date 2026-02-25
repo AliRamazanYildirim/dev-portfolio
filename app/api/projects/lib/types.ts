@@ -6,6 +6,7 @@ export interface ProjectDescription {
     en: string;
     de: string;
     tr: string;
+    fr: string;
 }
 
 export interface CreateProjectInput {
