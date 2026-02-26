@@ -49,10 +49,10 @@ export default function PricingTiers({
             </div>
           </motion.div>
 
-          <h2 className="bg-linear-to-r from-white via-zinc-100 to-zinc-400 bg-clip-text text-4xl font-bold text-transparent md:text-6xl">
+          <h2 className="bg-linear-to-r from-zinc-900 via-zinc-800 to-zinc-700 dark:from-white dark:via-zinc-100 dark:to-zinc-400 bg-clip-text text-4xl font-bold text-transparent md:text-6xl">
             Investment Options
           </h2>
-          <p className="mx-auto mt-6 max-w-2xl text-lg text-zinc-400">
+          <p className="mx-auto mt-6 max-w-2xl text-lg text-zinc-500 dark:text-zinc-400">
             Choose the package that matches your roadmap. Every tier includes
             regular status updates and a production-ready launch.
           </p>
@@ -94,7 +94,7 @@ export default function PricingTiers({
                   className={`relative h-full rounded-3xl border-2 p-8 transition-all duration-500 backdrop-blur-xl lg:p-10 ${
                     isHighlighted
                       ? "border-[#c58d12]/60 bg-linear-to-br from-zinc-900/95 via-black/90 to-zinc-900/95 shadow-[0_0_60px_rgba(197,141,18,0.45)]"
-                      : "border-zinc-800/60 bg-linear-to-br from-zinc-900/70 to-black/70 hover:border-[#c58d12]/40 hover:shadow-[0_0_40px_rgba(197,141,18,0.25)]"
+                      : "border-zinc-200 dark:border-zinc-800/60 bg-white dark:bg-linear-to-br dark:from-zinc-900/70 dark:to-black/70 hover:border-[#c58d12]/40 hover:shadow-[0_0_40px_rgba(197,141,18,0.25)]"
                   } ${hoveredIndex === index ? "-translate-y-2 scale-[1.02]" : ""}`}
                 >
                   {tier.badge && (
@@ -120,23 +120,27 @@ export default function PricingTiers({
 
                   <div className="relative z-10 mb-8">
                     <h3
-                      className={`text-2xl font-bold md:text-3xl ${isHighlighted ? "text-[#c58d12]" : "text-white"}`}
+                      className={`text-2xl font-bold md:text-3xl ${isHighlighted ? "text-[#c58d12]" : "text-zinc-800 dark:text-white"}`}
                     >
                       {tier.name}
                     </h3>
-                    <p className="mt-2 text-sm leading-relaxed text-zinc-400">
+                    <p className="mt-2 text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">
                       {tier.description}
                     </p>
                   </div>
 
-                  <div className="relative z-10 mb-10 border-b border-zinc-800/50 pb-10">
+                  <div className={`relative z-10 mb-10 border-b pb-10 ${isHighlighted ? "border-zinc-700/50" : "border-zinc-400 dark:border-zinc-800/50"}`}>
                     <div className="flex items-baseline gap-3">
-                      <span className="bg-linear-to-r from-white via-zinc-100 to-zinc-300 bg-clip-text text-5xl font-bold text-transparent md:text-6xl">
+                      <span className={`bg-clip-text text-5xl font-bold text-transparent md:text-6xl ${
+                        isHighlighted
+                          ? "bg-linear-to-r from-white via-zinc-100 to-zinc-300"
+                          : "bg-linear-to-r from-zinc-900 via-zinc-800 to-zinc-700 dark:from-white dark:via-zinc-100 dark:to-zinc-300"
+                      }`}>
                         {currency}
                         {tier.price}
                       </span>
                     </div>
-                    <p className="mt-3 flex items-center gap-2 text-sm text-zinc-400">
+                    <p className={`mt-3 flex items-center gap-2 text-sm ${isHighlighted ? "text-zinc-300" : "text-zinc-500 dark:text-zinc-400"}`}>
                       <svg
                         className="h-5 w-5 text-[#c58d12]"
                         fill="none"
@@ -168,7 +172,7 @@ export default function PricingTiers({
                           className={`mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border text-sm transition ${
                             isHighlighted
                               ? "border-[#c58d12]/50 bg-linear-to-br from-[#c58d12] to-[#d4a24a] text-black"
-                              : "border-zinc-700/60 bg-zinc-800/60 text-zinc-300"
+                              : "border-zinc-200 dark:border-zinc-700/60 bg-zinc-100 dark:bg-zinc-800/60 text-zinc-600 dark:text-zinc-300"
                           } group-hover:scale-110`}
                         >
                           <svg
@@ -186,7 +190,7 @@ export default function PricingTiers({
                           </svg>
                         </div>
                         <span
-                          className={`leading-relaxed transition-colors ${isHighlighted ? "text-zinc-100" : "text-zinc-400"} group-hover:text-white`}
+                          className={`leading-relaxed transition-colors ${isHighlighted ? "text-zinc-100" : "text-zinc-500 dark:text-zinc-400"} group-hover:text-zinc-800 dark:group-hover:text-white`}
                         >
                           {feature}
                         </span>
@@ -211,7 +215,7 @@ export default function PricingTiers({
                       className={`relative block w-full rounded-xl px-6 py-4 text-center text-sm font-bold uppercase tracking-wide transition ${
                         isHighlighted
                           ? "bg-linear-to-r from-[#c58d12] to-[#d4a24a] text-black shadow-[0_0_30px_rgba(197,141,18,0.45)] hover:shadow-[0_0_50px_rgba(197,141,18,0.6)]"
-                          : "border border-zinc-700 bg-linear-to-r from-zinc-800 to-zinc-700 text-white hover:border-[#c58d12]/50 hover:from-[#c58d12]/20 hover:to-[#d4a24a]/20"
+                          : "border border-zinc-400 dark:border-zinc-700 bg-white dark:bg-linear-to-r dark:from-zinc-800 dark:to-zinc-700 text-zinc-800 dark:text-white hover:border-[#c58d12]/50 hover:from-[#c58d12]/20 hover:to-[#d4a24a]/20"
                       }`}
                     >
                       {isHighlighted ? "Start Now" : "Get Started"}
@@ -238,7 +242,7 @@ export default function PricingTiers({
             ].map((item) => (
               <span
                 key={item}
-                className="rounded-full border border-[#c58d12]/20 bg-[#c58d12]/5 px-4 py-2 text-zinc-300 transition-colors hover:border-[#c58d12]/40 hover:text-[#c58d12]"
+                className="rounded-full font-bold border border-[#c58d12]/20 bg-[#c58d12]/5 px-4 py-2 text-zinc-700 transition-colors hover:border-[#c58d12]/40 hover:text-[#c58d12] dark:text-white"
               >
                 {item}
               </span>

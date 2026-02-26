@@ -14,7 +14,7 @@ const AboutPage = () => {
   return (
     <div className="relative min-h-screen">
       <motion.section
-        className="px-5 md:pb-20 relative z-10 text-white"
+        className="px-5 md:pb-20 relative z-10 text-zinc-900 dark:text-white"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8 }}
@@ -104,7 +104,7 @@ const Header = ({
 };
 
 const Paragraph = ({ text }: { text: string }) => (
-  <p className="content sm:text-lg lg:text-lgContent text-zinc-400 italic">
+  <p className="content sm:text-lg lg:text-lgContent text-zinc-500 dark:text-zinc-400 italic">
     {text}
   </p>
 );
@@ -144,9 +144,9 @@ const Interest = ({
         alt={data.alt}
         width={16}
         height={16}
-        className="sm:w-6 sm:h-6 lg:w-8 lg:h-8 brightness-0 invert"
+        className="sm:w-6 sm:h-6 lg:w-8 lg:h-8 brightness-0 dark:invert"
       />
-      <h3 className="content2 text-zinc-300 sm:text-xl lg:text-lgContent2">
+      <h3 className="content2 text-zinc-700 dark:text-zinc-300 sm:text-xl lg:text-lgContent2">
         {data.title}
       </h3>
     </div>

@@ -44,7 +44,7 @@ export default function SolutionHero({
 
           <h1 className="mb-6 text-4xl font-bold leading-tight md:text-6xl lg:text-7xl">
             <motion.span
-              className="inline-block bg-linear-to-r from-white via-[#d4a24a] to-white bg-clip-text text-transparent"
+              className="inline-block bg-linear-to-r from-zinc-600 via-[#7a5c08] to-zinc-400 dark:from-white dark:via-[#d4a24a] dark:to-white bg-clip-text text-transparent"
               animate={{ backgroundPosition: ["0% center", "100% center"] }}
               transition={{
                 duration: 3,
@@ -57,7 +57,7 @@ export default function SolutionHero({
             </motion.span>
           </h1>
 
-          <p className="mx-auto mb-10 max-w-3xl text-lg leading-relaxed text-zinc-400 md:text-xl lg:text-2xl">
+          <p className="mx-auto mb-10 max-w-3xl text-lg leading-relaxed text-zinc-500 dark:text-zinc-400 md:text-xl lg:text-2xl">
             {subtitle}
           </p>
 

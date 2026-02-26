@@ -23,12 +23,12 @@ const PartnersMarquee: React.FC = () => {
 
       {/* Kreativer Titelbereich */}
       <div className="text-center mb-8 mt-8 md:mb-12">
-        <span className="uppercase tracking-[0.5em] font-semibold text-sm md:text-base lg:text-lg text-white/90">
+        <span className="uppercase tracking-[0.5em] font-semibold text-sm md:text-base lg:text-lg text-zinc-700 dark:text-white/90">
           {partnersTexts.strapline}
         </span>
 
         <div className="w-full flex justify-center">
-          <h2 className="title md:text-lgHeading font-extrabold mt-2 text-white w-fit">
+          <h2 className="title md:text-lgHeading font-extrabold mt-2 text-zinc-900 dark:text-white w-fit">
             <SplitText text={partnersTexts.heading} />
           </h2>
         </div>

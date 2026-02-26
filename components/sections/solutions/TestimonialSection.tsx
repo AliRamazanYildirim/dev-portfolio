@@ -51,7 +51,7 @@ export default function TestimonialSection({
             </motion.div>
           </motion.div>
 
-          <div className="relative overflow-hidden rounded-2xl border border-[#c58d12]/20 bg-linear-to-br from-zinc-900/70 via-black/70 to-black/80 p-8 transition-all duration-500 hover:border-[#c58d12]/40 lg:p-12">
+          <div className="relative overflow-hidden rounded-2xl border border-zinc-200 dark:border-[#c58d12]/20 bg-white/80 dark:bg-linear-to-br dark:from-zinc-900/70 dark:via-black/70 dark:to-black/80 p-8 transition-all duration-500 hover:border-[#c58d12]/40 lg:p-12">
             <motion.div
               className="absolute inset-0 rounded-2xl bg-linear-to-br from-[#c58d12]/5 via-transparent to-[#d4a24a]/5"
               animate={{ opacity: [0.05, 0.1, 0.05] }}
@@ -69,7 +69,7 @@ export default function TestimonialSection({
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: 0.3 }}
-              className="relative z-10 mb-8 text-xl leading-relaxed text-zinc-100 italic lg:text-2xl"
+              className="relative z-10 mb-8 text-xl leading-relaxed text-zinc-600 dark:text-zinc-100 italic lg:text-2xl"
             >
               “{quote}”
             </motion.p>
@@ -104,10 +104,10 @@ export default function TestimonialSection({
               </motion.div>
 
               <div>
-                <p className="text-lg font-semibold text-white transition-colors hover:text-[#c58d12]">
+                <p className="text-lg font-semibold text-zinc-800 dark:text-white transition-colors hover:text-[#c58d12]">
                   {author}
                 </p>
-                <p className="text-sm text-zinc-400">
+                <p className="text-sm text-zinc-500 dark:text-zinc-400">
                   {role} ·{" "}
                   <span className="font-medium text-[#c58d12]">{company}</span>
                 </p>

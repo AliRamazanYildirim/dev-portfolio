@@ -30,7 +30,7 @@ const Contact = () => {
 };
 
 const Header = ({ lineOne, lineTwo }: { lineOne: string; lineTwo: string }) => (
-  <h2 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-black tracking-tight mb-10 md:mb-20 bg-linear-to-r from-white via-zinc-100 to-zinc-400 bg-clip-text text-transparent leading-tight">
+  <h2 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-black tracking-tight mb-10 md:mb-20 bg-linear-to-r from-zinc-900 via-zinc-700 to-zinc-500 dark:from-white dark:via-zinc-100 dark:to-zinc-400 bg-clip-text text-transparent leading-tight">
     <SplitText text={lineOne} />
     <SplitText text={lineTwo} />
   </h2>
@@ -143,24 +143,24 @@ const ContactForm = ({
             exit={{ opacity: 0, y: -20 }}
             className="md:grid md:grid-cols-12 gap-6 mx-auto"
           >
-            <div className="relative border-b border-zinc-700 md:col-span-3">
+            <div className="relative border-b border-zinc-300 dark:border-zinc-700 md:col-span-3">
               <input
                 type="text"
                 name="name"
                 placeholder={contactDictionary.placeholders.name}
-                className="content w-full bg-transparent border-none text-lg text-white placeholder:text-zinc-500 focus:outline-none focus:ring-0 sm:text-xl lg:text-lgContent"
+                className="content w-full bg-transparent border-none text-lg text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-0 sm:text-xl lg:text-lgContent"
                 value={formData.name ?? ""}
                 onChange={handleChange}
                 required
               />
             </div>
 
-            <div className="relative border-b border-zinc-700 md:col-span-3">
+            <div className="relative border-b border-zinc-300 dark:border-zinc-700 md:col-span-3">
               <input
                 type="email"
                 name="email"
                 placeholder={contactDictionary.placeholders.email}
-                className="content w-full bg-transparent border-none text-lg text-white placeholder:text-zinc-500 focus:outline-none focus:ring-0 sm:text-xl lg:text-lgContent"
+                className="content w-full bg-transparent border-none text-lg text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-0 sm:text-xl lg:text-lgContent"
                 value={formData.email ?? ""}
                 onChange={handleChange}
                 required
@@ -168,11 +168,11 @@ const ContactForm = ({
               />
             </div>
 
-            <div className="relative border-b border-zinc-700 md:col-span-6">
+            <div className="relative border-b border-zinc-300 dark:border-zinc-700 md:col-span-6">
               <textarea
                 name="message"
                 placeholder={contactDictionary.placeholders.message}
-                className="content w-full bg-transparent border-none text-lg text-white placeholder:text-zinc-500 focus:outline-none focus:ring-0 sm:text-xl lg:text-lgContent"
+                className="content w-full bg-transparent border-none text-lg text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-0 sm:text-xl lg:text-lgContent"
                 value={formData.message ?? ""}
                 onChange={handleChange}
                 required

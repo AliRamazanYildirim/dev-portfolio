@@ -31,7 +31,7 @@ const ProjectPage = () => {
   // Loading State
   if (loading) {
     return (
-      <div className="text-white px-5 py-10 md:px-20 md:py-20 min-h-screen flex items-center justify-center">
+      <div className="text-zinc-900 dark:text-white px-5 py-10 md:px-20 md:py-20 min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#c58d12] mx-auto mb-4"></div>
           <p className="content md:text-lgContent text-zinc-400">
@@ -45,9 +45,9 @@ const ProjectPage = () => {
   // Error State
   if (error || !project) {
     return (
-      <div className="text-white px-5 py-10 md:px-20 md:py-20 min-h-screen flex items-center justify-center">
+      <div className="text-zinc-900 dark:text-white px-5 py-10 md:px-20 md:py-20 min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h1 className="heading md:text-lgHeading mb-4 bg-linear-to-r from-white via-zinc-100 to-zinc-400 bg-clip-text text-transparent">
+          <h1 className="heading md:text-lgHeading mb-4 bg-linear-to-r from-zinc-900 via-zinc-700 to-zinc-500 dark:from-white dark:via-zinc-100 dark:to-zinc-400 bg-clip-text text-transparent">
             {projectTexts.notFoundTitle}
           </h1>
           <p className="content md:text-lgContent text-zinc-400 mb-6">
@@ -69,7 +69,7 @@ const ProjectPage = () => {
 
   return (
     <div>
-      <section className="text-white px-5 py-10 md:px-20 md:py-20">
+      <section className="text-zinc-900 dark:text-white px-5 py-10 md:px-20 md:py-20">
         <div className="container mx-auto">
           {/* Header */}
           <ProjectHeader
@@ -102,11 +102,11 @@ const ProjectPage = () => {
 
           {/* Technologies */}
           <div className="mb-16">
-            <h2 className="heading md:text-lgHeading mb-4 bg-linear-to-r from-white via-zinc-100 to-zinc-400 bg-clip-text text-transparent">
+            <h2 className="heading md:text-lgHeading mb-4 bg-linear-to-r from-zinc-900 via-zinc-700 to-zinc-500 dark:from-white dark:via-zinc-100 dark:to-zinc-400 bg-clip-text text-transparent">
               {projectTexts.technologiesHeading}
             </h2>
-            <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-6">
-              <p className="content md:text-lgContent text-white leading-relaxed">
+            <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 p-6">
+              <p className="content md:text-lgContent text-zinc-700 dark:text-white leading-relaxed">
                 {Array.isArray(technologies)
                   ? technologies.join(", ")
                   : technologies}

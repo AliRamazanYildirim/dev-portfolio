@@ -17,7 +17,7 @@ export default function ProjectHeader({ project, projectTexts }: Props) {
           </span>
         )}
       </div>
-      <p className="content md:text-lgContent text-white text-sm">
+      <p className="content md:text-lgContent text-zinc-500 dark:text-white text-sm">
         {projectTexts.authorPrefix
           ? `${projectTexts.authorPrefix} ${project.author}`
           : project.author}

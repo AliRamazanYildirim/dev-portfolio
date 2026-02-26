@@ -19,7 +19,7 @@ function Footer({ className }: { className?: string }) {
 
   return (
     <footer
-      className={`bg-transparent border-t border-white/10 flex flex-col md:flex-row justify-between items-center py-8 px-5 button md:text-lgButton md:px-20 ${className}`}
+      className={`bg-transparent border-t border-zinc-200 dark:border-white/10 flex flex-col md:flex-row justify-between items-center py-8 px-5 button md:text-lgButton md:px-20 ${className}`}
     >
       <div className="mt-1 flex flex-nowrap items-center gap-1 md:gap-5 lg:gap-10 overflow-x-auto md:overflow-visible text-zinc-400">
         {footerItems.map((item) => {
@@ -42,7 +42,7 @@ function Footer({ className }: { className?: string }) {
                 width={32}
                 height={32}
                 priority={item.title === "LinkedIn"}
-                className="w-7 h-7 md:w-8 md:h-8 lg:w-12 lg:h-12 transition group-hover:scale-105 brightness-0 invert"
+                className="w-7 h-7 md:w-8 md:h-8 lg:w-12 lg:h-12 transition group-hover:scale-105 brightness-0 dark:invert"
               />
               <span>{item.title}</span>
             </Link>

@@ -75,17 +75,17 @@ const ProjectsPage = () => {
   return (
     <div className="min-h-screen">
       <motion.section
-        className="text-white px-5 pb-10 md:px-20 md:pb-20"
+        className="text-zinc-900 dark:text-white px-5 pb-10 md:px-20 md:pb-20"
         initial="hidden"
         animate="visible"
         variants={containerVariants}
       >
         <div className="container mx-auto">
           <div className="mb-10" ref={listTopRef}>
-            <h1 className="text-4xl md:text-6xl font-black tracking-tight mb-4 bg-linear-to-r from-white via-zinc-100 to-zinc-400 bg-clip-text text-transparent leading-tight w-max whitespace-nowrap">
+            <h1 className="text-4xl md:text-6xl font-black tracking-tight mb-4 bg-linear-to-r from-zinc-900 via-zinc-700 to-zinc-500 dark:from-white dark:via-zinc-100 dark:to-zinc-400 bg-clip-text text-transparent leading-tight w-max whitespace-nowrap">
               {projectsDictionary.heading}
             </h1>
-            <p className="text-zinc-400 md:text-lg">
+            <p className="text-zinc-500 dark:text-zinc-400 md:text-lg">
               {projects.length}{" "}
               {projects.length === 1
                 ? projectsDictionary.projectLabelSingular

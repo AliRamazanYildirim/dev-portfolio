@@ -3,6 +3,7 @@ import "./globals.css";
 import AppShell from "@/components/ui/AppShell";
 import { Toaster } from "react-hot-toast";
 import { LanguageProvider } from "@/contexts/LanguageContext";
+import { ThemeProvider } from "next-themes";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.arytechsolutions.com"),
@@ -75,9 +76,11 @@ export default function RootLayout({
       className="h-full w-full overflow-x-hidden"
     >
       <body className="min-h-screen w-full overflow-x-hidden">
-        <LanguageProvider>
-          <AppShell>{children}</AppShell>
-        </LanguageProvider>
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+          <LanguageProvider>
+            <AppShell>{children}</AppShell>
+          </LanguageProvider>
+        </ThemeProvider>
         <Toaster
           position="top-center"
           toastOptions={{

@@ -84,10 +84,10 @@ export default function SolutionPageClient({ slug }: SolutionPageClientProps) {
               transition={{ duration: 0.8 }}
               className="mb-16 text-center"
             >
-              <h2 className="mb-4 text-3xl font-bold text-white md:text-5xl">
+              <h2 className="mb-4 text-3xl font-bold text-zinc-900 dark:text-white md:text-5xl">
                 {copy.benefitsHeading[language] ?? copy.benefitsHeading.en}
               </h2>
-              <p className="mx-auto max-w-2xl text-lg text-zinc-400">
+              <p className="mx-auto max-w-2xl text-lg text-zinc-500 dark:text-zinc-400">
                 {copy.benefitsSubtitle[language] ?? copy.benefitsSubtitle.en}
               </p>
             </motion.div>

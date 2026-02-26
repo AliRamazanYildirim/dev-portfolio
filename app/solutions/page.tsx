@@ -69,11 +69,11 @@ export default function SolutionsPage() {
               </div>
             </motion.div>
 
-            <h1 className="mb-6 bg-linear-to-r from-white via-zinc-100 to-zinc-400 bg-clip-text text-4xl font-bold text-transparent leading-tight md:text-6xl lg:text-7xl">
+            <h1 className="mb-6 bg-linear-to-r from-zinc-900 via-zinc-800 to-zinc-700 dark:from-white dark:via-zinc-100 dark:to-zinc-400 bg-clip-text text-4xl font-bold text-transparent leading-tight md:text-6xl lg:text-7xl">
               {copy.heroTitle[language]}
             </h1>
 
-            <p className="mx-auto max-w-3xl text-lg leading-relaxed text-zinc-400 md:text-xl lg:text-2xl">
+            <p className="mx-auto max-w-3xl text-lg leading-relaxed text-zinc-500 dark:text-zinc-400 md:text-xl lg:text-2xl">
               {copy.heroSubtitle[language]}
             </p>
           </motion.div>
@@ -91,7 +91,7 @@ export default function SolutionsPage() {
               transition={{ duration: 0.6 }}
             >
               <Link href={solution.href} className="group block h-full">
-                <div className="relative h-full overflow-hidden rounded-2xl border border-zinc-800 bg-linear-to-br from-zinc-900 to-black p-8 transition-all duration-500 hover:border-[#c58d12]/50">
+                <div className="relative h-full overflow-hidden rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-linear-to-br dark:from-zinc-900 dark:to-black p-8 transition-all duration-500 hover:border-[#c58d12]/50">
                   <div className="absolute inset-0 rounded-2xl bg-linear-to-br from-[#c58d12]/0 via-[#c58d12]/0 to-[#c58d12]/0 transition-all duration-500 group-hover:from-[#c58d12]/6 group-hover:via-[#c58d12]/10 group-hover:to-[#c58d12]/6" />
                   <div className="absolute top-0 right-0 h-24 w-24 rounded-bl-full bg-linear-to-br from-[#c58d12]/20 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
 
@@ -106,11 +106,11 @@ export default function SolutionsPage() {
                       />
                     </div>
 
-                    <h3 className="mb-4 text-xl font-bold text-white transition-colors duration-300 group-hover:text-[#c58d12] md:text-2xl">
+                    <h3 className="mb-4 text-xl font-bold text-zinc-900 dark:text-white transition-colors duration-300 group-hover:text-[#c58d12] md:text-2xl">
                       {solution.title}
                     </h3>
 
-                    <p className="mb-6 text-zinc-400 transition-colors duration-300 group-hover:text-zinc-200">
+                    <p className="mb-6 text-zinc-500 dark:text-zinc-400 transition-colors duration-300 group-hover:text-zinc-700 dark:group-hover:text-zinc-200">
                       {solution.description}
                     </p>
 
@@ -140,7 +140,7 @@ export default function SolutionsPage() {
         </div>
       </section>
 
-      <section className="relative overflow-hidden bg-linear-to-b from-black via-zinc-950 to-black py-24">
+      <section className="relative overflow-hidden bg-zinc-100 dark:bg-linear-to-b dark:from-black dark:via-zinc-950 dark:to-black py-24">
         <div className="mx-auto max-w-4xl px-6 text-center lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -148,11 +148,11 @@ export default function SolutionsPage() {
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.8 }}
           >
-            <h2 className="mb-6 text-3xl font-bold text-white md:text-5xl">
+            <h2 className="mb-6 text-3xl font-bold text-zinc-900 dark:text-white md:text-5xl">
               {copy.ctaTitle[language]}
             </h2>
 
-            <p className="mx-auto mb-10 max-w-2xl text-lg text-zinc-400 md:text-xl">
+            <p className="mx-auto mb-10 max-w-2xl text-lg text-zinc-500 dark:text-zinc-400 md:text-xl">
               {copy.ctaSubtitle[language]}
             </p>
 

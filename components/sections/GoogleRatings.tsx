@@ -76,7 +76,7 @@ const GoogleRatings: React.FC = () => {
         {/* Strapline */}
         <motion.span
           variants={itemVariants}
-          className="uppercase tracking-[0.5em] font-semibold text-sm md:text-base lg:text-lg text-white/90 "
+          className="uppercase tracking-[0.5em] font-semibold text-sm md:text-base lg:text-lg text-zinc-700 dark:text-white/90 "
         >
           ⭐ GOOGLE RATINGS ⭐
         </motion.span>
@@ -86,7 +86,7 @@ const GoogleRatings: React.FC = () => {
           variants={itemVariants}
           className="w-full flex justify-center"
         >
-          <h2 className="text-2xl sm:text-3xl md:text-lgHeading font-extrabold mt-16 md:mt-20 text-white w-fit">
+          <h2 className="text-2xl sm:text-3xl md:text-lgHeading font-extrabold mt-16 md:mt-20 text-zinc-900 dark:text-white w-fit">
             <SplitText text={ratingsContent.heading} />
           </h2>
         </motion.div>
@@ -94,14 +94,14 @@ const GoogleRatings: React.FC = () => {
         {/* Subheading */}
         <motion.p
           variants={itemVariants}
-          className="font-satoshi text-content2 text-white/70 mt-6 md:mt-8 max-w-2xl mx-auto"
+          className="font-satoshi text-content2 text-zinc-600 dark:text-white/70 mt-6 md:mt-8 max-w-2xl mx-auto"
         >
           {ratingsContent.subheading}
         </motion.p>
 
         {/* Stats Bar */}
         <motion.div variants={itemVariants}>
-          <div className="flex flex-row items-center justify-between sm:justify-center gap-2 sm:gap-4 md:gap-12 mt-8 md:mt-10 p-4 sm:p-6 md:p-8 rounded-2xl border border-zinc-800 bg-zinc-900 relative overflow-hidden">
+          <div className="flex flex-row items-center justify-between sm:justify-center gap-2 sm:gap-4 md:gap-12 mt-8 md:mt-10 p-4 sm:p-6 md:p-8 rounded-2xl border border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900 relative overflow-hidden">
             {/* Average Rating */}
             <div className="flex flex-1 min-w-0 items-center justify-center gap-2 sm:gap-3 relative z-10">
               <div className="flex items-center">
@@ -160,37 +160,37 @@ const GoogleRatings: React.FC = () => {
                 </svg>
               </div>
               <div className="text-center">
-                <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-white">
+                <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-zinc-900 dark:text-white">
                   {averageRating}
                 </div>
-                <div className="text-[11px] sm:text-xs md:text-sm text-zinc-400 mt-1">
+                <div className="text-[11px] sm:text-xs md:text-sm text-zinc-500 dark:text-zinc-400 mt-1">
                   {t("googleRatings.averageRating")}
                 </div>
               </div>
             </div>
 
             {/* Divider */}
-            <div className="hidden sm:block w-px h-12 bg-zinc-700" />
+            <div className="hidden sm:block w-px h-12 bg-zinc-200 dark:bg-zinc-700" />
 
             {/* Total Testimonials */}
             <div className="flex-1 min-w-0 text-center relative z-10">
-              <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-white">
+              <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-zinc-900 dark:text-white">
                 {totalTestimonials.toLocaleString()}
               </div>
-              <div className="text-[11px] sm:text-xs md:text-sm text-zinc-400 mt-1">
+              <div className="text-[11px] sm:text-xs md:text-sm text-zinc-500 dark:text-zinc-400 mt-1">
                 {t("googleRatings.testimonials")}
               </div>
             </div>
 
             {/* Divider */}
-            <div className="hidden sm:block w-px h-12 bg-zinc-700" />
+            <div className="hidden sm:block w-px h-12 bg-zinc-200 dark:bg-zinc-700" />
 
             {/* Positive Percentage */}
             <div className="flex-1 min-w-0 text-center relative z-10">
               <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#c58d12]">
                 {avgPositive}%
               </div>
-              <div className="text-[11px] sm:text-xs md:text-sm text-zinc-400 mt-1">
+              <div className="text-[11px] sm:text-xs md:text-sm text-zinc-500 dark:text-zinc-400 mt-1">
                 {t("googleRatings.positiveReviews")}
               </div>
             </div>

@@ -32,8 +32,8 @@ export default function PrivacyPage() {
 
   return (
     <main className="w-full">
-      <div className="mx-auto max-w-4xl px-5 py-16 md:px-10 text-zinc-300">
-        <h1 className="text-4xl font-bold tracking-tight md:text-5xl bg-linear-to-r from-white via-zinc-100 to-zinc-400 bg-clip-text text-transparent">
+      <div className="mx-auto max-w-4xl px-5 py-16 md:px-10 text-zinc-600 dark:text-zinc-300">
+        <h1 className="text-4xl font-bold tracking-tight md:text-5xl bg-linear-to-r from-zinc-900 via-zinc-700 to-zinc-500 dark:from-white dark:via-zinc-100 dark:to-zinc-400 bg-clip-text text-transparent">
           {privacy.title}
         </h1>
         <p className="mt-2 text-sm uppercase tracking-wide text-zinc-500">
@@ -49,7 +49,7 @@ export default function PrivacyPage() {
         <div className="mt-10 space-y-10">
           {privacy.sections.map((section, index) => (
             <section key={`privacy-section-${index}`}>
-              <h2 className="text-2xl font-semibold text-white md:text-3xl">
+              <h2 className="text-2xl font-semibold text-zinc-900 dark:text-white md:text-3xl">
                 {section.heading}
               </h2>
               {hasParagraphs(section) && (
@@ -64,7 +64,7 @@ export default function PrivacyPage() {
                 </div>
               )}
               {hasBullets(section) && (
-                <ul className="mt-4 space-y-3 list-disc list-inside text-base md:text-lg text-zinc-300">
+                <ul className="mt-4 space-y-3 list-disc list-inside text-base md:text-lg text-zinc-600 dark:text-zinc-300">
                   {section.bullets.map((bullet, bulletIndex) => (
                     <li key={`privacy-section-${index}-bullet-${bulletIndex}`}>
                       {bullet}
@@ -77,10 +77,10 @@ export default function PrivacyPage() {
         </div>
 
         <section className="mt-12">
-          <h2 className="text-2xl font-semibold text-white md:text-3xl">
+          <h2 className="text-2xl font-semibold text-zinc-900 dark:text-white md:text-3xl">
             {privacy.contactHeading}
           </h2>
-          <ul className="mt-4 space-y-3 text-base md:text-lg text-zinc-300">
+          <ul className="mt-4 space-y-3 text-base md:text-lg text-zinc-600 dark:text-zinc-300">
             {privacy.contactDetails.map((detail, index) => (
               <li key={`privacy-contact-${index}`}>{detail}</li>
             ))}

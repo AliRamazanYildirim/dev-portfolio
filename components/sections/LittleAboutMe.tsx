@@ -11,7 +11,7 @@ const LittleAboutMe = () => {
   const littleAbout = dictionary.littleAbout;
 
   return (
-    <section id="about-section" className="px-7 pt-12 md:pt-10 text-white">
+    <section id="about-section" className="px-7 pt-12 md:pt-10">
       <div className="container pb-12 mx-auto grid grid-cols-1 gap-4 lg:grid-cols-2 lg:pb-36 lg:gap-0 items-start landscape:max-lg:grid-cols-1 landscape:max-lg:gap-4">
         <div>
           <Header text={littleAbout.heading} />
@@ -28,7 +28,7 @@ const LittleAboutMe = () => {
 };
 
 const Header = ({ text }: { text: string }) => (
-  <h2 className="heading mb-5 lg:text-lgHeading lg:mb-16 bg-linear-to-r from-white via-zinc-100 to-zinc-400 bg-clip-text text-transparent whitespace-nowrap w-max">
+  <h2 className="heading mb-5 lg:text-lgHeading lg:mb-16 bg-linear-to-r from-zinc-900 via-zinc-700 to-zinc-500 dark:from-white dark:via-zinc-100 dark:to-zinc-400 bg-clip-text text-transparent whitespace-nowrap w-max">
     {text}
   </h2>
 );
@@ -40,7 +40,7 @@ const fadeInVariants = {
 
 const Paragraph = ({ text }: { text: string }) => (
   <motion.p
-    className="content lg:pl-10 lg:text-lgContent lg:order-1 text-zinc-400"
+    className="content lg:pl-10 lg:text-lgContent lg:order-1 text-zinc-600 dark:text-zinc-400"
     variants={fadeInVariants}
     initial="hidden"
     whileInView="visible"
@@ -53,7 +53,7 @@ const Paragraph = ({ text }: { text: string }) => (
 
 const Paragraph2 = ({ text }: { text: string }) => (
   <motion.p
-    className="content lg:text-lgContent lg:order-1 max-w-2xl lg:ml-auto text-zinc-400"
+    className="content lg:text-lgContent lg:order-1 max-w-2xl lg:ml-auto text-zinc-600 dark:text-zinc-400"
     variants={fadeInVariants}
     initial="hidden"
     whileInView="visible"
@@ -108,7 +108,7 @@ const MoreAboutMe = ({ cta }: { cta: string }) => (
         alt="Arrow Up Icon"
         width={16}
         height={16}
-        additionalClasses="transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1 w-3 h-3 md:w-4 md:h-4 lg:w-5 lg:h-5 opacity-70"
+        additionalClasses="transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1 w-3 h-3 md:w-4 md:h-4 lg:w-5 lg:h-5 opacity-70 [filter:brightness(0)_saturate(100%)_invert(55%)_sepia(90%)_saturate(500%)_hue-rotate(5deg)_brightness(0.9)] dark:[filter:brightness(0)_saturate(100%)_invert(55%)_sepia(90%)_saturate(500%)_hue-rotate(5deg)_brightness(0.9)]"
       />
     </Link>
   </motion.div>

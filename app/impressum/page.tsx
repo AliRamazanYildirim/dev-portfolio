@@ -124,19 +124,19 @@ export default function ImpressumPage() {
       />
       <main className="w-full">
         <article
-          className="mx-auto max-w-4xl px-5 py-16 md:px-10 text-zinc-300"
+          className="mx-auto max-w-4xl px-5 py-16 md:px-10 text-zinc-600 dark:text-zinc-300"
           itemScope
           itemType="https://schema.org/WebPage"
         >
           {/* Header */}
           <header>
             <h1
-              className="text-4xl font-bold tracking-tight md:text-5xl bg-linear-to-r from-white via-zinc-100 to-zinc-400 bg-clip-text text-transparent"
+              className="text-4xl font-bold tracking-tight md:text-5xl bg-linear-to-r from-zinc-900 via-zinc-700 to-zinc-500 dark:from-white dark:via-zinc-100 dark:to-zinc-400 bg-clip-text text-transparent"
               itemProp="name"
             >
               {imprint.title}
             </h1>
-            <p className="mt-2 text-sm uppercase tracking-wide text-zinc-500">
+            <p className="mt-2 text-sm uppercase tracking-wide text-zinc-500 dark:text-zinc-300">
               {imprint.lastUpdated}
             </p>
           </header>
@@ -145,21 +145,21 @@ export default function ImpressumPage() {
           <section className="mt-10" aria-labelledby="provider-heading">
             <h2
               id="provider-heading"
-              className="text-2xl font-semibold text-white md:text-3xl"
+                className="text-2xl font-semibold text-zinc-900 dark:text-white md:text-3xl"
             >
               {sections.provider.heading}
             </h2>
             <div className="mt-4">
-              <h3 className="text-lg font-medium text-zinc-300">
+              <h3 className="text-lg font-medium text-zinc-600 dark:text-zinc-300">
                 {sections.provider.subheading}
               </h3>
               <address
-                className="mt-3 not-italic text-base md:text-lg text-zinc-300 space-y-1"
+                className="mt-3 not-italic text-base md:text-lg text-zinc-600 dark:text-zinc-300 space-y-1"
                 itemScope
                 itemType="https://schema.org/Person"
                 itemProp="author"
               >
-                <p className="font-semibold text-white" itemProp="name">
+                <p className="font-semibold text-zinc-900 dark:text-white" itemProp="name">
                   {sections.provider.content.name}
                 </p>
                 <p itemProp="jobTitle">
@@ -184,11 +184,11 @@ export default function ImpressumPage() {
           <section className="mt-10" aria-labelledby="contact-heading">
             <h2
               id="contact-heading"
-              className="text-2xl font-semibold text-white md:text-3xl"
+                className="text-2xl font-semibold text-zinc-900 dark:text-white md:text-3xl"
             >
               {sections.contact.heading}
             </h2>
-            <ul className="mt-4 space-y-3 text-base md:text-lg text-zinc-300">
+            <ul className="mt-4 space-y-3 text-base md:text-lg text-zinc-600 dark:text-zinc-300">
               <li className="flex items-center gap-2">
                 <span className="font-medium min-w-20">
                   {sections.contact.phone.label}:
@@ -228,7 +228,7 @@ export default function ImpressumPage() {
                 </a>
               </li>
             </ul>
-            <p className="mt-3 text-sm text-zinc-500">
+            <p className="mt-3 text-sm text-zinc-500 dark:text-zinc-300">
               {sections.contact.availability}
             </p>
           </section>
@@ -237,18 +237,18 @@ export default function ImpressumPage() {
           <section className="mt-10" aria-labelledby="tax-heading">
             <h2
               id="tax-heading"
-              className="text-2xl font-semibold text-white md:text-3xl"
+                className="text-2xl font-semibold text-zinc-900 dark:text-white md:text-3xl"
             >
               {sections.tax.heading}
             </h2>
-            <dl className="mt-4 space-y-4 text-base md:text-lg text-zinc-300">
+            <dl className="mt-4 space-y-4 text-base md:text-lg text-zinc-600 dark:text-zinc-300">
               <div>
                 <dt className="font-medium">{sections.tax.vatId.label}</dt>
                 <dd className="mt-1">
-                  <span className="font-semibold text-white">
+                  <span className="font-semibold text-zinc-900 dark:text-white">
                     {sections.tax.vatId.value}
                   </span>
-                  <p className="text-sm text-zinc-500 mt-1">
+                  <p className="text-sm text-zinc-500 dark:text-zinc-300 mt-1">
                     {sections.tax.vatId.note}
                   </p>
                 </dd>
@@ -256,10 +256,10 @@ export default function ImpressumPage() {
               <div>
                 <dt className="font-medium">{sections.tax.taxNumber.label}</dt>
                 <dd className="mt-1">
-                  <span className="font-semibold text-white">
+                  <span className="font-semibold text-zinc-900 dark:text-white">
                     {sections.tax.taxNumber.value}
                   </span>
-                  <span className="text-zinc-500">
+                  <span className="text-zinc-500 dark:text-zinc-300">
                     {" "}
                     ({sections.tax.taxNumber.office})
                   </span>
@@ -272,11 +272,11 @@ export default function ImpressumPage() {
           <section className="mt-10" aria-labelledby="registration-heading">
             <h2
               id="registration-heading"
-              className="text-2xl font-semibold text-white md:text-3xl"
+                className="text-2xl font-semibold text-zinc-900 dark:text-white md:text-3xl"
             >
               {sections.registration.heading}
             </h2>
-            <dl className="mt-4 space-y-4 text-base md:text-lg text-zinc-300">
+            <dl className="mt-4 space-y-4 text-base md:text-lg text-zinc-600 dark:text-zinc-300">
               <div>
                 <dt className="font-medium">
                   {sections.registration.activity.label}
@@ -287,7 +287,7 @@ export default function ImpressumPage() {
                 <dt className="font-medium">
                   {sections.registration.authority.label}
                 </dt>
-                <dd className="mt-1 text-zinc-500">
+                <dd className="mt-1 text-zinc-500 dark:text-zinc-300">
                   {sections.registration.authority.value}
                 </dd>
               </div>
@@ -298,11 +298,11 @@ export default function ImpressumPage() {
           <section className="mt-10" aria-labelledby="insurance-heading">
             <h2
               id="insurance-heading"
-              className="text-2xl font-semibold text-white md:text-3xl"
+                className="text-2xl font-semibold text-zinc-900 dark:text-white md:text-3xl"
             >
               {sections.insurance.heading}
             </h2>
-            <dl className="mt-4 space-y-3 text-base md:text-lg text-zinc-300">
+            <dl className="mt-4 space-y-3 text-base md:text-lg text-zinc-600 dark:text-zinc-300">
               <div className="flex flex-col sm:flex-row sm:gap-2">
                 <dt className="font-medium">
                   {sections.insurance.provider.label}:
@@ -328,15 +328,15 @@ export default function ImpressumPage() {
           <section className="mt-10" aria-labelledby="responsible-heading">
             <h2
               id="responsible-heading"
-              className="text-2xl font-semibold text-white md:text-3xl"
+                className="text-2xl font-semibold text-zinc-900 dark:text-white md:text-3xl"
             >
               {sections.responsible.heading}
             </h2>
-            <p className="mt-2 text-sm text-zinc-500">
+            <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
               {sections.responsible.note}
             </p>
-            <address className="mt-3 not-italic text-base md:text-lg text-zinc-300">
-              <p className="font-semibold text-white">
+              <address className="mt-3 not-italic text-base md:text-lg text-zinc-600 dark:text-zinc-300">
+              <p className="font-semibold text-zinc-900 dark:text-white">
                 {sections.responsible.name}
               </p>
               <p>{sections.responsible.address}</p>
@@ -347,13 +347,13 @@ export default function ImpressumPage() {
           <section className="mt-10" aria-labelledby="dispute-heading">
             <h2
               id="dispute-heading"
-              className="text-2xl font-semibold text-white md:text-3xl"
+                className="text-2xl font-semibold text-zinc-900 dark:text-white md:text-3xl"
             >
               {sections.dispute.heading}
             </h2>
 
             {/* ODR Platform Card */}
-            <div className="mt-6 relative overflow-hidden rounded-2xl border border-zinc-800 bg-linear-to-br from-zinc-900 to-black p-6 md:p-8">
+            <div className="mt-6 relative overflow-hidden rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-linear-to-br dark:from-zinc-900 dark:to-black p-6 md:p-8">
               <div className="absolute top-0 right-0 w-40 h-40 bg-linear-to-br from-blue-500/5 to-transparent rounded-bl-full" />
               <div className="absolute bottom-0 left-0 w-32 h-32 bg-linear-to-tr from-[#c58d12]/5 to-transparent rounded-tr-full" />
 
@@ -376,10 +376,10 @@ export default function ImpressumPage() {
                     </svg>
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-white">
+                    <h3 className="text-lg font-semibold text-zinc-900 dark:text-white">
                       {legalCopy.odrTitle[language]}
                     </h3>
-                    <p className="text-sm text-zinc-500 mt-1">
+                    <p className="text-sm text-zinc-500 dark:text-zinc-300 mt-1">
                       {sections.dispute.intro}
                     </p>
                   </div>
@@ -444,7 +444,7 @@ export default function ImpressumPage() {
             </div>
 
             {/* Participation Notice */}
-            <div className="mt-5 relative overflow-hidden rounded-2xl border-l-4 border-l-[#c58d12] border border-[#c58d12]/20 bg-linear-to-r from-[#c58d12]/5 to-zinc-900/50 p-5 md:p-6">
+            <div className="mt-5 relative overflow-hidden rounded-2xl border-l-4 border-l-[#c58d12] border border-[#c58d12]/20 bg-[#c58d12]/5 dark:bg-linear-to-r dark:from-[#c58d12]/5 dark:to-zinc-900/50 p-5 md:p-6">
               <div className="absolute top-0 right-0 w-24 h-24 bg-linear-to-br from-[#c58d12]/10 to-transparent rounded-bl-full" />
               <div className="relative z-10 flex gap-4">
                 <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-[#c58d12]/10 shrink-0">
@@ -463,10 +463,10 @@ export default function ImpressumPage() {
                   </svg>
                 </div>
                 <div>
-                  <h4 className="font-semibold text-white mb-1">
+                  <h4 className="font-semibold text-zinc-900 dark:text-white mb-1">
                     {legalCopy.arbitrationNoticeTitle[language]}
                   </h4>
-                  <p className="text-sm md:text-base text-zinc-400 leading-relaxed">
+                  <p className="text-sm md:text-base text-zinc-500 dark:text-zinc-400 leading-relaxed">
                     {sections.dispute.participation}
                   </p>
                 </div>
@@ -478,37 +478,37 @@ export default function ImpressumPage() {
           <section className="mt-10" aria-labelledby="liability-heading">
             <h2
               id="liability-heading"
-              className="text-2xl font-semibold text-white md:text-3xl"
+                className="text-2xl font-semibold text-zinc-900 dark:text-white md:text-3xl"
             >
               {sections.liability.heading}
             </h2>
 
             {/* Liability for Content */}
             <div className="mt-6">
-              <h3 className="text-xl font-medium text-white">
+              <h3 className="text-xl font-medium text-zinc-900 dark:text-white">
                 {sections.liability.content.heading}
               </h3>
-              <p className="mt-3 text-base md:text-lg text-zinc-300 leading-relaxed">
+              <p className="mt-3 text-base md:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
                 {sections.liability.content.text}
               </p>
             </div>
 
             {/* Liability for Links */}
             <div className="mt-6">
-              <h3 className="text-xl font-medium text-white">
+              <h3 className="text-xl font-medium text-zinc-900 dark:text-white">
                 {sections.liability.links.heading}
               </h3>
-              <p className="mt-3 text-base md:text-lg text-zinc-300 leading-relaxed">
+              <p className="mt-3 text-base md:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
                 {sections.liability.links.text}
               </p>
             </div>
 
             {/* Copyright */}
             <div className="mt-6">
-              <h3 className="text-xl font-medium text-white">
+              <h3 className="text-xl font-medium text-zinc-900 dark:text-white">
                 {sections.liability.copyright.heading}
               </h3>
-              <p className="mt-3 text-base md:text-lg text-zinc-300 leading-relaxed">
+              <p className="mt-3 text-base md:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed">
                 {sections.liability.copyright.text}
               </p>
             </div>
@@ -518,14 +518,14 @@ export default function ImpressumPage() {
           <section className="mt-10" aria-labelledby="image-credits-heading">
             <h2
               id="image-credits-heading"
-              className="text-2xl font-semibold text-white md:text-3xl"
+                className="text-2xl font-semibold text-zinc-900 dark:text-white md:text-3xl"
             >
               {sections.imageCredits.heading}
             </h2>
-            <p className="mt-4 text-base md:text-lg text-zinc-300">
+            <p className="mt-4 text-base md:text-lg text-zinc-600 dark:text-zinc-300">
               {sections.imageCredits.intro}
             </p>
-            <ul className="mt-4 space-y-2 list-disc list-inside text-base md:text-lg text-zinc-300">
+            <ul className="mt-4 space-y-2 list-disc list-inside text-base md:text-lg text-zinc-600 dark:text-zinc-300">
               {sections.imageCredits.credits.map((credit, index) => (
                 <li key={`image-credit-${index}`}>{credit}</li>
               ))}
@@ -534,17 +534,17 @@ export default function ImpressumPage() {
 
           {/* Related Links */}
           <nav
-            className="mt-16 pt-10 border-t border-zinc-800"
+            className="mt-16 pt-10 border-t border-zinc-200 dark:border-zinc-800"
             aria-label="Related legal pages"
           >
-            <h2 className="text-xl font-semibold text-white mb-6">
+            <h2 className="text-xl font-semibold text-zinc-900 dark:text-white mb-6">
               {legalCopy.moreLegalInformation[language]}
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               {/* Privacy Policy Card */}
               <Link
                 href="/privacy"
-                className="group relative overflow-hidden rounded-2xl border border-zinc-800 bg-linear-to-br from-zinc-900 to-black p-6 transition-all duration-300 hover:shadow-xl hover:shadow-[#c58d12]/10 hover:border-[#c58d12]/40 hover:-translate-y-1"
+                className="group relative overflow-hidden rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-linear-to-br dark:from-zinc-900 dark:to-black p-6 transition-all duration-300 hover:shadow-xl hover:shadow-[#c58d12]/10 hover:border-[#c58d12]/40 hover:-translate-y-1"
               >
                 <div className="absolute top-0 right-0 w-32 h-32 bg-linear-to-br from-[#c58d12]/5 to-transparent rounded-bl-full transition-all duration-300 group-hover:w-40 group-hover:h-40" />
                 <div className="relative z-10">
@@ -563,7 +563,7 @@ export default function ImpressumPage() {
                       />
                     </svg>
                   </div>
-                  <h3 className="text-lg font-semibold text-white mb-2 transition-colors duration-300 group-hover:text-[#c58d12]">
+                  <h3 className="text-lg font-semibold text-zinc-900 dark:text-white mb-2 transition-colors duration-300 group-hover:text-[#c58d12]">
                     {legalCopy.privacyCardTitle[language]}
                   </h3>
                   <p className="text-sm text-zinc-500 mb-4">
@@ -591,7 +591,7 @@ export default function ImpressumPage() {
               {/* Terms & Conditions Card */}
               <Link
                 href="/terms"
-                className="group relative overflow-hidden rounded-2xl border border-zinc-800 bg-linear-to-br from-zinc-900 to-black p-6 transition-all duration-300 hover:shadow-xl hover:shadow-[#c58d12]/10 hover:border-[#c58d12]/40 hover:-translate-y-1"
+                className="group relative overflow-hidden rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-linear-to-br dark:from-zinc-900 dark:to-black p-6 transition-all duration-300 hover:shadow-xl hover:shadow-[#c58d12]/10 hover:border-[#c58d12]/40 hover:-translate-y-1"
               >
                 <div className="absolute top-0 right-0 w-32 h-32 bg-linear-to-br from-[#c58d12]/5 to-transparent rounded-bl-full transition-all duration-300 group-hover:w-40 group-hover:h-40" />
                 <div className="relative z-10">
@@ -610,7 +610,7 @@ export default function ImpressumPage() {
                       />
                     </svg>
                   </div>
-                  <h3 className="text-lg font-semibold text-white mb-2 transition-colors duration-300 group-hover:text-[#c58d12]">
+                  <h3 className="text-lg font-semibold text-zinc-900 dark:text-white mb-2 transition-colors duration-300 group-hover:text-[#c58d12]">
                     {legalCopy.termsCardTitle[language]}
                   </h3>
                   <p className="text-sm text-zinc-500 mb-4">

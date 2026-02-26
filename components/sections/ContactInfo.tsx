@@ -19,7 +19,7 @@ const ContactInfo = ({
     <motion.div
       whileHover={{ scale: 1.01, y: -1 }}
       whileTap={{ scale: 0.98 }}
-      className="group flex w-full max-w-md items-center gap-4 rounded-2xl border border-zinc-700 bg-zinc-900 px-5 py-4 shadow-xl transition-all duration-300 hover:border-[#c58d12]/50 hover:shadow-[0_0_24px_rgba(197,141,18,0.15)]"
+      className="group flex w-full max-w-md items-center gap-4 rounded-2xl border border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-900 px-5 py-4 shadow-xl transition-all duration-300 hover:border-[#c58d12]/50 hover:shadow-[0_0_24px_rgba(197,141,18,0.15)]"
     >
       <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-[#c58d12] to-[#d4a24a] text-black shadow-sm">
         <svg
@@ -44,7 +44,7 @@ const ContactInfo = ({
         </span>
         <a
           href={`tel:${phoneNumber.replace(/\s+/g, "")}`}
-          className="inline-block rounded px-2 py-1.5 text-lg font-semibold text-white transition-colors duration-200 hover:text-[#c58d12] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#c58d12]/40"
+          className="inline-block rounded px-2 py-1.5 text-lg font-semibold text-zinc-900 dark:text-white transition-colors duration-200 hover:text-[#c58d12] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#c58d12]/40"
         >
           {phoneNumber}
         </a>

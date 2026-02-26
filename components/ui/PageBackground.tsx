@@ -3,28 +3,40 @@
 import React from "react";
 import { motion } from "framer-motion";
 
+interface PageBackgroundProps {
+  isDark?: boolean;
+}
+
 /**
- * Provides the global Solutions-style dark background:
- * pure-black base → subtle zinc grid overlay → two animated gold glow blobs.
+ * Provides the global animated glow background.
+ * Dark mode: deep gold blobs on black.
+ * Light mode: soft warm-amber blobs on beige.
  * Rendered as `position:fixed` so it sits behind all page content.
  */
-export default function PageBackground() {
+export default function PageBackground({ isDark = true }: PageBackgroundProps) {
   return (
     <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
-      {/* Subtle grid lines */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#18181b_1px,transparent_1px),linear-gradient(to_bottom,#18181b_1px,transparent_1px)] bg-size-[4rem_4rem] opacity-20" />
-
-      {/* Gold glow — top-left */}
+      {/* Glow — top-left */}
       <motion.div
-        className="absolute top-1/4 left-1/4 h-160 w-160 rounded-full bg-[#c58d12]/10 blur-[140px]"
-        animate={{ scale: [1, 1.25, 1], opacity: [0.25, 0.45, 0.25] }}
+        className={`absolute top-1/4 left-1/4 h-160 w-160 rounded-full blur-[130px] ${
+          isDark ? "bg-[#c58d12]/15" : "bg-[#c58d12]/20"
+        }`}
+        animate={{
+          scale: [1, 1.25, 1],
+          opacity: isDark ? [0.35, 0.55, 0.35] : [0.38, 0.58, 0.38],
+        }}
         transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
       />
 
-      {/* Gold glow — bottom-right */}
+      {/* Glow — bottom-right */}
       <motion.div
-        className="absolute bottom-1/4 right-1/4 h-160 w-160 rounded-full bg-[#c58d12]/10 blur-[140px]"
-        animate={{ scale: [1.25, 1, 1.25], opacity: [0.45, 0.25, 0.45] }}
+        className={`absolute bottom-1/4 right-1/4 h-160 w-160 rounded-full blur-[130px] ${
+          isDark ? "bg-[#c58d12]/15" : "bg-amber-400/20"
+        }`}
+        animate={{
+          scale: [1.25, 1, 1.25],
+          opacity: isDark ? [0.55, 0.35, 0.55] : [0.52, 0.32, 0.52],
+        }}
         transition={{
           duration: 10,
           repeat: Infinity,
@@ -32,6 +44,20 @@ export default function PageBackground() {
           delay: 2,
         }}
       />
+
+      {/* Extra glow — center, light mode only */}
+      {!isDark && (
+        <motion.div
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-120 w-120 rounded-full bg-orange-300/20 blur-[150px]"
+          animate={{ scale: [1, 1.15, 1], opacity: [0.28, 0.45, 0.28] }}
+          transition={{
+            duration: 14,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 1,
+          }}
+        />
+      )}
     </div>
   );
 }

@@ -179,7 +179,7 @@ const ReviewsCarousel: React.FC<ReviewsCarouselProps> = ({
               className={`rounded-full transition-all duration-300 backdrop-blur-sm ${
                 i === currentSlide
                   ? "bg-linear-to-r from-[#c58d12] to-[#d4a24a] w-10 h-3 md:w-12 md:h-3 shadow-lg shadow-[#c58d12]/50"
-                  : "bg-white/20 w-2.5 h-2.5 md:w-3 md:h-3 hover:bg-white/40 hover:w-4 md:hover:w-5"
+                  : "bg-zinc-900/15 dark:bg-white/20 w-2.5 h-2.5 md:w-3 md:h-3 hover:bg-zinc-900/30 dark:hover:bg-white/40 hover:w-4 md:hover:w-5"
               }`}
               aria-label={`Go to slide ${i + 1}`}
               whileHover={{ scale: 1.2 }}
@@ -231,7 +231,7 @@ const ReviewsCarousel: React.FC<ReviewsCarouselProps> = ({
       </div>
 
       {/* Slide Counter (optional) */}
-      <div className="text-center mt-6 text-white/50 text-sm">
+      <div className="text-center mt-6 text-zinc-500 dark:text-white/50 text-sm">
         {currentSlide + 1} / {totalSlides}
       </div>
     </div>

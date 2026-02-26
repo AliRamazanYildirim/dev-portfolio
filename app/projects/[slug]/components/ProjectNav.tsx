@@ -15,14 +15,14 @@ export default function ProjectNav({
   const router = useRouter();
 
   return (
-    <div className="flex justify-between items-center border-t border-zinc-800 pt-8">
+    <div className="flex justify-between items-center border-t border-zinc-200 dark:border-zinc-800 pt-8">
       <button
         onClick={() =>
           previousSlug
             ? router.push(`/projects/${previousSlug}`)
             : router.push("/projects")
         }
-        className="text-white hover:text-[#c58d12] heading md:text-lgHeading font-bold transition flex items-center gap-2"
+        className="text-zinc-800 dark:text-white hover:text-[#c58d12] heading md:text-lgHeading font-bold transition flex items-center gap-2"
       >
         <span>&lt;</span>
         {previousSlug ? projectTexts.previous : projectTexts.indexFallback}
@@ -34,7 +34,7 @@ export default function ProjectNav({
             ? router.push(`/projects/${nextSlug}`)
             : router.push("/projects")
         }
-        className="text-white hover:text-[#c58d12] heading md:text-lgHeading font-bold transition flex items-center gap-2"
+        className="text-zinc-800 dark:text-white hover:text-[#c58d12] heading md:text-lgHeading font-bold transition flex items-center gap-2"
       >
         {nextSlug ? projectTexts.next : projectTexts.indexFallback}
         <span>&gt;</span>

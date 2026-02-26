@@ -156,7 +156,7 @@ export const Nav = ({ className }: { className?: string }) => {
         >
           <button
             type="button"
-            className="button lg:text-lgButton transition flex items-center gap-1 text-white hover:text-white"
+            className="button lg:text-lgButton transition flex items-center gap-1 text-zinc-800 dark:text-white hover:text-zinc-800 dark:hover:text-white"
           >
             <span>{item.title}</span>
             <svg
@@ -191,7 +191,7 @@ export const Nav = ({ className }: { className?: string }) => {
                 style={{
                   pointerEvents: hoveredIndex === index ? "auto" : "none",
                 }}
-                className="absolute left-0 top-full mt-3 w-80 rounded-lg border border-white/10 bg-zinc-900 shadow-xl z-50 overflow-hidden"
+                className="absolute left-0 top-full mt-3 w-80 rounded-lg border border-zinc-200 bg-white dark:border-white/10 dark:bg-zinc-900 shadow-xl z-50 overflow-hidden"
                 onMouseEnter={() => {
                   // Pointer entered dropdown: cancel close and mark inside
                   submenuInside.current = true;
@@ -214,21 +214,21 @@ export const Nav = ({ className }: { className?: string }) => {
                     <Link
                       key={idx}
                       href={solution.href}
-                      className="flex items-start gap-3 p-3 rounded-lg transition group/item hover:bg-white/5"
+                      className="flex items-start gap-3 p-3 rounded-lg transition group/item hover:bg-zinc-100/60 dark:hover:bg-zinc-800/80"
                     >
-                      <div className="shrink-0 mt-1 w-14 h-14 rounded-full bg-white/5 flex items-center justify-center">
-                        <span
-                          role="img"
-                          aria-label={solution.alt || solution.title}
-                          className="block w-8 h-8 bg-current text-white group-hover/item:text-[#c58d12] transition-colors"
+                        <div className="shrink-0 mt-1 w-14 h-14 rounded-full bg-zinc-200/70 dark:bg-zinc-700/60 group-hover/item:bg-[#c58d12]/10 dark:group-hover/item:bg-[#c58d12]/15 flex items-center justify-center transition-colors">
+                          <span
+                            role="img"
+                            aria-label={solution.alt || solution.title}
+                            className="block w-8 h-8 bg-current text-zinc-700 dark:text-white group-hover/item:text-[#c58d12] dark:group-hover/item:text-[#c58d12] transition-colors"
                           style={maskStyle(solution.icon)}
                         />
                       </div>
                       <div className="flex-1">
-                        <h3 className="text-sm font-semibold text-white group-hover/item:text-[#c58d12] transition">
+                        <h3 className="text-sm font-semibold text-zinc-900 dark:text-white group-hover/item:text-[#c58d12] dark:group-hover/item:text-[#c58d12] transition">
                           {solution.title}
                         </h3>
-                        <p className="text-xs text-zinc-400 mt-0.5">
+                        <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
                           {solution.description}
                         </p>
                       </div>
@@ -249,7 +249,7 @@ export const Nav = ({ className }: { className?: string }) => {
         href={item.path || "#"}
         target={item.external ? "_blank" : undefined}
         rel={item.external ? "noopener noreferrer" : undefined}
-        className={`button lg:text-lgButton text-white hover:text-white relative group transition ${
+        className={`button lg:text-lgButton text-zinc-800 dark:text-white hover:text-zinc-800 dark:hover:text-white relative group transition ${
           isActive(item.path || "") ? "font-bold underline" : ""
         }`}
         onMouseEnter={() => setHoveredIndex(index)}
@@ -282,19 +282,31 @@ export const Nav = ({ className }: { className?: string }) => {
           >
             <Link
               href="/"
-              className="button text-white lg:text-lgButton transition hover:underline hover:text-white"
+              className="button text-zinc-800 dark:text-white lg:text-lgButton transition hover:underline hover:text-zinc-800 dark:hover:text-white"
             >
               <motion.div
                 whileHover={{ scale: 1.1, rotate: 10 }}
                 transition={{ type: "spring", stiffness: 300 }}
               >
+                {/* Light mode logo (dark SVG) */}
+                <Image
+                  src="/ali-ramazan-yildirim.svg"
+                  alt="Logo"
+                  width={288}
+                  height={192}
+                  sizes="(max-width: 767px) 96px, (max-width: 1023px) 240px, 288px"
+                  className="w-auto block dark:hidden"
+                  style={{ height: navHeight }}
+                  priority
+                />
+                {/* Dark mode logo (white SVG) */}
                 <Image
                   src="/ali-ramazan-yildirim-white.svg"
                   alt="Logo"
                   width={288}
                   height={192}
                   sizes="(max-width: 767px) 96px, (max-width: 1023px) 240px, 288px"
-                  className="w-auto opacity-100"
+                  className="w-auto hidden dark:block"
                   style={{ height: navHeight }}
                   priority
                 />
@@ -334,7 +346,7 @@ export const Nav = ({ className }: { className?: string }) => {
                   }}
                 >
                   <button
-                    className="button lg:text-lgButton flex items-center gap-2 transition text-white hover:text-white"
+                    className="button lg:text-lgButton flex items-center gap-2 transition text-zinc-800 dark:text-white hover:text-zinc-800 dark:hover:text-white"
                     aria-haspopup="true"
                     aria-expanded={languageMenuOpen}
                     aria-label={navDictionary.aria.language}
@@ -379,7 +391,7 @@ export const Nav = ({ className }: { className?: string }) => {
                         style={{
                           pointerEvents: languageMenuOpen ? "auto" : "none",
                         }}
-                        className="absolute right-0 top-full mt-2 w-40 rounded-md border border-white/10 bg-zinc-900/95 py-2 shadow-lg backdrop-blur z-50 flex flex-col items-center"
+                        className="absolute right-0 top-full mt-2 w-40 rounded-md border border-zinc-200 bg-white dark:border-white/10 dark:bg-zinc-900/95 py-2 shadow-lg backdrop-blur z-50 flex flex-col items-center"
                         onMouseEnter={() => {
                           langMenuInside.current = true;
                           if (langMenuCloseTimer.current) {
@@ -403,7 +415,7 @@ export const Nav = ({ className }: { className?: string }) => {
                               className={`w-full px-4 py-2 text-center text-sm transition ${
                                 language === lang.code
                                   ? "font-semibold text-[#c9184a]"
-                                  : "text-white/80 hover:text-white"
+                                  : "text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white"
                               } flex items-center gap-2 justify-center`}
                             >
                               <Image
@@ -423,7 +435,7 @@ export const Nav = ({ className }: { className?: string }) => {
                 </div>
 
                 <button
-                  className="lg:hidden inline-flex items-center justify-center rounded-full border border-white/30 bg-white/10 text-white hover:border-white/50 px-3 py-2 shadow-sm backdrop-blur-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9184a]/40"
+                  className="lg:hidden inline-flex items-center justify-center rounded-full border border-zinc-400/50 dark:border-white/30 bg-zinc-100/80 dark:bg-white/10 text-zinc-800 dark:text-white hover:border-zinc-500/70 dark:hover:border-white/50 px-3 py-2 shadow-sm backdrop-blur-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9184a]/40"
                   onClick={toggleMenu}
                   aria-label={navDictionary.aria.toggle}
                   aria-expanded={menuOpen}
@@ -469,16 +481,16 @@ export const Nav = ({ className }: { className?: string }) => {
                   onClick={toggleMenu}
                 >
                   <div
-                    className="relative w-full max-w-md landscape:max-w-3xl rounded-[28px] border border-white/10 bg-linear-to-b from-zinc-900/97 via-zinc-900/97 to-zinc-900/97 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.7)] backdrop-blur-lg overflow-hidden"
+                    className="relative w-full max-w-md landscape:max-w-3xl rounded-[28px] border border-zinc-200 bg-white/97 dark:border-white/10 dark:bg-zinc-900 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.4)] backdrop-blur-lg overflow-hidden"
                     role="dialog"
                     aria-modal="true"
                     onClick={(event) => event.stopPropagation()}
                   >
                     <div className="absolute inset-x-0 top-3 flex justify-center">
-                      <span className="h-1.5 w-10 rounded-full bg-white/10" />
+                      <span className="h-1.5 w-10 rounded-full bg-zinc-300 dark:bg-white/10" />
                     </div>
                     <button
-                      className="absolute top-3 right-3 inline-flex items-center justify-center rounded-full border border-white/10 bg-white/10 p-2 text-white shadow-sm transition hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9184a]/40"
+                      className="absolute top-3 right-3 inline-flex items-center justify-center rounded-full border border-zinc-200 dark:border-white/10 bg-zinc-100 dark:bg-white/10 p-2 text-zinc-700 dark:text-white shadow-sm transition hover:bg-zinc-200 dark:hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9184a]/40"
                       onClick={toggleMenu}
                       aria-label={navDictionary.aria.close}
                       type="button"
@@ -507,7 +519,7 @@ export const Nav = ({ className }: { className?: string }) => {
                           >
                             <button
                               type="button"
-                              className="button lg:text-lgButton transition flex items-center justify-center gap-2 mx-auto w-full max-w-85 rounded-full border border-white/10 bg-white/5 px-5 py-3 text-center text-white shadow-sm backdrop-blur-sm hover:border-[#c9184a]/40 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9184a]/40 landscape:py-2.5 landscape:max-w-105"
+                              className="button lg:text-lgButton transition flex items-center justify-center gap-2 mx-auto w-full max-w-85 rounded-full border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/5 px-5 py-3 text-center text-zinc-800 dark:text-white shadow-sm hover:border-[#c9184a]/40 hover:bg-zinc-100 dark:hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9184a]/40 landscape:py-2.5 landscape:max-w-105"
                               onClick={() => setSolutionsOpen(!solutionsOpen)}
                             >
                               <span>{item.title}</span>
@@ -534,14 +546,14 @@ export const Nav = ({ className }: { className?: string }) => {
                                   animate={{ opacity: 1, height: "auto" }}
                                   exit={{ opacity: 0, height: 0 }}
                                   transition={{ duration: 0.2 }}
-                                  className="mt-3 grid gap-2 w-full max-w-105 rounded-2xl border border-white/10 bg-white/5 p-3 shadow-lg backdrop-blur-md overflow-hidden sm:grid-cols-2 landscape:mt-2 landscape:max-w-160"
+                                  className="mt-3 grid gap-2 w-full max-w-105 rounded-2xl border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/5 p-3 shadow-lg overflow-hidden sm:grid-cols-2 landscape:mt-2 landscape:max-w-160"
                                 >
                                   {item.submenu.map(
                                     (solution: any, subIdx: number) => (
                                       <Link
                                         key={subIdx}
                                         href={solution.href}
-                                        className="flex items-start gap-3 rounded-xl border border-transparent bg-white/5 p-3 transition group/item hover:border-[#c58d12]/40 hover:bg-white/10"
+                                        className="flex items-start gap-3 rounded-xl border border-transparent bg-zinc-100 dark:bg-white/5 p-3 transition group/item hover:border-[#c58d12]/40 hover:bg-zinc-200/60 dark:hover:bg-white/10"
                                         onClick={() => {
                                           setMenuOpen(false);
                                           setSolutionsOpen(false);
@@ -553,12 +565,12 @@ export const Nav = ({ className }: { className?: string }) => {
                                             aria-label={
                                               solution.alt || solution.title
                                             }
-                                            className="block w-4 h-4 bg-current text-white group-hover/item:text-[#c58d12] transition-colors"
+                                            className="block w-4 h-4 bg-current text-zinc-600 dark:text-white group-hover/item:text-[#c58d12] transition-colors"
                                             style={maskStyle(solution.icon)}
                                           />
                                         </div>
                                         <div className="flex-1">
-                                          <h4 className="text-xs font-semibold text-white group-hover/item:text-[#c58d12] transition">
+                                          <h4 className="text-xs font-semibold text-zinc-900 dark:text-white group-hover/item:text-[#c58d12] transition">
                                             {solution.title}
                                           </h4>
                                           <p className="text-xs text-zinc-400 mt-0.5">
@@ -585,7 +597,7 @@ export const Nav = ({ className }: { className?: string }) => {
                                   ? "noopener noreferrer"
                                   : undefined
                               }
-                              className="button lg:text-lgButton transition w-full max-w-85 rounded-full border border-white/10 bg-white/5 px-5 py-3 text-center text-white shadow-sm backdrop-blur-sm hover:border-[#c9184a]/40 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9184a]/40 landscape:py-2.5 landscape:max-w-75"
+                              className="button lg:text-lgButton transition w-full max-w-85 rounded-full border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/5 px-5 py-3 text-center text-zinc-800 dark:text-white shadow-sm hover:border-[#c9184a]/40 hover:bg-zinc-100 dark:hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9184a]/40 landscape:py-2.5 landscape:max-w-75"
                               onClick={() => setMenuOpen(false)}
                             >
                               {item.title}
@@ -594,8 +606,8 @@ export const Nav = ({ className }: { className?: string }) => {
                         ),
                       )}
 
-                      <li className="w-full border-t border-white/10 pt-5 landscape:col-span-2 landscape:pt-4">
-                        <div className="text-[11px] font-semibold text-white/40 uppercase tracking-[0.35em] text-center">
+                      <li className="w-full border-t border-zinc-200 dark:border-white/10 pt-5 landscape:col-span-2 landscape:pt-4">
+                        <div className="text-[11px] font-semibold text-zinc-400 dark:text-white/40 uppercase tracking-[0.35em] text-center">
                           {languageLabel}
                         </div>
                         <div className="mt-3 flex flex-col items-center gap-2 landscape:mt-2 landscape:flex-row landscape:flex-wrap landscape:justify-center">
@@ -607,7 +619,7 @@ export const Nav = ({ className }: { className?: string }) => {
                               className={`w-56 max-w-[80vw] rounded-full border px-4 py-2.5 text-sm transition shadow-sm backdrop-blur-sm landscape:w-40 landscape:py-2 ${
                                 language === lang.code
                                   ? "border-[#c9184a] text-[#c9184a] bg-[#c9184a]/10"
-                                  : "border-white/10 bg-white/5 text-white/80 hover:border-white/30 hover:text-white"
+                                  : "border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/5 text-zinc-700 dark:text-white/80 hover:border-zinc-400 dark:hover:border-white/30 hover:text-zinc-900 dark:hover:text-white"
                               } flex items-center gap-2 justify-center`}
                             >
                               <Image

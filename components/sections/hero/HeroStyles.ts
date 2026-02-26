@@ -1,7 +1,7 @@
 export type PremiumSurfaceVariant = "panel" | "card";
 
 export const PREMIUM_SURFACE_BASE =
-  "group relative overflow-hidden border border-zinc-700/60 bg-linear-to-br from-zinc-900 via-zinc-900/95 to-zinc-950 backdrop-blur-md transition-all duration-500 hover:border-[#c58d12]/40";
+  "group relative overflow-hidden border border-zinc-200 bg-white dark:border-zinc-700/60 dark:bg-linear-to-br dark:from-zinc-900 dark:via-zinc-900/95 dark:to-zinc-950 backdrop-blur-md transition-all duration-500 hover:border-[#c58d12]/40";
 export const PREMIUM_SURFACE_OVERLAY =
   "pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(197,141,18,0.06),transparent_58%)] opacity-80";
 export const PREMIUM_SURFACE_PRIMARY_GLOW =

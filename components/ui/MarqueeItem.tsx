@@ -20,9 +20,9 @@ const MarqueeItem: React.FC<MarqueeItemProps> = ({ images, from, to }) => {
         alt={item.text || `Icon ${index + 1}`}
         width={40}
         height={40}
-        className="md:w-20 md:h-20"
+        className={`md:w-20 md:h-20${item.src === "/techStack/expressjs.svg" ? " dark:brightness-0 dark:invert" : item.src === "/techStack/github.svg" ? " brightness-0 dark:invert" : ""}`}
       />
-      <span className="text-sm md:text-lg text-white text-center font-bold">
+      <span className="text-sm md:text-lg text-zinc-700 dark:text-white text-center font-bold">
         {item.text}
       </span>
     </div>

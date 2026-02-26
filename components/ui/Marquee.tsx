@@ -11,14 +11,14 @@ const Marquee = () => {
     { src: "/techStack/04.svg", text: "Supabase" },
     { src: "/techStack/05.svg", text: "PostgreSQL" },
     { src: "/techStack/06.svg", text: "Node.js" },
-    { src: "/techStack/07.svg", text: "Express.js" },
+    { src: "/techStack/expressjs.svg", text: "Express.js" },
     { src: "/techStack/08.svg", text: "Next.Js" },
     { src: "/techStack/09.svg", text: "React" },
   ];
 
   const lowerMarquee = [
     { src: "/techStack/10.svg", text: "Git" },
-    { src: "/techStack/11.svg", text: "GitHub" },
+    { src: "/techStack/github.svg", text: "GitHub" },
     { src: "/techStack/12.svg", text: "VS Code" },
     { src: "/techStack/13.svg", text: "Postman" },
     { src: "/techStack/14.svg", text: "Docker" },

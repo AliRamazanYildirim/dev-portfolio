@@ -20,29 +20,29 @@ export default function ProjectMeta({
         </h2>
       </div>
       <div>
-        <p className="content md:text-lgContent text-white text-lg leading-relaxed">
+        <p className="content md:text-lgContent text-zinc-700 dark:text-white text-lg leading-relaxed">
           {description}
         </p>
       </div>
 
       <div className="grid grid-cols-3 gap-4 mt-8">
         <div>
-          <p className="font-bold content md:text-lgContent text-white">
+          <p className="font-bold content md:text-lgContent text-zinc-700 dark:text-white">
             {projectTexts.role}
           </p>
-          <p className="text-white">{project.role}</p>
+          <p className="text-zinc-600 dark:text-white">{project.role}</p>
         </div>
         <div>
-          <p className="font-bold content md:text-lgContent text-white">
+          <p className="font-bold content md:text-lgContent text-zinc-700 dark:text-white">
             {projectTexts.duration}
           </p>
-          <p className="text-white">{project.duration}</p>
+          <p className="text-zinc-600 dark:text-white">{project.duration}</p>
         </div>
         <div>
-          <p className="font-bold content md:text-lgContent text-white">
+          <p className="font-bold content md:text-lgContent text-zinc-700 dark:text-white">
             {projectTexts.category}
           </p>
-          <p className="text-white">{project.category}</p>
+          <p className="text-zinc-600 dark:text-white">{project.category}</p>
         </div>
       </div>
     </div>

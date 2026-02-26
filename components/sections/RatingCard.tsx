@@ -34,7 +34,7 @@ const RatingCard: React.FC<RatingCardProps> = ({
       whileHover="hover"
       className="group h-full"
     >
-      <div className="relative h-full rounded-2xl border border-zinc-800 bg-linear-to-br from-zinc-900 to-black p-6 md:p-8 transition-all duration-300 hover:border-[#c58d12]/40 overflow-hidden">
+      <div className="relative h-full rounded-2xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-linear-to-br dark:from-zinc-900 dark:to-black p-6 md:p-8 transition-all duration-300 hover:border-[#c58d12]/40 overflow-hidden">
         {/* Gold hover glow */}
         <div className="absolute inset-0 bg-linear-to-br from-[#c58d12]/0 via-[#c58d12]/0 to-[#c58d12]/0 transition-all duration-500 group-hover:from-[#c58d12]/5 group-hover:to-[#c58d12]/8 pointer-events-none" />
         {/* Bottom accent line */}
@@ -45,12 +45,12 @@ const RatingCard: React.FC<RatingCardProps> = ({
           {/* Header */}
           <div className="flex items-start justify-between gap-4">
             <div className="flex flex-col gap-3 flex-1">
-              <h3 className="font-satoshi font-semibold text-lg text-white leading-tight group-hover:text-[#c58d12] transition-colors duration-300">
+              <h3 className="font-satoshi font-semibold text-lg text-zinc-900 dark:text-white leading-tight group-hover:text-[#c58d12] transition-colors duration-300">
                 {rating.businessName}
               </h3>
               <div className="flex items-center gap-3">
                 <RatingStars rating={rating.rating} size="md" animated={true} />
-                <span className="font-satoshi font-bold text-white text-lg">
+                <span className="font-satoshi font-bold text-zinc-900 dark:text-white text-lg">
                   {rating.rating.toFixed(1)}
                 </span>
               </div>
@@ -83,16 +83,16 @@ const RatingCard: React.FC<RatingCardProps> = ({
           </div>
 
           {/* Review Text */}
-          <p className="font-satoshi text-sm md:text-base text-zinc-400 leading-relaxed grow">
+          <p className="font-satoshi text-sm md:text-base text-zinc-600 dark:text-zinc-400 leading-relaxed grow">
             &ldquo;{rating.reviewText}&rdquo;
           </p>
 
           {/* Footer */}
-          <div className="flex items-center justify-between pt-4 border-t border-zinc-800">
-            <div className="flex items-center gap-2 text-xs md:text-sm text-zinc-500">
+          <div className="flex items-center justify-between pt-4 border-t border-zinc-200 dark:border-zinc-800">
+            <div className="flex items-center gap-2 text-xs md:text-sm text-zinc-500 dark:text-zinc-500">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="w-4 h-4 text-zinc-600"
+                className="w-4 h-4 text-zinc-400 dark:text-zinc-600"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
@@ -118,12 +118,12 @@ const RatingCard: React.FC<RatingCardProps> = ({
           {/* Positive percentage indicator */}
           <div className="mt-2">
             <div className="flex items-center justify-between mb-1.5">
-              <span className="text-xs text-zinc-500">Positive</span>
-              <span className="text-xs font-medium text-zinc-300">
+              <span className="text-xs text-zinc-500 dark:text-zinc-500">Positive</span>
+              <span className="text-xs font-medium text-zinc-600 dark:text-zinc-300">
                 {rating.positivePercentage}%
               </span>
             </div>
-            <div className="w-full h-1.5 bg-zinc-800 rounded-full overflow-hidden">
+            <div className="w-full h-1.5 bg-zinc-200 dark:bg-zinc-800 rounded-full overflow-hidden">
               <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: `${rating.positivePercentage}%` }}
