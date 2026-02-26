@@ -12,7 +12,7 @@ export default function ProjectHeader({ project, projectTexts }: Props) {
       <div className="flex items-center justify-between mb-4">
         <h1 className="heading md:text-lgHeading">{project.title}</h1>
         {project.featured && (
-          <span className="bg-[#c9184a] text-white px-4 py-2 rounded-full text-sm font-bold">
+          <span className="rounded-full border border-[#c58d12]/40 bg-[#c58d12]/10 px-4 py-2 text-sm font-bold text-[#c58d12]">
             {projectTexts.featuredBadge}
           </span>
         )}
@@ -23,7 +23,7 @@ export default function ProjectHeader({ project, projectTexts }: Props) {
           : project.author}
         {" \u2022 "}
         {new Date(project.createdAt).toLocaleDateString(
-          projectTexts.dateLocale
+          projectTexts.dateLocale,
         )}
       </p>
     </div>

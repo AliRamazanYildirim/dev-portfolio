@@ -83,8 +83,8 @@ const ProjectsUI = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
             {[1, 2].map((i) => (
               <div key={i} className="animate-pulse">
-                <div className="bg-gray-700 rounded-md h-64 mb-4"></div>
-                <div className="bg-gray-700 rounded h-6 w-3/4"></div>
+                <div className="bg-zinc-800 rounded-2xl h-64 mb-4"></div>
+                <div className="bg-zinc-800 rounded h-6 w-3/4"></div>
               </div>
             ))}
           </div>
@@ -96,7 +96,7 @@ const ProjectsUI = () => {
   return (
     <section className="text-white px-7 py-12 md:py-14">
       <div className="container mx-auto">
-        <h2 className="title md:text-lgHeading font-bold mb-10">
+        <h2 className="title md:text-lgHeading font-bold mb-10 bg-linear-to-r from-white via-zinc-100 to-zinc-400 bg-clip-text text-transparent">
           <SplitText text={texts.heading} />
         </h2>
 
@@ -129,7 +129,7 @@ const ProjectsUI = () => {
                   {/* Featured badge (top-right) */}
                   {project.featured && (
                     <div className="absolute top-2 right-4 z-30">
-                      <p className="text-sm text-[#c9184a] font-medium">
+                      <p className="text-sm text-[#c58d12] font-medium">
                         {texts.featuredBadge}
                       </p>
                     </div>
@@ -147,9 +147,9 @@ const ProjectsUI = () => {
           </div>
         ) : (
           <div className="text-center py-16 sm:py-24">
-            <div className="bg-[#eeede9] rounded-xl sm:rounded-2xl shadow-lg border border-white/20 p-8 sm:p-12 max-w-sm sm:max-w-md mx-auto">
+            <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-8 sm:p-12 max-w-sm sm:max-w-md mx-auto">
               <svg
-                className="mx-auto h-12 w-12 sm:h-16 sm:w-16 text-[#131313]/50 mb-4 sm:mb-6"
+                className="mx-auto h-12 w-12 sm:h-16 sm:w-16 text-zinc-600 mb-4 sm:mb-6"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 48 48"
@@ -162,10 +162,10 @@ const ProjectsUI = () => {
                 />
               </svg>
 
-              <h3 className="text-lg sm:text-xl font-medium text-[#131313] mb-2 sm:mb-3">
+              <h3 className="text-lg sm:text-xl font-medium text-white mb-2 sm:mb-3">
                 {texts.emptyTitle}
               </h3>
-              <p className="text-sm sm:text-base text-[#131313]/70">
+              <p className="text-sm sm:text-base text-zinc-400">
                 {texts.emptyDescription}
               </p>
             </div>

@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 import SplitText from "@/components/animations/SplitText";
 import ReviewsCarousel from "./ReviewsCarousel";
 import WaveSeparator from "@/components/ui/WaveSeparator";
-import NoiseBackground from "@/components/ui/NoiseBackground";
 import { useTranslation } from "@/hooks/useTranslation";
 import {
   enGoogleRatings,
@@ -102,11 +101,7 @@ const GoogleRatings: React.FC = () => {
 
         {/* Stats Bar */}
         <motion.div variants={itemVariants}>
-          <NoiseBackground
-            mode="light"
-            intensity={0.08}
-            className="flex flex-row items-center justify-between sm:justify-center gap-2 sm:gap-4 md:gap-12 mt-8 md:mt-10 p-4 sm:p-6 md:p-8 rounded-xl shadow-lg relative overflow-hidden"
-          >
+          <div className="flex flex-row items-center justify-between sm:justify-center gap-2 sm:gap-4 md:gap-12 mt-8 md:mt-10 p-4 sm:p-6 md:p-8 rounded-2xl border border-zinc-800 bg-zinc-900 relative overflow-hidden">
             {/* Average Rating */}
             <div className="flex flex-1 min-w-0 items-center justify-center gap-2 sm:gap-3 relative z-10">
               <div className="flex items-center">
@@ -165,41 +160,41 @@ const GoogleRatings: React.FC = () => {
                 </svg>
               </div>
               <div className="text-center">
-                <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-black">
+                <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-white">
                   {averageRating}
                 </div>
-                <div className="text-[11px] sm:text-xs md:text-sm text-black/60 mt-1">
+                <div className="text-[11px] sm:text-xs md:text-sm text-zinc-400 mt-1">
                   {t("googleRatings.averageRating")}
                 </div>
               </div>
             </div>
 
             {/* Divider */}
-            <div className="hidden sm:block w-px h-12 bg-black/20" />
+            <div className="hidden sm:block w-px h-12 bg-zinc-700" />
 
             {/* Total Testimonials */}
             <div className="flex-1 min-w-0 text-center relative z-10">
-              <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-black">
+              <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-white">
                 {totalTestimonials.toLocaleString()}
               </div>
-              <div className="text-[11px] sm:text-xs md:text-sm text-black/60 mt-1">
+              <div className="text-[11px] sm:text-xs md:text-sm text-zinc-400 mt-1">
                 {t("googleRatings.testimonials")}
               </div>
             </div>
 
             {/* Divider */}
-            <div className="hidden sm:block w-px h-12 bg-black/20" />
+            <div className="hidden sm:block w-px h-12 bg-zinc-700" />
 
             {/* Positive Percentage */}
             <div className="flex-1 min-w-0 text-center relative z-10">
-              <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-green-600">
+              <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#c58d12]">
                 {avgPositive}%
               </div>
-              <div className="text-[11px] sm:text-xs md:text-sm text-black/60 mt-1">
+              <div className="text-[11px] sm:text-xs md:text-sm text-zinc-400 mt-1">
                 {t("googleRatings.positiveReviews")}
               </div>
             </div>
-          </NoiseBackground>
+          </div>
         </motion.div>
       </motion.div>
 

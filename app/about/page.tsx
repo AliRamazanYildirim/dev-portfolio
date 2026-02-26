@@ -3,7 +3,6 @@
 import React from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import NoiseBackground from "@/components/ui/NoiseBackground";
 import SplitText from "@/components/animations/SplitText";
 import { useTranslation } from "@/hooks/useTranslation";
 import type { TranslationDictionary } from "@/constants/translations";
@@ -13,70 +12,68 @@ const AboutPage = () => {
   const aboutDictionary = dictionary.aboutPage;
 
   return (
-    <NoiseBackground mode="light" intensity={0.1}>
-      <div className="relative min-h-screen overflow-hidden">
-        <motion.section
-          className="px-5 md:pb-20 relative z-10"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8 }}
-        >
-          <div className="container mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-12 items-center">
-              <motion.div
-                className="md:col-span-8 pb-5 md:pb-20"
-                initial={{ x: -50, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                transition={{ duration: 0.8, ease: "easeOut" }}
-              >
-                <Header lines={aboutDictionary.headline} />
-                <Paragraph text={aboutDictionary.quote} />
-              </motion.div>
+    <div className="relative min-h-screen">
+      <motion.section
+        className="px-5 md:pb-20 relative z-10 text-white"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.8 }}
+      >
+        <div className="container mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-12 items-center">
+            <motion.div
+              className="md:col-span-8 pb-5 md:pb-20"
+              initial={{ x: -50, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+            >
+              <Header lines={aboutDictionary.headline} />
+              <Paragraph text={aboutDictionary.quote} />
+            </motion.div>
 
-              <motion.div
-                className="md:col-span-4 pb-10 flex justify-center md:justify-end"
-                initial={{ x: 50, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
-              >
-                <Portrait />
-              </motion.div>
-            </div>
+            <motion.div
+              className="md:col-span-4 pb-10 flex justify-center md:justify-end"
+              initial={{ x: 50, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
+            >
+              <Portrait />
+            </motion.div>
+          </div>
 
-            <div>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, ease: "easeOut", delay: 0.4 }}
-              >
-                <Header2
-                  text={aboutDictionary.sectionHeading}
-                  isTurkish={language === "tr"}
-                />
-              </motion.div>
+          <div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: "easeOut", delay: 0.4 }}
+            >
+              <Header2
+                text={aboutDictionary.sectionHeading}
+                isTurkish={language === "tr"}
+              />
+            </motion.div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 mt-8">
-                {aboutDictionary.interests.map((interest, index) => (
-                  <motion.div
-                    key={index}
-                    className="flex flex-col space-y-2"
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{
-                      duration: 0.6,
-                      ease: "easeOut",
-                      delay: 0.6 + index * 0.1,
-                    }}
-                  >
-                    <Interest data={interest} />
-                  </motion.div>
-                ))}
-              </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 mt-8">
+              {aboutDictionary.interests.map((interest, index) => (
+                <motion.div
+                  key={interest.title}
+                  className="flex flex-col space-y-2"
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    duration: 0.6,
+                    ease: "easeOut",
+                    delay: 0.6 + index * 0.1,
+                  }}
+                >
+                  <Interest data={interest} />
+                </motion.div>
+              ))}
             </div>
           </div>
-        </motion.section>
-      </div>
-    </NoiseBackground>
+        </div>
+      </motion.section>
+    </div>
   );
 };
 
@@ -86,10 +83,10 @@ const Header = ({
   lines: TranslationDictionary["aboutPage"]["headline"];
 }) => {
   const lineClasses = [
-    "block text-2xl sm:text-5xl lg:text-8xl xl:text-[6.5rem]",
-    "block text-2xl sm:text-5xl lg:text-8xl xl:text-[6.5rem]",
-    "block pl-12 md:pl-32 text-3xl sm:text-5xl lg:text-8xl xl:text-[6.5rem]",
-    "block pl-12 md:pl-10 text-3xl sm:text-5xl lg:text-8xl xl:text-[6.5rem]",
+    "block text-[1.35rem] sm:text-[2.7rem] lg:text-[5.4rem] xl:text-[5.85rem]",
+    "block text-[1.35rem] sm:text-[2.7rem] lg:text-[5.4rem] xl:text-[5.85rem]",
+    "block pl-12 md:pl-32 text-[1.69rem] sm:text-[2.7rem] lg:text-[5.4rem] xl:text-[5.85rem]",
+    "block pl-12 md:pl-10 text-[1.69rem] sm:text-[2.7rem] lg:text-[5.4rem] xl:text-[5.85rem]",
   ];
 
   return (
@@ -107,7 +104,7 @@ const Header = ({
 };
 
 const Paragraph = ({ text }: { text: string }) => (
-  <p className="content sm:text-lg lg:text-lgContent text-gray italic">
+  <p className="content sm:text-lg lg:text-lgContent text-zinc-400 italic">
     {text}
   </p>
 );
@@ -123,13 +120,7 @@ const Portrait = () => (
   />
 );
 
-const Header2 = ({
-  text,
-  isTurkish,
-}: {
-  text: string;
-  isTurkish: boolean;
-}) => (
+const Header2 = ({ text, isTurkish }: { text: string; isTurkish: boolean }) => (
   <h2
     className={`heading leading-tight md:pb-10 ${
       isTurkish
@@ -153,14 +144,16 @@ const Interest = ({
         alt={data.alt}
         width={16}
         height={16}
-        className="sm:w-6 sm:h-6 lg:w-8 lg:h-8"
+        className="sm:w-6 sm:h-6 lg:w-8 lg:h-8 brightness-0 invert"
       />
-      <h3 className="content2 text-gray sm:text-xl lg:text-lgContent2">
+      <h3 className="content2 text-zinc-300 sm:text-xl lg:text-lgContent2">
         {data.title}
       </h3>
     </div>
 
-    <p className="content3 sm:text-lg lg:text-lgContent3">{data.description}</p>
+    <p className="content3 text-zinc-400 sm:text-lg lg:text-lgContent3">
+      {data.description}
+    </p>
   </div>
 );
 

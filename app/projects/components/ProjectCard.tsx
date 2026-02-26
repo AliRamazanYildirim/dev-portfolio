@@ -30,25 +30,29 @@ export default function ProjectCard({
   return (
     <div className="cursor-pointer group">
       <Link href={`/projects/${project.slug}`}>
-        <div className="relative overflow-hidden rounded-md">
-          <div className="flex justify-center mb-16">
+        <div className="relative overflow-hidden rounded-2xl border border-zinc-800 bg-linear-to-br from-zinc-900 to-black transition-all duration-500 hover:border-[#c58d12]/50">
+          <div className="absolute inset-0 rounded-2xl bg-linear-to-br from-[#c58d12]/0 to-[#c58d12]/0 transition-all duration-500 group-hover:from-[#c58d12]/5 group-hover:to-[#c58d12]/8 pointer-events-none" />
+          <div className="flex justify-center">
             <div className="w-full">
               <ProjectImage src={project.mainImage} alt={project.title} />
             </div>
           </div>
 
           {project.featured && (
-            <div className="absolute top-4 right-4 bg-[#c9184a] text-white px-3 py-1 rounded-full text-sm font-bold">
-              {projectsDictionary?.featured || "Featured"}
+            <div className="absolute top-0 right-0 z-30">
+              <div className="rounded-bl-2xl rounded-tr-2xl border-b border-l border-[#c58d12]/40 bg-[#c58d12]/15 px-4 py-2 text-sm font-semibold text-[#c58d12]">
+                {projectsDictionary?.featured || "Featured"}
+              </div>
             </div>
           )}
+          <div className="absolute bottom-0 left-0 h-1 w-0 bg-linear-to-r from-[#c58d12] to-transparent transition-all duration-500 group-hover:w-full" />
         </div>
 
-        <div className="mt-4">
-          <h2 className="content md:text-lgContent font-bold group-hover:text-[#c9184a] transition">
+        <div className="mt-4 px-1">
+          <h2 className="text-3xl md:text-4xl font-bold text-white transition-colors duration-300 group-hover:text-[#c58d12]">
             {project.title}
           </h2>
-          <p className="button md:text-lgButton text-white mt-2 line-clamp-2">
+          <p className="text-zinc-400 mt-2 text-lg md:text-xl line-clamp-2">
             {snippet}
           </p>
         </div>

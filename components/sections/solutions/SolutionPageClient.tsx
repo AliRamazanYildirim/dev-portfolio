@@ -67,28 +67,7 @@ export default function SolutionPageClient({ slug }: SolutionPageClientProps) {
   }>;
 
   return (
-    <main className="min-h-screen bg-linear-to-b from-black via-zinc-950 to-black">
-      <motion.div
-        className="pointer-events-none fixed top-1/3 left-1/4 h-96 w-96 rounded-full bg-linear-to-br from-[#c58d12] to-[#d4a24a] opacity-10 blur-[150px]"
-        animate={{ y: [0, -50, 0], scale: [1, 1.15, 1] }}
-        transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-      />
-      <motion.div
-        className="pointer-events-none fixed bottom-1/3 right-1/4 h-96 w-96 rounded-full bg-linear-to-tr from-[#d4a24a] to-[#c58d12] opacity-10 blur-[150px]"
-        animate={{ y: [0, 50, 0], scale: [1.1, 0.95, 1.1] }}
-        transition={{
-          duration: 16,
-          repeat: Infinity,
-          ease: "easeInOut",
-          delay: 1,
-        }}
-      />
-      <motion.div
-        className="pointer-events-none fixed right-1/3 top-10 h-80 w-80 rounded-full bg-[#c58d12]/20 opacity-10 blur-[120px]"
-        animate={{ rotate: [0, 360] }}
-        transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-      />
-
+    <main className="min-h-screen bg-transparent">
       <div className="relative z-10">
         <SolutionHero
           title={resolved.hero.title}

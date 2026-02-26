@@ -1,7 +1,6 @@
 "use client";
 
 import { motion } from "framer-motion";
-import NoiseBackground from "../ui/NoiseBackground";
 
 interface ContactInfoProps {
   phoneNumber?: string;
@@ -10,8 +9,6 @@ interface ContactInfoProps {
   badgeLabel?: string;
 }
 
-const MotionNoiseBackground = motion.create(NoiseBackground);
-
 const ContactInfo = ({
   phoneNumber = "+49 151 67145187",
   email = "aliramazanyildirim@gmail.com",
@@ -19,14 +16,12 @@ const ContactInfo = ({
   badgeLabel = "Direct line",
 }: ContactInfoProps) => {
   return (
-    <MotionNoiseBackground
-      mode="light"
-      intensity={0.08}
+    <motion.div
       whileHover={{ scale: 1.01, y: -1 }}
       whileTap={{ scale: 0.98 }}
-      className="group flex w-full max-w-md items-center gap-4 rounded-2xl border border-slate-300 bg-white/95 px-5 py-4 shadow-xl transition-shadow duration-200 focus:outline-none focus-visible:ring-4 focus-visible:ring-slate-300/70 hover:shadow-2xl"
+      className="group flex w-full max-w-md items-center gap-4 rounded-2xl border border-zinc-700 bg-zinc-900 px-5 py-4 shadow-xl transition-all duration-300 hover:border-[#c58d12]/50 hover:shadow-[0_0_24px_rgba(197,141,18,0.15)]"
     >
-      <span className="flex h-11 w-11 items-center justify-center rounded-full bg-slate-900 text-white shadow-sm">
+      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-[#c58d12] to-[#d4a24a] text-black shadow-sm">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
@@ -44,24 +39,24 @@ const ContactInfo = ({
         </svg>
       </span>
       <div className="flex flex-col text-center">
-        <span className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+        <span className="text-xs font-semibold uppercase tracking-[0.2em] text-[#c58d12]">
           {badgeLabel}
         </span>
         <a
           href={`tel:${phoneNumber.replace(/\s+/g, "")}`}
-          className="inline-block rounded px-2 py-1.5 text-lg font-semibold text-slate-900 transition-colors duration-200 hover:text-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-900/30"
+          className="inline-block rounded px-2 py-1.5 text-lg font-semibold text-white transition-colors duration-200 hover:text-[#c58d12] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#c58d12]/40"
         >
           {phoneNumber}
         </a>
         <a
           href={`mailto:${email}`}
-          className="inline-block rounded px-2 py-1.5 text-sm text-slate-600 underline decoration-slate-300 underline-offset-2 transition-colors duration-200 hover:text-slate-800 hover:decoration-slate-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-600/30"
+          className="inline-block rounded px-2 py-1.5 text-sm text-zinc-400 underline decoration-zinc-600 underline-offset-2 transition-colors duration-200 hover:text-[#c58d12] hover:decoration-[#c58d12]/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#c58d12]/30"
         >
           {email}
         </a>
-        <span className="text-sm text-slate-500">{availabilityLabel}</span>
+        <span className="text-sm text-zinc-500">{availabilityLabel}</span>
       </div>
-    </MotionNoiseBackground>
+    </motion.div>
   );
 };
 

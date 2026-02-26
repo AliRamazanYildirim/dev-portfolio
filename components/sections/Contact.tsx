@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import NoiseBackground from "../ui/NoiseBackground";
 import SplitText from "@/components/animations/SplitText";
 import toast from "react-hot-toast";
 import ContactInfo from "./ContactInfo";
@@ -15,25 +14,23 @@ const Contact = () => {
   const contactInfoDictionary = dictionary.contactInfo;
 
   return (
-    <NoiseBackground mode="light" intensity={0.1}>
-      <section id="contact" className="px-7 py-10 md:py-5">
-        <div className="container mx-auto">
-          <Header
-            lineOne={contactDictionary.headingLineOne}
-            lineTwo={contactDictionary.headingLineTwo}
-          />
-          <ContactForm
-            contactDictionary={contactDictionary}
-            contactInfoDictionary={contactInfoDictionary}
-          />
-        </div>
-      </section>
-    </NoiseBackground>
+    <section id="contact" className="px-7 py-10 md:py-5">
+      <div className="container mx-auto">
+        <Header
+          lineOne={contactDictionary.headingLineOne}
+          lineTwo={contactDictionary.headingLineTwo}
+        />
+        <ContactForm
+          contactDictionary={contactDictionary}
+          contactInfoDictionary={contactInfoDictionary}
+        />
+      </div>
+    </section>
   );
 };
 
 const Header = ({ lineOne, lineTwo }: { lineOne: string; lineTwo: string }) => (
-  <h2 className="heading sm:text-4xl lg:text-lgHeading mb-10 md:mb-20">
+  <h2 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-black tracking-tight mb-10 md:mb-20 bg-linear-to-r from-white via-zinc-100 to-zinc-400 bg-clip-text text-transparent leading-tight">
     <SplitText text={lineOne} />
     <SplitText text={lineTwo} />
   </h2>
@@ -133,7 +130,7 @@ const ContactForm = ({
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
-            className="text-green-600 text-center text-xl"
+            className="text-[#c58d12] text-center text-xl font-semibold"
           >
             {contactDictionary.success}
           </motion.p>
@@ -146,24 +143,24 @@ const ContactForm = ({
             exit={{ opacity: 0, y: -20 }}
             className="md:grid md:grid-cols-12 gap-6 mx-auto"
           >
-            <div className="relative border-b border-gray md:col-span-3">
+            <div className="relative border-b border-zinc-700 md:col-span-3">
               <input
                 type="text"
                 name="name"
                 placeholder={contactDictionary.placeholders.name}
-                className="content w-full bg-transparent border-none text-lg placeholder-[#260a03] focus:outline-none focus:ring-0 sm:text-xl lg:text-lgContent"
+                className="content w-full bg-transparent border-none text-lg text-white placeholder:text-zinc-500 focus:outline-none focus:ring-0 sm:text-xl lg:text-lgContent"
                 value={formData.name ?? ""}
                 onChange={handleChange}
                 required
               />
             </div>
 
-            <div className="relative border-b border-gray md:col-span-3">
+            <div className="relative border-b border-zinc-700 md:col-span-3">
               <input
                 type="email"
                 name="email"
                 placeholder={contactDictionary.placeholders.email}
-                className="content w-full bg-transparent border-none text-lg placeholder-[#260a03] focus:outline-none focus:ring-0 sm:text-xl lg:text-lgContent"
+                className="content w-full bg-transparent border-none text-lg text-white placeholder:text-zinc-500 focus:outline-none focus:ring-0 sm:text-xl lg:text-lgContent"
                 value={formData.email ?? ""}
                 onChange={handleChange}
                 required
@@ -171,11 +168,11 @@ const ContactForm = ({
               />
             </div>
 
-            <div className="relative border-b border-gray md:col-span-6">
+            <div className="relative border-b border-zinc-700 md:col-span-6">
               <textarea
                 name="message"
                 placeholder={contactDictionary.placeholders.message}
-                className="content w-full bg-transparent border-none text-lg placeholder-[#260a03] focus:outline-none focus:ring-0 sm:text-xl lg:text-lgContent"
+                className="content w-full bg-transparent border-none text-lg text-white placeholder:text-zinc-500 focus:outline-none focus:ring-0 sm:text-xl lg:text-lgContent"
                 value={formData.message ?? ""}
                 onChange={handleChange}
                 required
@@ -183,12 +180,14 @@ const ContactForm = ({
             </div>
 
             <div className="col-span-12 flex justify-end mt-6">
-              <button
+              <motion.button
                 type="submit"
-                className="py-3 px-6 bg-black text-white rounded-md hover:bg-[#260a03] transition-colors duration-200"
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+                className="inline-flex items-center gap-2 rounded-xl bg-linear-to-r from-[#c58d12] to-[#d4a24a] px-8 py-4 font-bold text-black shadow-[0_0_30px_rgba(197,141,18,0.3)] transition-all duration-300 hover:from-[#d4a24a] hover:to-[#c58d12] hover:shadow-[0_0_50px_rgba(197,141,18,0.5)]"
               >
                 {contactDictionary.submit}
-              </button>
+              </motion.button>
             </div>
             {/* Phone contact rendered under the submit button */}
             <div className="col-span-12 flex justify-center mt-6">

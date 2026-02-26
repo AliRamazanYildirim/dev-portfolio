@@ -48,25 +48,8 @@ export default function SolutionsPage() {
   } as const;
 
   return (
-    <main className="min-h-screen bg-black">
-      <section className="relative flex min-h-[60vh] items-center justify-center overflow-hidden bg-linear-to-br from-black via-zinc-900 to-black">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#18181b_1px,transparent_1px),linear-gradient(to_bottom,#18181b_1px,transparent_1px)] bg-size-[4rem_4rem] mask-[radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)] opacity-20" />
-        <motion.div
-          className="absolute top-1/4 left-1/4 h-96 w-96 rounded-full bg-[#c58d12]/20 blur-[128px]"
-          animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
-          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-        />
-        <motion.div
-          className="absolute bottom-1/4 right-1/4 h-96 w-96 rounded-full bg-[#c58d12]/20 blur-[128px]"
-          animate={{ scale: [1.2, 1, 1.2], opacity: [0.5, 0.3, 0.5] }}
-          transition={{
-            duration: 8,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 1,
-          }}
-        />
-
+    <main className="min-h-screen">
+      <section className="relative flex min-h-[60vh] items-center justify-center overflow-hidden">
         <div className="relative z-10 mx-auto max-w-5xl px-6 py-24 text-center lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -97,7 +80,7 @@ export default function SolutionsPage() {
         </div>
       </section>
 
-      <section className="relative bg-black py-24">
+      <section className="relative py-24">
         <div className="mx-auto grid max-w-7xl gap-8 px-6 md:grid-cols-2 lg:grid-cols-3 lg:px-8">
           {solutions.map((solution) => (
             <motion.div

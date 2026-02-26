@@ -1,6 +1,5 @@
 "use client";
 
-import NoiseBackground from "@/components/ui/NoiseBackground";
 import { useTranslation } from "@/hooks/useTranslation";
 import {
   privacyTranslations,
@@ -33,67 +32,63 @@ export default function PrivacyPage() {
 
   return (
     <main className="w-full">
-      <NoiseBackground mode="light" intensity={0.1}>
-        <div className="mx-auto max-w-4xl px-5 py-16 md:px-10 text-[#260a03]">
-          <h1 className="text-4xl font-semibold tracking-tight md:text-5xl">
-            {privacy.title}
-          </h1>
-          <p className="mt-2 text-sm uppercase tracking-wide text-neutral-600">
-            {privacy.lastUpdated}
-          </p>
+      <div className="mx-auto max-w-4xl px-5 py-16 md:px-10 text-zinc-300">
+        <h1 className="text-4xl font-bold tracking-tight md:text-5xl bg-linear-to-r from-white via-zinc-100 to-zinc-400 bg-clip-text text-transparent">
+          {privacy.title}
+        </h1>
+        <p className="mt-2 text-sm uppercase tracking-wide text-zinc-500">
+          {privacy.lastUpdated}
+        </p>
 
-          <div className="mt-8 space-y-5 text-base leading-relaxed md:text-lg">
-            {privacy.intro.map((paragraph, index) => (
-              <p key={`privacy-intro-${index}`}>{paragraph}</p>
-            ))}
-          </div>
-
-          <div className="mt-10 space-y-10">
-            {privacy.sections.map((section, index) => (
-              <section key={`privacy-section-${index}`}>
-                <h2 className="text-2xl font-semibold text-[#180a04] md:text-3xl">
-                  {section.heading}
-                </h2>
-                {hasParagraphs(section) && (
-                  <div className="mt-4 space-y-4 text-base leading-relaxed md:text-lg">
-                    {section.paragraphs.map((paragraph, paragraphIndex) => (
-                      <p
-                        key={`privacy-section-${index}-paragraph-${paragraphIndex}`}
-                      >
-                        {paragraph}
-                      </p>
-                    ))}
-                  </div>
-                )}
-                {hasBullets(section) && (
-                  <ul className="mt-4 space-y-3 list-disc list-inside text-base md:text-lg text-[#3a2018]">
-                    {section.bullets.map((bullet, bulletIndex) => (
-                      <li
-                        key={`privacy-section-${index}-bullet-${bulletIndex}`}
-                      >
-                        {bullet}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </section>
-            ))}
-          </div>
-
-          <section className="mt-12">
-            <h2 className="text-2xl font-semibold text-[#180a04] md:text-3xl">
-              {privacy.contactHeading}
-            </h2>
-            <ul className="mt-4 space-y-3 text-base md:text-lg text-[#3a2018]">
-              {privacy.contactDetails.map((detail, index) => (
-                <li key={`privacy-contact-${index}`}>{detail}</li>
-              ))}
-            </ul>
-          </section>
-
-          <p className="mt-12 text-sm text-neutral-600">{privacy.note}</p>
+        <div className="mt-8 space-y-5 text-base leading-relaxed md:text-lg">
+          {privacy.intro.map((paragraph, index) => (
+            <p key={`privacy-intro-${index}`}>{paragraph}</p>
+          ))}
         </div>
-      </NoiseBackground>
+
+        <div className="mt-10 space-y-10">
+          {privacy.sections.map((section, index) => (
+            <section key={`privacy-section-${index}`}>
+              <h2 className="text-2xl font-semibold text-white md:text-3xl">
+                {section.heading}
+              </h2>
+              {hasParagraphs(section) && (
+                <div className="mt-4 space-y-4 text-base leading-relaxed md:text-lg">
+                  {section.paragraphs.map((paragraph, paragraphIndex) => (
+                    <p
+                      key={`privacy-section-${index}-paragraph-${paragraphIndex}`}
+                    >
+                      {paragraph}
+                    </p>
+                  ))}
+                </div>
+              )}
+              {hasBullets(section) && (
+                <ul className="mt-4 space-y-3 list-disc list-inside text-base md:text-lg text-zinc-300">
+                  {section.bullets.map((bullet, bulletIndex) => (
+                    <li key={`privacy-section-${index}-bullet-${bulletIndex}`}>
+                      {bullet}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </section>
+          ))}
+        </div>
+
+        <section className="mt-12">
+          <h2 className="text-2xl font-semibold text-white md:text-3xl">
+            {privacy.contactHeading}
+          </h2>
+          <ul className="mt-4 space-y-3 text-base md:text-lg text-zinc-300">
+            {privacy.contactDetails.map((detail, index) => (
+              <li key={`privacy-contact-${index}`}>{detail}</li>
+            ))}
+          </ul>
+        </section>
+
+        <p className="mt-12 text-sm text-zinc-500">{privacy.note}</p>
+      </div>
     </main>
   );
 }

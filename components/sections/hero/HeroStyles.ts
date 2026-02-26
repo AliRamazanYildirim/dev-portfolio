@@ -1,15 +1,15 @@
 export type PremiumSurfaceVariant = "panel" | "card";
 
 export const PREMIUM_SURFACE_BASE =
-  "group relative overflow-hidden border border-[#e2c48d]/70 bg-linear-to-br from-[#fffefb]/96 via-[#fff9ee]/94 to-[#f9edd2]/80 backdrop-blur-md transition-all duration-500";
+  "group relative overflow-hidden border border-zinc-700/60 bg-linear-to-br from-zinc-900 via-zinc-900/95 to-zinc-950 backdrop-blur-md transition-all duration-500 hover:border-[#c58d12]/40";
 export const PREMIUM_SURFACE_OVERLAY =
-  "pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.93),transparent_58%)] opacity-80";
+  "pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(197,141,18,0.06),transparent_58%)] opacity-80";
 export const PREMIUM_SURFACE_PRIMARY_GLOW =
-  "pointer-events-none absolute rounded-full bg-[#efd7a9]/40 blur-3xl transition-opacity duration-500 group-hover:opacity-100";
+  "pointer-events-none absolute rounded-full bg-[#c58d12]/15 blur-3xl transition-opacity duration-500 group-hover:opacity-100";
 export const PREMIUM_SURFACE_SECONDARY_GLOW =
-  "pointer-events-none absolute rounded-full bg-[#f8ecd2]/35 blur-3xl";
+  "pointer-events-none absolute rounded-full bg-[#c58d12]/10 blur-3xl";
 export const PREMIUM_SURFACE_TOP_LINE =
-  "pointer-events-none absolute h-px bg-linear-to-r from-transparent via-[#d8b06a]/70 to-transparent";
+  "pointer-events-none absolute h-px bg-linear-to-r from-transparent via-[#c58d12]/50 to-transparent";
 
 export const premiumSurfaceVariantStyles: Record<
   PremiumSurfaceVariant,

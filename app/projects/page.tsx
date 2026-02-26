@@ -2,8 +2,6 @@
 
 import { useRef } from "react";
 import { motion } from "framer-motion";
-import NoiseBackground from "@/components/ui/NoiseBackground";
-import SplitText from "@/components/animations/SplitText";
 import { usePagination } from "@/hooks/usePagination";
 import Pagination from "@/components/ui/Pagination";
 import { useTranslation } from "@/hooks/useTranslation";
@@ -56,26 +54,26 @@ const ProjectsPage = () => {
 
   if (loading) {
     return (
-      <NoiseBackground mode="dark" intensity={0.1}>
+      <div className="min-h-screen">
         <ProjectLoadingState text={projectsDictionary.projectsLoading} />
-      </NoiseBackground>
+      </div>
     );
   }
 
   if (error) {
     return (
-      <NoiseBackground mode="dark" intensity={0.1}>
+      <div className="min-h-screen">
         <ErrorState
           message={error}
           onRetry={() => window.location.reload()}
           actionLabel={projectsDictionary.retry}
         />
-      </NoiseBackground>
+      </div>
     );
   }
 
   return (
-    <NoiseBackground mode="dark" intensity={0.1}>
+    <div className="min-h-screen">
       <motion.section
         className="text-white px-5 pb-10 md:px-20 md:pb-20"
         initial="hidden"
@@ -84,10 +82,10 @@ const ProjectsPage = () => {
       >
         <div className="container mx-auto">
           <div className="mb-10" ref={listTopRef}>
-            <h1 className="title md:text-lgTitle mb-4">
-              <SplitText text={projectsDictionary.heading} />
+            <h1 className="text-4xl md:text-6xl font-black tracking-tight mb-4 bg-linear-to-r from-white via-zinc-100 to-zinc-400 bg-clip-text text-transparent leading-tight w-max whitespace-nowrap">
+              {projectsDictionary.heading}
             </h1>
-            <p className="content md:text-lgContent text-gray">
+            <p className="text-zinc-400 md:text-lg">
               {projects.length}{" "}
               {projects.length === 1
                 ? projectsDictionary.projectLabelSingular
@@ -160,7 +158,7 @@ const ProjectsPage = () => {
           )}
         </div>
       </motion.section>
-    </NoiseBackground>
+    </div>
   );
 };
 

@@ -4,7 +4,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import Marquee from "@/components/ui/Marquee";
-import SplitText from "@/components/animations/SplitText";
 import { useTranslation } from "@/hooks/useTranslation";
 
 const LittleAboutMe = () => {
@@ -29,8 +28,8 @@ const LittleAboutMe = () => {
 };
 
 const Header = ({ text }: { text: string }) => (
-  <h2 className="heading mb-5 lg:text-lgHeading lg:mb-16">
-    <SplitText text={text} />
+  <h2 className="heading mb-5 lg:text-lgHeading lg:mb-16 bg-linear-to-r from-white via-zinc-100 to-zinc-400 bg-clip-text text-transparent whitespace-nowrap w-max">
+    {text}
   </h2>
 );
 
@@ -41,7 +40,7 @@ const fadeInVariants = {
 
 const Paragraph = ({ text }: { text: string }) => (
   <motion.p
-    className="content lg:pl-10 lg:text-lgContent lg:order-1"
+    className="content lg:pl-10 lg:text-lgContent lg:order-1 text-zinc-400"
     variants={fadeInVariants}
     initial="hidden"
     whileInView="visible"
@@ -54,7 +53,7 @@ const Paragraph = ({ text }: { text: string }) => (
 
 const Paragraph2 = ({ text }: { text: string }) => (
   <motion.p
-    className="content lg:text-lgContent lg:order-1 max-w-2xl lg:ml-auto"
+    className="content lg:text-lgContent lg:order-1 max-w-2xl lg:ml-auto text-zinc-400"
     variants={fadeInVariants}
     initial="hidden"
     whileInView="visible"
@@ -91,7 +90,7 @@ const Icon: React.FC<IconProps> = ({
 
 const MoreAboutMe = ({ cta }: { cta: string }) => (
   <motion.div
-    className="flex pt-5 items-center text-gray group lg:order-0 max-w-lg lg:pl-24 lg:pb-10"
+    className="flex pt-5 items-center group lg:order-0 max-w-lg lg:pl-24 lg:pb-10"
     variants={fadeInVariants}
     initial="hidden"
     whileInView="visible"
@@ -99,7 +98,7 @@ const MoreAboutMe = ({ cta }: { cta: string }) => (
     transition={{ duration: 2, ease: "easeOut" }}
   >
     <Link href="/about" passHref>
-      <span className="button text-white font-bold mr-2 lg:text-lgButton hover:underline transition">
+      <span className="button text-[#c58d12] font-bold mr-2 lg:text-lgButton hover:underline transition">
         {cta}
       </span>
     </Link>
@@ -109,7 +108,7 @@ const MoreAboutMe = ({ cta }: { cta: string }) => (
         alt="Arrow Up Icon"
         width={16}
         height={16}
-        additionalClasses="transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1 w-3 h-3 md:w-4 md:h-4 lg:w-5 lg:h-5"
+        additionalClasses="transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1 w-3 h-3 md:w-4 md:h-4 lg:w-5 lg:h-5 opacity-70"
       />
     </Link>
   </motion.div>
