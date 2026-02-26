@@ -214,9 +214,9 @@ export const Nav = ({ className }: { className?: string }) => {
                     <Link
                       key={idx}
                       href={solution.href}
-                      className="flex items-start gap-3 p-3 rounded-lg transition group/item hover:bg-zinc-100/60 dark:hover:bg-zinc-800/80"
+                      className="flex items-start gap-3 p-3 rounded-lg transition-colors duration-200 group/item hover:bg-[#c58d12]/8 dark:hover:bg-zinc-800/80"
                     >
-                      <div className="shrink-0 mt-1 w-14 h-14 rounded-full bg-zinc-200/70 dark:bg-zinc-700/60 group-hover/item:bg-[#c58d12]/10 dark:group-hover/item:bg-[#c58d12]/15 flex items-center justify-center transition-colors">
+                      <div className="shrink-0 mt-1 w-14 h-14 rounded-full bg-zinc-300/55 dark:bg-zinc-700/60 group-hover/item:bg-[#c58d12]/10 dark:group-hover/item:bg-[#c58d12]/15 flex items-center justify-center transition-colors duration-200">
                         <span
                           role="img"
                           aria-label={solution.alt || solution.title}

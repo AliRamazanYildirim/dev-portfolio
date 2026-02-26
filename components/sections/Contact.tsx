@@ -148,7 +148,7 @@ const ContactForm = ({
                 type="text"
                 name="name"
                 placeholder={contactDictionary.placeholders.name}
-                className="content w-full bg-transparent border-none text-lg text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-white/90 focus:outline-none focus:ring-0 sm:text-xl lg:text-lgContent"
+                className="content w-full bg-transparent border-none text-lg text-zinc-900 dark:text-white placeholder:text-zinc-900 dark:placeholder:text-white focus:outline-none focus:ring-0 sm:text-xl lg:text-lgContent"
                 value={formData.name ?? ""}
                 onChange={handleChange}
                 required
@@ -160,7 +160,7 @@ const ContactForm = ({
                 type="email"
                 name="email"
                 placeholder={contactDictionary.placeholders.email}
-                className="content w-full bg-transparent border-none text-lg text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-white/70 focus:outline-none focus:ring-0 sm:text-xl lg:text-lgContent"
+                className="content w-full bg-transparent border-none text-lg text-zinc-900 dark:text-white placeholder:text-zinc-900 dark:placeholder:text-white focus:outline-none focus:ring-0 sm:text-xl lg:text-lgContent"
                 value={formData.email ?? ""}
                 onChange={handleChange}
                 required
@@ -172,7 +172,7 @@ const ContactForm = ({
               <textarea
                 name="message"
                 placeholder={contactDictionary.placeholders.message}
-                className="content w-full bg-transparent border-none text-lg text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-white/70 focus:outline-none focus:ring-0 sm:text-xl lg:text-lgContent"
+                className="content w-full bg-transparent border-none text-lg text-zinc-900 dark:text-white placeholder:text-zinc-900 dark:placeholder:text-white focus:outline-none focus:ring-0 sm:text-xl lg:text-lgContent"
                 value={formData.message ?? ""}
                 onChange={handleChange}
                 required
