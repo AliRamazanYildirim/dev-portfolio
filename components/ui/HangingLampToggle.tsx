@@ -128,7 +128,7 @@ export default function HangingLampToggle() {
           >
             {/* Shade body */}
             <path
-              d="M4 4 L32 4 L28 24 L8 24 Z"
+              d="M13 4 L23 4 L35 24 L1 24 Z"
               fill={
                 isDark ? "url(#shadeGradientDark)" : "url(#shadeGradientLight)"
               }
@@ -159,9 +159,9 @@ export default function HangingLampToggle() {
             )}
             {/* Bottom rim highlight */}
             <line
-              x1="8"
+              x1="1"
               y1="24"
-              x2="28"
+              x2="35"
               y2="24"
               stroke={isDark ? "#a8955a" : "#7a5e28"}
               strokeWidth="1"

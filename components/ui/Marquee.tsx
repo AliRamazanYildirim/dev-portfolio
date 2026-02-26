@@ -5,25 +5,32 @@ import MarqueeItem from "./MarqueeItem";
 
 const Marquee = () => {
   const upperMarquee = [
-    { src: "/techStack/01.svg", text: "JavaScript" },
-    { src: "/techStack/02.svg", text: "Tailwind" },
-    { src: "/techStack/03.svg", text: "TypeScript" },
-    { src: "/techStack/04.svg", text: "Supabase" },
-    { src: "/techStack/05.svg", text: "PostgreSQL" },
-    { src: "/techStack/06.svg", text: "Node.js" },
+    { src: "/techStack/javascript.svg", text: "JavaScript" },
+    { src: "/techStack/tailwindcss.svg", text: "Tailwind" },
+    { src: "/techStack/typescript.svg", text: "TypeScript" },
+    { src: "/techStack/supabase.svg", text: "Supabase" },
+    { src: "/techStack/postgresql.svg", text: "PostgreSQL" },
+    { src: "/techStack/mongodb.svg", text: "MongoDB" },
+    { src: "/techStack/prisma.svg", text: "Prisma" },
+    { src: "/techStack/redis.svg", text: "Redis" },
+    { src: "/techStack/nodejs.svg", text: "Node.js" },
+    { src: "/techStack/csharp.svg", text: "C#" },
+    { src: "/techStack/dotnet.svg", text: ".NET" },
     { src: "/techStack/expressjs.svg", text: "Express.js" },
-    { src: "/techStack/08.svg", text: "Next.Js" },
-    { src: "/techStack/09.svg", text: "React" },
+    { src: "/techStack/nextjs.svg", text: "Next.Js" },
+    { src: "/techStack/react.svg", text: "React" },
   ];
 
   const lowerMarquee = [
-    { src: "/techStack/10.svg", text: "Git" },
+    { src: "/techStack/git.svg", text: "Git" },
     { src: "/techStack/github.svg", text: "GitHub" },
-    { src: "/techStack/12.svg", text: "VS Code" },
-    { src: "/techStack/13.svg", text: "Postman" },
-    { src: "/techStack/14.svg", text: "Docker" },
-    { src: "/techStack/15.svg", text: "Bun" },
-    { src: "/techStack/16.svg", text: "Figma" },
+    { src: "/techStack/vscode.svg", text: "VS Code" },
+    { src: "/techStack/postman.svg", text: "Postman" },
+    { src: "/techStack/docker.svg", text: "Docker" },
+    { src: "/techStack/bun.svg", text: "Bun" },
+    { src: "/techStack/figma.svg", text: "Figma" },
+    { src: "/techStack/vercel.svg", text: "Vercel" },
+    { src: "/techStack/netlify.svg", text: "Netlify" }
   ];
 
   return (
