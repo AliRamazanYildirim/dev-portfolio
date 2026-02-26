@@ -59,15 +59,12 @@ export default function HangingLampToggle() {
   // Prevent hydration mismatch: render placeholder until mounted
   if (!mounted) {
     return (
-      <div
-        className="pointer-events-none fixed right-6 top-1/2 z-40 flex -translate-y-1/2 flex-col items-center"
-        style={{ width: 36 }}
-      />
+      <div className="pointer-events-none fixed right-6 max-lg:right-8.5 max-lg:top-17 max-lg:landscape:top-26 lg:top-0 z-50 flex flex-col items-center" />
     );
   }
 
   return (
-    <div className="fixed right-6 top-1/2 z-40 -translate-y-1/2">
+    <div className="fixed right-6 max-lg:right-8.5 max-lg:top-17 max-lg:landscape:top-26 lg:top-0 z-50">
       {/* Ceiling bracket */}
       <div className="mx-auto flex flex-col items-center">
         {/* Bracket plate */}
