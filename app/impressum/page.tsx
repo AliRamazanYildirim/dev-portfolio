@@ -145,7 +145,7 @@ export default function ImpressumPage() {
           <section className="mt-10" aria-labelledby="provider-heading">
             <h2
               id="provider-heading"
-                className="text-2xl font-semibold text-zinc-900 dark:text-white md:text-3xl"
+              className="text-2xl font-semibold text-zinc-900 dark:text-white md:text-3xl"
             >
               {sections.provider.heading}
             </h2>
@@ -159,7 +159,10 @@ export default function ImpressumPage() {
                 itemType="https://schema.org/Person"
                 itemProp="author"
               >
-                <p className="font-semibold text-zinc-900 dark:text-white" itemProp="name">
+                <p
+                  className="font-semibold text-zinc-900 dark:text-white"
+                  itemProp="name"
+                >
                   {sections.provider.content.name}
                 </p>
                 <p itemProp="jobTitle">
@@ -184,7 +187,7 @@ export default function ImpressumPage() {
           <section className="mt-10" aria-labelledby="contact-heading">
             <h2
               id="contact-heading"
-                className="text-2xl font-semibold text-zinc-900 dark:text-white md:text-3xl"
+              className="text-2xl font-semibold text-zinc-900 dark:text-white md:text-3xl"
             >
               {sections.contact.heading}
             </h2>
@@ -237,7 +240,7 @@ export default function ImpressumPage() {
           <section className="mt-10" aria-labelledby="tax-heading">
             <h2
               id="tax-heading"
-                className="text-2xl font-semibold text-zinc-900 dark:text-white md:text-3xl"
+              className="text-2xl font-semibold text-zinc-900 dark:text-white md:text-3xl"
             >
               {sections.tax.heading}
             </h2>
@@ -272,7 +275,7 @@ export default function ImpressumPage() {
           <section className="mt-10" aria-labelledby="registration-heading">
             <h2
               id="registration-heading"
-                className="text-2xl font-semibold text-zinc-900 dark:text-white md:text-3xl"
+              className="text-2xl font-semibold text-zinc-900 dark:text-white md:text-3xl"
             >
               {sections.registration.heading}
             </h2>
@@ -298,7 +301,7 @@ export default function ImpressumPage() {
           <section className="mt-10" aria-labelledby="insurance-heading">
             <h2
               id="insurance-heading"
-                className="text-2xl font-semibold text-zinc-900 dark:text-white md:text-3xl"
+              className="text-2xl font-semibold text-zinc-900 dark:text-white md:text-3xl"
             >
               {sections.insurance.heading}
             </h2>
@@ -328,14 +331,14 @@ export default function ImpressumPage() {
           <section className="mt-10" aria-labelledby="responsible-heading">
             <h2
               id="responsible-heading"
-                className="text-2xl font-semibold text-zinc-900 dark:text-white md:text-3xl"
+              className="text-2xl font-semibold text-zinc-900 dark:text-white md:text-3xl"
             >
               {sections.responsible.heading}
             </h2>
             <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
               {sections.responsible.note}
             </p>
-              <address className="mt-3 not-italic text-base md:text-lg text-zinc-600 dark:text-zinc-300">
+            <address className="mt-3 not-italic text-base md:text-lg text-zinc-600 dark:text-zinc-300">
               <p className="font-semibold text-zinc-900 dark:text-white">
                 {sections.responsible.name}
               </p>
@@ -347,7 +350,7 @@ export default function ImpressumPage() {
           <section className="mt-10" aria-labelledby="dispute-heading">
             <h2
               id="dispute-heading"
-                className="text-2xl font-semibold text-zinc-900 dark:text-white md:text-3xl"
+              className="text-2xl font-semibold text-zinc-900 dark:text-white md:text-3xl"
             >
               {sections.dispute.heading}
             </h2>
@@ -478,7 +481,7 @@ export default function ImpressumPage() {
           <section className="mt-10" aria-labelledby="liability-heading">
             <h2
               id="liability-heading"
-                className="text-2xl font-semibold text-zinc-900 dark:text-white md:text-3xl"
+              className="text-2xl font-semibold text-zinc-900 dark:text-white md:text-3xl"
             >
               {sections.liability.heading}
             </h2>
@@ -518,7 +521,7 @@ export default function ImpressumPage() {
           <section className="mt-10" aria-labelledby="image-credits-heading">
             <h2
               id="image-credits-heading"
-                className="text-2xl font-semibold text-zinc-900 dark:text-white md:text-3xl"
+              className="text-2xl font-semibold text-zinc-900 dark:text-white md:text-3xl"
             >
               {sections.imageCredits.heading}
             </h2>

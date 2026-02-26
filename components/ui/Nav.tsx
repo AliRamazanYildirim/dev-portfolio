@@ -216,11 +216,11 @@ export const Nav = ({ className }: { className?: string }) => {
                       href={solution.href}
                       className="flex items-start gap-3 p-3 rounded-lg transition group/item hover:bg-zinc-100/60 dark:hover:bg-zinc-800/80"
                     >
-                        <div className="shrink-0 mt-1 w-14 h-14 rounded-full bg-zinc-200/70 dark:bg-zinc-700/60 group-hover/item:bg-[#c58d12]/10 dark:group-hover/item:bg-[#c58d12]/15 flex items-center justify-center transition-colors">
-                          <span
-                            role="img"
-                            aria-label={solution.alt || solution.title}
-                            className="block w-8 h-8 bg-current text-zinc-700 dark:text-white group-hover/item:text-[#c58d12] dark:group-hover/item:text-[#c58d12] transition-colors"
+                      <div className="shrink-0 mt-1 w-14 h-14 rounded-full bg-zinc-200/70 dark:bg-zinc-700/60 group-hover/item:bg-[#c58d12]/10 dark:group-hover/item:bg-[#c58d12]/15 flex items-center justify-center transition-colors">
+                        <span
+                          role="img"
+                          aria-label={solution.alt || solution.title}
+                          className="block w-8 h-8 bg-current text-zinc-700 dark:text-white group-hover/item:text-[#c58d12] dark:group-hover/item:text-[#c58d12] transition-colors"
                           style={maskStyle(solution.icon)}
                         />
                       </div>

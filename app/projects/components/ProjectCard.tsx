@@ -30,7 +30,7 @@ export default function ProjectCard({
   return (
     <div className="cursor-pointer group">
       <Link href={`/projects/${project.slug}`}>
-          <div className="relative overflow-hidden rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-linear-to-br dark:from-zinc-900 dark:to-black transition-all duration-500 hover:border-[#c58d12]/50">
+        <div className="relative overflow-hidden rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-linear-to-br dark:from-zinc-900 dark:to-black transition-all duration-500 hover:border-[#c58d12]/50">
           <div className="absolute inset-0 rounded-2xl bg-linear-to-br from-[#c58d12]/0 to-[#c58d12]/0 transition-all duration-500 group-hover:from-[#c58d12]/5 group-hover:to-[#c58d12]/8 pointer-events-none" />
           <div className="flex justify-center">
             <div className="w-full">

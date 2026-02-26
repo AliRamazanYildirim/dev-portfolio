@@ -1,6 +1,11 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useState,
+  startTransition,
+} from "react";
 import { motion, useAnimation } from "framer-motion";
 import { useTheme } from "next-themes";
 
@@ -17,8 +22,11 @@ export default function HangingLampToggle() {
   // Must use useState+useEffect so server and client both start with mounted=false
   // This prevents hydration mismatch (resolvedTheme is populated before hydration on client)
   const [mounted, setMounted] = useState(false);
-  // eslint-disable-next-line react-hooks/set-state-in-effect
-  useEffect(() => { setMounted(true); }, []);
+  useEffect(() => {
+    startTransition(() => {
+      setMounted(true);
+    });
+  }, []);
 
   const isDark = resolvedTheme === "dark";
 
@@ -125,9 +133,7 @@ export default function HangingLampToggle() {
             <path
               d="M4 4 L32 4 L28 24 L8 24 Z"
               fill={
-                isDark
-                  ? "url(#shadeGradientDark)"
-                  : "url(#shadeGradientLight)"
+                isDark ? "url(#shadeGradientDark)" : "url(#shadeGradientLight)"
               }
               stroke={isDark ? "#78716c" : "#7a5e28"}
               strokeWidth="1"

@@ -140,7 +140,9 @@ const RatingStars: React.FC<RatingStarsProps> = ({
                   fill={isFullStar ? `url(#starGrad-${i})` : "currentColor"}
                   stroke={isFullStar ? "#EAB308" : "none"}
                   strokeWidth={isFullStar ? "0.8" : "0"}
-                  className={isFullStar ? undefined : "text-zinc-300 dark:text-white/20"}
+                  className={
+                    isFullStar ? undefined : "text-zinc-300 dark:text-white/20"
+                  }
                 />
                 {isFullStar && (
                   <path

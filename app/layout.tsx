@@ -76,7 +76,11 @@ export default function RootLayout({
       className="h-full w-full overflow-x-hidden"
     >
       <body className="min-h-screen w-full overflow-x-hidden">
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem={false}
+        >
           <LanguageProvider>
             <AppShell>{children}</AppShell>
           </LanguageProvider>

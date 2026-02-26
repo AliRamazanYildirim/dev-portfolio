@@ -63,14 +63,14 @@ const RatingCard: React.FC<RatingCardProps> = ({
                 transition={{ delay: index * 0.15 + 0.3 }}
                 className="shrink-0"
               >
-                <div className="rounded-full border border-[#c58d12]/40 bg-[#c58d12]/10 p-2">
+                <div className="rounded-full bg-emerald-500 dark:bg-emerald-600 shadow-[0_0_12px_rgba(52,211,153,0.45)] p-2">
                   <svg
                     width="20"
                     height="20"
                     viewBox="0 0 24 24"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
-                    className="text-[#c58d12]"
+                    className="text-white"
                   >
                     <path
                       d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"
@@ -108,8 +108,8 @@ const RatingCard: React.FC<RatingCardProps> = ({
             </div>
 
             <div className="flex items-center gap-1.5 text-xs">
-              <div className="w-1.5 h-1.5 rounded-full bg-[#c58d12]" />
-              <span className="text-[#c58d12] font-medium">
+              <div className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
+              <span className="text-emerald-600 font-medium">
                 {verifiedLabel}
               </span>
             </div>
@@ -118,7 +118,9 @@ const RatingCard: React.FC<RatingCardProps> = ({
           {/* Positive percentage indicator */}
           <div className="mt-2">
             <div className="flex items-center justify-between mb-1.5">
-              <span className="text-xs text-zinc-500 dark:text-zinc-500">Positive</span>
+              <span className="text-xs text-zinc-500 dark:text-zinc-500">
+                Positive
+              </span>
               <span className="text-xs font-medium text-zinc-600 dark:text-zinc-300">
                 {rating.positivePercentage}%
               </span>
@@ -128,7 +130,7 @@ const RatingCard: React.FC<RatingCardProps> = ({
                 initial={{ width: 0 }}
                 animate={{ width: `${rating.positivePercentage}%` }}
                 transition={{ delay: index * 0.15 + 0.2, duration: 0.8 }}
-                className="h-full bg-linear-to-r from-[#c58d12] to-[#d4a24a] rounded-full"
+                className="h-full bg-linear-to-r from-emerald-500 to-emerald-400 rounded-full"
               />
             </div>
           </div>

@@ -129,18 +129,24 @@ export default function PricingTiers({
                     </p>
                   </div>
 
-                  <div className={`relative z-10 mb-10 border-b pb-10 ${isHighlighted ? "border-zinc-700/50" : "border-zinc-400 dark:border-zinc-800/50"}`}>
+                  <div
+                    className={`relative z-10 mb-10 border-b pb-10 ${isHighlighted ? "border-zinc-700/50" : "border-zinc-400 dark:border-zinc-800/50"}`}
+                  >
                     <div className="flex items-baseline gap-3">
-                      <span className={`bg-clip-text text-5xl font-bold text-transparent md:text-6xl ${
-                        isHighlighted
-                          ? "bg-linear-to-r from-white via-zinc-100 to-zinc-300"
-                          : "bg-linear-to-r from-zinc-900 via-zinc-800 to-zinc-700 dark:from-white dark:via-zinc-100 dark:to-zinc-300"
-                      }`}>
+                      <span
+                        className={`bg-clip-text text-5xl font-bold text-transparent md:text-6xl ${
+                          isHighlighted
+                            ? "bg-linear-to-r from-white via-zinc-100 to-zinc-300"
+                            : "bg-linear-to-r from-zinc-900 via-zinc-800 to-zinc-700 dark:from-white dark:via-zinc-100 dark:to-zinc-300"
+                        }`}
+                      >
                         {currency}
                         {tier.price}
                       </span>
                     </div>
-                    <p className={`mt-3 flex items-center gap-2 text-sm ${isHighlighted ? "text-zinc-300" : "text-zinc-500 dark:text-zinc-400"}`}>
+                    <p
+                      className={`mt-3 flex items-center gap-2 text-sm ${isHighlighted ? "text-zinc-300" : "text-zinc-500 dark:text-zinc-400"}`}
+                    >
                       <svg
                         className="h-5 w-5 text-[#c58d12]"
                         fill="none"

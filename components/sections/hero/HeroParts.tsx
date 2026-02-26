@@ -90,7 +90,9 @@ export const HeroContent = ({
         </div>
 
         {subheadline && (
-          <p className="text-base md:text-lg text-zinc-600 dark:text-zinc-300">{subheadline}</p>
+          <p className="text-base md:text-lg text-zinc-600 dark:text-zinc-300">
+            {subheadline}
+          </p>
         )}
       </div>
 
@@ -121,7 +123,8 @@ export const HeroContent = ({
               onClick={onOpenProcess}
               shimmerColor="rgba(216,176,106,0.55)"
               shimmerDuration="6s"
-              className="min-w-0 flex-1 h-auto min-h-12 px-5 sm:px-8 py-3 flex items-center justify-center rounded-full border border-[#e2c48d]/80 bg-linear-to-br from-[#fffefb]/98 via-[#fff9ee]/96 to-[#f9edd2]/86 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_14px_30px_rgba(36,12,2,0.1)] transition-all duration-500 hover:-translate-y-0.5 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.95),0_20px_36px_rgba(36,12,2,0.14)]">
+              className="min-w-0 flex-1 h-auto min-h-12 px-5 sm:px-8 py-3 flex items-center justify-center rounded-full border border-[#e2c48d]/80 bg-linear-to-br from-[#fffefb]/98 via-[#fff9ee]/96 to-[#f9edd2]/86 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_14px_30px_rgba(36,12,2,0.1)] transition-all duration-500 hover:-translate-y-0.5 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.95),0_20px_36px_rgba(36,12,2,0.14)]"
+            >
               <span className="text-center text-sm sm:text-base leading-snug font-semibold tracking-tight text-[#2f1d0e] text-balance">
                 {ctas.secondary.label}
               </span>
@@ -131,7 +134,9 @@ export const HeroContent = ({
       )}
 
       {trustNote && (
-        <p className="text-sm md:text-base text-[#8b6f4d] dark:text-zinc-500">{trustNote}</p>
+        <p className="text-sm md:text-base text-[#8b6f4d] dark:text-zinc-500">
+          {trustNote}
+        </p>
       )}
     </div>
   );
