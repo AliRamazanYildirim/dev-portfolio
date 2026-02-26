@@ -6,8 +6,62 @@ import React, {
   useState,
   startTransition,
 } from "react";
-import { motion, useAnimation } from "framer-motion";
+import { motion, useAnimation, type Variants } from "framer-motion";
 import { useTheme } from "next-themes";
+
+const CORD_BASE_PATH = "M10 -6 C10 4 10 11 10 15 C10 20 10 25 10 30";
+const CORD_WAVE_RIGHT_PATH = "M10 -6 C15 4 4 11 10 15 C14 20 6 25 10 30";
+const CORD_WAVE_LEFT_PATH = "M10 -6 C5 4 16 11 10 15 C6 20 14 25 10 30";
+const UPPER_CORD_BASE_PATH = "M8 0 C7.2 7 8.8 13 8 24";
+const UPPER_CORD_WAVE_RIGHT_PATH = "M8 0 C10.8 7 5.2 13 8 24";
+const UPPER_CORD_WAVE_LEFT_PATH = "M8 0 C5.2 7 10.8 13 8 24";
+
+const cordSwingVariants: Variants = {
+  idle: { y: 0 },
+  pull: {
+    y: [0, 7, -2, 1, 0],
+    transition: {
+      duration: 0.58,
+      ease: [0.22, 1, 0.36, 1],
+      times: [0, 0.35, 0.62, 0.82, 1],
+    },
+  },
+};
+
+const upperCordPathVariants: Variants = {
+  idle: { d: UPPER_CORD_BASE_PATH },
+  pull: {
+    d: [
+      UPPER_CORD_BASE_PATH,
+      UPPER_CORD_WAVE_RIGHT_PATH,
+      UPPER_CORD_WAVE_LEFT_PATH,
+      UPPER_CORD_BASE_PATH,
+    ],
+    transition: {
+      duration: 0.58,
+      ease: [0.45, 0.05, 0.55, 0.95],
+      times: [0, 0.32, 0.62, 1],
+    },
+  },
+};
+
+const cordPathVariants: Variants = {
+  idle: { d: CORD_BASE_PATH },
+  pull: {
+    d: [
+      CORD_BASE_PATH,
+      CORD_WAVE_RIGHT_PATH,
+      CORD_WAVE_LEFT_PATH,
+      CORD_WAVE_RIGHT_PATH,
+      CORD_BASE_PATH,
+    ],
+    transition: {
+      duration: 0.58,
+      ease: [0.45, 0.05, 0.55, 0.95],
+      times: [0, 0.3, 0.56, 0.8, 1],
+    },
+  },
+};
 
 /**
  * HangingLampToggle — Dark/Light mode switcher.
@@ -31,11 +85,8 @@ export default function HangingLampToggle() {
   const isDark = resolvedTheme === "dark";
 
   const handleToggle = useCallback(async () => {
-    // Cord stretch down then snap back
-    cordControls.start({
-      scaleY: [1, 1.35, 0.9, 1],
-      transition: { duration: 0.4, ease: "easeOut" },
-    });
+    // Pull cord bends into a springy S-wave and settles back
+    cordControls.start("pull");
 
     // Lamp swing: natural pendulum feel
     lampControls.start({
@@ -88,10 +139,25 @@ export default function HangingLampToggle() {
         className="flex flex-col items-center"
       >
         {/* Upper wire (ceiling → lamp) */}
-        <div
-          className={`w-px ${isDark ? "bg-zinc-500" : "bg-[#a08450]"}`}
-          style={{ height: 24 }}
-        />
+        <svg
+          width="16"
+          height="24"
+          viewBox="0 0 16 24"
+          xmlns="http://www.w3.org/2000/svg"
+          className="overflow-visible"
+          aria-hidden="true"
+        >
+          <motion.path
+            initial="idle"
+            variants={upperCordPathVariants}
+            animate={cordControls}
+            d={UPPER_CORD_BASE_PATH}
+            fill="none"
+            stroke={isDark ? "#71717a" : "#a08450"}
+            strokeWidth="1.4"
+            strokeLinecap="round"
+          />
+        </svg>
 
         {/* Lamp shade + glow */}
         <button
@@ -208,21 +274,38 @@ export default function HangingLampToggle() {
 
         {/* Pull cord */}
         <motion.div
+          initial="idle"
+          variants={cordSwingVariants}
           animate={cordControls}
           style={{ originY: "0%" }}
-          className="flex flex-col items-center"
+          className="-mt-1 flex flex-col items-center"
         >
           {/* Cord line */}
-          <div
-            className={`w-px ${isDark ? "bg-zinc-500" : "bg-[#a08450]"}`}
-            style={{ height: 30 }}
-          />
+          <svg
+            width="20"
+            height="30"
+            viewBox="0 0 20 30"
+            xmlns="http://www.w3.org/2000/svg"
+            className="overflow-visible"
+            aria-hidden="true"
+          >
+            <motion.path
+              initial="idle"
+              variants={cordPathVariants}
+              animate={cordControls}
+              d={CORD_BASE_PATH}
+              fill="none"
+              stroke={isDark ? "#71717a" : "#a08450"}
+              strokeWidth="1.6"
+              strokeLinecap="round"
+            />
+          </svg>
 
           {/* Pull knob */}
           <motion.div
             whileHover={{ scale: 1.15 }}
-            whileTap={{ scale: 0.9, y: 4 }}
-            className={`h-3 w-3 cursor-pointer rounded-full border transition-colors duration-300 ${
+            whileTap={{ scale: 0.92, y: 2 }}
+            className={`-mt-px h-3 w-3 cursor-pointer rounded-full border transition-colors duration-300 ${
               isDark
                 ? "border-zinc-500 bg-zinc-700 shadow-[0_0_6px_rgba(251,191,36,0.3)]"
                 : "border-[#7a5e28] bg-[#c58d12] shadow-[0_1px_6px_rgba(197,141,18,0.4)]"
