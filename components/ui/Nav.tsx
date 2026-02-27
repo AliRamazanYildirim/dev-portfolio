@@ -285,7 +285,7 @@ export const Nav = ({ className }: { className?: string }) => {
               className="button text-zinc-800 dark:text-white lg:text-lgButton transition hover:underline hover:text-zinc-800 dark:hover:text-white"
             >
               <motion.div
-                whileHover={{ scale: 1.1, rotate: 10 }}
+                whileHover={{ scale: 1.08 }}
                 transition={{ type: "spring", stiffness: 300 }}
               >
                 {/* Light mode logo (dark SVG) */}
@@ -295,7 +295,7 @@ export const Nav = ({ className }: { className?: string }) => {
                   width={288}
                   height={192}
                   sizes="(max-width: 767px) 96px, (max-width: 1023px) 240px, 288px"
-                  className="w-auto block dark:hidden"
+                  className="w-auto block transition-transform duration-300 hover:scale-110 dark:hidden"
                   style={{ height: navHeight }}
                   priority
                 />
@@ -306,7 +306,7 @@ export const Nav = ({ className }: { className?: string }) => {
                   width={288}
                   height={192}
                   sizes="(max-width: 767px) 96px, (max-width: 1023px) 240px, 288px"
-                  className="w-auto hidden dark:block"
+                  className="w-auto hidden transition-transform duration-300 hover:scale-110 dark:block"
                   style={{ height: navHeight }}
                   priority
                 />
