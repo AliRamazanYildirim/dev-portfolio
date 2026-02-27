@@ -81,6 +81,8 @@ const ProjectPage = () => {
           <ProjectMedia
             src={(project as ProjectDetail).mainImage}
             alt={(project as ProjectDetail).title}
+            featured={(project as ProjectDetail).featured}
+            featuredLabel={projectTexts.featuredBadge}
           />
 
           {/* Meta / About */}

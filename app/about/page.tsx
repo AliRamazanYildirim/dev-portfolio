@@ -104,7 +104,7 @@ const Header = ({
 };
 
 const Paragraph = ({ text }: { text: string }) => (
-  <p className="content sm:text-lg lg:text-lgContent text-zinc-500 dark:text-zinc-400 italic">
+  <p className="content sm:text-lg lg:text-lgContent text-zinc-500 dark:text-zinc-300 italic">
     {text}
   </p>
 );
@@ -151,7 +151,7 @@ const Interest = ({
       </h3>
     </div>
 
-    <p className="content3 text-zinc-400 sm:text-lg lg:text-lgContent3">
+    <p className="content3 text-zinc-600 dark:text-zinc-200 sm:text-lg lg:text-lgContent3">
       {data.description}
     </p>
   </div>
