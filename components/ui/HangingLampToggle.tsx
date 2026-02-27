@@ -186,8 +186,8 @@ export default function HangingLampToggle() {
           {/* Lamp shade SVG */}
           <svg
             width="36"
-            height="28"
-            viewBox="0 0 36 28"
+            height="30"
+            viewBox="0 0 36 30"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
             className="drop-shadow-md transition-all duration-300 group-hover:brightness-110"
@@ -213,26 +213,29 @@ export default function HangingLampToggle() {
               stroke={isDark ? "#78716c" : "#7a5e28"}
               strokeWidth="0.5"
             />
-            {/* Inner glow when dark */}
-            {isDark && (
-              <ellipse
-                cx="18"
-                cy="19"
-                rx="7"
-                ry="4"
-                fill="rgba(251,191,36,0.18)"
-              />
-            )}
-            {/* Bottom rim highlight */}
-            <line
-              x1="1"
-              y1="24"
-              x2="35"
-              y2="24"
-              stroke={isDark ? "#a8955a" : "#7a5e28"}
-              strokeWidth="1"
-              strokeLinecap="round"
-            />
+            {/* lamp.svg icon (replaces ellipse layers) */}
+            <g
+              transform="translate(7.5 33.6) scale(0.875 -0.875)"
+              style={{ color: isDark ? "#f6d36a" : "#d4af37" }}
+            >
+              <g fill="none">
+                <path
+                  fill="currentColor"
+                  d="m10.211 20.106l-.223.447zm-1.067-4.42l-.462.19zm-.226-.452l-.395.306zm6.164 0l.395.306zM17.5 10c0 1.8-.865 3.4-2.204 4.403l.6.8A6.49 6.49 0 0 0 18.5 10zM12 4.5a5.5 5.5 0 0 1 5.5 5.5h1A6.5 6.5 0 0 0 12 3.5zM6.5 10A5.5 5.5 0 0 1 12 4.5v-1A6.5 6.5 0 0 0 5.5 10zm2.204 4.403A5.49 5.49 0 0 1 6.5 10h-1a6.49 6.49 0 0 0 2.604 5.203zm1.793 5.35a11.8 11.8 0 0 0-.891-4.258l-.924.382c.51 1.234.788 2.556.816 3.897zm3.068-.095a3.5 3.5 0 0 1-3.13 0l-.447.895a4.5 4.5 0 0 0 4.024 0zm.83-4.163a11.8 11.8 0 0 0-.892 4.259l1 .02c.027-1.341.305-2.663.815-3.897zm-.383 5.058a.89.89 0 0 0 .49-.779l-1-.02a.11.11 0 0 1 .063-.096zm-4.514-.779a.89.89 0 0 0 .49.779l.447-.895a.11.11 0 0 1 .062.095zm-1.394-4.57c.318.238.39.297.42.336l.79-.613c-.135-.174-.353-.33-.61-.524zm1.502.29c-.087-.21-.16-.396-.292-.567l-.79.613c.032.042.054.086.158.337zm5.69-1.09c-.257.192-.475.35-.61.523l.79.613c.03-.039.101-.098.42-.337zm.022 1.473c.104-.251.126-.295.159-.337l-.79-.613c-.133.171-.206.358-.293.568z"
+                />
+                <path
+                  stroke="currentColor"
+                  d="M14.5 16.5a6.73 6.73 0 0 1-5 0"
+                  strokeWidth={isDark ? 1 : 1.35}
+                />
+                <path
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  d="M11 14V9.75A1.25 1.25 0 1 0 9.75 11h4.5A1.25 1.25 0 1 0 13 9.75V14"
+                  strokeWidth={isDark ? 1 : 1.35}
+                />
+              </g>
+            </g>
             <defs>
               <linearGradient
                 id="shadeGradientDark"
