@@ -128,15 +128,15 @@ export default function HangingLampToggle() {
   // Prevent hydration mismatch: render placeholder until mounted
   if (!mounted) {
     return (
-      <div className="pointer-events-none fixed right-6 max-lg:right-8.5 max-lg:top-17 max-lg:landscape:top-26 lg:top-0 z-50 flex flex-row items-start" />
+      <div className="pointer-events-none fixed right-2 max-lg:right-2 max-lg:top-16 max-lg:landscape:top-24 lg:top-0 z-50 flex flex-row justify-end items-start w-full" />
     );
   }
 
   return (
-    <div className="fixed right-6 max-lg:right-8.5 max-lg:top-17 max-lg:landscape:top-26 lg:top-0 z-50 flex flex-row items-stretch">
+    <div className="fixed right-2 max-lg:right-5.5 max-lg:top-17 max-lg:landscape:top-26.5 lg:top-0 z-50 flex flex-row items-stretch justify-end w-full">
       {/* Vertical mode label — letter by letter, same height as lamp */}
       <div
-        className="flex flex-col items-center justify-between self-stretch gap-0 mr-1.5 lg:mr-2"
+        className="max-lg:order-2 max-lg:ml-1.5 lg:order-1 lg:mr-2 flex flex-col items-center justify-between self-stretch gap-0"
         aria-hidden="true"
       >
         {modeLabel.split("").map((letter, i) => (
@@ -161,7 +161,7 @@ export default function HangingLampToggle() {
       </div>
 
       {/* Lamp column: bracket + swing */}
-      <div className="flex flex-col items-center">
+      <div className="max-lg:order-1 lg:order-2 flex flex-col items-center">
         {/* Ceiling bracket */}
         <div className="mx-auto flex flex-col items-center">
           {/* Bracket plate */}

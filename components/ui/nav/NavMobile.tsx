@@ -54,7 +54,7 @@ export default function NavMobile({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-40"
+            className="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-[70]"
             onClick={handleClose}
           />
           <motion.div
@@ -63,7 +63,7 @@ export default function NavMobile({
             exit="exit"
             variants={MOBILE_MENU_VARIANTS}
             transition={{ duration: 0.25, ease: "easeOut" }}
-            className="lg:hidden fixed inset-0 z-50 flex items-start justify-center px-4 py-6 sm:py-10 landscape:py-4 overflow-y-auto"
+            className="lg:hidden fixed inset-0 z-[80] flex items-start justify-center px-4 py-6 sm:py-10 landscape:py-4 overflow-y-auto"
             onClick={handleClose}
           >
             <div
@@ -164,7 +164,10 @@ export default function NavMobile({
                       </AnimatePresence>
                     </li>
                   ) : (
-                    <li key={item.path ?? item.title} className="w-full flex justify-center">
+                    <li
+                      key={item.path ?? item.title}
+                      className="w-full flex justify-center"
+                    >
                       <Link
                         href={item.path || "#"}
                         target={item.external ? "_blank" : undefined}
@@ -192,16 +195,18 @@ export default function NavMobile({
                           language === item.code
                             ? "border-[#c9184a] text-[#c9184a] bg-[#c9184a]/10"
                             : "border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/5 text-zinc-700 dark:text-white/80 hover:border-zinc-400 dark:hover:border-white/30 hover:text-zinc-900 dark:hover:text-white"
-                        } flex items-center gap-2 justify-center`}
+                        } flex justify-center items-center`}
                       >
-                        <Image
-                          src={item.flag}
-                          alt={`${item.label} flag`}
-                          width={18}
-                          height={12}
-                          className="h-3 w-4 rounded-sm object-cover"
-                        />
-                        {item.label}
+                        <span className="flex items-center gap-2 w-27.5">
+                          <Image
+                            src={item.flag}
+                            alt={`${item.label} flag`}
+                            width={18}
+                            height={12}
+                            className="h-3 w-4 shrink-0 rounded-sm object-cover"
+                          />
+                          <span>{item.label}</span>
+                        </span>
                       </button>
                     ))}
                   </div>

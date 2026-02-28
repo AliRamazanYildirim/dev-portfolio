@@ -175,7 +175,8 @@ export default function NavDesktop({
               target={item.external ? "_blank" : undefined}
               rel={item.external ? "noopener noreferrer" : undefined}
               className={`button lg:text-lgButton text-zinc-800 dark:text-white hover:text-zinc-800 dark:hover:text-white relative group transition ${
-                isActive(item.path || "") || (projectsRouteActive && item.path === "/projects")
+                isActive(item.path || "") ||
+                (projectsRouteActive && item.path === "/projects")
                   ? "font-bold underline"
                   : ""
               }`}
@@ -250,7 +251,7 @@ export default function NavDesktop({
               style={{
                 pointerEvents: languageMenuOpen ? "auto" : "none",
               }}
-              className="absolute right-0 top-full mt-2 w-40 rounded-md border border-zinc-200 bg-white dark:border-white/10 dark:bg-zinc-900/95 py-2 shadow-lg backdrop-blur z-50 flex flex-col items-center"
+              className="absolute right-0 top-full mt-2 w-44 rounded-md border border-zinc-200 bg-white dark:border-white/10 dark:bg-zinc-900/95 py-2 shadow-lg backdrop-blur z-50 flex flex-col"
               onMouseEnter={clearLanguageMenuCloseTimer}
               onMouseLeave={scheduleLanguageMenuClose}
             >
@@ -262,20 +263,22 @@ export default function NavDesktop({
                       onLanguageChange(item.code);
                       setLanguageMenuOpen(false);
                     }}
-                    className={`w-full px-4 py-2 text-center text-sm transition ${
+                    className={`w-full px-4 py-2 text-sm transition flex justify-center ${
                       language === item.code
                         ? "font-semibold text-[#c9184a]"
                         : "text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white"
-                    } flex items-center gap-2 justify-center`}
+                    }`}
                   >
-                    <Image
-                      src={item.flag}
-                      alt={`${item.label} flag`}
-                      width={18}
-                      height={12}
-                      className="h-3 w-4 rounded-sm object-cover"
-                    />
-                    {item.label}
+                    <span className="flex items-center gap-2 w-27.5">
+                      <Image
+                        src={item.flag}
+                        alt={`${item.label} flag`}
+                        width={18}
+                        height={12}
+                        className="h-3 w-4 shrink-0 rounded-sm object-cover"
+                      />
+                      <span>{item.label}</span>
+                    </span>
                   </button>
                 </li>
               ))}
