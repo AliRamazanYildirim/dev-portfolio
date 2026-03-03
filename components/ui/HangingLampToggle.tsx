@@ -133,7 +133,7 @@ export default function HangingLampToggle() {
   }
 
   return (
-    <div className="fixed right-2 max-lg:right-5.5 max-lg:top-17 max-lg:landscape:top-26.5 lg:top-0 z-50 flex flex-row items-stretch justify-end w-full">
+    <div className="fixed right-2 max-lg:right-5.5 max-lg:top-15 max-lg:landscape:top-24.5 lg:top-0 z-50 flex flex-row items-stretch justify-end w-full">
       {/* Vertical mode label — letter by letter, same height as lamp */}
       <div
         className="max-lg:order-2 max-lg:ml-1.5 lg:order-1 lg:mr-2 flex flex-col items-center justify-between self-stretch gap-0"

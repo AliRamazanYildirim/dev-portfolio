@@ -54,7 +54,7 @@ export default function NavMobile({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-[70]"
+            className="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-70"
             onClick={handleClose}
           />
           <motion.div
@@ -63,7 +63,7 @@ export default function NavMobile({
             exit="exit"
             variants={MOBILE_MENU_VARIANTS}
             transition={{ duration: 0.25, ease: "easeOut" }}
-            className="lg:hidden fixed inset-0 z-[80] flex items-start justify-center px-4 py-6 sm:py-10 landscape:py-4 overflow-y-auto"
+            className="lg:hidden fixed inset-0 z-80 flex items-start justify-center px-4 py-6 sm:py-10 landscape:py-4 overflow-y-auto"
             onClick={handleClose}
           >
             <div

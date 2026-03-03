@@ -33,30 +33,15 @@ export default function NavDesktop({
   onLanguageChange,
 }: NavDesktopProps) {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [openSubmenuIndex, setOpenSubmenuIndex] = useState<number | null>(null);
   const [languageMenuOpen, setLanguageMenuOpen] = useState(false);
-  const submenuCloseTimer = useRef<number | null>(null);
   const languageMenuCloseTimer = useRef<number | null>(null);
-
-  const clearSubmenuCloseTimer = () => {
-    if (submenuCloseTimer.current) {
-      window.clearTimeout(submenuCloseTimer.current);
-      submenuCloseTimer.current = null;
-    }
-  };
 
   const clearLanguageMenuCloseTimer = () => {
     if (languageMenuCloseTimer.current) {
       window.clearTimeout(languageMenuCloseTimer.current);
       languageMenuCloseTimer.current = null;
     }
-  };
-
-  const scheduleSubmenuClose = () => {
-    clearSubmenuCloseTimer();
-    submenuCloseTimer.current = window.setTimeout(() => {
-      setHoveredIndex(null);
-      submenuCloseTimer.current = null;
-    }, CLOSE_DELAY_MS);
   };
 
   const scheduleLanguageMenuClose = () => {
@@ -69,10 +54,6 @@ export default function NavDesktop({
 
   useEffect(() => {
     return () => {
-      if (submenuCloseTimer.current) {
-        window.clearTimeout(submenuCloseTimer.current);
-        submenuCloseTimer.current = null;
-      }
       if (languageMenuCloseTimer.current) {
         window.clearTimeout(languageMenuCloseTimer.current);
         languageMenuCloseTimer.current = null;
@@ -83,6 +64,16 @@ export default function NavDesktop({
   const isActive = (path: string) => pathname === path;
   const projectsRouteActive = isProjectsRoute(pathname);
 
+  const openSubmenu = (index: number) => {
+    setHoveredIndex(index);
+    setOpenSubmenuIndex(index);
+  };
+
+  const closeSubmenu = () => {
+    setOpenSubmenuIndex(null);
+    setHoveredIndex(null);
+  };
+
   return (
     <>
       <div className="hidden lg:flex space-x-8">
@@ -92,11 +83,8 @@ export default function NavDesktop({
               <div
                 key={item.title}
                 className="relative group"
-                onMouseEnter={() => {
-                  clearSubmenuCloseTimer();
-                  setHoveredIndex(index);
-                }}
-                onMouseLeave={scheduleSubmenuClose}
+                onMouseEnter={() => openSubmenu(index)}
+                onMouseLeave={closeSubmenu}
               >
                 <button
                   type="button"
@@ -105,7 +93,7 @@ export default function NavDesktop({
                   <span>{item.title}</span>
                   <svg
                     className={`w-4 h-4 transition-transform ${
-                      hoveredIndex === index ? "rotate-180" : ""
+                      openSubmenuIndex === index ? "rotate-180" : ""
                     }`}
                     fill="none"
                     stroke="currentColor"
@@ -121,45 +109,42 @@ export default function NavDesktop({
                 </button>
 
                 <AnimatePresence>
-                  {hoveredIndex === index && (
+                  {openSubmenuIndex === index && (
                     <motion.div
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
                       transition={{ duration: 0.15 }}
-                      style={{
-                        pointerEvents: hoveredIndex === index ? "auto" : "none",
-                      }}
-                      className="absolute left-0 top-full mt-3 w-80 rounded-lg border border-zinc-200 bg-white dark:border-white/10 dark:bg-zinc-900 shadow-xl z-50 overflow-hidden"
-                      onMouseEnter={clearSubmenuCloseTimer}
-                      onMouseLeave={scheduleSubmenuClose}
+                      className="absolute left-0 top-full w-80 pt-3 z-50"
                     >
-                      <div className="p-4 space-y-1">
-                        {item.submenu.map((solution) => (
-                          <Link
-                            key={solution.href}
-                            href={solution.href}
-                            className="flex items-start gap-3 p-3 rounded-lg transition-colors duration-200 group/item hover:bg-[#c58d12]/8 dark:hover:bg-zinc-800/80"
-                            onClick={() => setHoveredIndex(null)}
-                          >
-                            <div className="shrink-0 mt-1 w-14 h-14 rounded-full bg-zinc-300/55 dark:bg-zinc-700/60 group-hover/item:bg-[#c58d12]/10 dark:group-hover/item:bg-[#c58d12]/15 flex items-center justify-center transition-colors duration-200">
-                              <span
-                                role="img"
-                                aria-label={solution.alt || solution.title}
-                                className="block w-8 h-8 bg-current text-zinc-700 dark:text-white group-hover/item:text-[#c58d12] dark:group-hover/item:text-[#c58d12] transition-colors"
-                                style={getIconMaskStyle(solution.icon)}
-                              />
-                            </div>
-                            <div className="flex-1">
-                              <h3 className="text-sm font-semibold text-zinc-900 dark:text-white group-hover/item:text-[#c58d12] dark:group-hover/item:text-[#c58d12] transition">
-                                {solution.title}
-                              </h3>
-                              <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
-                                {solution.description}
-                              </p>
-                            </div>
-                          </Link>
-                        ))}
+                      <div className="rounded-lg border border-zinc-200 bg-white dark:border-white/10 dark:bg-zinc-900 shadow-xl overflow-hidden">
+                        <div className="p-4 space-y-1">
+                          {item.submenu.map((solution) => (
+                            <Link
+                              key={solution.href}
+                              href={solution.href}
+                              className="flex items-start gap-3 p-3 rounded-lg transition-colors duration-200 group/item hover:bg-[#c58d12]/8 dark:hover:bg-zinc-800/80"
+                              onClick={closeSubmenu}
+                            >
+                              <div className="shrink-0 mt-1 w-14 h-14 rounded-full bg-zinc-300/55 dark:bg-zinc-700/60 group-hover/item:bg-[#c58d12]/10 dark:group-hover/item:bg-[#c58d12]/15 flex items-center justify-center transition-colors duration-200">
+                                <span
+                                  role="img"
+                                  aria-label={solution.alt || solution.title}
+                                  className="block w-8 h-8 bg-current text-zinc-700 dark:text-white group-hover/item:text-[#c58d12] dark:group-hover/item:text-[#c58d12] transition-colors"
+                                  style={getIconMaskStyle(solution.icon)}
+                                />
+                              </div>
+                              <div className="flex-1">
+                                <h3 className="text-sm font-semibold text-zinc-900 dark:text-white group-hover/item:text-[#c58d12] dark:group-hover/item:text-[#c58d12] transition">
+                                  {solution.title}
+                                </h3>
+                                <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
+                                  {solution.description}
+                                </p>
+                              </div>
+                            </Link>
+                          ))}
+                        </div>
                       </div>
                     </motion.div>
                   )}
@@ -180,8 +165,14 @@ export default function NavDesktop({
                   ? "font-bold underline"
                   : ""
               }`}
-              onClick={() => setHoveredIndex(null)}
-              onMouseEnter={() => setHoveredIndex(index)}
+              onClick={() => {
+                setHoveredIndex(null);
+                setOpenSubmenuIndex(null);
+              }}
+              onMouseEnter={() => {
+                setHoveredIndex(index);
+                setOpenSubmenuIndex(null);
+              }}
               onMouseLeave={() => setHoveredIndex(null)}
             >
               <span className="relative">
@@ -203,6 +194,8 @@ export default function NavDesktop({
       <div
         className="hidden lg:block relative"
         onMouseEnter={() => {
+          setOpenSubmenuIndex(null);
+          setHoveredIndex(null);
           clearLanguageMenuCloseTimer();
           setLanguageMenuOpen(true);
         }}

@@ -1,4 +1,5 @@
 import React from "react";
+import { NAV_HEIGHT } from "@/components/ui/nav/shared";
 
 interface Props {
   message?: string | null;
@@ -6,13 +7,20 @@ interface Props {
   actionLabel?: string;
 }
 
+const centeredViewportStyle = {
+  minHeight: `calc(100dvh - ${NAV_HEIGHT})`,
+};
+
 export default function ErrorState({
   message = "Something went wrong",
   onRetry,
   actionLabel = "Retry",
 }: Props) {
   return (
-    <div className="text-zinc-900 dark:text-white px-5 pb-10 md:px-20 md:pb-20 min-h-screen flex items-center justify-center">
+    <div
+      className="text-zinc-900 dark:text-white px-5 md:px-20 flex items-center justify-center"
+      style={centeredViewportStyle}
+    >
       <div className="text-center">
         <p className="content md:text-lgContent text-red-400 mb-4">{message}</p>
         {onRetry && (

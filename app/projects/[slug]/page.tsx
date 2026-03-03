@@ -4,6 +4,7 @@ import { useRouter, useParams } from "next/navigation";
 import { useTranslation } from "@/hooks/useTranslation";
 import { getLocalizedText, type Locales } from "../utils/getLocalizedText";
 import { useProject } from "./hooks/useProject";
+import { NAV_HEIGHT } from "@/components/ui/nav/shared";
 import {
   useLanguageContext,
   type SupportedLanguage,
@@ -15,6 +16,10 @@ import ProjectMeta from "./components/ProjectMeta";
 import ProjectGallery from "./components/ProjectGallery";
 import ProjectTags from "./components/ProjectTags";
 import ProjectNav from "./components/ProjectNav";
+
+const centeredViewportStyle = {
+  minHeight: `calc(100dvh - ${NAV_HEIGHT})`,
+};
 
 const ProjectPage = () => {
   const router = useRouter();
@@ -31,7 +36,10 @@ const ProjectPage = () => {
   // Loading State
   if (loading) {
     return (
-      <div className="text-zinc-900 dark:text-white px-5 py-10 md:px-20 md:py-20 min-h-screen flex items-center justify-center">
+      <div
+        className="text-zinc-900 dark:text-white px-5 md:px-20 flex items-center justify-center"
+        style={centeredViewportStyle}
+      >
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#c58d12] mx-auto mb-4"></div>
           <p className="content md:text-lgContent text-zinc-400">
@@ -45,7 +53,10 @@ const ProjectPage = () => {
   // Error State
   if (error || !project) {
     return (
-      <div className="text-zinc-900 dark:text-white px-5 py-10 md:px-20 md:py-20 min-h-screen flex items-center justify-center">
+      <div
+        className="text-zinc-900 dark:text-white px-5 md:px-20 flex items-center justify-center"
+        style={centeredViewportStyle}
+      >
         <div className="text-center">
           <h1 className="heading md:text-lgHeading mb-4 bg-linear-to-r from-zinc-900 via-zinc-700 to-zinc-500 dark:from-white dark:via-zinc-100 dark:to-zinc-400 bg-clip-text text-transparent">
             {projectTexts.notFoundTitle}

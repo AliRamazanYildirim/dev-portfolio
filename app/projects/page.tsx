@@ -53,22 +53,16 @@ const ProjectsPage = () => {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen">
-        <ProjectLoadingState text={projectsDictionary.projectsLoading} />
-      </div>
-    );
+    return <ProjectLoadingState text={projectsDictionary.projectsLoading} />;
   }
 
   if (error) {
     return (
-      <div className="min-h-screen">
-        <ErrorState
-          message={error}
-          onRetry={() => window.location.reload()}
-          actionLabel={projectsDictionary.retry}
-        />
-      </div>
+      <ErrorState
+        message={error}
+        onRetry={() => window.location.reload()}
+        actionLabel={projectsDictionary.retry}
+      />
     );
   }
 

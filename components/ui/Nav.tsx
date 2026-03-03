@@ -103,7 +103,7 @@ export const Nav = ({ className }: NavProps) => {
                 />
 
                 <button
-                  className="lg:hidden inline-flex items-center justify-center rounded-full border border-zinc-400/50 dark:border-white/30 bg-zinc-100/80 dark:bg-white/10 text-zinc-800 dark:text-white hover:border-zinc-500/70 dark:hover:border-white/50 px-3 py-2 shadow-sm backdrop-blur-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9184a]/40"
+                  className="lg:hidden relative -top-2 inline-flex items-center justify-center rounded-full border border-zinc-400/50 dark:border-white/30 bg-zinc-100/80 dark:bg-white/10 text-zinc-800 dark:text-white hover:border-zinc-500/70 dark:hover:border-white/50 px-3 py-2 shadow-sm backdrop-blur-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9184a]/40"
                   onClick={toggleMenu}
                   aria-label={navDictionary.aria.toggle}
                   aria-expanded={menuOpen}
