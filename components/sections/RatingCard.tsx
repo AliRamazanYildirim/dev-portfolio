@@ -89,10 +89,10 @@ const RatingCard: React.FC<RatingCardProps> = ({
 
           {/* Footer */}
           <div className="flex items-center justify-between pt-4 border-t border-zinc-200 dark:border-zinc-800">
-            <div className="flex items-center gap-2 text-xs md:text-sm text-zinc-500 dark:text-zinc-500">
+            <div className="flex items-center gap-2 text-xs md:text-sm text-zinc-500 dark:text-zinc-200">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="w-4 h-4 text-zinc-400 dark:text-zinc-600"
+                className="w-4 h-4 text-zinc-400 dark:text-zinc-200"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
@@ -118,7 +118,7 @@ const RatingCard: React.FC<RatingCardProps> = ({
           {/* Positive percentage indicator */}
           <div className="mt-2">
             <div className="flex items-center justify-between mb-1.5">
-              <span className="text-xs text-zinc-500 dark:text-zinc-500">
+              <span className="text-xs text-zinc-500 dark:text-zinc-200">
                 Positive
               </span>
               <span className="text-xs font-medium text-zinc-600 dark:text-zinc-300">

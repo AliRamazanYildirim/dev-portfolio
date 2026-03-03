@@ -371,6 +371,7 @@ export default function HangingLampToggle() {
               }`}
               onClick={handleToggle}
               aria-hidden="true"
+              tabIndex={-1}
             />
           </motion.div>
         </motion.div>

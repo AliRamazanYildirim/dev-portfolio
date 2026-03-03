@@ -134,7 +134,7 @@ export const HeroContent = ({
       )}
 
       {trustNote && (
-        <p className="text-sm md:text-base text-[#8b6f4d] dark:text-zinc-500">
+        <p className="text-sm md:text-base text-[#8b6f4d] dark:text-zinc-200">
           {trustNote}
         </p>
       )}
@@ -280,7 +280,7 @@ export const HeroFooter = ({
   onScrollToAbout: () => void;
 }) => (
   <div className="mt-12 border-t border-zinc-500 dark:border-orange-300 pt-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 text-zinc-900 dark:text-white">
-    <span className="text-xs md:text-sm uppercase tracking-[0.4em] text-zinc-500">
+    <span className="text-xs md:text-sm uppercase tracking-[0.4em] text-zinc-200">
       {locationLabel}
     </span>
     <button
