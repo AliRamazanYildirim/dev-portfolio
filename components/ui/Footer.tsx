@@ -34,7 +34,7 @@ function Footer({ className }: { className?: string }) {
               rel={isExternal || isPdf ? "noopener noreferrer" : undefined}
               prefetch={isPdf ? false : undefined}
               aria-label={`${footerDictionary.socialAriaPrefix} ${item.title}`}
-              className="group flex items-center gap-1 lg:gap-4 text-sm md:text-base lg:text-2xl font-medium transition hover:text-[#c58d12] shrink-0 whitespace-nowrap"
+              className="group flex items-center gap-1 lg:gap-4 text-zinc-800 dark:text-white text-sm md:text-base lg:text-2xl font-medium transition hover:text-[#c58d12] shrink-0 whitespace-nowrap"
             >
               <Image
                 src={item.icon}
@@ -50,7 +50,7 @@ function Footer({ className }: { className?: string }) {
         })}
       </div>
 
-      <div className="mt-6 md:mt-0 flex flex-col items-center md:items-end gap-3 text-zinc-400">
+      <div className="mt-6 md:mt-0 flex flex-col items-center md:items-end gap-3 text-zinc-800 dark:text-white">
         <div className="flex flex-col md:flex-row items-center gap-3 md:gap-4">
           <Link
             href="/impressum"
