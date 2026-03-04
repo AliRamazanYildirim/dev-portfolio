@@ -45,29 +45,21 @@ const GoogleRatings: React.FC = () => {
       <PremiumSeparator className="mb-8 md:mb-12" />
 
       {/* Header Section */}
-      <div
-        className="text-center mb-12 md:mb-16 mt-16 md:mt-20 hero-reveal"
-      >
+      <div className="text-center mb-12 md:mb-16 mt-16 md:mt-20 hero-reveal">
         {/* Strapline */}
-        <span
-          className="uppercase tracking-[0.5em] font-semibold text-sm md:text-base lg:text-lg text-zinc-700 dark:text-white/90 "
-        >
+        <span className="uppercase tracking-[0.5em] font-semibold text-sm md:text-base lg:text-lg text-zinc-700 dark:text-white/90 ">
           ⭐ GOOGLE RATINGS ⭐
         </span>
 
         {/* Main Heading */}
-        <div
-          className="w-full flex justify-center"
-        >
+        <div className="w-full flex justify-center">
           <h2 className="text-2xl sm:text-3xl md:text-lgHeading font-extrabold mt-16 md:mt-20 text-zinc-900 dark:text-white w-fit">
             <SplitText text={ratingsContent.heading} />
           </h2>
         </div>
 
         {/* Subheading */}
-        <p
-          className="font-satoshi text-content2 text-zinc-600 dark:text-white/70 mt-6 md:mt-8 max-w-2xl mx-auto"
-        >
+        <p className="font-satoshi text-content2 text-zinc-600 dark:text-white/70 mt-6 md:mt-8 max-w-2xl mx-auto">
           {ratingsContent.subheading}
         </p>
 
@@ -206,9 +198,7 @@ const GoogleRatings: React.FC = () => {
 
       {/* Call to Action */}
       <div className="flex justify-center mt-12 md:mt-16 pb-12 md:pb-16 hero-reveal">
-        <div
-          className="inline-flex rounded-xl overflow-hidden bg-linear-to-r from-yellow-500 via-amber-500 to-orange-600 shadow-lg hover:shadow-xl hover:shadow-amber-500/50 hover:scale-105 active:scale-95 transition-all duration-300"
-        >
+        <div className="inline-flex rounded-xl overflow-hidden bg-linear-to-r from-yellow-500 via-amber-500 to-orange-600 shadow-lg hover:shadow-xl hover:shadow-amber-500/50 hover:scale-105 active:scale-95 transition-all duration-300">
           <a
             href={ratingsContent.ratings[0]?.googleProfileUrl || "#"}
             target="_blank"

@@ -3,8 +3,7 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 
-interface ShimmerButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface ShimmerButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   shimmerColor?: string;
   shimmerSize?: string;
   borderRadius?: string;
@@ -27,14 +26,14 @@ export const ShimmerButton = React.forwardRef<
       children,
       ...props
     },
-    ref
+    ref,
   ) => {
     return (
       <button
         ref={ref}
         className={cn(
           "relative inline-flex h-12 w-full cursor-pointer items-center justify-center rounded-lg border border-slate-800 bg-slate-950 px-6 py-1 font-medium text-white transition-colors duration-500 hover:bg-slate-900",
-          className
+          className,
         )}
         style={
           {
@@ -68,7 +67,7 @@ export const ShimmerButton = React.forwardRef<
         </div>
       </button>
     );
-  }
+  },
 );
 
 ShimmerButton.displayName = "ShimmerButton";

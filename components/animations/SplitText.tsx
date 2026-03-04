@@ -41,7 +41,11 @@ const SplitText: React.FC<SplitTextProps> = ({ text, className = "" }) => {
       animate={inView ? "visible" : "hidden"}
     >
       {letters.map((letter, index) => (
-        <motion.span key={index} className="inline-block" variants={letterVariants}>
+        <motion.span
+          key={index}
+          className="inline-block"
+          variants={letterVariants}
+        >
           {letter === " " ? "\u00A0" : letter}
         </motion.span>
       ))}
