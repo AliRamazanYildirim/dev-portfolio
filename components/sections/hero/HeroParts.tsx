@@ -214,9 +214,9 @@ const PortraitPanel = ({
     <span className="inline-flex items-center rounded-full border border-[#c58d12]/40 bg-[#c58d12]/10 px-3 py-1 text-[9px] sm:text-[10px] font-semibold uppercase tracking-[0.26em] sm:tracking-[0.35em] text-[#c58d12]">
       {panel.badge}
     </span>
-    <h3 className="mt-4 text-lg md:text-xl font-semibold leading-snug text-zinc-900 dark:text-white text-balance">
+    <h2 className="mt-4 text-lg md:text-xl font-semibold leading-snug text-zinc-900 dark:text-white text-balance">
       {panel.title}
-    </h3>
+    </h2>
     <p className="mt-2 text-sm md:text-base leading-relaxed text-zinc-600 dark:text-zinc-400 text-balance">
       {panel.summary}
     </p>
