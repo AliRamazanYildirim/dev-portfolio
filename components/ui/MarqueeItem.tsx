@@ -1,14 +1,13 @@
 import React from "react";
-import { motion } from "framer-motion";
 import Image from "next/image";
 
 interface MarqueeItemProps {
   images: { src: string; text: string }[];
-  from: string;
-  to: string;
+  from?: string;
+  to?: string;
 }
 
-const MarqueeItem: React.FC<MarqueeItemProps> = ({ images, from, to }) => {
+const MarqueeItem: React.FC<MarqueeItemProps> = ({ images }) => {
   const renderItem = (item: { src: string; text: string }, index: number) => (
     <div
       key={index}
@@ -30,21 +29,15 @@ const MarqueeItem: React.FC<MarqueeItemProps> = ({ images, from, to }) => {
 
   return (
     <div className="relative overflow-hidden">
-      {/* Maskierter Verlauf nur im Hintergrund*/}
+      {/* Maskierter Verlauf nur im Hintergrund */}
       <div className="absolute inset-0 pointer-events-none MyGradient z-0" />
 
-      {/* Inhalt in separater Schicht*/}
+      {/* Inhalt in separater Schicht – reine CSS-Animation */}
       <div className="relative z-10 flex">
-        {[...Array(2)].map((_, i) => (
-          <motion.div
-            key={i}
-            initial={{ x: `${from}` }}
-            animate={{ x: `${to}` }}
-            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-            className="flex shrink-0"
-          >
+        {[0, 1].map((i) => (
+          <div key={i} className="marquee-track">
             {images.map((item, index) => renderItem(item, index))}
-          </motion.div>
+          </div>
         ))}
       </div>
     </div>

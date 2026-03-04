@@ -54,11 +54,10 @@ export const ShimmerButton = React.forwardRef<
           }}
         >
           <div
-            className="absolute inset-0"
+            className="absolute inset-0 shimmer-bg-anim"
             style={
               {
                 background: `linear-gradient(45deg, transparent, var(--shimmer-color), transparent)`,
-                animation: `shimmer var(--shimmer-duration) infinite`,
                 backgroundSize: "200% 200%",
               } as React.CSSProperties
             }
@@ -67,17 +66,6 @@ export const ShimmerButton = React.forwardRef<
         <div className="relative z-10 flex items-center justify-center">
           {children}
         </div>
-
-        <style>{`
-          @keyframes shimmer {
-            0% {
-              background-position: -200% center;
-            }
-            100% {
-              background-position: 200% center;
-            }
-          }
-        `}</style>
       </button>
     );
   }

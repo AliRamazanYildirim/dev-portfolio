@@ -11,6 +11,18 @@ interface ReviewsCarouselProps {
   verifiedLabel: string;
 }
 
+const BREAKPOINTS = {
+  lg: "(min-width: 1024px)",
+  md: "(min-width: 768px)",
+} as const;
+
+function getItemsPerPage(): number {
+  if (typeof window === "undefined") return 3;
+  if (window.matchMedia(BREAKPOINTS.lg).matches) return 3;
+  if (window.matchMedia(BREAKPOINTS.md).matches) return 2;
+  return 1;
+}
+
 const ReviewsCarousel: React.FC<ReviewsCarouselProps> = ({
   reviews,
   reviewsLabel,
@@ -18,7 +30,7 @@ const ReviewsCarousel: React.FC<ReviewsCarouselProps> = ({
 }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
-  const [itemsPerPage, setItemsPerPage] = useState(3);
+  const [itemsPerPage, setItemsPerPage] = useState(getItemsPerPage);
   const [isClient, setIsClient] = useState(false);
 
   // Client-side mount
@@ -27,23 +39,22 @@ const ReviewsCarousel: React.FC<ReviewsCarouselProps> = ({
     setIsClient(true);
   }, []);
 
-  // Responsive logic
+  // Responsive logic using matchMedia (avoids forced reflow from reading innerWidth)
   useEffect(() => {
     if (!isClient) return;
 
-    const handleResize = () => {
-      if (window.innerWidth >= 1024) {
-        setItemsPerPage(3); // Desktop
-      } else if (window.innerWidth >= 768) {
-        setItemsPerPage(2); // Tablet
-      } else {
-        setItemsPerPage(1); // Mobile
-      }
-    };
+    const lgMql = window.matchMedia(BREAKPOINTS.lg);
+    const mdMql = window.matchMedia(BREAKPOINTS.md);
 
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    const handleChange = () => setItemsPerPage(getItemsPerPage());
+
+    lgMql.addEventListener("change", handleChange);
+    mdMql.addEventListener("change", handleChange);
+
+    return () => {
+      lgMql.removeEventListener("change", handleChange);
+      mdMql.removeEventListener("change", handleChange);
+    };
   }, [isClient]);
 
   // Total slides hesapla

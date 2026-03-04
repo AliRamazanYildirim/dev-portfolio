@@ -1,10 +1,8 @@
 "use client";
 
 import React from "react";
-import { motion } from "framer-motion";
 import SplitText from "@/components/animations/SplitText";
 import ReviewsCarousel from "./ReviewsCarousel";
-import WaveSeparator from "@/components/ui/WaveSeparator";
 import { useTranslation } from "@/hooks/useTranslation";
 import {
   enGoogleRatings,
@@ -24,26 +22,6 @@ const GoogleRatings: React.FC = () => {
       tr: trGoogleRatings,
       fr: frGoogleRatings,
     }[language] || enGoogleRatings;
-
-  const containerVariants = {
-    initial: { opacity: 0 },
-    animate: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.2,
-      },
-    },
-  };
-
-  const itemVariants = {
-    initial: { opacity: 0, y: 20 },
-    animate: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.6 },
-    },
-  };
 
   // Calculate average rating
   const averageRating = (
@@ -67,40 +45,34 @@ const GoogleRatings: React.FC = () => {
       <PremiumSeparator className="mb-8 md:mb-12" />
 
       {/* Header Section */}
-      <motion.div
-        className="text-center mb-12 md:mb-16 mt-16 md:mt-20"
-        variants={containerVariants}
-        initial="initial"
-        animate="animate"
+      <div
+        className="text-center mb-12 md:mb-16 mt-16 md:mt-20 hero-reveal"
       >
         {/* Strapline */}
-        <motion.span
-          variants={itemVariants}
+        <span
           className="uppercase tracking-[0.5em] font-semibold text-sm md:text-base lg:text-lg text-zinc-700 dark:text-white/90 "
         >
           ⭐ GOOGLE RATINGS ⭐
-        </motion.span>
+        </span>
 
         {/* Main Heading */}
-        <motion.div
-          variants={itemVariants}
+        <div
           className="w-full flex justify-center"
         >
           <h2 className="text-2xl sm:text-3xl md:text-lgHeading font-extrabold mt-16 md:mt-20 text-zinc-900 dark:text-white w-fit">
             <SplitText text={ratingsContent.heading} />
           </h2>
-        </motion.div>
+        </div>
 
         {/* Subheading */}
-        <motion.p
-          variants={itemVariants}
+        <p
           className="font-satoshi text-content2 text-zinc-600 dark:text-white/70 mt-6 md:mt-8 max-w-2xl mx-auto"
         >
           {ratingsContent.subheading}
-        </motion.p>
+        </p>
 
         {/* Stats Bar */}
-        <motion.div variants={itemVariants} className="mt-8 md:mt-10">
+        <div className="mt-8 md:mt-10">
           <div className="relative rounded-2xl overflow-hidden border border-zinc-200/80 dark:border-zinc-700/50 bg-white dark:bg-zinc-900 shadow-[0_4px_24px_rgba(0,0,0,0.06),0_1px_3px_rgba(0,0,0,0.04),inset_0_1px_0_rgba(255,255,255,0.9)] dark:shadow-[0_4px_32px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.04)]">
             {/* Top shimmer line */}
             <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-[#c58d12]/50 to-transparent" />
@@ -220,36 +192,22 @@ const GoogleRatings: React.FC = () => {
             {/* Bottom shimmer line */}
             <div className="absolute inset-x-0 bottom-0 h-px bg-linear-to-r from-transparent via-zinc-200/80 dark:via-zinc-700/50 to-transparent" />
           </div>
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
 
       {/* Rating Cards Carousel */}
-      <motion.div
-        variants={itemVariants}
-        initial="initial"
-        whileInView="animate"
-        viewport={{ once: true, margin: "-100px" }}
-        className="mt-16 md:mt-20"
-      >
+      <div className="mt-16 md:mt-20 hero-reveal">
         <ReviewsCarousel
           reviews={ratingsContent.ratings}
           reviewsLabel={ratingsContent.reviews}
           verifiedLabel={ratingsContent.verified}
         />
-      </motion.div>
+      </div>
 
       {/* Call to Action */}
-      <motion.div
-        variants={itemVariants}
-        initial="initial"
-        whileInView="animate"
-        viewport={{ once: true, margin: "-100px" }}
-        className="flex justify-center mt-12 md:mt-16 pb-12 md:pb-16"
-      >
-        <motion.div
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className="inline-flex rounded-xl overflow-hidden bg-linear-to-r from-yellow-500 via-amber-500 to-orange-600 shadow-lg hover:shadow-xl hover:shadow-amber-500/50 transition-all duration-300"
+      <div className="flex justify-center mt-12 md:mt-16 pb-12 md:pb-16 hero-reveal">
+        <div
+          className="inline-flex rounded-xl overflow-hidden bg-linear-to-r from-yellow-500 via-amber-500 to-orange-600 shadow-lg hover:shadow-xl hover:shadow-amber-500/50 hover:scale-105 active:scale-95 transition-all duration-300"
         >
           <a
             href={ratingsContent.ratings[0]?.googleProfileUrl || "#"}
@@ -258,24 +216,22 @@ const GoogleRatings: React.FC = () => {
             className="group inline-flex items-center gap-2 px-6 md:px-8 py-3 md:py-4 font-satoshi font-semibold text-black hover:text-black/90 transition-all duration-300 relative z-10"
           >
             <span>{t("googleRatings.seeMore")}</span>
-            <motion.svg
-              className="w-5 h-5 md:w-6 md:h-6 text-black drop-shadow-md group-hover:drop-shadow-lg transition-all"
+            <svg
+              className="w-5 h-5 md:w-6 md:h-6 text-black drop-shadow-md group-hover:drop-shadow-lg group-hover:translate-x-1 transition-all"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
               strokeWidth="2.5"
-              initial={{ x: 0 }}
-              whileHover={{ x: 4 }}
             >
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 d="M9 5l7 7-7 7"
               />
-            </motion.svg>
+            </svg>
           </a>
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
     </section>
   );
 };
