@@ -43,7 +43,7 @@ export default function NavDesktop({
               <div key={item.title} className="relative group/sub">
                 <button
                   type="button"
-                  className="button lg:text-lgButton transition flex items-center gap-1 pb-3 text-zinc-800 dark:text-white hover:text-zinc-800 dark:hover:text-white"
+                  className="cursor-pointer button lg:text-lgButton transition flex items-center gap-1 pb-3 text-zinc-800 dark:text-white hover:text-zinc-800 dark:hover:text-white"
                 >
                   <span>{item.title}</span>
                   <svg
@@ -129,7 +129,7 @@ export default function NavDesktop({
 
       <div className="hidden lg:block relative group/lang">
         <button
-          className="button lg:text-lgButton flex items-center gap-2 pb-3 transition text-zinc-800 dark:text-white hover:text-zinc-800 dark:hover:text-white"
+          className="cursor-pointer button lg:text-lgButton flex items-center gap-2 pb-3 transition text-zinc-800 dark:text-white hover:text-zinc-800 dark:hover:text-white"
           aria-haspopup="true"
           aria-label={languageAriaLabel}
           type="button"
