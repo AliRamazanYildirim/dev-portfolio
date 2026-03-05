@@ -50,11 +50,11 @@ const ContactInfo = ({
         </a>
         <a
           href={`mailto:${email}`}
-          className="inline-block rounded px-2 py-1.5 text-sm text-zinc-500 dark:text-zinc-200  decoration-zinc-600 underline-offset-2 transition-colors duration-200 hover:text-[#c58d12] hover:decoration-[#c58d12]/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#c58d12]/30"
+          className="inline-block rounded px-2 py-1.5 text-sm text-zinc-600 dark:text-zinc-200  decoration-zinc-600 underline-offset-2 transition-colors duration-200 hover:text-[#c58d12] hover:decoration-[#c58d12]/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#c58d12]/30"
         >
           {email}
         </a>
-        <span className="text-sm text-zinc-500 dark:text-zinc-200">{availabilityLabel}</span>
+        <span className="text-sm text-zinc-600 dark:text-zinc-200">{availabilityLabel}</span>
       </div>
     </motion.div>
   );

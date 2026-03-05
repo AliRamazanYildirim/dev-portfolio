@@ -83,16 +83,16 @@ const RatingCard: React.FC<RatingCardProps> = ({
           </div>
 
           {/* Review Text */}
-          <p className="font-satoshi text-sm md:text-base text-zinc-600 dark:text-zinc-400 leading-relaxed grow">
+          <p className="font-satoshi text-sm md:text-base text-zinc-600 dark:text-zinc-200 leading-relaxed grow">
             &ldquo;{rating.reviewText}&rdquo;
           </p>
 
           {/* Footer */}
           <div className="flex items-center justify-between pt-4 border-t border-zinc-200 dark:border-zinc-800">
-            <div className="flex items-center gap-2 text-xs md:text-sm text-zinc-500 dark:text-zinc-200">
+            <div className="flex items-center gap-2 text-xs md:text-sm text-zinc-600 dark:text-zinc-200">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="w-4 h-4 text-zinc-400 dark:text-zinc-200"
+                className="w-4 h-4 text-zinc-600 dark:text-zinc-200"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"

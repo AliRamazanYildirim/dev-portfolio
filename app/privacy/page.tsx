@@ -64,7 +64,7 @@ export default function PrivacyPage() {
                 </div>
               )}
               {hasBullets(section) && (
-                <ul className="mt-4 space-y-3 list-disc list-inside text-base md:text-lg text-zinc-600 dark:text-zinc-300">
+                <ul className="mt-4 space-y-3 list-disc list-inside text-base md:text-lg text-zinc-800 dark:text-zinc-300">
                   {section.bullets.map((bullet, bulletIndex) => (
                     <li key={`privacy-section-${index}-bullet-${bulletIndex}`}>
                       {bullet}
@@ -80,14 +80,14 @@ export default function PrivacyPage() {
           <h2 className="text-2xl font-semibold text-zinc-900 dark:text-white md:text-3xl">
             {privacy.contactHeading}
           </h2>
-          <ul className="mt-4 space-y-3 text-base md:text-lg text-zinc-600 dark:text-zinc-300">
+          <ul className="mt-4 space-y-3 text-base md:text-lg text-zinc-800 dark:text-zinc-300">
             {privacy.contactDetails.map((detail, index) => (
               <li key={`privacy-contact-${index}`}>{detail}</li>
             ))}
           </ul>
         </section>
 
-        <p className="mt-12 text-sm text-zinc-500">{privacy.note}</p>
+        <p className="mt-12 text-sm text-zinc-600 dark:text-zinc-200">{privacy.note}</p>
       </div>
     </main>
   );

@@ -40,7 +40,7 @@ const fadeInVariants = {
 
 const Paragraph = ({ text }: { text: string }) => (
   <motion.p
-    className="content lg:pl-10 lg:text-lgContent lg:order-1 text-zinc-600 dark:text-zinc-400"
+    className="content lg:pl-10 lg:text-lgContent lg:order-1 text-zinc-600 dark:text-zinc-200"
     variants={fadeInVariants}
     initial="hidden"
     whileInView="visible"
@@ -53,7 +53,7 @@ const Paragraph = ({ text }: { text: string }) => (
 
 const Paragraph2 = ({ text }: { text: string }) => (
   <motion.p
-    className="content lg:text-lgContent lg:order-1 max-w-2xl lg:ml-auto text-zinc-600 dark:text-zinc-400"
+    className="content lg:text-lgContent lg:order-1 max-w-2xl lg:ml-auto text-zinc-600 dark:text-zinc-200"
     variants={fadeInVariants}
     initial="hidden"
     whileInView="visible"

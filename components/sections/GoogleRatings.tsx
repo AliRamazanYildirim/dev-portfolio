@@ -59,7 +59,7 @@ const GoogleRatings: React.FC = () => {
         </div>
 
         {/* Subheading */}
-        <p className="font-satoshi text-content2 text-zinc-600 dark:text-white/70 mt-6 md:mt-8 max-w-2xl mx-auto">
+        <p className="font-satoshi text-content2 text-zinc-600 dark:text-zinc-200 mt-6 md:mt-8 max-w-2xl mx-auto">
           {ratingsContent.subheading}
         </p>
 
@@ -124,7 +124,7 @@ const GoogleRatings: React.FC = () => {
                   <div className="text-3xl sm:text-4xl font-extrabold text-zinc-900 dark:text-white tracking-tight tabular-nums leading-none">
                     {averageRating}
                   </div>
-                  <div className="text-[10px] sm:text-[11px] text-zinc-400 dark:text-zinc-200 font-medium uppercase tracking-wider">
+                  <div className="text-[10px] sm:text-[11px] text-zinc-600 dark:text-zinc-200 font-medium uppercase tracking-wider">
                     {t("googleRatings.averageRating")}
                   </div>
                 </div>
@@ -149,7 +149,7 @@ const GoogleRatings: React.FC = () => {
                   <div className="text-3xl sm:text-4xl font-extrabold text-zinc-900 dark:text-white tracking-tight tabular-nums leading-none">
                     {totalTestimonials.toLocaleString()}
                   </div>
-                  <div className="text-[10px] sm:text-[11px] text-zinc-400 dark:text-zinc-200 font-medium uppercase tracking-wider">
+                  <div className="text-[10px] sm:text-[11px] text-zinc-600 dark:text-zinc-200 font-medium uppercase tracking-wider">
                     {t("googleRatings.testimonials")}
                   </div>
                 </div>
@@ -174,7 +174,7 @@ const GoogleRatings: React.FC = () => {
                   <div className="text-3xl sm:text-4xl font-extrabold text-zinc-900 dark:text-white tracking-tight tabular-nums leading-none">
                     {avgPositive}%
                   </div>
-                  <div className="text-[10px] sm:text-[11px] text-zinc-400 dark:text-zinc-200 font-medium uppercase tracking-wider">
+                  <div className="text-[10px] sm:text-[11px] text-zinc-600 dark:text-zinc-200 font-medium uppercase tracking-wider">
                     {t("googleRatings.positiveReviews")}
                   </div>
                 </div>

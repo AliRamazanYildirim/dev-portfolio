@@ -143,7 +143,7 @@ const ContactForm = ({
             exit={{ opacity: 0, y: -20 }}
             className="md:grid md:grid-cols-12 gap-6 mx-auto"
           >
-            <div className="relative border-b border-zinc-300 dark:border-zinc-700 md:col-span-3">
+            <div className="relative border-b border-zinc-700 dark:border-zinc-300 md:col-span-3">
               <input
                 type="text"
                 name="name"
@@ -155,7 +155,7 @@ const ContactForm = ({
               />
             </div>
 
-            <div className="relative border-b border-zinc-300 dark:border-zinc-700 md:col-span-3">
+            <div className="relative border-b border-zinc-700 dark:border-zinc-300 md:col-span-3">
               <input
                 type="email"
                 name="email"
@@ -168,7 +168,7 @@ const ContactForm = ({
               />
             </div>
 
-            <div className="relative border-b border-zinc-300 dark:border-zinc-700 md:col-span-6">
+            <div className="relative border-b border-zinc-700 dark:border-zinc-300 md:col-span-6">
               <textarea
                 name="message"
                 placeholder={contactDictionary.placeholders.message}

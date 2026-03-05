@@ -7,8 +7,15 @@
 
 /* Fix für die Deprecation-Warnung: h1-Größe explizit festlegen */
 @layer base {
-  h1 { @apply text-3xl md:text-5xl font-bold; }
-  section h1, article h1, nav h1, aside h1 { @apply text-3xl md:text-5xl; }
+  h1 {
+    @apply text-3xl md:text-5xl font-bold;
+  }
+  section h1,
+  article h1,
+  nav h1,
+  aside h1 {
+    @apply text-3xl md:text-5xl;
+  }
   .title {
     @apply font-inter text-title tracking-tight font-black leading-none;
   }
@@ -43,7 +50,8 @@
     );
   }
   .theme {
-    --animate-shimmer-slide: shimmer-slide var(--speed) ease-in-out infinite alternate;
+    --animate-shimmer-slide: shimmer-slide var(--speed) ease-in-out infinite
+      alternate;
     --animate-spin-around: spin-around calc(var(--speed) * 2) infinite linear;
   }
   :root {
@@ -112,22 +120,24 @@
 
 @theme inline {
   @keyframes shimmer-slide {
-  to {
-    transform: translate(calc(100cqw - 100%), 0);
+    to {
+      transform: translate(calc(100cqw - 100%), 0);
     }
   }
   @keyframes spin-around {
-  0% {
-    transform: translateZ(0) rotate(0);
+    0% {
+      transform: translateZ(0) rotate(0);
     }
-  15%, 35% {
-    transform: translateZ(0) rotate(90deg);
+    15%,
+    35% {
+      transform: translateZ(0) rotate(90deg);
     }
-  65%, 85% {
-    transform: translateZ(0) rotate(270deg);
+    65%,
+    85% {
+      transform: translateZ(0) rotate(270deg);
     }
-  100% {
-    transform: translateZ(0) rotate(360deg);
+    100% {
+      transform: translateZ(0) rotate(360deg);
     }
   }
 }
@@ -144,7 +154,8 @@
 }
 
 @keyframes hero-bounce {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
   }
   50% {
@@ -168,8 +179,12 @@
 
 /* ShimmerButton keyframe (moved from inline <style>) */
 @keyframes shimmer {
-  0%   { background-position: -200% center; }
-  100% { background-position: 200% center; }
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
 }
 
 .shimmer-bg-anim {
@@ -178,15 +193,19 @@
 
 /* Marquee CSS animation (replaces framer-motion infinite) */
 @keyframes marquee-scroll {
-  from { transform: translate3d(0, 0, 0); }
-  to   { transform: translate3d(-100%, 0, 0); }
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-100%, 0, 0);
+  }
 }
 
 .marquee-track {
   display: flex;
   flex-shrink: 0;
   will-change: transform;
-  animation: marquee-scroll 20s linear infinite;
+  animation: marquee-scroll 35s linear infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {

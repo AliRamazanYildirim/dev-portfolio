@@ -52,7 +52,7 @@ export default function ProjectCard({
           <h2 className="text-3xl md:text-4xl font-bold text-zinc-900 dark:text-white transition-colors duration-300 group-hover:text-[#c58d12]">
             {project.title}
           </h2>
-          <p className="text-zinc-500 dark:text-zinc-400 mt-2 text-lg md:text-xl line-clamp-2">
+          <p className="text-zinc-800 dark:text-zinc-200 mt-2 text-lg md:text-xl line-clamp-2">
             {snippet}
           </p>
         </div>

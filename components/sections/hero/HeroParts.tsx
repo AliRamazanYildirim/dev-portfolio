@@ -217,7 +217,7 @@ const PortraitPanel = ({
     <h2 className="mt-4 text-lg md:text-xl font-semibold leading-snug text-zinc-900 dark:text-white text-balance">
       {panel.title}
     </h2>
-    <p className="mt-2 text-sm md:text-base leading-relaxed text-zinc-600 dark:text-zinc-400 text-balance">
+    <p className="mt-2 text-sm md:text-base leading-relaxed text-zinc-600 dark:text-zinc-300 text-balance">
       {panel.summary}
     </p>
 
@@ -230,7 +230,7 @@ const PortraitPanel = ({
           <p className="text-base sm:text-lg font-semibold leading-none text-zinc-900 dark:text-white">
             {stat.value}
           </p>
-          <p className="mt-1 text-[10px] sm:text-[11px] leading-tight text-zinc-500 text-balance">
+          <p className="mt-1 text-[10px] sm:text-[11px] leading-tight text-zinc-500 dark:text-zinc-300 text-balance">
             {stat.label}
           </p>
         </div>
@@ -262,7 +262,7 @@ const ValueGrid = ({
         <p className="text-lg font-semibold leading-snug text-zinc-900 dark:text-white">
           {item.title}
         </p>
-        <p className="mt-2 text-sm md:text-base leading-relaxed text-zinc-600 dark:text-zinc-400">
+        <p className="mt-2 text-sm md:text-base leading-relaxed text-zinc-600 dark:text-zinc-300">
           {item.description}
         </p>
       </PremiumSurface>
