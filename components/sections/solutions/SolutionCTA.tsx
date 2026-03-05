@@ -15,7 +15,7 @@ export default function SolutionCTA({
   button,
 }: SolutionCTAProps) {
   return (
-    <section className="relative overflow-hidden py-24">
+    <section className="relative overflow-hidden py-20">
       <div className="relative z-10 mx-auto max-w-4xl px-6 text-center lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -54,7 +54,7 @@ export default function SolutionCTA({
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="mx-auto mb-10 max-w-2xl text-lg leading-relaxed text-zinc-500 dark:text-zinc-400 md:text-xl"
+            className="mx-auto mb-10 max-w-2xl text-lg leading-relaxed text-zinc-600 dark:text-zinc-300 md:text-xl"
           >
             {subtitle}
           </motion.p>

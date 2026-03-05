@@ -26,7 +26,7 @@ export default function PricingTiers({
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   return (
-    <section className="relative overflow-hidden py-24">
+    <section className="relative overflow-hidden py-10">
       <div className="relative z-10 mx-auto max-w-7xl px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
@@ -94,7 +94,7 @@ export default function PricingTiers({
                   className={`relative h-full rounded-3xl border-2 p-8 transition-all duration-500 backdrop-blur-xl lg:p-10 ${
                     isHighlighted
                       ? "border-[#c58d12]/60 bg-linear-to-br from-zinc-900/95 via-black/90 to-zinc-900/95 shadow-[0_0_60px_rgba(197,141,18,0.45)]"
-                      : "border-zinc-200 dark:border-zinc-800/60 bg-white dark:bg-linear-to-br dark:from-zinc-900/70 dark:to-black/70 hover:border-[#c58d12]/40 hover:shadow-[0_0_40px_rgba(197,141,18,0.25)]"
+                      : "border-zinc-200 dark:border-zinc-800/60 bg-white dark:bg-transparent dark:bg-linear-to-br dark:from-zinc-900/95 dark:via-black/90 dark:to-zinc-900/95 hover:border-[#c58d12]/40 hover:shadow-[0_0_40px_rgba(197,141,18,0.25)]"
                   } ${hoveredIndex === index ? "-translate-y-2 scale-[1.02]" : ""}`}
                 >
                   {tier.badge && (
@@ -196,7 +196,7 @@ export default function PricingTiers({
                           </svg>
                         </div>
                         <span
-                          className={`leading-relaxed transition-colors ${isHighlighted ? "text-zinc-100" : "text-zinc-500 dark:text-zinc-400"} group-hover:text-zinc-800 dark:group-hover:text-white`}
+                          className={`leading-relaxed transition-colors ${isHighlighted ? "text-zinc-100 group-hover:text-white" : "text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-800 dark:group-hover:text-white"}`}
                         >
                           {feature}
                         </span>
@@ -238,7 +238,7 @@ export default function PricingTiers({
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 1 }}
-          className="mt-16 border-t border-zinc-800/50 pt-12 text-center"
+          className="mt-16 border-t border-zinc-800/50 dark:border-zinc-300 pt-12 text-center"
         >
           <p className="flex flex-wrap items-center justify-center gap-8 text-sm">
             {[

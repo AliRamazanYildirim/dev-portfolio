@@ -75,7 +75,7 @@ export default function SolutionPageClient({ slug }: SolutionPageClientProps) {
           cta={resolved.hero.cta}
         />
 
-        <section className="relative py-24">
+        <section className="relative py-20">
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -87,7 +87,7 @@ export default function SolutionPageClient({ slug }: SolutionPageClientProps) {
               <h2 className="mb-4 text-3xl font-bold text-zinc-900 dark:text-white md:text-5xl">
                 {copy.benefitsHeading[language] ?? copy.benefitsHeading.en}
               </h2>
-              <p className="mx-auto max-w-2xl text-lg text-zinc-500 dark:text-zinc-400">
+              <p className="mx-auto max-w-2xl text-lg text-zinc-600 dark:text-zinc-300">
                 {copy.benefitsSubtitle[language] ?? copy.benefitsSubtitle.en}
               </p>
             </motion.div>

@@ -51,7 +51,7 @@ export default function TestimonialSection({
             </motion.div>
           </motion.div>
 
-          <div className="relative overflow-hidden rounded-2xl border border-zinc-200 dark:border-[#c58d12]/20 bg-white/80 dark:bg-linear-to-br dark:from-zinc-900/70 dark:via-black/70 dark:to-black/80 p-8 transition-all duration-500 hover:border-[#c58d12]/40 lg:p-12">
+          <div className="relative overflow-hidden rounded-2xl border border-zinc-200 dark:border-[#c58d12]/20 bg-white/80 dark:bg-transparent dark:bg-linear-to-br dark:from-zinc-900/95 dark:via-black/90 dark:to-zinc-900/95 p-8 transition-all duration-500 hover:border-[#c58d12]/40 lg:p-12">
             <motion.div
               className="absolute inset-0 rounded-2xl bg-linear-to-br from-[#c58d12]/5 via-transparent to-[#d4a24a]/5"
               animate={{ opacity: [0.05, 0.1, 0.05] }}

@@ -25,7 +25,7 @@ export default function BenefitCard({
       whileHover={{ y: -8 }}
       className="group relative"
     >
-      <div className="relative h-full overflow-hidden rounded-2xl border border-zinc-200/80 bg-white/90 dark:border-zinc-800/50 dark:bg-linear-to-br dark:from-zinc-900/80 dark:to-black/80 p-8 backdrop-blur">
+      <div className="relative h-full overflow-hidden rounded-2xl border border-zinc-200/80 bg-white/90 dark:border-zinc-800/50 dark:bg-transparent dark:bg-linear-to-br dark:from-zinc-900/95 dark:via-black/90 dark:to-zinc-900/95 p-8 backdrop-blur">
         <motion.div
           className="absolute inset-0 rounded-2xl bg-linear-to-br from-[#c58d12]/0 via-[#c58d12]/0 to-[#c58d12]/0 group-hover:from-[#c58d12]/10 group-hover:via-[#c58d12]/15 group-hover:to-[#c58d12]/5"
           animate={{ opacity: [0.05, 0.1, 0.05] }}
@@ -74,7 +74,7 @@ export default function BenefitCard({
             {title}
           </h3>
 
-          <p className="text-zinc-500 dark:text-zinc-400 transition-colors duration-300 group-hover:text-zinc-700 dark:group-hover:text-zinc-200">
+          <p className="text-zinc-600 dark:text-zinc-400 transition-colors duration-300 group-hover:text-zinc-700 dark:group-hover:text-zinc-200">
             {description}
           </p>
 
