@@ -2,10 +2,11 @@
 
 import {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
-  useState,
+  useSyncExternalStore,
   type ReactNode,
 } from "react";
 import { translations } from "@/constants/translations";
@@ -33,27 +34,43 @@ const SUPPORTED_LANGUAGES: readonly SupportedLanguage[] = [
 const isSupportedLanguage = (value: string): value is SupportedLanguage =>
   SUPPORTED_LANGUAGES.includes(value as SupportedLanguage);
 
+// Lies das localStorage als externes System.
+const listeners = new Set<() => void>();
+
+function subscribeToLanguage(callback: () => void): () => void {
+  listeners.add(callback);
+  return () => listeners.delete(callback);
+}
+
+function getLanguageSnapshot(): SupportedLanguage {
+  const stored = localStorage.getItem(STORAGE_KEY);
+  if (stored && isSupportedLanguage(stored)) return stored;
+  return DEFAULT_LANGUAGE;
+}
+
+function getLanguageServerSnapshot(): SupportedLanguage {
+  return DEFAULT_LANGUAGE;
+}
+
+function setStoredLanguage(lang: SupportedLanguage): void {
+  localStorage.setItem(STORAGE_KEY, lang);
+  // Benachrichtige alle Abonnenten
+  listeners.forEach((cb) => cb());
+}
+
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [language, setLanguage] = useState<SupportedLanguage>(() => {
-    if (typeof window !== "undefined") {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored && isSupportedLanguage(stored)) {
-        return stored;
-      }
-    }
-    return DEFAULT_LANGUAGE;
-  });
+  const language = useSyncExternalStore(
+    subscribeToLanguage,
+    getLanguageSnapshot,
+    getLanguageServerSnapshot,
+  );
+
+  const setLanguage = useCallback((lang: SupportedLanguage) => {
+    setStoredLanguage(lang);
+  }, []);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      localStorage.setItem(STORAGE_KEY, language);
-    }
-  }, [language]);
-
-  useEffect(() => {
-    if (typeof document !== "undefined") {
-      document.documentElement.lang = language;
-    }
+    document.documentElement.lang = language;
   }, [language]);
 
   const value = useMemo<LanguageContextValue>(() => {
@@ -81,7 +98,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       t,
       raw: dictionary,
     };
-  }, [language]);
+  }, [language, setLanguage]);
 
   return (
     <LanguageContext.Provider value={value}>

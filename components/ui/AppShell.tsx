@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useSyncExternalStore } from "react";
 import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
 import Nav from "@/components/ui/Nav";
@@ -11,12 +11,19 @@ import PageBackground from "@/components/ui/PageBackground";
 import HangingLampToggle from "@/components/ui/HangingLampToggle";
 import { useConsoleArt } from "@/hooks/useConsoleArt";
 
+const emptySubscribe = () => () => {};
+const returnTrue = () => true;
+const returnFalse = () => false;
+
 export default function AppShell({ children }: { children: React.ReactNode }) {
   useConsoleArt();
   const pathname = usePathname();
   const { resolvedTheme } = useTheme();
+  const mounted = useSyncExternalStore(emptySubscribe, returnTrue, returnFalse);
+
   const isAdmin = pathname?.startsWith("/admin");
-  const isDark = resolvedTheme !== "light";
+  // SSR'da resolvedTheme undefined — dark varsayılan olarak tutarlı render sağlanır
+  const isDark = mounted ? resolvedTheme !== "light" : true;
 
   if (isAdmin) {
     return <>{children}</>;

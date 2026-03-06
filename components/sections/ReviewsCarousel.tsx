@@ -30,12 +30,13 @@ const ReviewsCarousel: React.FC<ReviewsCarouselProps> = ({
 }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
-  const [itemsPerPage, setItemsPerPage] = useState(getItemsPerPage);
+  const [itemsPerPage, setItemsPerPage] = useState(3); // SSR ile eşleşen sabit değer
   const [isClient, setIsClient] = useState(false);
 
-  // Client-side mount
+  // Client-side mount + doğru itemsPerPage ayarla
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- hydration detection
+    setItemsPerPage(getItemsPerPage());
     setIsClient(true);
   }, []);
 
