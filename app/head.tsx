@@ -3,13 +3,15 @@ export default function Head() {
     <>
       <link
         rel="icon"
-        href="/ali-ramazan-yildirim-white-favicon.svg"
+        href="/ali-ramazan-yildirim-dark-favicon.svg"
         type="image/svg+xml"
+        media="(prefers-color-scheme: light)"
       />
       <link
-        rel="shortcut icon"
+        rel="icon"
         href="/ali-ramazan-yildirim-white-favicon.svg"
         type="image/svg+xml"
+        media="(prefers-color-scheme: dark)"
       />
       <link
         rel="preload"

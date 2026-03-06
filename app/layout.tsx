@@ -44,9 +44,14 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       {
+        url: "/ali-ramazan-yildirim-dark-favicon.svg",
+        type: "image/svg+xml",
+        media: "(prefers-color-scheme: light)",
+      },
+      {
         url: "/ali-ramazan-yildirim-white-favicon.svg",
         type: "image/svg+xml",
-        sizes: "any",
+        media: "(prefers-color-scheme: dark)",
       },
     ],
     shortcut: [
