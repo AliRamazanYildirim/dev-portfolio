@@ -12,7 +12,7 @@ const PartnersMarquee: React.FC = () => {
 
   const partners = [
     { src: "/partners/karaca.png", text: "KARACA" },
-    { src: "/logo.svg", text: "SARA BAU" },
+    { src: "/partners/sara-bau.svg", text: "SARA BAU" },
     { src: "/partners/kingnetz-logo.png", text: "kingnetz.de" },
   ];
 

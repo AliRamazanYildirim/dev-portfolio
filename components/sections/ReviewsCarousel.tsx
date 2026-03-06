@@ -183,19 +183,23 @@ const ReviewsCarousel: React.FC<ReviewsCarouselProps> = ({
         </motion.button>
 
         {/* Pagination Dots - Enhanced */}
-        <div className="flex items-center gap-3 md:gap-4">
+        <div className="flex items-center gap-1 md:gap-2">
           {Array.from({ length: totalSlides }).map((_, i) => (
             <motion.button
               key={i}
               onClick={() => handleDotClick(i)}
-              className={`rounded-full transition-all duration-300 backdrop-blur-sm ${
-                i === currentSlide
-                  ? "bg-linear-to-r from-[#c58d12] to-[#d4a24a] w-10 h-3 md:w-12 md:h-3 shadow-lg shadow-[#c58d12]/50"
-                  : "bg-zinc-900/15 dark:bg-white/20 w-2.5 h-2.5 md:w-3 md:h-3 hover:bg-zinc-900/30 dark:hover:bg-white/40 hover:w-4 md:hover:w-5"
-              }`}
+              className="flex items-center justify-center min-w-12 min-h-12 p-3"
               aria-label={`Go to slide ${i + 1}`}
               whileHover={{ scale: 1.2 }}
-            />
+            >
+              <span
+                className={`block rounded-full transition-all duration-300 backdrop-blur-sm ${
+                  i === currentSlide
+                    ? "bg-linear-to-r from-[#c58d12] to-[#d4a24a] w-10 h-3 md:w-12 md:h-3 shadow-lg shadow-[#c58d12]/50"
+                    : "bg-zinc-900/15 dark:bg-white/20 w-2.5 h-2.5 md:w-3 md:h-3 group-hover:bg-zinc-900/30 dark:group-hover:bg-white/40"
+                }`}
+              />
+            </motion.button>
           ))}
         </div>
 
