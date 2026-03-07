@@ -11,17 +11,37 @@ export default function ScrollToTopButton() {
   const [visible, setVisible] = useState(false);
   const visibleRef = useRef(false);
   const progressCircleRef = useRef<SVGCircleElement | null>(null);
+  const cachedMaxScrollRef = useRef(0);
+
+  // scrollHeight- und innerHeight-Werte cachen — mit ResizeObserver aktualisieren
+  useEffect(() => {
+    function recalc() {
+      cachedMaxScrollRef.current =
+        document.documentElement.scrollHeight - window.innerHeight;
+    }
+
+    const ro = new ResizeObserver(recalc);
+    ro.observe(document.documentElement);
+    // Fenstergröße ändern überwachen (Viewport-Änderung)
+    window.addEventListener("resize", recalc, { passive: true });
+
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", recalc);
+    };
+  }, []);
 
   useEffect(() => {
     let rafId = 0;
 
     function updateFromScroll() {
       rafId = 0;
-      const scrollTop = window.scrollY || document.documentElement.scrollTop;
-      const maxScrollable =
-        document.documentElement.scrollHeight - window.innerHeight;
+      const scrollTop = window.scrollY;
+      const maxScrollable = cachedMaxScrollRef.current;
       const progress =
-        maxScrollable > 0 ? Math.min(1, Math.max(0, scrollTop / maxScrollable)) : 0;
+        maxScrollable > 0
+          ? Math.min(1, Math.max(0, scrollTop / maxScrollable))
+          : 0;
       const dashOffset = (1 - progress) * RING_CIRCUMFERENCE;
 
       if (progressCircleRef.current) {
@@ -40,7 +60,6 @@ export default function ScrollToTopButton() {
       rafId = window.requestAnimationFrame(updateFromScroll);
     }
 
-    onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
 
     return () => {
