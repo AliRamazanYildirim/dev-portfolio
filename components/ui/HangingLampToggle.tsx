@@ -78,11 +78,33 @@ export default function HangingLampToggle() {
   // Must use useState+useEffect so server and client both start with mounted=false
   // This prevents hydration mismatch (resolvedTheme is populated before hydration on client)
   const [mounted, setMounted] = useState(false);
+  const [isHiddenOnMobileScroll, setIsHiddenOnMobileScroll] = useState(false);
   useEffect(() => {
     startTransition(() => {
       setMounted(true);
     });
   }, []);
+
+  useEffect(() => {
+    if (!mounted) {
+      return;
+    }
+
+    let lastScrollY = window.scrollY;
+
+    const handleScroll = () => {
+      if (window.innerWidth >= 1024) {
+        return;
+      }
+
+      const currentScrollY = window.scrollY;
+      setIsHiddenOnMobileScroll(currentScrollY > lastScrollY && currentScrollY > 24);
+      lastScrollY = currentScrollY;
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [mounted]);
 
   const isDark = resolvedTheme === "dark";
 
@@ -101,6 +123,9 @@ export default function HangingLampToggle() {
   const modeLabel = isDark
     ? (darkLabels[language] ?? "DARK")
     : (lightLabels[language] ?? "LIGHT");
+  const mobilePointerEventsClass = isHiddenOnMobileScroll
+    ? "pointer-events-auto max-lg:pointer-events-none"
+    : "pointer-events-auto";
 
   const handleToggle = useCallback(async () => {
     // Pull cord bends into a springy S-wave and settles back
@@ -128,15 +153,21 @@ export default function HangingLampToggle() {
   // Prevent hydration mismatch: render placeholder until mounted
   if (!mounted) {
     return (
-      <div className="pointer-events-none fixed right-2 max-lg:right-2 max-lg:top-16 max-lg:landscape:top-24 lg:top-0 z-50 flex flex-row justify-end items-start w-full" />
+      <div className="pointer-events-none fixed right-2 top-0 max-lg:right-[0.5rem] max-lg:top-[4rem] max-lg:landscape:top-[6rem] z-50 flex flex-row justify-end items-start w-full" />
     );
   }
 
   return (
-    <div className="pointer-events-none fixed right-2 max-lg:right-5.5 max-lg:top-15 max-lg:landscape:top-24.5 lg:top-0 z-50 flex flex-row items-stretch justify-end w-full">
+    <div
+      className={`pointer-events-none fixed right-2 top-0 max-lg:right-[1.375rem] max-lg:top-[3.75rem] max-lg:landscape:top-[6.125rem] z-50 flex flex-row items-stretch justify-end w-full transition-[transform,opacity] duration-300 ease-out ${
+        isHiddenOnMobileScroll
+          ? "max-lg:-translate-y-16 max-lg:opacity-0"
+          : "max-lg:translate-y-0 max-lg:opacity-100"
+      }`}
+    >
       {/* Vertical mode label — letter by letter, same height as lamp */}
       <div
-        className="pointer-events-auto max-lg:order-2 max-lg:ml-1.5 lg:order-1 lg:mr-2 flex flex-col items-center justify-between self-stretch gap-0"
+        className={`${mobilePointerEventsClass} max-lg:order-2 max-lg:ml-1.5 lg:order-1 lg:mr-2 flex flex-col items-center justify-between self-stretch gap-0`}
         aria-hidden="true"
       >
         {modeLabel.split("").map((letter, i) => (
@@ -161,7 +192,9 @@ export default function HangingLampToggle() {
       </div>
 
       {/* Lamp column: bracket + swing */}
-      <div className="pointer-events-auto max-lg:order-1 lg:order-2 flex flex-col items-center">
+      <div
+        className={`${mobilePointerEventsClass} max-lg:order-1 lg:order-2 flex flex-col items-center`}
+      >
         {/* Ceiling bracket */}
         <div className="mx-auto flex flex-col items-center">
           {/* Bracket plate */}
