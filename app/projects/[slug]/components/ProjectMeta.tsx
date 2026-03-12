@@ -12,6 +12,13 @@ export default function ProjectMeta({
   projectTexts,
   description,
 }: Props) {
+  const translatedRole =
+    projectTexts.roleLabels?.[project.role] ?? project.role;
+  const translatedDuration =
+    projectTexts.durationLabels?.[project.duration] ?? project.duration;
+  const translatedCategory =
+    projectTexts.categoryLabels?.[project.category] ?? project.category;
+
   return (
     <div className="mb-16 grid grid-cols-1 md:grid-cols-2 md:gap-8">
       <div>
@@ -30,19 +37,19 @@ export default function ProjectMeta({
           <p className="font-bold content md:text-lgContent text-zinc-700 dark:text-white">
             {projectTexts.role}
           </p>
-          <p className="text-zinc-600 dark:text-white">{project.role}</p>
+          <p className="text-zinc-600 dark:text-white">{translatedRole}</p>
         </div>
         <div>
           <p className="font-bold content md:text-lgContent text-zinc-700 dark:text-white">
             {projectTexts.duration}
           </p>
-          <p className="text-zinc-600 dark:text-white">{project.duration}</p>
+          <p className="text-zinc-600 dark:text-white">{translatedDuration}</p>
         </div>
         <div>
           <p className="font-bold content md:text-lgContent text-zinc-700 dark:text-white">
             {projectTexts.category}
           </p>
-          <p className="text-zinc-600 dark:text-white">{project.category}</p>
+          <p className="text-zinc-600 dark:text-white">{translatedCategory}</p>
         </div>
       </div>
     </div>

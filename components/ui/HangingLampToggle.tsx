@@ -98,7 +98,9 @@ export default function HangingLampToggle() {
       }
 
       const currentScrollY = window.scrollY;
-      setIsHiddenOnMobileScroll(currentScrollY > lastScrollY && currentScrollY > 24);
+      setIsHiddenOnMobileScroll(
+        currentScrollY > lastScrollY && currentScrollY > 24,
+      );
       lastScrollY = currentScrollY;
     };
 
@@ -153,13 +155,13 @@ export default function HangingLampToggle() {
   // Prevent hydration mismatch: render placeholder until mounted
   if (!mounted) {
     return (
-      <div className="pointer-events-none fixed right-2 top-0 max-lg:right-[0.5rem] max-lg:top-[4rem] max-lg:landscape:top-[6rem] z-50 flex flex-row justify-end items-start w-full" />
+      <div className="pointer-events-none fixed right-2 top-0 max-lg:right-2 max-lg:top-16 max-lg:landscape:top-24 z-50 flex flex-row justify-end items-start w-full" />
     );
   }
 
   return (
     <div
-      className={`pointer-events-none fixed right-2 top-0 max-lg:right-[1.375rem] max-lg:top-[3.75rem] max-lg:landscape:top-[6.125rem] z-50 flex flex-row items-stretch justify-end w-full transition-[transform,opacity] duration-300 ease-out ${
+      className={`pointer-events-none fixed right-2 top-0 max-lg:right-5.5 max-lg:top-15 max-lg:landscape:top-24.5 z-50 flex flex-row items-stretch justify-end w-full transition-[transform,opacity] duration-300 ease-out ${
         isHiddenOnMobileScroll
           ? "max-lg:-translate-y-16 max-lg:opacity-0"
           : "max-lg:translate-y-0 max-lg:opacity-100"
