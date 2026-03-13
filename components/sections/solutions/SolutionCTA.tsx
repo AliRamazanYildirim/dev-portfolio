@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface SolutionCTAProps {
   title: string;
@@ -14,6 +15,9 @@ export default function SolutionCTA({
   subtitle,
   button,
 }: SolutionCTAProps) {
+  const { dictionary } = useTranslation();
+  const solutionCta = dictionary.solutionCta;
+
   return (
     <section className="relative overflow-hidden py-20">
       <div className="relative z-10 mx-auto max-w-4xl px-6 text-center lg:px-8">
@@ -101,37 +105,39 @@ export default function SolutionCTA({
             transition={{ duration: 0.6, delay: 0.6 }}
             className="mt-16 flex flex-wrap items-center justify-center gap-8 text-sm"
           >
-            {["Free consultation", "No commitment", "Response in 24h"].map(
-              (item, index) => (
-                <motion.div
-                  key={item}
-                  whileHover={{ scale: 1.08, y: -4 }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                  className="flex items-center gap-3 rounded-lg border border-[#c58d12]/30 bg-[#c58d12]/10 px-4 py-2 text-zinc-600 transition-colors hover:border-[#c58d12]/60"
+            {[
+              solutionCta.freeConsultation,
+              solutionCta.noCommitment,
+              solutionCta.responseIn24h,
+            ].map((item, index) => (
+              <motion.div
+                key={item}
+                whileHover={{ scale: 1.08, y: -4 }}
+                transition={{ type: "spring", stiffness: 300 }}
+                className="flex items-center gap-3 rounded-lg border border-[#c58d12]/30 bg-[#c58d12]/10 px-4 py-2 text-zinc-600 transition-colors hover:border-[#c58d12]/60"
+              >
+                <motion.svg
+                  className="h-5 w-5 text-[#c58d12]"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                  animate={{ scale: [1, 1.2, 1] }}
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                    delay: index * 0.2,
+                  }}
                 >
-                  <motion.svg
-                    className="h-5 w-5 text-[#c58d12]"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                    animate={{ scale: [1, 1.2, 1] }}
-                    transition={{
-                      duration: 2,
-                      repeat: Infinity,
-                      delay: index * 0.2,
-                    }}
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                      clipRule="evenodd"
-                    />
-                  </motion.svg>
-                  <span className="text-zinc-600 font-bold dark:text-white">
-                    {item}
-                  </span>
-                </motion.div>
-              ),
-            )}
+                  <path
+                    fillRule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                    clipRule="evenodd"
+                  />
+                </motion.svg>
+                <span className="text-zinc-600 font-bold dark:text-white">
+                  {item}
+                </span>
+              </motion.div>
+            ))}
           </motion.div>
         </motion.div>
       </div>

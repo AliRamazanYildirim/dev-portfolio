@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface PricingTier {
   name: string;
@@ -24,6 +25,8 @@ export default function PricingTiers({
   currency = "€",
 }: PricingTiersProps) {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const { dictionary } = useTranslation();
+  const pt = dictionary.pricingTiers;
 
   return (
     <section className="relative overflow-hidden py-10">
@@ -44,17 +47,16 @@ export default function PricingTiers({
           >
             <div className="rounded-full border border-[#c58d12]/30 bg-[#c58d12]/10 px-4 py-1.5">
               <span className="text-sm font-semibold tracking-widest text-[#c58d12]">
-                TRANSPARENT PRICING
+                {pt.badge}
               </span>
             </div>
           </motion.div>
 
           <h2 className="bg-linear-to-r from-zinc-900 via-zinc-800 to-zinc-700 dark:from-white dark:via-zinc-100 dark:to-zinc-400 bg-clip-text text-4xl font-bold text-transparent md:text-6xl">
-            Investment Options
+            {pt.heading}
           </h2>
           <p className="mx-auto mt-6 max-w-2xl text-lg text-zinc-500 dark:text-zinc-400">
-            Choose the package that matches your roadmap. Every tier includes
-            regular status updates and a production-ready launch.
+            {pt.subtitle}
           </p>
         </motion.div>
 
@@ -224,7 +226,7 @@ export default function PricingTiers({
                           : "border border-zinc-400 dark:border-zinc-700 bg-white dark:bg-linear-to-r dark:from-zinc-800 dark:to-zinc-700 text-zinc-800 dark:text-white hover:border-[#c58d12]/50 hover:from-[#c58d12]/20 hover:to-[#d4a24a]/20"
                       }`}
                     >
-                      {isHighlighted ? "Start Now" : "Get Started"}
+                      {isHighlighted ? pt.startNow : pt.getStarted}
                     </Link>
                   </motion.div>
                 </div>
@@ -241,18 +243,16 @@ export default function PricingTiers({
           className="mt-16 border-t border-zinc-800/50 dark:border-zinc-300 pt-12 text-center"
         >
           <p className="flex flex-wrap items-center justify-center gap-8 text-sm">
-            {[
-              "No hidden fees",
-              "Dedicated post-launch support",
-              "Flexible payment plans",
-            ].map((item) => (
-              <span
-                key={item}
-                className="rounded-full font-bold border border-[#c58d12]/20 bg-[#c58d12]/5 px-4 py-2 text-zinc-700 transition-colors hover:border-[#c58d12]/40 hover:text-[#c58d12] dark:text-white"
-              >
-                {item}
-              </span>
-            ))}
+            {[pt.noHiddenFees, pt.postLaunchSupport, pt.flexiblePayment].map(
+              (item) => (
+                <span
+                  key={item}
+                  className="rounded-full font-bold border border-[#c58d12]/20 bg-[#c58d12]/5 px-4 py-2 text-zinc-700 transition-colors hover:border-[#c58d12]/40 hover:text-[#c58d12] dark:text-white"
+                >
+                  {item}
+                </span>
+              ),
+            )}
           </p>
         </motion.div>
       </div>

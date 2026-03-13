@@ -17,43 +17,30 @@ interface SolutionPageClientProps {
 }
 
 export default function SolutionPageClient({ slug }: SolutionPageClientProps) {
-  const { language } = useTranslation();
-  const dictionary = solutionDetails[language] ?? solutionDetails.en;
-  const fallbackDictionary = solutionDetails.en;
-  const fallbackContent = fallbackDictionary[slug];
-  const content = dictionary[slug] ?? fallbackContent;
+  const { language, dictionary } = useTranslation();
+  const contentDictionary = solutionDetails[language] ?? solutionDetails.en;
+  const fallbackContentDictionary = solutionDetails.en;
+  const fallbackContent = fallbackContentDictionary[slug];
+  const content = contentDictionary[slug] ?? fallbackContent;
   const resolved = content ?? fallbackContent;
+  const solutionPageCopy = dictionary.solutionPage;
+  const pricingTiersCopy = dictionary.pricingTiers;
 
   if (!fallbackContent) {
     return null;
   }
 
-  const copy = {
-    benefitsHeading: {
-      en: "Key Benefits",
-      de: "Wichtigste Vorteile",
-      tr: "Öne Çıkan Faydalar",
-      fr: "Avantages cles",
-    },
-    benefitsSubtitle: {
-      en: "Discover the highlights of this solution and why teams rely on it to deliver results.",
-      de: "Erfahren Sie, warum Teams dieser Lösung vertrauen, um messbare Ergebnisse zu erzielen.",
-      tr: "Bu çözümün öne çıkan özelliklerini ve ekiplerin neden sonuç almak için ona güvendiğini keşfedin.",
-      fr: "Decouvrez les points forts de cette solution et pourquoi les equipes lui font confiance pour obtenir des resultats.",
-    },
-  } as const;
-
   const tiers = [
     resolved.pricing.starter && {
-      name: "Starter",
+      name: pricingTiersCopy.tierStarter,
       ...resolved.pricing.starter,
     },
     resolved.pricing.professional && {
-      name: "Professional",
+      name: pricingTiersCopy.tierProfessional,
       ...resolved.pricing.professional,
     },
     resolved.pricing.enterprise && {
-      name: "Enterprise",
+      name: pricingTiersCopy.tierEnterprise,
       ...resolved.pricing.enterprise,
     },
   ].filter(Boolean) as Array<{
@@ -85,10 +72,10 @@ export default function SolutionPageClient({ slug }: SolutionPageClientProps) {
               className="mb-16 text-center"
             >
               <h2 className="mb-4 text-3xl font-bold text-zinc-900 dark:text-white md:text-5xl">
-                {copy.benefitsHeading[language] ?? copy.benefitsHeading.en}
+                {solutionPageCopy.benefitsHeading}
               </h2>
               <p className="mx-auto max-w-2xl text-lg text-zinc-600 dark:text-zinc-300">
-                {copy.benefitsSubtitle[language] ?? copy.benefitsSubtitle.en}
+                {solutionPageCopy.benefitsSubtitle}
               </p>
             </motion.div>
 

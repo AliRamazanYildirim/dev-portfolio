@@ -433,6 +433,29 @@ const baseTranslations = {
                 backToHome: "Back to home",
             },
         },
+        pricingTiers: {
+            badge: "TRANSPARENT PRICING",
+            heading: "Investment Options",
+            subtitle: "Choose the package that matches your roadmap. Every tier includes regular status updates and a production-ready launch.",
+            noHiddenFees: "No hidden fees",
+            postLaunchSupport: "Dedicated post-launch support",
+            flexiblePayment: "Flexible payment plans",
+            startNow: "Start Now",
+            getStarted: "Get Started",
+            tierStarter: "Starter",
+            tierProfessional: "Professional",
+            tierEnterprise: "Enterprise",
+        },
+        solutionPage: {
+            benefitsHeading: "Key Benefits",
+            benefitsSubtitle:
+                "Discover the highlights of this solution and why teams rely on it to deliver results.",
+        },
+        solutionCta: {
+            freeConsultation: "Free consultation",
+            noCommitment: "No commitment",
+            responseIn24h: "Response in 24h",
+        },
     },
     de: {
         nav: {
@@ -662,6 +685,29 @@ const baseTranslations = {
                 backToHome: "Zurück zur Startseite",
             },
         },
+        pricingTiers: {
+            badge: "TRANSPARENTE PREISE",
+            heading: "Investitionsoptionen",
+            subtitle: "Wählen Sie das Paket, das zu Ihrem Vorhaben passt. Jede Stufe beinhaltet regelmäßige Status-Updates und einen produktionsfertigen Launch.",
+            noHiddenFees: "Keine versteckten Gebühren",
+            postLaunchSupport: "Dedizierter Support nach dem Launch",
+            flexiblePayment: "Flexible Zahlungspläne",
+            startNow: "Jetzt starten",
+            getStarted: "Loslegen",
+            tierStarter: "Einstieg",
+            tierProfessional: "Professionell",
+            tierEnterprise: "Unternehmen",
+        },
+        solutionPage: {
+            benefitsHeading: "Wichtigste Vorteile",
+            benefitsSubtitle:
+                "Erfahren Sie, warum Teams dieser Lösung vertrauen, um messbare Ergebnisse zu erzielen.",
+        },
+        solutionCta: {
+            freeConsultation: "Kostenlose Beratung",
+            noCommitment: "Unverbindlich",
+            responseIn24h: "Antwort in 24h",
+        },
     },
     tr: {
         nav: {
@@ -888,6 +934,29 @@ const baseTranslations = {
                 footerNote: "Sadece yetkili yöneticiler için",
                 backToHome: "Ana sayfaya dön",
             },
+        },
+        pricingTiers: {
+            badge: "ŞEFFAF FİYATLANDIRMA",
+            heading: "Yatırım Seçenekleri",
+            subtitle: "Yol haritanıza uygun paketi seçin. Her seviye düzenli durum güncellemeleri ve üretime hazır bir lansman içerir.",
+            noHiddenFees: "Gizli ücret yok",
+            postLaunchSupport: "Lansman sonrası özel destek",
+            flexiblePayment: "Esnek ödeme planları",
+            startNow: "Hemen Başla",
+            getStarted: "Başlayın",
+            tierStarter: "Başlangıç",
+            tierProfessional: "Profesyonel",
+            tierEnterprise: "Kurumsal",
+        },
+        solutionPage: {
+            benefitsHeading: "Öne Çıkan Faydalar",
+            benefitsSubtitle:
+                "Bu çözümün öne çıkan özelliklerini ve ekiplerin neden sonuç almak için ona güvendiğini keşfedin.",
+        },
+        solutionCta: {
+            freeConsultation: "Ücretsiz danışmanlık",
+            noCommitment: "Taahhütsüz",
+            responseIn24h: "24 saatte dönüş",
         },
     },
 } as const;
@@ -1121,6 +1190,29 @@ export const translations = {
                 footerNote: "Réservé aux administrateurs autorisés",
                 backToHome: "Retour à l'accueil",
             },
+        },
+        pricingTiers: {
+            badge: "TARIFICATION TRANSPARENTE",
+            heading: "Options d'investissement",
+            subtitle: "Choisissez le forfait qui correspond à votre feuille de route. Chaque niveau comprend des mises à jour régulières et un lancement prêt pour la production.",
+            noHiddenFees: "Aucuns frais cachés",
+            postLaunchSupport: "Support dédié après lancement",
+            flexiblePayment: "Plans de paiement flexibles",
+            startNow: "Commencer",
+            getStarted: "Démarrer",
+            tierStarter: "Débutant",
+            tierProfessional: "Professionnel",
+            tierEnterprise: "Entreprise",
+        },
+        solutionPage: {
+            benefitsHeading: "Avantages clés",
+            benefitsSubtitle:
+                "Découvrez les points forts de cette solution et pourquoi les équipes lui font confiance pour obtenir des résultats.",
+        },
+        solutionCta: {
+            freeConsultation: "Consultation gratuite",
+            noCommitment: "Sans engagement",
+            responseIn24h: "Réponse en 24 h",
         },
     },
 } as const;
