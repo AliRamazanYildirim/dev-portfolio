@@ -456,6 +456,9 @@ const baseTranslations = {
             noCommitment: "No commitment",
             responseIn24h: "Response in 24h",
         },
+        solutionHero: {
+            badge: "PREMIUM SOLUTION",
+        },
     },
     de: {
         nav: {
@@ -708,6 +711,9 @@ const baseTranslations = {
             noCommitment: "Unverbindlich",
             responseIn24h: "Antwort in 24h",
         },
+        solutionHero: {
+            badge: "PREMIUM-LÖSUNG",
+        },
     },
     tr: {
         nav: {
@@ -957,6 +963,9 @@ const baseTranslations = {
             freeConsultation: "Ücretsiz danışmanlık",
             noCommitment: "Taahhütsüz",
             responseIn24h: "24 saatte dönüş",
+        },
+        solutionHero: {
+            badge: "PREMIUM ÇÖZÜM",
         },
     },
 } as const;
@@ -1213,6 +1222,9 @@ export const translations = {
             freeConsultation: "Consultation gratuite",
             noCommitment: "Sans engagement",
             responseIn24h: "Réponse en 24 h",
+        },
+        solutionHero: {
+            badge: "SOLUTION PREMIUM",
         },
     },
 } as const;

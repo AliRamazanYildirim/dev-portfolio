@@ -163,7 +163,7 @@ export default function NavDesktop({
               <button
                 type="button"
                 onClick={() => onLanguageChange(item.code)}
-                className={`w-full px-4 py-2 text-sm transition flex justify-center ${
+                className={`w-full cursor-pointer px-4 py-2 text-sm transition flex justify-center ${
                   language === item.code
                     ? "font-semibold text-[#c9184a]"
                     : "text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white"

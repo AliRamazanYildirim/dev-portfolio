@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface SolutionHeroProps {
   title: string;
@@ -14,6 +15,8 @@ export default function SolutionHero({
   subtitle,
   cta,
 }: SolutionHeroProps) {
+  const { dictionary } = useTranslation();
+
   return (
     <section className="relative flex min-h-[70vh] items-center justify-center overflow-hidden">
       <div className="relative z-10 mx-auto max-w-5xl px-6 py-24 text-center lg:px-8">
@@ -37,7 +40,7 @@ export default function SolutionHero({
               transition={{ type: "spring", stiffness: 280 }}
             >
               <span className="text-sm font-medium tracking-wider text-[#c58d12]">
-                PREMIUM SOLUTION
+                {dictionary.solutionHero.badge}
               </span>
             </motion.div>
           </motion.div>
