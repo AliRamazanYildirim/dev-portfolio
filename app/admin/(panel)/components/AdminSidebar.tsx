@@ -38,6 +38,12 @@ const navigation = [
       !pathname.includes("statistics"),
   },
   {
+    label: "Invoice Management",
+    href: "/admin/invoices",
+    icon: FileText,
+    match: (pathname: string) => pathname.startsWith("/admin/invoices"),
+  },
+  {
     label: "Discounts",
     href: "/admin/discounts",
     icon: FileText,

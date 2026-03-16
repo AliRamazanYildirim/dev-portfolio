@@ -1,21 +1,14 @@
-import { InvoiceData } from "@/lib/invoiceUtils";
+import { InvoiceGenerateService } from "@/app/api/invoice/generate/service";
+import { validateInvoiceData } from "@/app/api/invoice/generate/validation";
+import { ValidationError } from "@/lib/errors";
+import type { InvoiceData } from "@/lib/invoiceUtils";
 
 export async function fetchInvoicePdf(invoiceData: InvoiceData): Promise<Buffer> {
-    const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
-    const response = await fetch(`${baseUrl}/api/invoice/generate`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(invoiceData),
-    });
-
-    if (!response.ok) {
-        throw new Error(
-            `Failed to generate PDF: ${response.status} ${response.statusText}`
-        );
+    const validation = validateInvoiceData(invoiceData);
+    if (!validation.valid) {
+        throw new ValidationError(validation.error);
     }
 
-    const arrayBuffer = await response.arrayBuffer();
-    return Buffer.from(arrayBuffer);
+    const { pdfBytes } = InvoiceGenerateService.generate(validation.value);
+    return Buffer.from(pdfBytes);
 }
