@@ -203,7 +203,7 @@ export default function NavMobile({
                             alt={`${item.label} flag`}
                             width={18}
                             height={12}
-                            className="h-3 w-4 shrink-0 rounded-sm object-cover"
+                            className="shrink-0 rounded-sm object-cover"
                           />
                           <span>{item.label}</span>
                         </span>

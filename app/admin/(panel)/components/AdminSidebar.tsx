@@ -140,6 +140,7 @@ export function AdminSidebar({ isOpen, onClose, onToggle }: AdminSidebarProps) {
               src="/ali-ramazan-yildirim.svg"
               alt="Admin logo"
               fill
+              loading="eager"
               className="object-contain"
             />
           </button>

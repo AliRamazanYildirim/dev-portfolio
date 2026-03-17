@@ -139,7 +139,7 @@ export default function NavDesktop({
             alt={`${currentLanguage.label} flag`}
             width={20}
             height={14}
-            className="h-3.5 w-5 rounded-sm object-cover"
+            className="rounded-sm object-cover"
           />
           <span className="font-normal">{currentLanguage.label}</span>
           <svg
@@ -175,7 +175,7 @@ export default function NavDesktop({
                     alt={`${item.label} flag`}
                     width={18}
                     height={12}
-                    className="h-3 w-4 shrink-0 rounded-sm object-cover"
+                    className="shrink-0 rounded-sm object-cover"
                   />
                   <span>{item.label}</span>
                 </span>

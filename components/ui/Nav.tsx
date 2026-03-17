@@ -74,7 +74,7 @@ export const Nav = ({ className }: NavProps) => {
                   height={192}
                   sizes="(max-width: 767px) 96px, (max-width: 1023px) 240px, 288px"
                   className="w-auto block transition-transform duration-300 hover:scale-110 dark:hidden"
-                  style={{ height: NAV_HEIGHT }}
+                  style={{ width: "auto", height: NAV_HEIGHT }}
                   priority
                 />
                 <Image
@@ -84,7 +84,7 @@ export const Nav = ({ className }: NavProps) => {
                   height={192}
                   sizes="(max-width: 767px) 96px, (max-width: 1023px) 240px, 288px"
                   className="w-auto hidden transition-transform duration-300 hover:scale-110 dark:block"
-                  style={{ height: NAV_HEIGHT }}
+                  style={{ width: "auto", height: NAV_HEIGHT }}
                   priority
                 />
               </motion.div>
