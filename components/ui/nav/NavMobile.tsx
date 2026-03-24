@@ -201,7 +201,7 @@ export default function NavMobile({
                           <Image
                             src={item.flag}
                             alt={`${item.label} flag`}
-                            width={18}
+                            width={16}
                             height={12}
                             className="shrink-0 rounded-sm object-cover"
                           />

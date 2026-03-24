@@ -70,8 +70,8 @@ export const Nav = ({ className }: NavProps) => {
                 <Image
                   src="/ali-ramazan-yildirim.svg"
                   alt="Logo"
-                  width={288}
-                  height={192}
+                  width={500}
+                  height={500}
                   sizes="(max-width: 767px) 96px, (max-width: 1023px) 240px, 288px"
                   className="w-auto block transition-transform duration-300 hover:scale-110 dark:hidden"
                   style={{ width: "auto", height: NAV_HEIGHT }}
@@ -80,8 +80,8 @@ export const Nav = ({ className }: NavProps) => {
                 <Image
                   src="/ali-ramazan-yildirim-white.svg"
                   alt="Logo"
-                  width={288}
-                  height={192}
+                  width={500}
+                  height={500}
                   sizes="(max-width: 767px) 96px, (max-width: 1023px) 240px, 288px"
                   className="w-auto hidden transition-transform duration-300 hover:scale-110 dark:block"
                   style={{ width: "auto", height: NAV_HEIGHT }}

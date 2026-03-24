@@ -138,7 +138,7 @@ export default function NavDesktop({
             src={currentLanguage.flag}
             alt={`${currentLanguage.label} flag`}
             width={20}
-            height={14}
+            height={15}
             className="rounded-sm object-cover"
           />
           <span className="font-normal">{currentLanguage.label}</span>
@@ -173,7 +173,7 @@ export default function NavDesktop({
                   <Image
                     src={item.flag}
                     alt={`${item.label} flag`}
-                    width={18}
+                    width={16}
                     height={12}
                     className="shrink-0 rounded-sm object-cover"
                   />
