@@ -1,0 +1,53 @@
+{
+  "route": "/api/admin/login",
+  "appSecurity": {
+    "failedLockWindow": {
+      "limit": 10,
+      "windowSeconds": 900
+    },
+    "exponentialBackoff": {
+      "baseSeconds": 2,
+      "maxSeconds": 120
+    },
+    "turnstile": {
+      "enabledEnv": "TURNSTILE_ENABLED",
+      "secretEnv": "TURNSTILE_SECRET_KEY",
+      "siteKeyEnv": "NEXT_PUBLIC_TURNSTILE_SITE_KEY"
+    }
+  },
+  "rules": [
+    {
+      "name": "block_malicious_bots_login",
+      "type": "bot-management",
+      "action": "block",
+      "condition": "malicious_or_suspicious_bot"
+    },
+    {
+      "name": "challenge_automation_login",
+      "type": "bot-management",
+      "action": "challenge",
+      "condition": "likely_automated"
+    },
+    {
+      "name": "edge_rate_limit_login_ip",
+      "type": "rate-limit",
+      "action": "block",
+      "threshold": {
+        "requests": 20,
+        "windowSeconds": 600,
+        "blockSeconds": 600,
+        "key": "ip"
+      }
+    },
+    {
+      "name": "edge_burst_limit_login_ip",
+      "type": "rate-limit",
+      "action": "challenge",
+      "threshold": {
+        "requests": 5,
+        "windowSeconds": 30,
+        "key": "ip"
+      }
+    }
+  ]
+}

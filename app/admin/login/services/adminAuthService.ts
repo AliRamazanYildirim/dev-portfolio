@@ -17,7 +17,11 @@ export async function checkSession() {
   }
 }
 
-export async function login(formData: { email: string; password: string }) {
+export async function login(formData: {
+  email: string;
+  password: string;
+  turnstileToken?: string;
+}) {
   try {
     const res = await fetch("/api/admin/login", {
       method: "POST",

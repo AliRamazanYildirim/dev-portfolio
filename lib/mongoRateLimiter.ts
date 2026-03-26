@@ -9,6 +9,17 @@ interface RateLimitDoc extends mongoose.Document {
     expiresAt: Date
 }
 
+export interface RateLimitMeta {
+    limit: number
+    remaining: number
+    reset: number
+}
+
+export interface RateLimitResult {
+    allowed: boolean
+    meta: RateLimitMeta
+}
+
 const RateLimitSchema = new mongoose.Schema<RateLimitDoc>({
     key: { type: String, required: true, unique: true },
     count: { type: Number, required: true, default: 0 },
@@ -22,13 +33,26 @@ function getModel(): mongoose.Model<RateLimitDoc> {
     return mongoose.model<RateLimitDoc>(RATE_LIMIT_MODEL, RateLimitSchema);
 }
 
-export async function checkRateLimitKey(key: string, windowSec: number, limit: number) {
+function toMeta(limit: number, count: number, resetDate: Date): RateLimitMeta {
+    return {
+        limit,
+        remaining: Math.max(0, limit - count),
+        reset: Math.floor(resetDate.getTime() / 1000),
+    };
+}
+
+async function ensureMongoConnection(): Promise<void> {
     try {
         await connectToMongo();
-    } catch (err: any) {
-        console.error('mongoRateLimiter: connectToMongo failed:', err && (err.stack || err.message || err));
-        throw new Error('mongoRateLimiter: connectToMongo failed: ' + (err && (err.message || String(err))));
+    } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : String(error);
+        console.error('mongoRateLimiter: connectToMongo failed:', error);
+        throw new Error(`mongoRateLimiter: connectToMongo failed: ${message}`);
     }
+}
+
+export async function checkRateLimitKey(key: string, windowSec: number, limit: number): Promise<RateLimitResult> {
+    await ensureMongoConnection();
     const Model = getModel()
     const now = new Date()
     const expiresAt = new Date(now.getTime() + windowSec * 1000)
@@ -68,14 +92,71 @@ export async function checkRateLimitKey(key: string, windowSec: number, limit: n
     const currCount = result.count ?? 1;
     return {
         allowed: currCount <= limit,
-        meta: {
-            limit,
-            remaining: Math.max(0, limit - currCount),
-            reset: Math.floor((result.expiresAt || expiresAt).getTime() / 1000),
-        },
+        meta: toMeta(limit, currCount, result.expiresAt || expiresAt),
     };
 }
 
-const mongoRateLimiter = { checkRateLimitKey };
+export async function getRateLimitKeyStatus(key: string, windowSec: number, limit: number): Promise<RateLimitResult> {
+    await ensureMongoConnection();
+
+    const Model = getModel();
+    const now = new Date();
+    const fallbackReset = new Date(now.getTime() + windowSec * 1000);
+
+    const doc = await Model.findOne({ key }).exec();
+
+    if (!doc || doc.expiresAt <= now) {
+        if (doc && doc.expiresAt <= now) {
+            await Model.deleteOne({ key }).exec();
+        }
+
+        return {
+            allowed: true,
+            meta: toMeta(limit, 0, fallbackReset),
+        };
+    }
+
+    const currentCount = doc.count ?? 0;
+    return {
+        allowed: currentCount < limit,
+        meta: toMeta(limit, currentCount, doc.expiresAt),
+    };
+}
+
+export async function resetRateLimitKey(key: string): Promise<void> {
+    await ensureMongoConnection();
+    const Model = getModel();
+    await Model.deleteOne({ key }).exec();
+}
+
+export async function setRateLimitKeyWindow(key: string, windowSec: number): Promise<RateLimitResult> {
+    await ensureMongoConnection();
+
+    const Model = getModel();
+    const now = new Date();
+    const expiresAt = new Date(now.getTime() + windowSec * 1000);
+
+    const doc = await Model.findOneAndUpdate(
+        { key },
+        { $set: { key, count: 1, expiresAt } },
+        { new: true, upsert: true },
+    ).exec();
+
+    if (!doc) {
+        throw new Error('rate_limit error: unable to set rate limit window');
+    }
+
+    return {
+        allowed: false,
+        meta: toMeta(1, 1, doc.expiresAt || expiresAt),
+    };
+}
+
+const mongoRateLimiter = {
+    checkRateLimitKey,
+    getRateLimitKeyStatus,
+    resetRateLimitKey,
+    setRateLimitKeyWindow,
+};
 
 export default mongoRateLimiter;

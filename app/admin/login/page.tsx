@@ -24,6 +24,11 @@ export default function AdminLoginPage() {
     setShowPassword,
     handleInputChange,
     handleLogin,
+    turnstileEnabled,
+    turnstileSiteKey,
+    turnstileToken,
+    setTurnstileToken,
+    turnstileRefreshKey,
   } = useAdminLoginForm(loginTexts);
 
   if (checkingSession)
@@ -64,6 +69,11 @@ export default function AdminLoginPage() {
                 handleInputChange={handleInputChange}
                 handleLogin={handleLogin}
                 loginTexts={loginTexts}
+                turnstileEnabled={turnstileEnabled}
+                turnstileSiteKey={turnstileSiteKey}
+                turnstileToken={turnstileToken}
+                setTurnstileToken={setTurnstileToken}
+                turnstileRefreshKey={turnstileRefreshKey}
               />
 
               <motion.div
@@ -79,9 +89,10 @@ export default function AdminLoginPage() {
             </div>
 
             <BackToHomeButton>
-                <span className="inline-flex items-center font-bold">
-                <ArrowLeft className="mr-1 h-4 w-4 font-bold" />{loginTexts.backToHome}
-                </span>
+              <span className="inline-flex items-center font-bold">
+                <ArrowLeft className="mr-1 h-4 w-4 font-bold" />
+                {loginTexts.backToHome}
+              </span>
             </BackToHomeButton>
           </motion.div>
         </div>

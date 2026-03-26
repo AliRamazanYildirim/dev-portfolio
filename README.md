@@ -77,3 +77,4 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 - Naming & structure standardı: [docs/naming-and-structure.md](docs/naming-and-structure.md)
 - API domain architecture standardı: [app/api/ARCHITECTURE.md](app/api/ARCHITECTURE.md)
+- Vercel login bot/rate koruma kuralları: [docs/security/vercel-login-protection-rules.md](docs/security/vercel-login-protection-rules.md)

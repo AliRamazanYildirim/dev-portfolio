@@ -2,6 +2,7 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import ErrorAlert from "./ErrorAlert";
+import TurnstileWidget from "./TurnstileWidget";
 
 interface Props {
   formData: { email: string; password: string };
@@ -12,6 +13,11 @@ interface Props {
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleLogin: (e: React.FormEvent) => void;
   loginTexts: any;
+  turnstileEnabled: boolean;
+  turnstileSiteKey: string;
+  turnstileToken: string;
+  setTurnstileToken: (token: string) => void;
+  turnstileRefreshKey: number;
 }
 
 export default function LoginForm({
@@ -23,6 +29,11 @@ export default function LoginForm({
   handleInputChange,
   handleLogin,
   loginTexts,
+  turnstileEnabled,
+  turnstileSiteKey,
+  turnstileToken,
+  setTurnstileToken,
+  turnstileRefreshKey,
 }: Props) {
   return (
     <motion.form
@@ -112,6 +123,22 @@ export default function LoginForm({
           </button>
         </div>
       </div>
+
+      {turnstileEnabled && (
+        <div className="space-y-2">
+          <TurnstileWidget
+            siteKey={turnstileSiteKey}
+            disabled={isLoading}
+            refreshKey={turnstileRefreshKey}
+            onTokenChange={setTurnstileToken}
+          />
+          {!turnstileToken && (
+            <p className="text-center text-xs text-[#131313]/60">
+              Complete the security verification before signing in.
+            </p>
+          )}
+        </div>
+      )}
 
       <motion.button
         type="submit"

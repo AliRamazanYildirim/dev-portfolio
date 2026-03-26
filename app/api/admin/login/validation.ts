@@ -6,7 +6,7 @@ export function validateLoginBody(body: unknown): LoginRequest {
         throw new ValidationError("Request body is required");
     }
 
-    const { email, password } = body as Record<string, unknown>;
+    const { email, password, turnstileToken } = body as Record<string, unknown>;
 
     if (!email || typeof email !== "string") {
         throw new ValidationError("Email is required");
@@ -19,5 +19,7 @@ export function validateLoginBody(body: unknown): LoginRequest {
     return {
         email: email.trim(),
         password,
+        turnstileToken:
+            typeof turnstileToken === "string" ? turnstileToken.trim() : undefined,
     };
 }
