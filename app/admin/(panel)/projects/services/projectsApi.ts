@@ -35,7 +35,7 @@ export async function createProject(
   payload: Record<string, unknown>,
 ): Promise<ApiResult<Project>> {
   try {
-    const res = await fetch("/api/projects", {
+    const res = await fetch("/api/admin/projects", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),

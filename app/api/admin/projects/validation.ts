@@ -3,6 +3,14 @@
  */
 
 import type { UpdateProjectInput } from "./types";
+import type { CreateProjectInput } from "@/app/api/projects/types";
+import { validateCreateProjectBody as validateProjectCreateBody } from "@/app/api/projects/validation";
+
+export function validateCreateProjectBody(
+    body: unknown,
+): { valid: true; value: CreateProjectInput } | { valid: false; error: string } {
+    return validateProjectCreateBody(body);
+}
 
 export function validateUpdateProjectBody(
     body: unknown,

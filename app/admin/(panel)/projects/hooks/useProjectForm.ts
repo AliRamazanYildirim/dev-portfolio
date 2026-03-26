@@ -71,13 +71,19 @@ export function useProjectForm(options?: UseProjectFormOptions) {
     setCategory(project.category || "");
     setDuration(project.duration || "");
     setIsFeatured(Boolean(project.isFeatured));
-    setGallery(project.gallery.map((g) => g.url));
+    setGallery(
+      project.gallery
+        .map((g) => (typeof g.url === "string" ? g.url.trim() : ""))
+        .filter(Boolean),
+    );
     setActiveTab("en");
     setShowForm(true);
   }, []);
 
   const addGalleryImage = useCallback((url: string) => {
-    setGallery((prev) => [...prev, url]);
+    const normalizedUrl = url.trim();
+    if (!normalizedUrl) return;
+    setGallery((prev) => [...prev, normalizedUrl]);
   }, []);
 
   const removeGalleryImage = useCallback((index: number) => {
@@ -104,6 +110,10 @@ export function useProjectForm(options?: UseProjectFormOptions) {
       .map((t) => t.trim())
       .filter(Boolean);
 
+    const sanitizedGallery = gallery
+      .map((url) => url.trim())
+      .filter(Boolean);
+
     const payload = {
       slug,
       title,
@@ -117,8 +127,8 @@ export function useProjectForm(options?: UseProjectFormOptions) {
       duration,
       category,
       technologies: JSON.stringify(techArray),
-      mainImage: gallery[0] || "/placeholder.jpg",
-      gallery,
+      mainImage: sanitizedGallery[0] || "/placeholder.jpg",
+      gallery: sanitizedGallery,
       featured: isFeatured,
       previousSlug: null,
       nextSlug: null,

@@ -12,6 +12,34 @@ export default function ImageUpload({ onUpload }: ImageUploadProps) {
   const [uploading, setUploading] = useState(false);
   const [dragActive, setDragActive] = useState(false);
 
+  const getErrorMessage = (error: unknown) => {
+    if (error instanceof Error && error.message) {
+      return error.message;
+    }
+    return "Upload error occurred!";
+  };
+
+  const extractUploadedUrl = (payload: unknown): string | null => {
+    if (!payload || typeof payload !== "object") return null;
+
+    const obj = payload as {
+      url?: unknown;
+      data?: { url?: unknown };
+      success?: unknown;
+      error?: unknown;
+    };
+
+    if (typeof obj.data?.url === "string" && obj.data.url.trim()) {
+      return obj.data.url.trim();
+    }
+
+    if (typeof obj.url === "string" && obj.url.trim()) {
+      return obj.url.trim();
+    }
+
+    return null;
+  };
+
   // Upload-Handler - Upload handler
   const handleUpload = async (file: File) => {
     if (!file) return;
@@ -25,10 +53,25 @@ export default function ImageUpload({ onUpload }: ImageUploadProps) {
         method: "POST",
         body: formData,
       });
-      const data = await res.json();
-      onUpload(data.url);
+
+      const data = (await res.json()) as unknown;
+
+      if (!res.ok) {
+        const errorMessage =
+          typeof (data as { error?: unknown })?.error === "string"
+            ? (data as { error: string }).error
+            : `Upload failed (HTTP ${res.status})`;
+        throw new Error(errorMessage);
+      }
+
+      const uploadedUrl = extractUploadedUrl(data);
+      if (!uploadedUrl) {
+        throw new Error("Upload succeeded but no image URL was returned");
+      }
+
+      onUpload(uploadedUrl);
     } catch (error) {
-      toast.error("Upload error occurred!");
+      toast.error(getErrorMessage(error));
     } finally {
       setUploading(false);
     }

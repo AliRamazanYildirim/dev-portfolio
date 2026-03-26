@@ -9,10 +9,27 @@ import {
     projectRepository,
     projectImageRepository,
 } from "@/lib/repositories";
+import { ProjectsService } from "@/app/api/projects/service";
 import { ValidationError, NotFoundError, AppError } from "@/lib/errors";
-import type { UpdateProjectInput, UpdateProjectResult, DeleteProjectResult } from "./types";
+import type { AdminProjectCreateRequest, CreateProjectResult, UpdateProjectInput, UpdateProjectResult, DeleteProjectResult } from "./types";
 
 export class AdminProjectsService {
+    /**
+     * Projekt erstellen (Admin)
+     */
+    static async create(input: AdminProjectCreateRequest): Promise<CreateProjectResult> {
+        const result = await ProjectsService.create(input);
+
+        if (!result.success) {
+            throw new ValidationError(result.error || "Failed to create project");
+        }
+
+        return {
+            data: result.data,
+            message: "Project created successfully",
+        };
+    }
+
     /**
      * Projekt aktualisieren (Admin)
      */

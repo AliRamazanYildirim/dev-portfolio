@@ -85,6 +85,13 @@ export function ProjectFormModal({
     removeGalleryImage,
   } = handlers;
 
+  const galleryItems = gallery
+    .map((url, index) => ({
+      url: typeof url === "string" ? url.trim() : "",
+      index,
+    }))
+    .filter((item) => item.url.length > 0);
+
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-lg flex items-center justify-center p-2 sm:p-4 z-50">
       <div className="relative backdrop-blur-xl bg-white/95 border border-white/20 rounded-2xl sm:rounded-3xl shadow-2xl w-full max-w-sm sm:max-w-2xl lg:max-w-4xl max-h-[95vh] sm:max-h-[90vh] overflow-hidden">
@@ -312,9 +319,9 @@ export function ProjectFormModal({
                   />
                 </div>
 
-                {gallery.length > 0 && (
+                {galleryItems.length > 0 && (
                   <div className="grid grid-cols-4 gap-4 mt-8">
-                    {gallery.map((url, index) => (
+                    {galleryItems.map(({ url, index }) => (
                       <div
                         key={`${url}-${index}`}
                         className="relative group/delete"

@@ -2,6 +2,9 @@
  * Admin Projects API – Types & Interfaces
  */
 
+import type { CreateProjectInput } from "@/app/api/projects/types";
+import type { ProjectReadDto } from "@/app/api/projects/lib/dto";
+
 export interface UpdateProjectInput {
     slug: string;
     title: string;
@@ -15,6 +18,13 @@ export interface UpdateProjectInput {
     featured?: boolean;
     previousSlug?: string | null;
     nextSlug?: string | null;
+}
+
+export type AdminProjectCreateRequest = CreateProjectInput;
+
+export interface CreateProjectResult {
+    data: ProjectReadDto;
+    message: string;
 }
 
 export interface UpdateProjectResult {
