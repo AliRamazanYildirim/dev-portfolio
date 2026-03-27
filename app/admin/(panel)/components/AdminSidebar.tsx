@@ -133,7 +133,7 @@ export function AdminSidebar({ isOpen, onClose, onToggle }: AdminSidebarProps) {
           <button
             type="button"
             onClick={handleGoHome}
-            className="relative h-28 w-28 transition-all focus:outline-none"
+            className="relative h-28 w-28 transition-all focus:outline-none cursor-pointer"
             aria-label="Go to home page"
           >
             <Image
@@ -171,7 +171,7 @@ export function AdminSidebar({ isOpen, onClose, onToggle }: AdminSidebarProps) {
                 type="button"
                 onClick={() => handleNavigate(item.href)}
                 className={cn(
-                  "group flex w-full items-center rounded-xl text-sm font-medium transition",
+                  "group flex w-full items-center rounded-xl text-sm font-medium transition cursor-pointer",
                   active
                     ? "bg-linear-to-r from-[#04724d] via-[#04471c] to-[#b8dbd9] text-white shadow-lg"
                     : "text-[#131313]/80 hover:bg-black/15 hover:text-[#131313]",
@@ -200,7 +200,7 @@ export function AdminSidebar({ isOpen, onClose, onToggle }: AdminSidebarProps) {
             type="button"
             onClick={handleLogout}
             className={cn(
-              "flex w-full items-center justify-center rounded-xl bg-[#131313] text-sm font-semibold text-white transition hover:bg-[#131313]/90",
+              "flex w-full items-center justify-center rounded-xl bg-[#131313] text-sm font-semibold text-white transition hover:bg-[#131313]/90 cursor-pointer",
               collapsed ? "gap-0 px-0 py-3" : "gap-2 px-4 py-3",
             )}
           >
