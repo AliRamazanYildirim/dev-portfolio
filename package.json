@@ -41,7 +41,7 @@
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "autoprefixer": "^10.4.27",
-    "baseline-browser-mapping": "^2.10.10",
+    "baseline-browser-mapping": "^2.10.12",
     "eslint": "^9.39.4",
     "eslint-config-next": "^16.2.1",
     "postcss": "^8.5.8",
@@ -49,6 +49,6 @@
     "typescript": "^5.9.3"
   },
   "overrides": {
-    "baseline-browser-mapping": "^2.10.7"
+    "baseline-browser-mapping": "^2.10.12"
   }
 }
