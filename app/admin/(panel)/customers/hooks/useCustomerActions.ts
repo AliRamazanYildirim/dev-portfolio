@@ -1,18 +1,31 @@
 "use client";
 
 import toast from "react-hot-toast";
+import type { Customer, FetchCustomersOptions } from "@/types/customer";
 
 type UseCustomerActionsParams = {
-    customers: any[];
-    validateForm: (customers: any[]) => boolean;
-    getCustomerData: () => any;
-    editingCustomer?: any | null;
-    saveCustomer: (data: any, editing?: any | null) => Promise<any>;
-    fetchCustomers: (opts?: any) => Promise<any[]>;
-    setSelectedCustomer: (c: any) => void;
+    customers: Customer[];
+    validateForm: (customers: Customer[]) => boolean;
+    getCustomerData: () => Partial<Customer>;
+    editingCustomer?: Customer | null;
+    saveCustomer: (
+        data: Partial<Customer>,
+        editing?: Customer | null
+    ) => Promise<Customer | null>;
+    fetchCustomers: (opts?: FetchCustomersOptions) => Promise<Customer[]>;
+    setSelectedCustomer: (customer: Customer | null) => void;
     resetForm: () => void;
-    setShowForm: (v: boolean) => void;
-    setSidebarOpen: (v: boolean) => void;
+    setShowForm: (visible: boolean) => void;
+    setSidebarOpen: (visible: boolean) => void;
+    setEditForm: (customer: Customer) => void;
+    deleteCustomer: (id: string) => Promise<void>;
+};
+
+const resolveCustomerId = (customer: Partial<Customer> | null | undefined): string | null => {
+    if (!customer) return null;
+    if (typeof customer.id === "string" && customer.id.length > 0) return customer.id;
+    if (typeof customer._id === "string" && customer._id.length > 0) return customer._id;
+    return null;
 };
 
 export function useCustomerActions({
@@ -26,6 +39,8 @@ export function useCustomerActions({
     resetForm,
     setShowForm,
     setSidebarOpen,
+    setEditForm,
+    deleteCustomer,
 }: UseCustomerActionsParams) {
     const save = async () => {
         if (!validateForm(customers)) return;
@@ -35,8 +50,10 @@ export function useCustomerActions({
             if (saved) {
                 try {
                     const fresh = await fetchCustomers();
-                    const savedId = (saved as any)?._id ? (saved as any)._id : (saved as any).id;
-                    const newSel = fresh.find((c: any) => String(c.id || c._id) === String(savedId));
+                    const savedId = resolveCustomerId(saved);
+                    const newSel = savedId
+                        ? fresh.find((customer) => resolveCustomerId(customer) === savedId)
+                        : null;
                     if (newSel) setSelectedCustomer(newSel);
                 } catch (e) {
                     // ignore
@@ -46,12 +63,30 @@ export function useCustomerActions({
                 setSidebarOpen(true);
                 resetForm();
             }
-        } catch (error: any) {
-            toast.error(error?.message || "Registration failed");
+        } catch (error: unknown) {
+            const errorMessage = error instanceof Error ? error.message : "Registration failed";
+            toast.error(errorMessage);
         }
     };
 
-    return { save } as const;
+    const openEditForm = (customer: Customer) => {
+        setEditForm(customer);
+        setSidebarOpen(false);
+        setShowForm(true);
+        setSelectedCustomer(customer);
+    };
+
+    const cancelForm = () => {
+        setSidebarOpen(true);
+        setShowForm(false);
+        resetForm();
+    };
+
+    const remove = async (id: string) => {
+        await deleteCustomer(id);
+    };
+
+    return { save, openEditForm, cancelForm, remove } as const;
 }
 
 export default useCustomerActions;

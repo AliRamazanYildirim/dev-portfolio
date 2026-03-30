@@ -67,7 +67,7 @@ export default function CustomersAdminPage() {
 
   const { setOpen: setSidebarOpen } = useAdminSidebar();
 
-  const { save } = useCustomerActions({
+  const { save, openEditForm, cancelForm, remove } = useCustomerActions({
     customers,
     validateForm,
     getCustomerData,
@@ -78,23 +78,12 @@ export default function CustomersAdminPage() {
     resetForm,
     setShowForm,
     setSidebarOpen,
+    setEditForm,
+    deleteCustomer,
   });
-
-  const handleEditCustomer = (customer: any) => {
-    setEditForm(customer);
-    setSidebarOpen(false);
-    setShowForm(true);
-    setSelectedCustomer(customer);
-  };
 
   // Do not mirror form changes into `selectedCustomer` on the client.
   // The selected customer will only change if the server confirms the save.
-
-  const handleCancelForm = () => {
-    setSidebarOpen(true);
-    setShowForm(false);
-    resetForm();
-  };
 
   if (authLoading) {
     return (
@@ -321,8 +310,9 @@ export default function CustomersAdminPage() {
                       <div className="hidden lg:block lg:col-span-8 xl:col-span-9">
                         <CustomerDetails
                           customer={selectedCustomer}
-                          onEdit={handleEditCustomer}
-                          onDelete={deleteCustomer}
+                          onEdit={openEditForm}
+                          onDelete={remove}
+                          actionMode="customer-manage"
                         />
                       </div>
                       {/* Mobile: Show as modal */}
@@ -331,12 +321,13 @@ export default function CustomersAdminPage() {
                           customer={selectedCustomer}
                           onEdit={(customer) => {
                             setShowMobileDetails(false);
-                            handleEditCustomer(customer);
+                            openEditForm(customer);
                           }}
                           onDelete={(id) => {
                             setShowMobileDetails(false);
-                            deleteCustomer(id);
+                            remove(id);
                           }}
+                          actionMode="customer-manage"
                           isModal={true}
                           onClose={() => setShowMobileDetails(false)}
                         />
@@ -379,7 +370,7 @@ export default function CustomersAdminPage() {
             referralValidation={referralValidation}
             onUpdateField={updateField}
             onSave={save}
-            onCancel={handleCancelForm}
+            onCancel={cancelForm}
           />
         </div>
       </NoiseBackground>

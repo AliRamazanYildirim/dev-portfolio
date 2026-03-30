@@ -13,7 +13,7 @@ interface CustomerDetailsProps {
   onDelete?: (id: string) => void;
   isModal?: boolean;
   onClose?: () => void;
-  actionMode?: "full" | "invoice-only";
+  actionMode?: "full" | "invoice-only" | "invoice-manage" | "customer-manage";
 }
 
 export default function CustomerDetails({
@@ -87,6 +87,26 @@ export default function CustomerDetails({
   };
 
   const isInvoiceOnly = actionMode === "invoice-only";
+  const isInvoiceManage = actionMode === "invoice-manage";
+  const showInvoiceButton = actionMode !== "customer-manage";
+  const showShareReferral =
+    actionMode === "full" || actionMode === "customer-manage";
+  const showEditDelete =
+    actionMode === "full" ||
+    isInvoiceManage ||
+    actionMode === "customer-manage";
+  const actionsTitle =
+    actionMode === "invoice-only" || actionMode === "invoice-manage"
+      ? "Invoice Actions"
+      : "Actions";
+  const actionGridClass =
+    actionMode === "full"
+      ? "sm:grid-cols-2 lg:grid-cols-4"
+      : actionMode === "customer-manage"
+        ? "sm:grid-cols-2 lg:grid-cols-3"
+        : showEditDelete
+          ? "sm:grid-cols-2 lg:grid-cols-3"
+          : "";
 
   const content = (
     <div className={isModal ? "" : "lg:col-span-8 xl:col-span-9"}>
@@ -512,35 +532,33 @@ export default function CustomerDetails({
                 <div className="flex items-center gap-4 mb-6">
                   <div className="w-3 h-3 bg-linear-to-r from-purple-500 to-pink-500 rounded-full"></div>
                   <h3 className="text-2xl font-bold text-purple-800">
-                    {isInvoiceOnly ? "Invoice Actions" : "Actions"}
+                    {actionsTitle}
                   </h3>
                 </div>
-                <div
-                  className={`grid grid-cols-1 gap-4 ${
-                    isInvoiceOnly ? "" : "sm:grid-cols-2 lg:grid-cols-4"
-                  }`}
-                >
-                  <button
-                    onClick={handleGenerateInvoice}
-                    disabled={false}
-                    className="w-full relative group/btn overflow-hidden inline-flex items-center justify-center px-6 py-4 bg-linear-to-r from-violet-600 via-purple-700 to-purple-800 text-white rounded-2xl font-bold shadow-lg hover:shadow-violet-500/40 hover:shadow-2xl transition-all duration-300 hover:scale-105"
-                  >
-                    <svg
-                      className="w-5 h-5 mr-2"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
+                <div className={`grid grid-cols-1 gap-4 ${actionGridClass}`}>
+                  {showInvoiceButton && (
+                    <button
+                      onClick={handleGenerateInvoice}
+                      disabled={false}
+                      className="w-full relative group/btn overflow-hidden inline-flex items-center justify-center px-6 py-4 bg-linear-to-r from-violet-600 via-purple-700 to-purple-800 text-white rounded-2xl font-bold shadow-lg hover:shadow-violet-500/40 hover:shadow-2xl transition-all duration-300 hover:scale-105"
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                      />
-                    </svg>
-                    Create Invoice
-                  </button>
-                  {!isInvoiceOnly && (
+                      <svg
+                        className="w-5 h-5 mr-2"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                        />
+                      </svg>
+                      Create Invoice
+                    </button>
+                  )}
+                  {showShareReferral && (
                     <>
                       <button
                         onClick={handleCopyReferral}
@@ -561,7 +579,10 @@ export default function CustomerDetails({
                         </svg>
                         Share Referral
                       </button>
-                      {/* 'Send Email' button removed; server now sends referrer notification on create */}
+                    </>
+                  )}
+                  {showEditDelete && (
+                    <>
                       <button
                         onClick={() => onEdit?.(customer)}
                         className="w-full relative group/btn overflow-hidden inline-flex items-center justify-center px-6 py-4 bg-linear-to-r from-amber-600 via-orange-600 to-orange-700 text-white rounded-2xl font-bold shadow-lg hover:shadow-amber-500/40 hover:shadow-2xl transition-all duration-300 hover:scale-105"
@@ -584,6 +605,11 @@ export default function CustomerDetails({
                       <button
                         onClick={() => {
                           if (!onDelete) return;
+                          const customerId = customer.id || customer._id;
+                          if (!customerId) {
+                            toast.error("Customer ID could not be resolved");
+                            return;
+                          }
                           toast(
                             (t) => (
                               <div className="flex flex-col gap-2 w-96">
@@ -595,7 +621,7 @@ export default function CustomerDetails({
                                   <button
                                     onClick={() => {
                                       toast.dismiss(t.id);
-                                      onDelete(customer.id);
+                                      onDelete(customerId);
                                     }}
                                     className="flex-1 bg-red-600 text-white px-3 py-1.5 rounded text-sm font-medium hover:bg-red-700 transition"
                                   >

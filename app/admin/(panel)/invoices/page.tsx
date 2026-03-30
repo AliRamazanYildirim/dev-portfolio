@@ -6,10 +6,14 @@ import { FileText, RefreshCcw, Search } from "lucide-react";
 import NoiseBackground from "@/components/ui/NoiseBackground";
 
 import { useAdminAuth } from "../hooks/useAdminAuth";
+import useAdminSidebar from "../hooks/useAdminSidebar";
 import { useCustomers } from "../customers/hooks/useCustomers";
+import { useCustomerForm } from "../customers/hooks/useCustomerForm";
 import { useCustomerSearch } from "../customers/hooks/useCustomerSearch";
+import useCustomerActions from "../customers/hooks/useCustomerActions";
 import CustomerList from "../customers/components/CustomerList";
 import CustomerDetails from "../customers/components/CustomerDetails";
+import CustomerForm from "../customers/components/CustomerForm";
 
 export default function InvoiceManagementPage() {
   const { isAuthenticated, loading: authLoading } = useAdminAuth();
@@ -20,10 +24,40 @@ export default function InvoiceManagementPage() {
     setSelectedCustomer,
     loading,
     fetchCustomers,
+    saveCustomer,
+    deleteCustomer,
     pagination,
   } = useCustomers();
 
+  const {
+    formData,
+    updateField,
+    editingCustomer,
+    referralValidation,
+    validateForm,
+    getCustomerData,
+    resetForm,
+    setEditForm,
+  } = useCustomerForm();
+
+  const [showForm, setShowForm] = useState(false);
   const [showMobileDetails, setShowMobileDetails] = useState(false);
+  const { setOpen: setSidebarOpen } = useAdminSidebar();
+
+  const { save, openEditForm, cancelForm, remove } = useCustomerActions({
+    customers,
+    validateForm,
+    getCustomerData,
+    editingCustomer,
+    saveCustomer,
+    fetchCustomers,
+    setSelectedCustomer,
+    resetForm,
+    setShowForm,
+    setSidebarOpen,
+    setEditForm,
+    deleteCustomer,
+  });
 
   const {
     searchQuery,
@@ -202,14 +236,24 @@ export default function InvoiceManagementPage() {
                       <div className="hidden lg:block lg:col-span-8 xl:col-span-9">
                         <CustomerDetails
                           customer={selectedCustomer}
-                          actionMode="invoice-only"
+                          onEdit={openEditForm}
+                          onDelete={remove}
+                          actionMode="invoice-manage"
                         />
                       </div>
 
                       {showMobileDetails && (
                         <CustomerDetails
                           customer={selectedCustomer}
-                          actionMode="invoice-only"
+                          onEdit={(customer) => {
+                            setShowMobileDetails(false);
+                            openEditForm(customer);
+                          }}
+                          onDelete={(id) => {
+                            setShowMobileDetails(false);
+                            remove(id);
+                          }}
+                          actionMode="invoice-manage"
                           isModal={true}
                           onClose={() => setShowMobileDetails(false)}
                         />
@@ -244,6 +288,16 @@ export default function InvoiceManagementPage() {
               )}
             </div>
           </div>
+
+          <CustomerForm
+            show={showForm}
+            formData={formData}
+            editingCustomer={editingCustomer}
+            referralValidation={referralValidation}
+            onUpdateField={updateField}
+            onSave={save}
+            onCancel={cancelForm}
+          />
         </div>
       </NoiseBackground>
     </div>
