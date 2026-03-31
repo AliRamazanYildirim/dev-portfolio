@@ -107,7 +107,7 @@ export function AdminSidebar({ isOpen, onClose, onToggle }: AdminSidebarProps) {
       className={cn(
         "fixed inset-y-0 left-0 z-40 transform overflow-hidden transition-all duration-300 ease-out lg:static lg:shrink-0 lg:translate-x-0",
         isOpen ? "w-64 translate-x-0" : "w-64 -translate-x-full",
-        collapsed ? "lg:w-20" : "lg:w-72",
+        collapsed ? "lg:w-30" : "lg:w-72",
       )}
     >
       <NoiseBackground
@@ -119,21 +119,27 @@ export function AdminSidebar({ isOpen, onClose, onToggle }: AdminSidebarProps) {
           type="button"
           aria-label={collapsed ? "Open sidebar" : "Close sidebar"}
           onClick={onToggle}
-          className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-white/40 text-[#131313] shadow-sm transition hover:bg-white"
+          className={cn(
+            "absolute top-4 z-30 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-black/10 bg-white/40 text-[#131313] shadow-sm transition hover:bg-white",
+            collapsed ? "left-1/2 -translate-x-1/2" : "right-4",
+          )}
         >
           {collapsed ? <Menu className="h-5 w-5" /> : <X className="h-5 w-5" />}
         </button>
 
         <div
           className={cn(
-            "flex flex-col items-center px-5 pt-16 pb-8 text-center transition-all",
-            collapsed ? "gap-3" : "gap-4",
+            "flex flex-col items-center pb-8 text-center transition-all",
+            collapsed ? "gap-3 pt-12 px-1" : "gap-4 pt-12 px-5",
           )}
         >
           <button
             type="button"
             onClick={handleGoHome}
-            className="relative h-28 w-28 transition-all focus:outline-none cursor-pointer"
+            className={cn(
+              "relative transition-all focus:outline-none cursor-pointer",
+              collapsed ? "h-28 w-28 translate-x-1" : "h-52 w-52",
+            )}
             aria-label="Go to home page"
           >
             <Image
@@ -141,7 +147,10 @@ export function AdminSidebar({ isOpen, onClose, onToggle }: AdminSidebarProps) {
               alt="Admin logo"
               fill
               loading="eager"
-              className="object-contain"
+              className={cn(
+                "object-contain transition-transform duration-300",
+                collapsed ? "scale-100" : "scale-[1.15]",
+              )}
             />
           </button>
           {!collapsed && (
