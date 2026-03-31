@@ -396,7 +396,8 @@ export default function HangingLampToggle() {
             </svg>
 
             {/* Pull knob */}
-            <motion.div
+            <motion.button
+              type="button"
               whileHover={{ scale: 1.15 }}
               whileTap={{ scale: 0.92, y: 2 }}
               className={`-mt-px h-3 w-3 cursor-pointer rounded-full border transition-colors duration-300 ${
@@ -405,8 +406,7 @@ export default function HangingLampToggle() {
                   : "border-[#7a5e28] bg-[#c58d12] shadow-[0_1px_6px_rgba(197,141,18,0.4)]"
               }`}
               onClick={handleToggle}
-              aria-hidden="true"
-              tabIndex={-1}
+              aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
             />
           </motion.div>
         </motion.div>
