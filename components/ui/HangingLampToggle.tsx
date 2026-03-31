@@ -406,7 +406,9 @@ export default function HangingLampToggle() {
                   : "border-[#7a5e28] bg-[#c58d12] shadow-[0_1px_6px_rgba(197,141,18,0.4)]"
               }`}
               onClick={handleToggle}
-              aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+              aria-label={
+                isDark ? "Switch to light mode" : "Switch to dark mode"
+              }
             />
           </motion.div>
         </motion.div>
