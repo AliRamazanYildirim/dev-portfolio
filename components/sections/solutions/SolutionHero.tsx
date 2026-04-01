@@ -32,7 +32,8 @@ export default function SolutionHero({
             transition={{ duration: 0.6, delay: 0.2 }}
           >
             <motion.div
-              className="rounded-full border border-[#c58d12]/40 bg-linear-to-r from-[#c58d12]/20 to-[#d4a24a]/10 px-4 py-1.5 backdrop-blur"
+              className="rounded-full border bg-linear-to-r from-[#c58d12]/20 to-[#d4a24a]/10 px-4 py-1.5 backdrop-blur"
+              style={{ borderColor: "rgba(197,141,18,0.4)" }}
               whileHover={{
                 boxShadow: "0 0 20px rgba(197,141,18,0.5)",
                 borderColor: "rgba(197,141,18,0.6)",
