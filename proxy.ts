@@ -2,14 +2,13 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { jwtVerify } from "jose";
+import { getJwtSecret, JWT_ISSUER } from "./lib/jwtConfig";
 
 // ─── Constants ──────────────────────────────────────────────────────────────────
 // Must match AUTH_COOKIE_NAME in lib/auth.ts
 const AUTH_COOKIE_NAME = "admin-auth-token";
 
-const JWT_SECRET =
-  process.env.JWT_SECRET || "fallback-secret-key-change-in-production";
-const JWT_ISSUER = "portfolio-admin";
+const JWT_SECRET = getJwtSecret();
 
 // ─── Public exceptions (no auth required) ───────────────────────────────────────
 const PUBLIC_ROUTES = new Set([

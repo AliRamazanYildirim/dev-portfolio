@@ -1,9 +1,9 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { getJwtSecret, JWT_ISSUER } from "./jwtConfig";
 
 // JWT Secret - Umgebungsvariable aus .env.local - Environment variable from .env.local
-const JWT_SECRET =
-  process.env.JWT_SECRET || "fallback-secret-key-change-in-production";
+const JWT_SECRET = getJwtSecret();
 
 // Admin-Anmeldedaten - Admin credentials
 export const ADMIN_CREDENTIALS = {
@@ -64,7 +64,7 @@ export function createToken(user: AdminUser): string {
   // Token gültig für 24 Stunden - Token valid for 24 hours
   return jwt.sign(payload, JWT_SECRET, {
     expiresIn: "24h",
-    issuer: "portfolio-admin",
+    issuer: JWT_ISSUER,
   });
 }
 
