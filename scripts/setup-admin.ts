@@ -1,9 +1,46 @@
 import { connectToMongo } from "../lib/mongodb";
 import AdminModel from "../models/Admin";
-import { hashPassword, ADMIN_CREDENTIALS } from "../lib/auth";
+import { ADMIN_CREDENTIALS } from "../lib/auth";
 import fs from "fs";
 import path from "path";
 import dotenv from "dotenv";
+
+const MISSING_ADMIN_HASH_ERROR = [
+  "ADMIN_PASSWORD_HASH is required for admin setup.",
+  "Generate a bcrypt hash with:",
+  '  bun run scripts/hash-password.ts "YourStrongPassword"',
+  "Then set ADMIN_PASSWORD_HASH in .env.",
+].join("\n");
+
+function readAdminPasswordHashFromEnvFile(): string {
+  try {
+    const envPath = path.resolve(process.cwd(), ".env");
+    if (!fs.existsSync(envPath)) {
+      return "";
+    }
+
+    const parsed = dotenv.parse(fs.readFileSync(envPath));
+    return parsed["ADMIN_PASSWORD_HASH"]?.trim() || "";
+  } catch {
+    return "";
+  }
+}
+
+function resolveAdminPasswordHash(): string {
+  const fileHash = readAdminPasswordHashFromEnvFile();
+  const envHash = ADMIN_CREDENTIALS.passwordHash.trim();
+  const passwordHash = fileHash || envHash;
+
+  if (!passwordHash) {
+    throw new Error(MISSING_ADMIN_HASH_ERROR);
+  }
+
+  if (!passwordHash.startsWith("$2")) {
+    throw new Error("ADMIN_PASSWORD_HASH must be a bcrypt hash (starts with '$2').");
+  }
+
+  return passwordHash;
+}
 
 /**
  * Admin-Benutzer in der Datenbank erstellen - Create admin user in database
@@ -20,19 +57,7 @@ async function createAdminUser() {
 
     // Upsert admin user: ensure ADMIN_PASSWORD_HASH from .env is written
     console.log("👤 Admin-Benutzer wird erstellt/aktualisiert... - Creating/updating admin user...");
-    // Prefer raw value from .env file to avoid any environment/expansion issues
-    let rawEnvHash = "";
-    try {
-      const envPath = path.resolve(process.cwd(), ".env");
-      if (fs.existsSync(envPath)) {
-        const parsed = dotenv.parse(fs.readFileSync(envPath));
-        rawEnvHash = parsed["ADMIN_PASSWORD_HASH"] || "";
-      }
-    } catch (err) {
-      // ignore and fall back to ADMIN_CREDENTIALS
-    }
-
-    const passwordHash = rawEnvHash || ADMIN_CREDENTIALS.passwordHash || (await hashPassword("changeme"));
+    const passwordHash = resolveAdminPasswordHash();
 
     const adminUser = await AdminModel.findOneAndUpdate(
       { email: ADMIN_CREDENTIALS.email },
@@ -60,6 +85,7 @@ async function createAdminUser() {
       "❌ Fehler beim Erstellen des Admin-Benutzers - Error creating admin user:"
     );
     console.error(error);
+    process.exitCode = 1;
   } finally {
     // Mongoose bağlantısını kapat - Close mongoose connection
     await (await connectToMongo()).close();

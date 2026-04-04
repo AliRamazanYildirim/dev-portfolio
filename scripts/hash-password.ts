@@ -33,9 +33,11 @@ async function createPasswordHash() {
     console.log(`ADMIN_PASSWORD_HASH=${hashedPassword}`);
     console.log("");
     console.log(
-      "⚠️  WICHTIG: Löschen Sie das ADMIN_DEFAULT_PASSWORD aus der .env!"
+      "⚠️  WICHTIG: Setzen Sie diesen Wert als ADMIN_PASSWORD_HASH in Ihrer .env."
     );
-    console.log("   IMPORTANT: Delete ADMIN_DEFAULT_PASSWORD from .env!");
+    console.log(
+      "   IMPORTANT: Set this value as ADMIN_PASSWORD_HASH in your .env file."
+    );
     console.log("");
     console.log("🔐 Das Original-Passwort wird nirgendwo gespeichert.");
     console.log("   The original password is not stored anywhere.");
