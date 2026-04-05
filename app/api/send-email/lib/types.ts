@@ -4,6 +4,10 @@ export interface SendEmailPayload {
     message: string;
 }
 
+export interface SendEmailRequestInput extends SendEmailPayload {
+    turnstileToken?: string;
+}
+
 export interface SmtpConfig {
     host: string;
     port: number;

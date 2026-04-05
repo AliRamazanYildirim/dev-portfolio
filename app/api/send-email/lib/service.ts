@@ -1,5 +1,6 @@
 import { getMailPort } from "@/lib/mail";
 import type { SendEmailPayload } from "./types";
+import { SendEmailDeliveryGuard } from "./deliveryGuard";
 
 function buildContactHtml(payload: SendEmailPayload) {
   return `<!DOCTYPE html><html lang="de"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Kontaktnachricht</title></head>
@@ -40,13 +41,15 @@ export class SendEmailService {
       throw new Error("No contact recipient email configured");
     }
 
-    // Mail über zentralen Mail Port senden (DIP)
-    const mailPort = getMailPort();
-    const result = await mailPort.send({
-      to: recipientEmail,
-      subject: `Contact form: ${payload.name}`,
-      text: `From: ${payload.name} <${payload.email}>\n\n${payload.message}`,
-      html: buildContactHtml(payload),
+    const result = await SendEmailDeliveryGuard.run(async () => {
+      // Mail über zentralen Mail Port senden (DIP)
+      const mailPort = getMailPort();
+      return mailPort.send({
+        to: recipientEmail,
+        subject: `Contact form: ${payload.name}`,
+        text: `From: ${payload.name} <${payload.email}>\n\n${payload.message}`,
+        html: buildContactHtml(payload),
+      });
     });
 
     return result;
