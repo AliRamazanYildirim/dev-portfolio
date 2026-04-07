@@ -6,9 +6,11 @@
  */
 
 import { NextResponse } from "next/server";
-import { isAppError, type AppError } from "@/lib/errors";
+import { isAppError } from "@/lib/errors";
 
 /* ---------- Typen ---------- */
+
+const SHOULD_EXPOSE_ERROR_DETAILS = process.env.NODE_ENV !== "production";
 
 export interface ApiSuccessResponse<T = unknown> {
     success: true;
@@ -53,7 +55,12 @@ export function handleError(error: unknown, fallbackMessage = "Internal server e
         return errorResponse(error.message, error.statusCode);
     }
 
-    const message = error instanceof Error ? error.message : String(error);
+    const details = error instanceof Error ? error.message : String(error);
     console.error(fallbackMessage, error);
-    return errorResponse(fallbackMessage, 500, message);
+
+    if (!SHOULD_EXPOSE_ERROR_DETAILS) {
+        return errorResponse(fallbackMessage, 500);
+    }
+
+    return errorResponse(fallbackMessage, 500, details);
 }
