@@ -187,9 +187,10 @@ const Portrait = () => (
     width={408}
     height={488}
     sizes="(max-width: 768px) 80vw, 408px"
+    suppressHydrationWarning
+    preload
     className="block w-full h-auto rounded-md object-cover"
     style={{ aspectRatio: "408 / 488" }}
-    fetchPriority="high"
   />
 );
 

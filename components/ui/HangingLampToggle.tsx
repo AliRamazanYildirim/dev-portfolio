@@ -246,7 +246,7 @@ export default function HangingLampToggle() {
             onKeyDown={handleKeyDown}
             aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
             tabIndex={0}
-            className="group relative flex flex-col items-center focus:outline-none"
+            className="group relative flex cursor-pointer flex-col items-center focus:outline-none"
           >
             {/* Glow halo — dark mode only */}
             {isDark && (

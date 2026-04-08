@@ -116,6 +116,7 @@ const Portrait = () => (
     width={408}
     height={488}
     sizes="(max-width: 768px) 80vw, 408px"
+    loading="eager"
     className="rounded-md"
   />
 );
