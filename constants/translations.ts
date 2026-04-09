@@ -222,6 +222,7 @@ const baseTranslations = {
             items: [
                 {
                     title: "<Solutions>",
+                    path: "/solutions",
                     submenu: enSolutions,
                 },
                 { title: "<About>", path: "/about" },
@@ -479,6 +480,7 @@ const baseTranslations = {
             items: [
                 {
                     title: "<Lösungen>",
+                    path: "/solutions",
                     submenu: deSolutions,
                 },
                 { title: "<Über mich>", path: "/about" },
@@ -734,6 +736,7 @@ const baseTranslations = {
             items: [
                 {
                     title: "<Çözümler>",
+                    path: "/solutions",
                     submenu: trSolutions,
                 },
                 { title: "<Hakkımda>", path: "/about" },
@@ -991,6 +994,7 @@ export const translations = {
             items: [
                 {
                     title: "<Solutions>",
+                    path: "/solutions",
                     submenu: frSolutions,
                 },
                 { title: "<À propos>", path: "/about" },

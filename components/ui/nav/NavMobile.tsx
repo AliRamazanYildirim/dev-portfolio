@@ -103,28 +103,39 @@ export default function NavMobile({
                       key={item.title}
                       className="w-full flex flex-col items-center landscape:col-span-2"
                     >
-                      <button
-                        type="button"
-                        className="button lg:text-lgButton transition flex items-center justify-center gap-2 mx-auto w-full max-w-85 rounded-full border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/5 px-5 py-3 text-center text-zinc-800 dark:text-white shadow-sm hover:border-[#c9184a]/40 hover:bg-zinc-100 dark:hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9184a]/40 landscape:py-2.5 landscape:max-w-105"
-                        onClick={() => toggleSubmenu(item.title)}
-                      >
-                        <span>{item.title}</span>
-                        <svg
-                          className={`w-4 h-4 transition-transform ${
-                            openSubmenuTitle === item.title ? "rotate-180" : ""
-                          }`}
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
+                      <div className="mx-auto flex w-full max-w-85 items-center gap-2 landscape:max-w-105">
+                        <Link
+                          href={item.path || "/solutions"}
+                          className="button lg:text-lgButton transition flex-1 rounded-full border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/5 px-5 py-3 text-center text-zinc-800 dark:text-white shadow-sm hover:border-[#c9184a]/40 hover:bg-zinc-100 dark:hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9184a]/40 landscape:py-2.5"
+                          onClick={handleClose}
                         >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M19 9l-7 7-7-7"
-                          />
-                        </svg>
-                      </button>
+                          {item.title}
+                        </Link>
+                        <button
+                          type="button"
+                          className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/5 text-zinc-800 dark:text-white shadow-sm transition hover:border-[#c9184a]/40 hover:bg-zinc-100 dark:hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9184a]/40 landscape:h-10 landscape:w-10"
+                          onClick={() => toggleSubmenu(item.title)}
+                          aria-label={`${item.title} submenu`}
+                        >
+                          <svg
+                            className={`w-4 h-4 transition-transform ${
+                              openSubmenuTitle === item.title
+                                ? "rotate-180"
+                                : ""
+                            }`}
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M19 9l-7 7-7-7"
+                            />
+                          </svg>
+                        </button>
+                      </div>
                       <AnimatePresence>
                         {openSubmenuTitle === item.title && (
                           <motion.div

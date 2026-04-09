@@ -91,18 +91,18 @@ export default function SolutionsPage() {
               transition={{ duration: 0.6 }}
             >
               <Link href={solution.href} className="group block h-full">
-                <div className="relative h-full overflow-hidden rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-linear-to-br dark:from-zinc-900 dark:to-black p-8 transition-all duration-500 hover:border-[#c58d12]/50">
-                  <div className="absolute inset-0 rounded-2xl bg-linear-to-br from-[#c58d12]/0 via-[#c58d12]/0 to-[#c58d12]/0 transition-all duration-500 group-hover:from-[#c58d12]/6 group-hover:via-[#c58d12]/10 group-hover:to-[#c58d12]/6" />
+                <div className="relative h-full overflow-hidden rounded-2xl border border-zinc-200/70 dark:border-zinc-700/70 bg-[#c58d12]/6 dark:bg-linear-to-br dark:from-zinc-900 dark:to-zinc-950 p-8 transition-all duration-500 hover:border-[#c58d12]/50 dark:shadow-[0_12px_30px_rgba(0,0,0,0.45),0_0_0_1px_rgba(255,255,255,0.05)] dark:hover:shadow-[0_20px_55px_rgba(0,0,0,0.65),0_0_0_1px_rgba(197,141,18,0.35)]">
+                  <div className="absolute inset-0 rounded-2xl bg-linear-to-br from-[#c58d12]/0 via-[#c58d12]/0 to-[#c58d12]/0 dark:from-white/2 dark:via-transparent dark:to-[#c58d12]/8 transition-all duration-500 group-hover:from-[#c58d12]/6 group-hover:via-[#c58d12]/10 group-hover:to-[#c58d12]/6 dark:group-hover:from-[#c58d12]/10 dark:group-hover:via-[#c58d12]/14 dark:group-hover:to-[#c58d12]/10" />
                   <div className="absolute top-0 right-0 h-24 w-24 rounded-bl-full bg-linear-to-br from-[#c58d12]/20 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
 
                   <div className="relative z-10">
-                    <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-xl border border-[#c58d12]/30 bg-linear-to-br from-[#c58d12]/20 to-[#c58d12]/5 transition-all duration-500 group-hover:scale-110 group-hover:rotate-3">
+                    <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-xl border border-[#c58d12]/30 bg-linear-to-br from-[#c58d12]/20 to-[#c58d12]/5 transition-all duration-500 group-hover:scale-110 group-hover:rotate-3">
                       <Image
                         src={solution.icon}
                         alt={solution.alt ?? solution.title}
                         width={32}
                         height={32}
-                        className="h-8 w-8 object-contain"
+                        className="mx-auto h-8 w-8 object-contain transition-all duration-300 dark:brightness-0 dark:invert"
                       />
                     </div>
 
@@ -140,7 +140,7 @@ export default function SolutionsPage() {
         </div>
       </section>
 
-      <section className="relative overflow-hidden bg-zinc-100 dark:bg-linear-to-b dark:from-black dark:via-zinc-950 dark:to-black py-24">
+      <section className="relative overflow-hidden py-24">
         <div className="mx-auto max-w-4xl px-6 text-center lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 30 }}

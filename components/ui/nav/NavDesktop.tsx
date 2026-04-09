@@ -20,6 +20,9 @@ interface NavDesktopProps {
 const isProjectsRoute = (pathname: string) =>
   pathname === "/projects" || pathname.startsWith("/projects/");
 
+const isSolutionsRoute = (pathname: string) =>
+  pathname === "/solutions" || pathname.startsWith("/solutions/");
+
 export default function NavDesktop({
   navItems,
   pathname,
@@ -33,17 +36,22 @@ export default function NavDesktop({
 
   const isActive = (path: string) => pathname === path;
   const projectsRouteActive = isProjectsRoute(pathname);
+  const solutionsRouteActive = isSolutionsRoute(pathname);
 
   return (
     <>
       <div className="hidden lg:flex space-x-8">
         {navItems.map((item, index) => {
           if (item.submenu) {
+            const solutionsPath = item.path || "/solutions";
+
             return (
               <div key={item.title} className="relative group/sub">
-                <button
-                  type="button"
-                  className="cursor-pointer button lg:text-lgButton transition flex items-center gap-1 pb-3 text-zinc-800 dark:text-white hover:text-zinc-800 dark:hover:text-white"
+                <Link
+                  href={solutionsPath}
+                  className={`cursor-pointer button lg:text-lgButton transition flex items-center gap-1 pb-3 text-zinc-800 dark:text-white hover:text-zinc-800 dark:hover:text-white ${
+                    solutionsRouteActive ? "font-bold underline" : ""
+                  }`}
                 >
                   <span>{item.title}</span>
                   <svg
@@ -59,7 +67,7 @@ export default function NavDesktop({
                       d="M19 9l-7 7-7-7"
                     />
                   </svg>
-                </button>
+                </Link>
 
                 <div className="absolute left-0 top-full w-80 z-50 opacity-0 invisible -translate-y-2.5 pointer-events-none transition-all duration-150 group-hover/sub:opacity-100 group-hover/sub:visible group-hover/sub:translate-y-0 group-hover/sub:pointer-events-auto">
                   <div className="rounded-lg border border-zinc-200 bg-white dark:border-white/10 dark:bg-zinc-900 shadow-xl overflow-hidden">
