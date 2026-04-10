@@ -7,6 +7,14 @@ import type {
     DiscountResult,
 } from "./types";
 
+function toSafeReferrerName(firstname: string | undefined, lastname: string | undefined): string {
+    const first = (firstname || "").trim();
+    const last = (lastname || "").trim();
+    const lastInitial = last ? `${last.charAt(0)}.` : "";
+    const displayName = [first, lastInitial].filter(Boolean).join(" ").trim();
+    return displayName || "Referral Partner";
+}
+
 function computeDiscount(basePrice: number, referralCount: number): DiscountResult {
     const clampedBasePrice = Math.max(0, basePrice);
     const safeReferralCount = Math.max(0, referralCount || 0);
@@ -40,14 +48,14 @@ export async function validateReferral(
 
     const referrer = await findReferrerByCode(input.referralCode);
     if (!referrer) {
-        throw new NotFoundError("Invalid referral code");
+        throw new NotFoundError("Referral code could not be validated");
     }
 
     const discount = computeDiscount(input.basePrice, referrer.referralCount || 0);
 
     return {
         referrer: {
-            name: `${referrer.firstname} ${referrer.lastname}`.trim(),
+            name: toSafeReferrerName(referrer.firstname, referrer.lastname),
             referralCount: referrer.referralCount || 0,
         },
         discount,

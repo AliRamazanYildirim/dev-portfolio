@@ -20,8 +20,3 @@ export async function POST(request: NextRequest) {
     return handleError(error, "Logout failed");
   }
 }
-
-// GET /api/admin/logout - Alternative für GET-Anfragen - Alternative for GET requests
-export async function GET(request: NextRequest) {
-  return POST(request);
-}

@@ -4,6 +4,9 @@
 
 import type { ValidateReferralInput } from "./types";
 
+const REFERRAL_CODE_REGEX = /^[a-zA-Z0-9_-]+$/;
+const MAX_REFERRAL_CODE_LENGTH = 64;
+
 export function validateReferralInput(
     body: unknown,
 ): { valid: true; value: ValidateReferralInput } | { valid: false; error: string } {
@@ -18,13 +21,25 @@ export function validateReferralInput(
         return { valid: false, error: "Referral code is required" };
     }
 
+    if (referralCode.length > MAX_REFERRAL_CODE_LENGTH) {
+        return { valid: false, error: "Referral code is too long" };
+    }
+
+    if (!REFERRAL_CODE_REGEX.test(referralCode)) {
+        return { valid: false, error: "Referral code contains invalid characters" };
+    }
+
     if (obj.basePrice === undefined || obj.basePrice === null) {
         return { valid: false, error: "Base price is required" };
     }
 
     const basePrice = Number(obj.basePrice);
-    if (Number.isNaN(basePrice)) {
+    if (!Number.isFinite(basePrice)) {
         return { valid: false, error: "Base price must be a number" };
+    }
+
+    if (basePrice <= 0) {
+        return { valid: false, error: "Base price must be greater than 0" };
     }
 
     return {

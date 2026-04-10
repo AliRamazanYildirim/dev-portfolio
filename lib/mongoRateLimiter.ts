@@ -2,6 +2,9 @@ import mongoose from './mongodb'
 import { connectToMongo } from './mongodb'
 
 const RATE_LIMIT_MODEL = 'RateLimit'
+const EXPIRES_AT_INDEX_KEY = { expiresAt: 1 } as const
+const EXPIRES_AT_INDEX_FIELD = 'expiresAt'
+const EXPIRES_AT_TTL_SECONDS = 0
 
 interface RateLimitDoc extends mongoose.Document {
     key: string
@@ -23,8 +26,16 @@ export interface RateLimitResult {
 const RateLimitSchema = new mongoose.Schema<RateLimitDoc>({
     key: { type: String, required: true, unique: true },
     count: { type: Number, required: true, default: 0 },
-    expiresAt: { type: Date, required: true, index: true },
+    expiresAt: { type: Date, required: true },
 })
+
+// Remove stale limiter windows automatically.
+RateLimitSchema.index(
+    EXPIRES_AT_INDEX_KEY,
+    { expireAfterSeconds: EXPIRES_AT_TTL_SECONDS },
+)
+
+let ensureIndexesPromise: Promise<void> | null = null;
 
 function getModel(): mongoose.Model<RateLimitDoc> {
     if (mongoose.models && mongoose.models[RATE_LIMIT_MODEL]) {
@@ -41,9 +52,77 @@ function toMeta(limit: number, count: number, resetDate: Date): RateLimitMeta {
     };
 }
 
+type MongoIndexInfo = {
+    name?: string
+    key?: Record<string, number>
+    expireAfterSeconds?: number
+}
+
+function isSingleExpiresAtIndex(index: MongoIndexInfo): boolean {
+    if (!index.key) {
+        return false
+    }
+
+    const fields = Object.keys(index.key)
+    return fields.length === 1 && index.key[EXPIRES_AT_INDEX_FIELD] === 1
+}
+
+async function dropIndexIfExists(collection: mongoose.Collection, indexName: string): Promise<void> {
+    try {
+        await collection.dropIndex(indexName)
+    } catch (error: unknown) {
+        const codeName =
+            typeof error === 'object' &&
+                error !== null &&
+                'codeName' in error
+                ? String((error as { codeName?: unknown }).codeName)
+                : ''
+
+        if (codeName !== 'IndexNotFound') {
+            throw error
+        }
+    }
+}
+
+async function ensureRateLimitIndexes(): Promise<void> {
+    if (ensureIndexesPromise) {
+        return ensureIndexesPromise;
+    }
+
+    ensureIndexesPromise = (async () => {
+        const collection = getModel().collection
+        const indexes = (await collection.indexes()) as MongoIndexInfo[]
+        const expiresAtIndex = indexes.find(isSingleExpiresAtIndex)
+
+        const hasDesiredTtlIndex =
+            Boolean(expiresAtIndex) &&
+            expiresAtIndex?.expireAfterSeconds === EXPIRES_AT_TTL_SECONDS
+
+        if (hasDesiredTtlIndex) {
+            return
+        }
+
+        if (expiresAtIndex?.name) {
+            await dropIndexIfExists(collection, expiresAtIndex.name)
+        }
+
+        await collection.createIndex(EXPIRES_AT_INDEX_KEY, {
+            expireAfterSeconds: EXPIRES_AT_TTL_SECONDS,
+        })
+    })()
+        .then(() => undefined)
+        .catch((error: unknown) => {
+            ensureIndexesPromise = null;
+            throw error;
+        });
+
+    return ensureIndexesPromise;
+}
+
 async function ensureMongoConnection(): Promise<void> {
     try {
         await connectToMongo();
+        await ensureRateLimitIndexes();
     } catch (error: unknown) {
         const message = error instanceof Error ? error.message : String(error);
         console.error('mongoRateLimiter: connectToMongo failed:', error);

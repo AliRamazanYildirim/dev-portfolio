@@ -1,11 +1,33 @@
-// Auth is now handled centrally by middleware.ts.
-// Only buildBaseUrl remains as a utility for constructing URLs in emails.
+const DEFAULT_PUBLIC_BASE_URL = "https://www.arytechsolutions.com";
 
-export function buildBaseUrl(req: Request) {
-    const host = (req as any).headers?.get?.("host");
-    if (!host) {
+function normalizeBaseUrl(raw: string | undefined): string | undefined {
+    if (!raw) {
         return undefined;
     }
-    const protocol = (req as any).headers?.get?.("x-forwarded-proto") || "https";
-    return `${protocol}://${host}`;
+
+    try {
+        const url = new URL(raw);
+        if (url.protocol !== "https:" && url.protocol !== "http:") {
+            return undefined;
+        }
+
+        return `${url.protocol}//${url.host}`;
+    } catch {
+        return undefined;
+    }
+}
+
+function resolveConfiguredBaseUrl(): string | undefined {
+    return normalizeBaseUrl(
+        process.env.APP_BASE_URL?.trim() ||
+        process.env.NEXT_PUBLIC_SITE_URL?.trim() ||
+        process.env.NEXT_PUBLIC_APP_URL?.trim() ||
+        DEFAULT_PUBLIC_BASE_URL,
+    );
+}
+
+const CONFIGURED_BASE_URL = resolveConfiguredBaseUrl();
+
+export function buildBaseUrl(_req: Request): string | undefined {
+    return CONFIGURED_BASE_URL;
 }

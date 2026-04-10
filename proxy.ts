@@ -13,7 +13,6 @@ const JWT_SECRET = getJwtSecret();
 // ─── Public exceptions (no auth required) ───────────────────────────────────────
 const PUBLIC_ROUTES = new Set([
   "/api/admin/login",
-  "/api/admin/logout",
   "/admin/login",
 ]);
 

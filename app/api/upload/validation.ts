@@ -15,7 +15,6 @@ export function validateUploadFile(
         "image/png",
         "image/webp",
         "image/gif",
-        "image/svg+xml",
     ];
 
     if (!allowedTypes.includes(file.type)) {
