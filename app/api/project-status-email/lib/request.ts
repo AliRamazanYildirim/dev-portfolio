@@ -18,12 +18,21 @@ function normalizeBaseUrl(raw: string | undefined): string | undefined {
 }
 
 function resolveConfiguredBaseUrl(): string | undefined {
-    return normalizeBaseUrl(
-        process.env.APP_BASE_URL?.trim() ||
-        process.env.NEXT_PUBLIC_SITE_URL?.trim() ||
-        process.env.NEXT_PUBLIC_APP_URL?.trim() ||
+    const candidates = [
+        process.env.APP_BASE_URL?.trim(),
+        process.env.NEXT_PUBLIC_SITE_URL?.trim(),
+        process.env.NEXT_PUBLIC_APP_URL?.trim(),
         DEFAULT_PUBLIC_BASE_URL,
-    );
+    ];
+
+    for (const candidate of candidates) {
+        const normalized = normalizeBaseUrl(candidate);
+        if (normalized) {
+            return normalized;
+        }
+    }
+
+    return undefined;
 }
 
 const CONFIGURED_BASE_URL = resolveConfiguredBaseUrl();
