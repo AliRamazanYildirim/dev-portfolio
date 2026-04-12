@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { NextRequest } from "next/server";
 import { POST } from "@/app/api/admin/login/route";
+import { ForbiddenError, UnauthorizedError } from "@/lib/errors";
 import {
   createJsonRequest,
   parseJsonResponse,
@@ -176,5 +177,56 @@ describe("admin login route integration", () => {
     expect(response.headers.get("X-RateLimit-Policy")).toBe("login_ip_window");
     expect(response.headers.get("set-cookie") || "").toContain("admin-auth-token=jwt-token");
     expect(mockAdminLoginService.resetFailedAttempts).toHaveBeenCalledTimes(1);
+  });
+
+  it("returns 401 and applies backoff on invalid credentials", async () => {
+    mockAdminLoginService.login.mockRejectedValue(
+      new UnauthorizedError("Invalid credentials"),
+    );
+
+    const request = createJsonRequest(
+      "http://localhost/api/admin/login",
+      "POST",
+      {
+        email: "admin@example.com",
+        password: "wrong-secret",
+      },
+    ) as unknown as NextRequest;
+
+    const response = await POST(request);
+    const payload = await parseJsonResponse<LoginSuccessPayload>(response);
+
+    expect(response.status).toBe(401);
+    expect(payload.success).toBe(false);
+    expect(payload.error).toBe("Invalid credentials");
+    expect(response.headers.get("X-RateLimit-Policy")).toBe(
+      "login_exponential_backoff",
+    );
+    expect(mockAdminLoginService.registerFailedAttempt).toHaveBeenCalledTimes(1);
+    expect(mockAdminLoginService.applyExponentialBackoff).toHaveBeenCalledTimes(1);
+    expect(mockAdminLoginService.resetFailedAttempts).not.toHaveBeenCalled();
+  });
+
+  it("returns 403 when turnstile verification fails", async () => {
+    mockAdminLoginService.verifyTurnstile.mockRejectedValue(
+      new ForbiddenError("Security verification failed"),
+    );
+
+    const request = createJsonRequest(
+      "http://localhost/api/admin/login",
+      "POST",
+      {
+        email: "admin@example.com",
+        password: "secret",
+      },
+    ) as unknown as NextRequest;
+
+    const response = await POST(request);
+    const payload = await parseJsonResponse<LoginSuccessPayload>(response);
+
+    expect(response.status).toBe(403);
+    expect(payload.success).toBe(false);
+    expect(payload.error).toBe("Security verification failed");
+    expect(mockAdminLoginService.login).not.toHaveBeenCalled();
   });
 });
