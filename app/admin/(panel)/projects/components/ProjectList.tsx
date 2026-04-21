@@ -164,7 +164,7 @@ export function ProjectList({
                 <div className="flex flex-row gap-2 sm:gap-3 lg:ml-6 w-full lg:w-auto lg:justify-end lg:items-end lg:self-end mt-4 lg:mt-0">
                   <button
                     onClick={() => onEditProject(project)}
-                    className="inline-flex items-center justify-center flex-1 sm:flex-none px-3 sm:px-6 py-2 sm:py-3 bg-linear-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-lg sm:rounded-xl font-medium shadow-sm transition-all duration-200 hover:shadow-md hover:scale-105 text-xs sm:text-base"
+                    className="inline-flex items-center justify-center flex-1 sm:flex-none px-3 sm:px-6 py-2 sm:py-3 bg-linear-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-lg sm:rounded-xl font-medium shadow-sm transition-all duration-200 hover:shadow-md hover:scale-105 text-xs sm:text-base cursor-pointer"
                   >
                     <svg
                       className="w-3.5 h-3.5 sm:w-5 sm:h-5 mr-1 sm:mr-2"
@@ -183,7 +183,7 @@ export function ProjectList({
                   </button>
                   <button
                     onClick={() => onDeleteProject(project.id)}
-                    className="inline-flex items-center justify-center flex-1 sm:flex-none px-3 sm:px-6 py-2 sm:py-3 bg-linear-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-lg sm:rounded-xl font-medium shadow-sm transition-all duration-200 hover:shadow-md hover:scale-105 text-xs sm:text-base"
+                    className="inline-flex items-center justify-center flex-1 sm:flex-none px-3 sm:px-6 py-2 sm:py-3 bg-linear-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-lg sm:rounded-xl font-medium shadow-sm transition-all duration-200 hover:shadow-md hover:scale-105 text-xs sm:text-base cursor-pointer"
                   >
                     <svg
                       className="w-3.5 h-3.5 sm:w-5 sm:h-5 mr-1 sm:mr-2"

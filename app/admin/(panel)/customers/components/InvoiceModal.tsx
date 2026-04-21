@@ -179,13 +179,13 @@ export default function InvoiceModal({
                       });
                     }
                   }}
-                  className="px-3 py-1 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
+                  className="px-3 py-1 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors cursor-pointer"
                 >
                   Download
                 </button>
                 <button
                   onClick={() => toast.dismiss(t.id)}
-                  className="px-3 py-1 bg-slate-200 text-slate-700 text-sm rounded-lg hover:bg-slate-300 transition-colors"
+                  className="px-3 py-1 bg-slate-200 text-slate-700 text-sm rounded-lg hover:bg-slate-300 transition-colors cursor-pointer"
                 >
                   Skip
                 </button>
@@ -240,7 +240,7 @@ export default function InvoiceModal({
             </div>
             <button
               onClick={onClose}
-              className="p-2 sm:p-3 hover:bg-white/10 rounded-xl transition-all duration-200 group"
+              className="p-2 sm:p-3 hover:bg-white/10 rounded-xl transition-all duration-200 group cursor-pointer"
             >
               <svg
                 className="w-5 h-5 sm:w-6 sm:h-6 text-white/70 group-hover:text-white transition-colors"
@@ -502,14 +502,14 @@ export default function InvoiceModal({
           <button
             type="button"
             onClick={onClose}
-            className="w-full sm:w-auto px-6 sm:px-8 py-3 border border-slate-300 text-slate-700 rounded-xl font-medium hover:bg-slate-100 transition-all duration-200 text-sm sm:text-base order-2 sm:order-1"
+            className="w-full sm:w-auto px-6 sm:px-8 py-3 border border-slate-300 text-slate-700 rounded-xl font-medium hover:bg-slate-100 transition-all duration-200 text-sm sm:text-base order-2 sm:order-1 cursor-pointer"
           >
             Cancel
           </button>
           <button
             onClick={handleSubmit}
             disabled={sending || formData.deliverables.length === 0}
-            className="w-full sm:w-auto px-6 sm:px-8 py-3 bg-linear-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl font-bold shadow-lg transition-all duration-200 hover:shadow-xl hover:scale-105 text-sm sm:text-base order-1 sm:order-2"
+            className="w-full sm:w-auto px-6 sm:px-8 py-3 bg-linear-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl font-bold shadow-lg transition-all duration-200 hover:shadow-xl hover:scale-105 text-sm sm:text-base order-1 sm:order-2 cursor-pointer"
           >
             {sending ? "Sending Invoice..." : "Generate & Send Invoice"}
           </button>

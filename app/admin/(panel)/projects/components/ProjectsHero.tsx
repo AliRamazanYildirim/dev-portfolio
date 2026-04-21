@@ -20,7 +20,7 @@ export function ProjectsHero({ onCreateProject }: ProjectsHeroProps) {
           <div className="flex flex-col sm:flex-row items-center justify-center landscape:justify-end lg:justify-end gap-3 sm:gap-4">
             <button
               onClick={onCreateProject}
-              className="button bg-white text-[#131313] px-6 sm:px-8 py-3 sm:py-4 rounded-lg hover:bg-white/90 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 w-full sm:w-auto"
+              className="button bg-white text-[#131313] px-6 sm:px-8 py-3 sm:py-4 rounded-lg hover:bg-white/90 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 w-full sm:w-auto cursor-pointer"
             >
               <span className="flex items-center justify-center gap-2 sm:gap-3 font-bold text-sm sm:text-base">
                 <svg

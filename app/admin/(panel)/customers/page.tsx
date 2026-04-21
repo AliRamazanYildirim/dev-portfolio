@@ -140,7 +140,7 @@ export default function CustomersAdminPage() {
                       setSidebarOpen(false);
                       setShowForm(true);
                     }}
-                    className="bg-white text-[#131313] px-4 py-2 rounded-lg font-semibold shadow hover:shadow-md"
+                    className="bg-white text-[#131313] px-4 py-2 rounded-lg font-semibold shadow hover:shadow-md cursor-pointer"
                   >
                     <span className="flex items-center justify-center gap-2 sm:gap-3 font-bold text-sm sm:text-base">
                       <svg
@@ -224,7 +224,7 @@ export default function CustomersAdminPage() {
                     <div className="flex flex-row gap-2 w-full landscape:w-auto landscape:justify-end sm:w-auto">
                       <button
                         type="submit"
-                        className="flex-1 landscape:flex-none sm:flex-none flex items-center justify-center gap-1.5 sm:gap-2 bg-white text-[#131313] px-3 py-1.5 rounded-md text-sm font-semibold"
+                        className="flex-1 landscape:flex-none sm:flex-none flex items-center justify-center gap-1.5 sm:gap-2 bg-white text-[#131313] px-3 py-1.5 rounded-md text-sm font-semibold cursor-pointer"
                       >
                         <Search className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                         <span>Search</span>
@@ -241,7 +241,7 @@ export default function CustomersAdminPage() {
                       <button
                         type="button"
                         onClick={() => fetchCustomers()}
-                        className="flex-1 landscape:flex-none sm:flex-none flex items-center justify-center gap-1.5 sm:gap-2 bg-white text-[#131313] px-3 py-1.5 rounded-lg font-semibold shadow hover:bg-white/90 transition disabled:opacity-60 disabled:cursor-not-allowed"
+                        className="flex-1 landscape:flex-none sm:flex-none flex items-center justify-center gap-1.5 sm:gap-2 bg-white text-[#131313] px-3 py-1.5 rounded-lg font-semibold shadow hover:bg-white/90 transition disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
                       >
                         <RefreshCcw
                           className={`h-3.5 w-3.5 sm:h-4 sm:w-4 text-[#131313] ${
@@ -276,7 +276,7 @@ export default function CustomersAdminPage() {
                         }
                         fetchCustomers({ from: dateFrom, to: dateTo });
                       }}
-                      className="w-full bg-white text-[#131313] px-2 py-1 rounded-md text-sm font-medium"
+                      className="w-full bg-white text-[#131313] px-2 py-1 rounded-md text-sm font-medium cursor-pointer"
                     >
                       Apply
                     </button>

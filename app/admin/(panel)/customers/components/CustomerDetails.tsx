@@ -315,7 +315,7 @@ export default function CustomerDetails({
                               setUpdatingStatus(false);
                             }
                           }}
-                          className={`inline-flex items-center justify-center w-20 h-20 rounded-full shadow-md transform transition-all duration-200 ${
+                          className={`inline-flex items-center justify-center w-20 h-20 rounded-full shadow-md transform transition-all duration-200 cursor-pointer disabled:cursor-not-allowed ${
                             active
                               ? `${step.color} text-white scale-100 ring-4 ring-white/20`
                               : done
@@ -540,7 +540,7 @@ export default function CustomerDetails({
                     <button
                       onClick={handleGenerateInvoice}
                       disabled={false}
-                      className="w-full relative group/btn overflow-hidden inline-flex items-center justify-center px-6 py-4 bg-linear-to-r from-violet-600 via-purple-700 to-purple-800 text-white rounded-2xl font-bold shadow-lg hover:shadow-violet-500/40 hover:shadow-2xl transition-all duration-300 hover:scale-105"
+                      className="w-full relative group/btn overflow-hidden inline-flex items-center justify-center px-6 py-4 bg-linear-to-r from-violet-600 via-purple-700 to-purple-800 text-white rounded-2xl font-bold shadow-lg hover:shadow-violet-500/40 hover:shadow-2xl transition-all duration-300 hover:scale-105 cursor-pointer"
                     >
                       <svg
                         className="w-5 h-5 mr-2"
@@ -562,7 +562,7 @@ export default function CustomerDetails({
                     <>
                       <button
                         onClick={handleCopyReferral}
-                        className="w-full relative group/btn overflow-hidden inline-flex items-center justify-center px-6 py-4 bg-linear-to-r from-blue-600 via-blue-700 to-indigo-700 text-white rounded-2xl font-bold shadow-lg hover:shadow-blue-500/40 hover:shadow-2xl transition-all duration-300 hover:scale-105"
+                        className="w-full relative group/btn overflow-hidden inline-flex items-center justify-center px-6 py-4 bg-linear-to-r from-blue-600 via-blue-700 to-indigo-700 text-white rounded-2xl font-bold shadow-lg hover:shadow-blue-500/40 hover:shadow-2xl transition-all duration-300 hover:scale-105 cursor-pointer"
                       >
                         <svg
                           className="w-5 h-5 mr-2"
@@ -585,7 +585,7 @@ export default function CustomerDetails({
                     <>
                       <button
                         onClick={() => onEdit?.(customer)}
-                        className="w-full relative group/btn overflow-hidden inline-flex items-center justify-center px-6 py-4 bg-linear-to-r from-amber-600 via-orange-600 to-orange-700 text-white rounded-2xl font-bold shadow-lg hover:shadow-amber-500/40 hover:shadow-2xl transition-all duration-300 hover:scale-105"
+                        className="w-full relative group/btn overflow-hidden inline-flex items-center justify-center px-6 py-4 bg-linear-to-r from-amber-600 via-orange-600 to-orange-700 text-white rounded-2xl font-bold shadow-lg hover:shadow-amber-500/40 hover:shadow-2xl transition-all duration-300 hover:scale-105 cursor-pointer"
                       >
                         <svg
                           className="w-5 h-5 mr-2"
@@ -623,13 +623,13 @@ export default function CustomerDetails({
                                       toast.dismiss(t.id);
                                       onDelete(customerId);
                                     }}
-                                    className="flex-1 bg-red-600 text-white px-3 py-1.5 rounded text-sm font-medium hover:bg-red-700 transition"
+                                    className="flex-1 bg-red-600 text-white px-3 py-1.5 rounded text-sm font-medium hover:bg-red-700 transition cursor-pointer"
                                   >
                                     Delete
                                   </button>
                                   <button
                                     onClick={() => toast.dismiss(t.id)}
-                                    className="flex-1 bg-gray-300 text-gray-800 px-3 py-1.5 rounded text-sm font-medium hover:bg-gray-400 transition"
+                                    className="flex-1 bg-gray-300 text-gray-800 px-3 py-1.5 rounded text-sm font-medium hover:bg-gray-400 transition cursor-pointer"
                                   >
                                     Cancel
                                   </button>
@@ -639,7 +639,7 @@ export default function CustomerDetails({
                             { duration: Infinity },
                           );
                         }}
-                        className="w-full relative group/btn overflow-hidden inline-flex items-center justify-center px-6 py-4 bg-linear-to-r from-red-600 via-red-700 to-rose-700 text-white rounded-2xl font-bold shadow-lg hover:shadow-red-500/40 hover:shadow-2xl transition-all duration-300 hover:scale-105"
+                        className="w-full relative group/btn overflow-hidden inline-flex items-center justify-center px-6 py-4 bg-linear-to-r from-red-600 via-red-700 to-rose-700 text-white rounded-2xl font-bold shadow-lg hover:shadow-red-500/40 hover:shadow-2xl transition-all duration-300 hover:scale-105 cursor-pointer"
                       >
                         <svg
                           className="w-5 h-5 mr-2"
@@ -682,7 +682,7 @@ export default function CustomerDetails({
           {/* Close button */}
           <button
             onClick={onClose}
-            className="absolute -top-2 -right-2 sm:top-2 sm:right-2 z-20 w-8 h-8 flex items-center justify-center bg-white hover:bg-gray-100 rounded-full shadow-lg transition-all"
+            className="absolute -top-2 -right-2 sm:top-2 sm:right-2 z-20 w-8 h-8 flex items-center justify-center bg-white hover:bg-gray-100 rounded-full shadow-lg transition-all cursor-pointer"
           >
             <svg
               className="w-5 h-5 text-slate-700"

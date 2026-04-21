@@ -107,7 +107,7 @@ export function ProjectFormModal({
             </div>
             <button
               onClick={onCancel}
-              className="p-2 sm:p-3 hover:bg-white/10 rounded-xl transition-all duration-200 group"
+              className="p-2 sm:p-3 hover:bg-white/10 rounded-xl transition-all duration-200 group cursor-pointer"
             >
               <svg
                 className="w-5 h-5 sm:w-6 sm:h-6 text-white/70 group-hover:text-white transition-colors"
@@ -163,7 +163,7 @@ export function ProjectFormModal({
                   <button
                     type="button"
                     onClick={() => setActiveTab("en")}
-                    className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                    className={`px-4 py-2 rounded-lg font-medium transition-all cursor-pointer ${
                       activeTab === "en"
                         ? "bg-[#131313] text-white"
                         : "bg-white/50 text-[#131313] hover:bg-white/80"
@@ -174,7 +174,7 @@ export function ProjectFormModal({
                   <button
                     type="button"
                     onClick={() => setActiveTab("de")}
-                    className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                    className={`px-4 py-2 rounded-lg font-medium transition-all cursor-pointer ${
                       activeTab === "de"
                         ? "bg-[#131313] text-white"
                         : "bg-white/50 text-[#131313] hover:bg-white/80"
@@ -185,7 +185,7 @@ export function ProjectFormModal({
                   <button
                     type="button"
                     onClick={() => setActiveTab("tr")}
-                    className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                    className={`px-4 py-2 rounded-lg font-medium transition-all cursor-pointer ${
                       activeTab === "tr"
                         ? "bg-[#131313] text-white"
                         : "bg-white/50 text-[#131313] hover:bg-white/80"
@@ -196,7 +196,7 @@ export function ProjectFormModal({
                   <button
                     type="button"
                     onClick={() => setActiveTab("fr")}
-                    className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                    className={`px-4 py-2 rounded-lg font-medium transition-all cursor-pointer ${
                       activeTab === "fr"
                         ? "bg-[#131313] text-white"
                         : "bg-white/50 text-[#131313] hover:bg-white/80"
@@ -336,7 +336,7 @@ export function ProjectFormModal({
                         <button
                           type="button"
                           onClick={() => removeGalleryImage(index)}
-                          className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center shadow-lg opacity-0 group-hover/delete:opacity-100 transition-all duration-200 hover:scale-110"
+                          className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center shadow-lg opacity-0 group-hover/delete:opacity-100 transition-all duration-200 hover:scale-110 cursor-pointer"
                         >
                           <svg
                             className="w-4 h-4"
@@ -364,13 +364,13 @@ export function ProjectFormModal({
         <div className="bg-[#131313]/5 backdrop-blur-sm px-4 sm:px-6 lg:px-8 py-4 sm:py-6 border-t border-[#131313]/10 flex flex-col sm:flex-row gap-3 sm:gap-4 sm:justify-end -mt-3">
           <button
             onClick={onCancel}
-            className="w-full sm:w-auto px-6 sm:px-8 py-3 border border-[#131313]/30 text-[#131313] rounded-xl font-medium hover:bg-[#131313]/5 transition-all duration-200 text-sm sm:text-base order-2 sm:order-1"
+            className="w-full sm:w-auto px-6 sm:px-8 py-3 border border-[#131313]/30 text-[#131313] rounded-xl font-medium hover:bg-[#131313]/5 transition-all duration-200 text-sm sm:text-base order-2 sm:order-1 cursor-pointer"
           >
             Cancel
           </button>
           <button
             onClick={onSubmit}
-            className="w-full sm:w-auto px-6 sm:px-8 py-3 bg-[#131313] hover:bg-[#131313]/90 text-white rounded-xl font-medium shadow-lg transition-all duration-200 hover:shadow-xl hover:scale-105 text-sm sm:text-base order-1 sm:order-2"
+            className="w-full sm:w-auto px-6 sm:px-8 py-3 bg-[#131313] hover:bg-[#131313]/90 text-white rounded-xl font-medium shadow-lg transition-all duration-200 hover:shadow-xl hover:scale-105 text-sm sm:text-base order-1 sm:order-2 cursor-pointer"
           >
             {editingProject ? "Update" : "Save"}
           </button>

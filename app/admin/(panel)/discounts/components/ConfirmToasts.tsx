@@ -24,14 +24,14 @@ export function confirmMarkPending(
                   console.error(e);
                 }
               }}
-              className="rounded-md bg-amber-500/70 px-3 py-1 text-xs font-semibold text-amber-100 hover:bg-amber-500/50"
+              className="rounded-md bg-amber-500/70 px-3 py-1 text-xs font-semibold text-amber-100 hover:bg-amber-500/50 cursor-pointer"
             >
               Confirm
             </button>
 
             <button
               onClick={() => toast.dismiss(t.id)}
-              className="rounded-md bg-white/5 px-3 py-1 text-xs font-semibold text-white hover:bg-white/10"
+              className="rounded-md bg-white/5 px-3 py-1 text-xs font-semibold text-white hover:bg-white/10 cursor-pointer"
             >
               Cancel
             </button>
@@ -68,14 +68,14 @@ export function confirmDelete(
                   console.error(e);
                 }
               }}
-              className="rounded-md bg-red-500/70 px-3 py-1 text-xs font-semibold text-red-100 hover:bg-red-500/50"
+              className="rounded-md bg-red-500/70 px-3 py-1 text-xs font-semibold text-red-100 hover:bg-red-500/50 cursor-pointer"
             >
               Delete
             </button>
 
             <button
               onClick={() => toast.dismiss(t.id)}
-              className="rounded-md bg-white/5 px-3 py-1 text-xs font-semibold text-white hover:bg-white/10"
+              className="rounded-md bg-white/5 px-3 py-1 text-xs font-semibold text-white hover:bg-white/10 cursor-pointer"
             >
               Cancel
             </button>
@@ -117,13 +117,13 @@ export function confirmResetEmail(
                   console.error(e);
                 }
               }}
-              className="flex-1 rounded-md bg-orange-500/70 px-3 py-1.5 text-xs font-semibold text-orange-100 hover:bg-orange-500/50"
+              className="flex-1 rounded-md bg-orange-500/70 px-3 py-1.5 text-xs font-semibold text-orange-100 hover:bg-orange-500/50 cursor-pointer"
             >
               Reset & Send Correction
             </button>
             <button
               onClick={() => toast.dismiss(t.id)}
-              className="rounded-md bg-white/5 px-3 py-1.5 text-xs font-semibold text-white hover:bg-white/10"
+              className="rounded-md bg-white/5 px-3 py-1.5 text-xs font-semibold text-white hover:bg-white/10 cursor-pointer"
             >
               Cancel
             </button>

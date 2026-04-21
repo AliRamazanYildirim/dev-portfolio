@@ -13,7 +13,7 @@ export default function BackToHomeButton({
       <button
         type="button"
         onClick={() => router.push("/")}
-        className="text-white/70 hover:text-white text-sm font-medium transition-colors duration-200"
+        className="text-white/70 hover:text-white text-sm font-medium transition-colors duration-200 cursor-pointer"
       >
         {children}
       </button>

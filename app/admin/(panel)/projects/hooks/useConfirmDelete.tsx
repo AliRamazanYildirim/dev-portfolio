@@ -57,13 +57,13 @@ export function useConfirmDelete(
                   toast.error(message || msgs.error);
                 }
               }}
-              className="flex-1 bg-red-600 text-white px-3 py-1.5 rounded text-sm font-medium hover:bg-red-700 transition"
+              className="flex-1 bg-red-600 text-white px-3 py-1.5 rounded text-sm font-medium hover:bg-red-700 transition cursor-pointer"
             >
               Delete
             </button>
             <button
               onClick={() => toast.dismiss(t.id)}
-              className="flex-1 bg-gray-300 text-gray-800 px-3 py-1.5 rounded text-sm font-medium hover:bg-gray-400 transition"
+              className="flex-1 bg-gray-300 text-gray-800 px-3 py-1.5 rounded text-sm font-medium hover:bg-gray-400 transition cursor-pointer"
             >
               Cancel
             </button>

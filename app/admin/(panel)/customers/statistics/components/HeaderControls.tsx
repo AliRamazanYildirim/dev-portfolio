@@ -67,7 +67,7 @@ export function HeaderControls({
                   onRangeChange(option.value);
                   setIsOpen(false);
                 }}
-                className={`w-full text-left px-4 py-2.5 text-sm transition-colors ${
+                className={`w-full text-left px-4 py-2.5 text-sm transition-colors cursor-pointer ${
                   option.value === rangeDays
                     ? "bg-blue-600 text-white"
                     : "text-white hover:bg-white/10"
@@ -81,7 +81,7 @@ export function HeaderControls({
       </div>
       <button
         onClick={onRefresh}
-        className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-white text-[#131313] px-5 py-2 rounded-lg font-semibold shadow hover:bg-white/90 transition disabled:opacity-60 disabled:cursor-not-allowed"
+        className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-white text-[#131313] px-5 py-2 rounded-lg font-semibold shadow hover:bg-white/90 transition disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
       >
         <RefreshCcw
           className={`h-4 w-4 text-[#131313] ${loading ? "animate-spin" : ""}`}

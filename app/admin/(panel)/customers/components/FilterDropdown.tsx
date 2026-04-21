@@ -38,7 +38,7 @@ export default function FilterDropdown({
       <button
         type="button"
         onClick={() => setOpen((s) => !s)}
-        className="w-full sm:w-auto bg-[#131313] text-white font-semibold rounded-lg px-3 py-1.5 text-sm shadow flex items-center gap-2 min-w-27.5 h-9"
+        className="w-full sm:w-auto bg-[#131313] text-white font-semibold rounded-lg px-3 py-1.5 text-sm shadow flex items-center gap-2 min-w-27.5 h-9 cursor-pointer"
       >
         <Filter className="w-4 h-4 text-white/70" />
         <span className="sm:hidden">Filter</span>
@@ -60,7 +60,7 @@ export default function FilterDropdown({
                 onChange(opt.value);
                 setOpen(false);
               }}
-              className={`w-full text-left px-4 py-2 text-sm whitespace-normal ${
+              className={`w-full text-left px-4 py-2 text-sm whitespace-normal cursor-pointer ${
                 opt.value === value
                   ? "bg-blue-600 text-white"
                   : "text-white hover:bg-white/5"

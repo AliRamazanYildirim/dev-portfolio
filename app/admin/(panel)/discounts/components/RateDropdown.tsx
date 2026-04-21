@@ -34,7 +34,7 @@ export function RateDropdown({
         type="button"
         onClick={() => setOpen((s) => !s)}
         disabled={disabled}
-        className={`rounded-md bg-white/10 px-2 py-1 text-xs text-white border border-white/20 inline-flex items-center gap-2 ${
+        className={`rounded-md bg-white/10 px-2 py-1 text-xs text-white border border-white/20 inline-flex items-center gap-2 cursor-pointer ${
           disabled ? "opacity-60 cursor-not-allowed" : ""
         }`}
       >
@@ -53,12 +53,12 @@ export function RateDropdown({
                 onChange(itemId, opt);
                 setOpen(false);
               }}
-              className={`w-full text-left px-1 py-1 text-xs transition ${
+              className={`w-full text-left px-1 py-1 text-xs transition cursor-pointer ${
                 opt === value
                   ? "bg-indigo-500/80 text-indigo-100"
                   : opt === "+3"
-                  ? "text-emerald-200 hover:bg-emerald-800/30"
-                  : "text-white/80 hover:bg-white/5"
+                    ? "text-emerald-200 hover:bg-emerald-800/30"
+                    : "text-white/80 hover:bg-white/5"
               }`}
             >
               {opt === "+3" ? "+3% Bonus" : `${opt}%`}

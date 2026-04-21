@@ -68,7 +68,7 @@ export default function AdminShell({ children }: AdminShellProps) {
                   <button
                     type="button"
                     onClick={toggleSidebar}
-                    className="flex items-center gap-2 rounded-lg border border-white/10 px-3 py-2 text-sm font-medium transition bg-white/70 hover:bg-white/10"
+                    className="flex items-center gap-2 rounded-lg border border-white/10 px-3 py-2 text-sm font-medium transition bg-white/70 hover:bg-white/10 cursor-pointer"
                   >
                     {isSidebarOpen ? (
                       <>

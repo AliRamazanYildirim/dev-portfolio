@@ -81,7 +81,7 @@ export default function CustomerForm({
             </div>
             <button
               onClick={onCancel}
-              className="p-2 sm:p-3 hover:bg-white/10 rounded-xl transition-all duration-200 group"
+              className="p-2 sm:p-3 hover:bg-white/10 rounded-xl transition-all duration-200 group cursor-pointer"
             >
               <svg
                 className="w-5 h-5 sm:w-6 sm:h-6 text-white/70 group-hover:text-white transition-colors"
@@ -322,7 +322,7 @@ export default function CustomerForm({
         <div className="bg-[#131313]/5 backdrop-blur-sm px-4 sm:px-6 lg:px-8 py-4 sm:py-6 border-t border-[#131313]/10 flex flex-col sm:flex-row gap-3 sm:gap-4 sm:justify-end -mt-3">
           <button
             onClick={onCancel}
-            className="w-full sm:w-auto px-6 sm:px-8 py-3 border border-[#131313]/30 text-[#131313] rounded-xl font-medium hover:bg-[#131313]/5 transition-all duration-200 text-sm sm:text-base order-2 sm:order-1"
+            className="w-full sm:w-auto px-6 sm:px-8 py-3 border border-[#131313]/30 text-[#131313] rounded-xl font-medium hover:bg-[#131313]/5 transition-all duration-200 text-sm sm:text-base order-2 sm:order-1 cursor-pointer"
           >
             Cancel
           </button>
@@ -331,7 +331,7 @@ export default function CustomerForm({
             disabled={
               !(emailValid && phoneValid && postcodeValid && priceValid)
             }
-            className={`w-full sm:w-auto px-6 sm:px-8 py-3 rounded-xl font-medium shadow-lg transition-all duration-200 text-sm sm:text-base order-1 sm:order-2 ${
+            className={`w-full sm:w-auto px-6 sm:px-8 py-3 rounded-xl font-medium shadow-lg transition-all duration-200 text-sm sm:text-base order-1 sm:order-2 cursor-pointer ${
               emailValid && phoneValid && postcodeValid && priceValid
                 ? "bg-[#131313] hover:bg-[#131313]/90 text-white hover:shadow-xl hover:scale-105"
                 : "bg-gray-200 text-gray cursor-not-allowed shadow-none"

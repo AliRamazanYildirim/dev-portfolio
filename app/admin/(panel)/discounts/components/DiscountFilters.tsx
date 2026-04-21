@@ -53,7 +53,7 @@ export function DiscountFilters({
         </div>
         <button
           onClick={onReset}
-          className="flex items-center gap-2 rounded-lg border border-[#131313]/10 bg-white px-3 py-2 text-sm font-semibold text-[#131313] shadow hover:bg-[#131313]/10 shrink-0"
+          className="flex items-center gap-2 rounded-lg border border-[#131313]/10 bg-white px-3 py-2 text-sm font-semibold text-[#131313] shadow hover:bg-[#131313]/10 shrink-0 cursor-pointer"
         >
           <X className="h-4 w-4" />
           Reset
@@ -61,7 +61,7 @@ export function DiscountFilters({
         <button
           onClick={onRefresh}
           disabled={loading}
-          className="flex items-center justify-center gap-2 bg-[#131313] text-white px-3 py-2 rounded-lg font-semibold shadow hover:bg-[#131313]/90 transition disabled:opacity-60 disabled:cursor-not-allowed shrink-0"
+          className="flex items-center justify-center gap-2 bg-[#131313] text-white px-3 py-2 rounded-lg font-semibold shadow hover:bg-[#131313]/90 transition disabled:opacity-60 disabled:cursor-not-allowed shrink-0 cursor-pointer"
         >
           <RefreshCcw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
           <span>Refresh</span>
@@ -104,7 +104,7 @@ function StatusDropdown({
       <button
         type="button"
         onClick={() => setOpen((s) => !s)}
-        className="bg-white text-[#131313] rounded-lg px-4 pr-8 py-2 text-sm shadow flex items-center gap-2 min-w-27.5 sm:min-w-35"
+        className="bg-white text-[#131313] rounded-lg px-4 pr-8 py-2 text-sm shadow flex items-center gap-2 min-w-27.5 sm:min-w-35 cursor-pointer"
       >
         <span className="truncate">{current.label}</span>
         <ChevronDown
@@ -124,7 +124,7 @@ function StatusDropdown({
                 onChange(opt.value);
                 setOpen(false);
               }}
-              className={`w-full text-left px-4 py-2 text-sm ${
+              className={`w-full text-left px-4 py-2 text-sm cursor-pointer ${
                 opt.value === value
                   ? "bg-[#0ea5a4] text-white"
                   : "text-[#131313] hover:bg-[#f3f4f6]"

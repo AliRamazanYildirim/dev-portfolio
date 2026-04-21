@@ -171,7 +171,7 @@ export default function DiscountTrackingPage() {
                       /* error already handled in hook */
                     }
                   }}
-                  className="relative inline-flex items-center gap-3 self-end sm:self-auto rounded-full border border-black/10 bg-white px-4 py-2 shadow-sm transition hover:shadow-md focus:outline-none focus:ring-2 focus:ring-black/20"
+                  className="relative inline-flex items-center gap-3 self-end sm:self-auto rounded-full border border-black/10 bg-white px-4 py-2 shadow-sm transition hover:shadow-md focus:outline-none focus:ring-2 focus:ring-black/20 cursor-pointer disabled:cursor-not-allowed"
                   aria-pressed={discountsEnabled}
                   disabled={settingsLoading}
                 >

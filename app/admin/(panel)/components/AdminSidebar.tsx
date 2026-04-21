@@ -13,7 +13,8 @@ import {
   Menu,
   Users2,
   X,
-  FileText,
+  ReceiptText,
+  TicketPercent,
 } from "lucide-react";
 
 interface AdminSidebarProps {
@@ -40,13 +41,13 @@ const navigation = [
   {
     label: "Invoice Management",
     href: "/admin/invoices",
-    icon: FileText,
+    icon: ReceiptText,
     match: (pathname: string) => pathname.startsWith("/admin/invoices"),
   },
   {
     label: "Discounts",
     href: "/admin/discounts",
-    icon: FileText,
+    icon: TicketPercent,
     match: (pathname: string) => pathname.startsWith("/admin/discounts"),
   },
   {

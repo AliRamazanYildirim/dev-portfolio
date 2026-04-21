@@ -186,7 +186,7 @@ export default function InvoiceManagementPage() {
                     <div className="flex flex-row gap-2 w-full landscape:w-auto landscape:justify-end sm:w-auto">
                       <button
                         type="submit"
-                        className="flex-1 landscape:flex-none sm:flex-none flex items-center justify-center gap-1.5 sm:gap-2 bg-white text-[#131313] px-3 py-1.5 rounded-md text-sm font-semibold"
+                        className="flex-1 landscape:flex-none sm:flex-none flex items-center justify-center gap-1.5 sm:gap-2 bg-white text-[#131313] px-3 py-1.5 rounded-md text-sm font-semibold cursor-pointer"
                       >
                         <Search className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                         <span>Search</span>
@@ -197,7 +197,7 @@ export default function InvoiceManagementPage() {
                           setSearchQuery("");
                           fetchCustomers();
                         }}
-                        className="flex-1 landscape:flex-none sm:flex-none flex items-center justify-center gap-1.5 sm:gap-2 bg-white text-[#131313] px-3 py-1.5 rounded-lg font-semibold shadow hover:bg-white/90 transition disabled:opacity-60 disabled:cursor-not-allowed"
+                        className="flex-1 landscape:flex-none sm:flex-none flex items-center justify-center gap-1.5 sm:gap-2 bg-white text-[#131313] px-3 py-1.5 rounded-lg font-semibold shadow hover:bg-white/90 transition disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
                       >
                         <RefreshCcw
                           className={`h-3.5 w-3.5 sm:h-4 sm:w-4 text-[#131313] ${
