@@ -16,4 +16,5 @@ export interface SendInvoiceResult {
     invoiceNumber: string;
     pdfSize: number;
     messageId: string;
+    previewUrl?: string | null;
 }

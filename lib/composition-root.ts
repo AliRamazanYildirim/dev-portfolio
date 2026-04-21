@@ -68,8 +68,7 @@ export type DependencyOverrides = {
 
 function createProductionDependencies(): AppDependencies {
     const hasCredentials = Boolean(
-        (process.env.SMTP_USER || process.env.EMAIL_USER) &&
-        (process.env.SMTP_PASS || process.env.EMAIL_PASS),
+        process.env.SMTP_USER && process.env.SMTP_PASS,
     );
 
     return {

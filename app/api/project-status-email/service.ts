@@ -5,7 +5,11 @@
  * Route-Handler delegiert hierher – keine Geschäftslogik in route.ts.
  */
 
-import { buildMailPayload, createProjectStatusTransporter } from "./lib/mailer";
+import {
+    buildMailPayload,
+    createProjectStatusTransporter,
+    mapProjectStatusMailError,
+} from "./lib/mailer";
 import { buildBaseUrl } from "./lib/request";
 import { buildLogoAttachment } from "./lib/logo";
 import type { ProjectStatusPayload } from "./lib/types";
@@ -46,7 +50,11 @@ export class ProjectStatusEmailService {
             logoCid,
         });
 
-        await transporter.sendMail(mailOptions);
+        try {
+            await transporter.sendMail(mailOptions);
+        } catch (error) {
+            throw mapProjectStatusMailError(error);
+        }
 
         return { sent: true };
     }

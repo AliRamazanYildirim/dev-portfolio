@@ -33,7 +33,6 @@ export class SendEmailService {
   static async sendContactEmail(payload: SendEmailPayload) {
     const recipientEmail =
       process.env.CONTACT_RECIPIENT_EMAIL ||
-      process.env.EMAIL_USER ||
       process.env.ADMIN_EMAIL ||
       process.env.SMTP_USER;
 

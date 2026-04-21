@@ -9,10 +9,10 @@ interface SendAdminEmailOptions {
 }
 
 export function createAdminCustomersMailer() {
-    const host = process.env.SMTP_HOST || "smtp.gmail.com";
-    const port = Number(process.env.SMTP_PORT || 587);
-    const user = process.env.SMTP_USER || process.env.EMAIL_USER;
-    const pass = process.env.SMTP_PASS || process.env.EMAIL_PASS;
+    const host = process.env.SMTP_HOST?.trim() || "smtp.gmail.com";
+    const port = Number(process.env.SMTP_PORT?.trim() || 587);
+    const user = process.env.SMTP_USER?.trim();
+    const pass = process.env.SMTP_PASS?.trim().replace(/\s+/g, "");
 
     if (!user || !pass) {
         throw new Error("SMTP credentials are missing for admin customers mailer");

@@ -13,17 +13,20 @@ interface MailOptionsParams {
 }
 
 export async function createVerifiedTransporter(): Promise<Transporter> {
-    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+    const smtpUser = process.env.SMTP_USER?.trim();
+    const smtpPass = process.env.SMTP_PASS?.trim().replace(/\s+/g, "");
+
+    if (!smtpUser || !smtpPass) {
         throw new Error(
-            "Email service not configured. Please set EMAIL_USER and EMAIL_PASS environment variables."
+            "Email service not configured. Please set SMTP_USER and SMTP_PASS environment variables."
         );
     }
 
     const transporter = nodemailer.createTransport({
         service: "gmail",
         auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS,
+            user: smtpUser,
+            pass: smtpPass,
         },
     });
 
@@ -49,7 +52,7 @@ export function buildMailOptions({
     });
 
     return {
-        from: `"Ali Ramazan Yildirim" <${process.env.EMAIL_USER}>`,
+        from: `"Ali Ramazan Yildirim" <${process.env.FROM_EMAIL || process.env.SMTP_USER}>`,
         to: customerEmail,
         subject: `Ihre Rechnung ${invoiceData.invoiceNumber} - Ali Ramazan Yildirim`,
         html,

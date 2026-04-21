@@ -47,12 +47,18 @@ export class InvoiceEmailService {
             ],
         });
 
+        const previewUrl =
+            typeof result.previewUrl === "string" ? result.previewUrl : null;
+
         return {
-            message: "Invoice email sent successfully with PDF attachment",
+            message: previewUrl
+                ? "Invoice email sent via test mailbox (preview URL available)"
+                : "Invoice email sent successfully with PDF attachment",
             customerEmail,
             invoiceNumber,
             pdfSize: (pdfBuffer as unknown as Buffer).length,
             messageId: result.messageId,
+            previewUrl,
         };
     }
 
