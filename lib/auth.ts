@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { randomBytes } from "node:crypto";
 import { getJwtSecret, JWT_ISSUER } from "./jwtConfig";
 
 // JWT Secret - Umgebungsvariable aus .env.local - Environment variable from .env.local
@@ -23,6 +24,7 @@ export interface AdminUser {
 export interface JWTPayload {
   userId: string;
   email: string;
+  jti?: string;
   iat?: number;
   exp?: number;
 }
@@ -65,6 +67,7 @@ export function createToken(user: AdminUser): string {
   return jwt.sign(payload, JWT_SECRET, {
     expiresIn: "24h",
     issuer: JWT_ISSUER,
+    jwtid: randomBytes(16).toString("hex"),
   });
 }
 

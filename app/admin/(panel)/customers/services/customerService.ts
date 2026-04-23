@@ -1,4 +1,5 @@
 import type { Customer, FetchCustomersOptions } from "@/types/customer";
+import { secureFetch } from "@/lib/security/csrfClient";
 
 export type { Customer, FetchCustomersOptions };
 
@@ -35,7 +36,7 @@ export const customerService = {
         let savedCustomer: Customer | null = null;
 
         const promise = (async () => {
-            const res = await fetch(url, {
+            const res = await secureFetch(url, {
                 method,
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(customerData),
@@ -68,7 +69,7 @@ export const customerService = {
     },
 
     async deleteCustomer(id: string): Promise<void> {
-        const res = await fetch(`/api/admin/customers/${id}`, {
+        const res = await secureFetch(`/api/admin/customers/${id}`, {
             method: "DELETE",
         });
         const json = await res.json();
@@ -113,7 +114,7 @@ export const customerService = {
         customerId: string,
         customerEmail: string
     ): Promise<void> {
-        const response = await fetch("/api/referral/send-email", {
+        const response = await secureFetch("/api/referral/send-email", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ customerId, customerEmail }),

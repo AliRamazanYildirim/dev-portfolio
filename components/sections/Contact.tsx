@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import SplitText from "@/components/animations/SplitText";
 import toast from "react-hot-toast";
 import ContactInfo from "./ContactInfo";
 import { useTranslation } from "@/hooks/useTranslation";
+import { ensureCsrfToken } from "@/lib/security/csrfClient";
 import type { TranslationDictionary } from "@/constants/translations";
 
 const Contact = () => {
@@ -49,6 +50,17 @@ const ContactForm = ({
   });
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
+  const [csrfToken, setCsrfToken] = useState("");
+
+  useEffect(() => {
+    ensureCsrfToken()
+      .then((token) => {
+        if (token) setCsrfToken(token);
+      })
+      .catch(() => {
+        /* ignore: wird beim Submit erneut versucht */
+      });
+  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -137,12 +149,14 @@ const ContactForm = ({
         ) : (
           <motion.form
             key="form"
+            method="post"
             onSubmit={handleSubmit}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             className="md:grid md:grid-cols-12 gap-6 mx-auto"
           >
+            <input type="hidden" name="csrf_token" value={csrfToken} readOnly />
             <div className="relative border-b border-zinc-700 dark:border-zinc-300 md:col-span-3">
               <input
                 type="text"

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { secureFetch } from "@/lib/security/csrfClient";
 
 // Interface-Definition - Interface definition
 interface ImageUploadProps {
@@ -49,7 +50,7 @@ export default function ImageUpload({ onUpload }: ImageUploadProps) {
     formData.append("file", file);
 
     try {
-      const res = await fetch("/api/upload", {
+      const res = await secureFetch("/api/upload", {
         method: "POST",
         body: formData,
       });

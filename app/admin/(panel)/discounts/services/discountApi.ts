@@ -1,3 +1,5 @@
+import { secureFetch } from "@/lib/security/csrfClient";
+
 export async function fetchDiscounts(): Promise<any> {
   const res = await fetch("/api/discounts");
   const json = await res.json();
@@ -17,7 +19,7 @@ export async function fetchDiscountSettings(): Promise<any> {
 export async function patchDiscount(
   payload: Record<string, unknown>,
 ): Promise<any> {
-  const res = await fetch("/api/discounts", {
+  const res = await secureFetch("/api/discounts", {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
@@ -29,7 +31,7 @@ export async function patchDiscount(
 }
 
 export async function deleteDiscountApi(id: string): Promise<void> {
-  const res = await fetch("/api/discounts", {
+  const res = await secureFetch("/api/discounts", {
     method: "DELETE",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ id }),
@@ -43,7 +45,7 @@ export async function sendDiscountEmailApi(
   transactionId: string,
   discountRate: number | "+3",
 ) {
-  const res = await fetch("/api/admin/discounts/send-email", {
+  const res = await secureFetch("/api/admin/discounts/send-email", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ transactionId, discountRate }),
@@ -58,7 +60,7 @@ export async function resetEmailApi(
   transactionId: string,
   sendCorrectionEmail = true,
 ) {
-  const res = await fetch("/api/admin/discounts/reset-email", {
+  const res = await secureFetch("/api/admin/discounts/reset-email", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ transactionId, sendCorrectionEmail }),
@@ -70,7 +72,7 @@ export async function resetEmailApi(
 }
 
 export async function updateDiscountsSetting(enabled: boolean) {
-  const res = await fetch("/api/admin/settings/discounts", {
+  const res = await secureFetch("/api/admin/settings/discounts", {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ enabled }),

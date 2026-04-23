@@ -6,6 +6,7 @@ import { validateLoginBody } from "./validation";
 import { AdminLoginService } from "./service";
 import { UnauthorizedError } from "@/lib/errors";
 import { getIpFromHeaders } from "@/lib/ip";
+import { recordAudit } from "@/lib/security/audit";
 import { attachRateLimitHeaders, rateLimitedResponse } from "./utils";
 
 export const runtime = "nodejs";
@@ -55,6 +56,15 @@ export async function POST(request: NextRequest) {
       const { token, user } = await AdminLoginService.login(input);
       await AdminLoginService.resetFailedAttempts(context);
 
+      await recordAudit({
+        action: "admin.login",
+        actorId: user.id,
+        actorEmail: user.email,
+        ip: context.ip,
+        userAgent: request.headers.get("user-agent"),
+        success: true,
+      });
+
       const response = NextResponse.json(createAdminLoginSuccessResponse(user));
       response.cookies.set(AuthService.cookieName, token, AuthService.cookieOptions);
 
@@ -65,6 +75,14 @@ export async function POST(request: NextRequest) {
       );
     } catch (error: unknown) {
       if (error instanceof UnauthorizedError) {
+        await recordAudit({
+          action: "admin.login.failed",
+          actorEmail: context.email,
+          ip: context.ip,
+          userAgent: request.headers.get("user-agent"),
+          success: false,
+        });
+
         const failedDecision = await AdminLoginService.registerFailedAttempt(context);
         if (!failedDecision.allowed) {
           return rateLimitedResponse(

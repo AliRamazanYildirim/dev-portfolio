@@ -14,6 +14,7 @@ import {
     COOKIE_OPTIONS,
     type AdminUser,
 } from "@/lib/auth";
+import { isTokenRevoked } from "@/lib/security/tokenRevocation";
 import { UnauthorizedError, ValidationError } from "@/lib/errors";
 import { isValidEmail } from "@/lib/validation";
 import type { LoginResult, SessionResult } from "./types";
@@ -68,6 +69,10 @@ export class AuthService {
         const decoded = verifyToken(token);
         if (!decoded) {
             throw new UnauthorizedError("Invalid session");
+        }
+
+        if (await isTokenRevoked(decoded.jti)) {
+            throw new UnauthorizedError("Session has been revoked");
         }
 
         const adminUser = await adminRepository.findByIdExec(decoded.userId);

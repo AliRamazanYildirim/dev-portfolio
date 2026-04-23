@@ -37,7 +37,7 @@
     "TextAnimations/BlurText/BlurText.jsx",
     "components/ui/Nav.jsx",
     ".next/dev/types/**/*.ts"
-  ],
+, "next.config.ts"  ],
   "exclude": [
     "node_modules"
   ]

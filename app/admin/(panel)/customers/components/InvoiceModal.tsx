@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from "react";
 import type { Customer } from "@/types/customer";
 import { INVOICE_CONSTANTS } from "@/constants/invoice";
 import { InvoiceService } from "../services/invoiceService";
+import { secureFetch } from "@/lib/security/csrfClient";
 import toast from "react-hot-toast";
 
 // 3-stage discount calculation (3-6-9% + 3% bonus each additional referral)
@@ -96,7 +97,7 @@ export default function InvoiceModal({
       });
 
       // Call our email API
-      const response = await fetch("/api/invoice/send-email", {
+      const response = await secureFetch("/api/invoice/send-email", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -146,13 +147,16 @@ export default function InvoiceModal({
                         id: "pdf-download",
                       });
 
-                      const pdfResponse = await fetch("/api/invoice/generate", {
-                        method: "POST",
-                        headers: {
-                          "Content-Type": "application/json",
+                      const pdfResponse = await secureFetch(
+                        "/api/invoice/generate",
+                        {
+                          method: "POST",
+                          headers: {
+                            "Content-Type": "application/json",
+                          },
+                          body: JSON.stringify(invoiceData),
                         },
-                        body: JSON.stringify(invoiceData),
-                      });
+                      );
 
                       if (pdfResponse.ok) {
                         const blob = await pdfResponse.blob();

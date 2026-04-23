@@ -71,6 +71,10 @@ vi.mock("@/app/api/admin/auth/service", () => ({
   AuthService: mockAuthService,
 }));
 
+vi.mock("@/lib/security/audit", () => ({
+  recordAudit: vi.fn(async () => undefined),
+}));
+
 function createDecision(
   allowed: boolean,
   policy: LoginRateLimitPolicy,

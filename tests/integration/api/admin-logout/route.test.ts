@@ -19,6 +19,7 @@ const mockAdminLogoutService = vi.hoisted(() => ({
     path: "/",
     expires: new Date(0),
   })),
+  revokeSession: vi.fn(async () => undefined),
 }));
 
 vi.mock("@/app/api/admin/logout/service", () => ({

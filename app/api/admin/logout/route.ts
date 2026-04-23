@@ -8,6 +8,10 @@ export async function POST(request: NextRequest) {
   try {
     validateLogoutRequest(request);
 
+    // Token widerrufen bevor das Cookie geloescht wird
+    const token = request.cookies?.get?.(AdminLogoutService.getCookieName())?.value;
+    await AdminLogoutService.revokeSession(token);
+
     // Erfolgreiche Antwort vorbereiten - Prepare successful response
     const response = NextResponse.json(AdminLogoutService.buildPayload());
 

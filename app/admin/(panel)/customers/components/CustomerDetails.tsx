@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import InvoiceModal from "./InvoiceModal";
+import { secureFetch } from "@/lib/security/csrfClient";
 
 interface CustomerDetailsProps {
   customer: Customer | null;
@@ -255,7 +256,7 @@ export default function CustomerDetails({
                               );
                               if (!saved) throw new Error("Save failed");
 
-                              const mailRes = await fetch(
+                              const mailRes = await secureFetch(
                                 "/api/project-status-email",
                                 {
                                   method: "POST",

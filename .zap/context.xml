@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<configuration>
+  <context>
+    <name>dev-portfolio</name>
+    <inscope>true</inscope>
+    <incregexes>http://host.docker.internal:3000.*</incregexes>
+    <excregexes>http://host.docker.internal:3000/_next/.*</excregexes>
+    <excregexes>http://host.docker.internal:3000/favicon\.ico.*</excregexes>
+    <excregexes>http://host.docker.internal:3000/.*\.(png|jpg|jpeg|webp|avif|ico|svg|woff|woff2)(\?.*)?$</excregexes>
+    <tech>
+      <include>Db</include>
+      <include>Language.JavaScript</include>
+      <include>OS</include>
+      <include>SCM</include>
+      <include>WS</include>
+    </tech>
+    <urlparser>
+      <class>org.zaproxy.zap.model.StandardParameterParser</class>
+      <config>{"kvps":"&amp;","kvs":"=","struct":[]}</config>
+    </urlparser>
+    <postparser>
+      <class>org.zaproxy.zap.model.StandardParameterParser</class>
+      <config>{"kvps":"&amp;","kvs":"=","struct":[]}</config>
+    </postparser>
+    <authentication>
+      <type>0</type>
+      <strategy>EACH_RESP</strategy>
+      <pollurl/>
+      <polldata/>
+      <pollheaders/>
+      <pollfreq>60</pollfreq>
+      <pollunits>REQUESTS</pollunits>
+    </authentication>
+    <session>
+      <type>0</type>
+    </session>
+    <authorization>
+      <type>0</type>
+      <basic>
+        <header/>
+        <body/>
+        <logic>AND</logic>
+        <code>-1</code>
+      </basic>
+    </authorization>
+  </context>
+</configuration>

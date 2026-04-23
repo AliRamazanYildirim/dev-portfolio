@@ -2,6 +2,7 @@ import type { Customer } from "@/types/customer";
 import { InvoiceData } from "@/lib/invoiceUtils";
 import { INVOICE_CONSTANTS } from "@/constants/invoice";
 import { calcDiscountedPrice } from "@/app/api/admin/customers/lib/referral";
+import { secureFetch } from "@/lib/security/csrfClient";
 
 export class InvoiceService {
     /**
@@ -157,7 +158,7 @@ export class InvoiceService {
     public static async generateInvoice(customer: Customer): Promise<void> {
         const invoiceData = this.createInvoiceData(customer);
 
-        const response = await fetch(INVOICE_CONSTANTS.API.GENERATE_ENDPOINT, {
+        const response = await secureFetch(INVOICE_CONSTANTS.API.GENERATE_ENDPOINT, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

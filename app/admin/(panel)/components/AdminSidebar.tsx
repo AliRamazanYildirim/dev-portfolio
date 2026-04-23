@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { parseAdminLogoutResponse } from "@/lib/contracts/adminLogout";
+import { secureFetch } from "@/lib/security/csrfClient";
 import NoiseBackground from "@/components/ui/NoiseBackground";
 import {
   LayoutDashboard,
@@ -75,7 +76,7 @@ export function AdminSidebar({ isOpen, onClose, onToggle }: AdminSidebarProps) {
 
   const handleLogout = useCallback(async () => {
     try {
-      const response = await fetch("/api/admin/logout", {
+      const response = await secureFetch("/api/admin/logout", {
         method: "POST",
         credentials: "include",
       });

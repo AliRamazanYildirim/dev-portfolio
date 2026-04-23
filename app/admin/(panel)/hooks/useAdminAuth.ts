@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { parseAdminLogoutResponse } from "@/lib/contracts/adminLogout";
 import { parseAdminSessionResponse } from "@/lib/contracts/adminSession";
+import { secureFetch } from "@/lib/security/csrfClient";
 
 // Interface für Admin-Benutzer - Interface for admin user
 interface AdminUser {
@@ -76,7 +77,7 @@ export function useAdminAuth() {
     // Logout-Funktion - Logout function
     const logout = async () => {
         try {
-            const response = await fetch("/api/admin/logout", {
+            const response = await secureFetch("/api/admin/logout", {
                 method: "POST",
                 credentials: "include",
             });

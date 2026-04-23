@@ -1,5 +1,6 @@
 import type { Project, ProjectApiResponse } from "../types";
 import { mapApiProject } from "../utils/format";
+import { secureFetch } from "@/lib/security/csrfClient";
 
 type ApiResult<T> =
   | { success: true; data: T }
@@ -35,7 +36,7 @@ export async function createProject(
   payload: Record<string, unknown>,
 ): Promise<ApiResult<Project>> {
   try {
-    const res = await fetch("/api/admin/projects", {
+    const res = await secureFetch("/api/admin/projects", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
@@ -56,7 +57,7 @@ export async function updateProject(
   payload: Record<string, unknown>,
 ): Promise<ApiResult<Project>> {
   try {
-    const res = await fetch(`/api/admin/projects/${id}`, {
+    const res = await secureFetch(`/api/admin/projects/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
@@ -74,7 +75,7 @@ export async function updateProject(
 
 export async function deleteProject(id: string): Promise<ApiResult<null>> {
   try {
-    const res = await fetch(`/api/admin/projects/${id}`, { method: "DELETE" });
+    const res = await secureFetch(`/api/admin/projects/${id}`, { method: "DELETE" });
     const json = await safeJson(res);
     if (!res.ok || !json || !json.success) {
       return { success: false, error: json?.error || `HTTP ${res.status}` };
