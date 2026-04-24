@@ -70,7 +70,7 @@ export default function LoginForm({
           onChange={handleInputChange}
           placeholder={loginTexts.emailPlaceholder}
           disabled={isLoading}
-          className="w-full px-6 py-4 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full px-6 py-4 bg-white/80 border border-[#131313]/20 rounded-xl text-[#131313] placeholder:text-[#131313]/40 focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content disabled:opacity-50 disabled:cursor-not-allowed"
         />
       </div>
 
@@ -90,7 +90,7 @@ export default function LoginForm({
             onChange={handleInputChange}
             placeholder={loginTexts.passwordPlaceholder}
             disabled={isLoading}
-            className="w-full px-6 py-4 pr-12 bg-white/80 border border-[#131313]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full px-6 py-4 pr-12 bg-white/80 border border-[#131313]/20 rounded-xl text-[#131313] placeholder:text-[#131313]/40 focus:outline-none focus:ring-2 focus:ring-[#131313] focus:border-transparent transition-all duration-200 content disabled:opacity-50 disabled:cursor-not-allowed"
           />
           <button
             type="button"
