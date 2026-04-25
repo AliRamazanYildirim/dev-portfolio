@@ -13,6 +13,7 @@
     "test:coverage": "vitest run --coverage",
     "setup-admin": "bun run scripts/setup-admin.ts",
     "security:zap": "bash scripts/security/zap-baseline.sh",
+    "security:zap:auth": "bash scripts/security/zap-auth-scan.sh",
     "security:cve": "bash scripts/security/audit.sh",
     "security:secrets": "bash scripts/security/secrets-scan.sh",
     "security:all": "bun run security:cve; bun run security:secrets"
