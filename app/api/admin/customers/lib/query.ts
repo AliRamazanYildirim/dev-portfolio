@@ -19,12 +19,23 @@ function buildDateRangeFilter(from?: string | null, to?: string | null) {
     return { $gte: new Date(fromIso), $lte: new Date(toIso) };
 }
 
+// Begrenzt Suchanfragen und entkommt Regex-Sonderzeichen → schuetzt vor ReDoS.
+const MAX_SEARCH_LENGTH = 64;
+const REGEX_SPECIALS = /[.*+?^${}()|[\]\\]/g;
+
+function escapeRegex(input: string): string {
+    return input.replace(REGEX_SPECIALS, "\\$&");
+}
+
 function buildSearchFilter(q?: string | null) {
     if (!q) {
         return undefined;
     }
 
-    const qClean = q.replace(/%/g, "");
+    const qClean = escapeRegex(q.replace(/%/g, "").slice(0, MAX_SEARCH_LENGTH));
+    if (!qClean) {
+        return undefined;
+    }
     const fields = [
         "firstname",
         "lastname",
